@@ -1,0 +1,118 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.2.RELEASE'
+    }
+    repositories {
+        maven { url 'https://repo.spring.io/milestone' }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        maven {
+            name "whkayak-releases"
+            url "http://whkayak.f3322.net:18150/nexus/content/groups/public"
+        }
+        maven {
+            name "whkayak-releases"
+            url "http://whkayak.f3322.net:18150/nexus/content/repositories/releases"
+        }
+        maven {
+            name "whkayak-snapshots"
+            url "http://whkayak.f3322.net:18150/nexus/content/repositories/snapshots"
+        }
+        maven {
+            name "aliyun"
+            url "http://maven.aliyun.com/nexus/content/groups/public"
+        }
+        mavenLocal()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.10"
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2'
+
+    }
+
+}
+plugins {
+    id 'net.ltgt.apt' version '0.10'
+}
+allprojects {
+    apply plugin: 'maven'
+    group = 'chain'
+    version = '1.0'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'application'
+    apply plugin: 'net.ltgt.apt'
+    apply plugin: 'maven-publish'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    if (!project.hasProperty('env') || !env) {
+        ext.env = 'dev'
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    ext {
+        springCloudVersion = 'Greenwich.RC2'
+        snippetsDir = file('build/generated-snippets')
+    }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.encoding = 'UTF-8'
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
+    javadoc {
+        options {
+            // 语言
+            locale 'zh_CN'
+            encoding 'UTF-8'
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/8/docs/api"
+        }
+    }
+    repositories {
+        maven { url 'https://repo.spring.io/milestone' }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        maven {
+            name "whkayak-releases"
+            url "http://whkayak.f3322.net:18150/nexus/content/groups/public"
+        }
+        maven {
+            name "whkayak-releases"
+            url "http://whkayak.f3322.net:18150/nexus/content/repositories/releases"
+        }
+        maven {
+            name "whkayak-snapshots"
+            url "http://whkayak.f3322.net:18150/nexus/content/repositories/snapshots"
+        }
+        maven {
+            name "aliyun"
+            url "http://maven.aliyun.com/nexus/content/groups/public"
+        }
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+
+    dependencies {
+        compile 'org.projectlombok:lombok:1.18.2'
+        compile('chain:css-log:2.0.3')
+        compile('chain:utils-commons:1.0.6')
+        runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        testCompile('junit:junit:4.12')
+        testCompile('pl.pragmatists:JUnitParams:1.1.1')
+        compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+    }
+}

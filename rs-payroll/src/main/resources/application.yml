@@ -1,0 +1,19 @@
+spring:
+  profiles:
+    active: env
+  aop:
+    proxyTargetClass: true
+  devtools:
+    restart:
+     enabled: false
+jasypt:
+  encryptor:
+    password: BHE9QEPUvh8HFjm2DCXm6j7wS4Fi
+    algorithm: PBEWithMD5AndDES
+#    saltGeneratorClassname: org.jasypt.salt.StringFixedSaltGenerator
+management:
+  endpoints:
+    web:
+    exposure:
+      include: health,info,env,metrics
+      #include: health,info,env,prometheus,metrics,httptrace,threaddump,heapdump,springmetrics
