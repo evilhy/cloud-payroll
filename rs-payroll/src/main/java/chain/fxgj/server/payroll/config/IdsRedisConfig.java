@@ -50,24 +50,27 @@ import java.util.Set;
 public class IdsRedisConfig {
 
     @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory,
+                                     ObjectMapper objectMapper) {
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofHours(24))
-                .computePrefixWith(cacheName -> PayrollConstants.PREFIX.concat(":").concat(cacheName).concat(":"))
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(valueSerializer(objectMapper())));
+                .computePrefixWith(
+                        cacheName -> PayrollConstants.PREFIX.concat(":").concat(cacheName).concat(":"))
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(keySerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(valueSerializer(objectMapper)));
         // 设置一个初始化的缓存空间set集合
         Set<String> cacheNames = new HashSet<>();
         cacheNames.add("loginSessionId");
-        cacheNames.add("regsiterSessionId");
 
         // 对每个缓存空间应用不同的配置
         Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
         configMap.put("loginSessionId", cacheConfiguration.entryTtl(Duration.ofMinutes(10)));
-        configMap.put("regsiterSessionId", cacheConfiguration.entryTtl(Duration.ofMinutes(30)));
 
         log.debug("自定义RedisCacheManager加载完成");
-        return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory))
+        return RedisCacheManager
+                .builder(RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory))
                 .initialCacheNames(cacheNames)
                 .withInitialCacheConfigurations(configMap)
                 .cacheDefaults(cacheConfiguration)
@@ -75,13 +78,14 @@ public class IdsRedisConfig {
     }
 
     @Bean
-    public RedisOperations<String, Object> redisOperations(RedisConnectionFactory redisConnectionFactory) {
+    public RedisOperations<String, Object> redisOperations(
+            RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(keySerializer());
         redisTemplate.setHashKeySerializer(keySerializer());
-        redisTemplate.setValueSerializer(valueSerializer(objectMapper()));
-        redisTemplate.setHashValueSerializer(valueSerializer(objectMapper()));
+        redisTemplate.setValueSerializer(valueSerializer(objectMapper));
+        redisTemplate.setHashValueSerializer(valueSerializer(objectMapper));
         return redisTemplate;
     }
 
@@ -93,21 +97,6 @@ public class IdsRedisConfig {
         return new GenericJackson2JsonRedisSerializer(objectMapper);
     }
 
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DataFormatConstants.DEFAULT_DATE_TIME_FORMAT)));
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DataFormatConstants.DEFAULT_DATE_FORMAT)));
-        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(DataFormatConstants.DEFAULT_TIME_FORMAT)));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DataFormatConstants.DEFAULT_DATE_TIME_FORMAT)));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DataFormatConstants.DEFAULT_DATE_FORMAT)));
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DataFormatConstants.DEFAULT_TIME_FORMAT)));
-        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-        objectMapper.registerModule(javaTimeModule);
-        return objectMapper;
-    }
+
 
 }
