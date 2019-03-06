@@ -31,7 +31,7 @@ import java.util.Set;
 
 @Configuration
 @Slf4j
-public class IdsRedisConfig {
+public class PayrollRedisConfig {
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory,
