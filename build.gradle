@@ -35,6 +35,7 @@ buildscript {
 }
 plugins {
     id 'net.ltgt.apt' version '0.10'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" apply false
 }
 allprojects {
     apply plugin: 'maven'

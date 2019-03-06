@@ -7,8 +7,6 @@ import chain.css.exception.ServiceHandleException;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.base.ErrorDTO;
 import chain.fxgj.server.payroll.exception.ForbiddenServiceException;
-import chain.utils.commons.JacksonUtil;
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.core.annotation.Order;
@@ -22,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -61,10 +58,10 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
             log.warn("BusiVerifyException :{}", error.getMessage());
             errorDTO = new ErrorDTO(400, ((BusiVerifyException) error).getErrorMsg(),
                     request.path().toString(), request.methodName());
-        }else if (error instanceof FeignException) {
-            log.warn(error.getMessage());
-            errorDTO = JacksonUtil.jsonToBean(((FeignException) error).contentUTF8(),
-                    ErrorDTO.class);
+//        }else if (error instanceof FeignException) {
+//            log.warn(error.getMessage());
+//            errorDTO = JacksonUtil.jsonToBean(((FeignException) error).contentUTF8(),
+//                    ErrorDTO.class);
         } else if (error instanceof ForbiddenServiceException) {
             log.warn("ForbiddenServiceException :{}", error.getMessage());
             ErrorMsg errorMsg = ((ForbiddenServiceException) error).getErrorMsg();
