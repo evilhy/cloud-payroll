@@ -7,6 +7,8 @@ import chain.css.exception.ServiceHandleException;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.base.ErrorDTO;
 import chain.fxgj.server.payroll.exception.ForbiddenServiceException;
+import chain.utils.commons.JacksonUtil;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.core.annotation.Order;
@@ -59,6 +61,10 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
             log.warn("BusiVerifyException :{}", error.getMessage());
             errorDTO = new ErrorDTO(400, ((BusiVerifyException) error).getErrorMsg(),
                     request.path().toString(), request.methodName());
+        }else if (error instanceof FeignException) {
+            log.warn(error.getMessage());
+            errorDTO = JacksonUtil.jsonToBean(((FeignException) error).contentUTF8(),
+                    ErrorDTO.class);
         } else if (error instanceof ForbiddenServiceException) {
             log.warn("ForbiddenServiceException :{}", error.getMessage());
             ErrorMsg errorMsg = ((ForbiddenServiceException) error).getErrorMsg();
@@ -104,12 +110,11 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
                     request.path(), request.methodName());
         }
         errorAttributes.put("status", errorDTO.getStatus());
-        errorAttributes.put("error_code", errorDTO.getErrorCode());
-        errorAttributes.put("error_msg", errorDTO.getErrorMsg());
+        errorAttributes.put("error_code", errorDTO.getErrCode());
+        errorAttributes.put("error_msg", errorDTO.getErrMsg());
         errorAttributes.put("path", errorDTO.getPath());
         errorAttributes.put("method", errorDTO.getMethod());
-        errorAttributes.put("timestamp",
-                errorDTO.getTimestamp().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        errorAttributes.put("timestamp",errorDTO.getTimestamp());
         return errorAttributes;
     }
 }

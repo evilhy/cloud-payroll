@@ -1,7 +1,7 @@
 package chain.fxgj.server.payroll.config;
 
-import chain.fxgj.server.payroll.config.json.*;
 import chain.utils.commons.JacksonUtil;
+import chain.utils.commons.json.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

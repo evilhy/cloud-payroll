@@ -3,12 +3,12 @@ package chain.fxgj.server.payroll.dto.base;
 import chain.css.exception.ErrorMsg;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 异常信息
@@ -19,49 +19,55 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = true)
 public class ErrorDTO {
     /**
      * http status
      */
+    @Builder.Default
     int status = 500;
+
     /**
      * 错误码
      */
-    String errorCode;
+    @JsonProperty("error_code")
+    String errCode;
     /**
      * 错误信息
      */
-    String errorMsg;
+    @JsonProperty("error_msg")
+    String errMsg;
 
     /**
      * 时间戳
      */
-    LocalDateTime timestamp;
-
+    Date timestamp;
     /**
-     * 访问路径
+     * 请求url
      */
     String path;
 
     /**
-     * Method
+     * 请求方法
      */
     String method;
 
     public ErrorDTO(int status, String errorCode, String errorMsg, String path, String method) {
         this.status = status;
-        this.errorCode = errorCode;
-        this.errorMsg = errorMsg;
+        this.errCode = errorCode;
+        this.errMsg = errorMsg;
         this.path = path;
         this.method = method;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = new Date();
     }
 
     public ErrorDTO(int status, ErrorMsg errorMsg, String path, String method) {
         this(status, errorMsg.getErrCode(), errorMsg.getErrMsg(), path, method);
     }
+
 }
