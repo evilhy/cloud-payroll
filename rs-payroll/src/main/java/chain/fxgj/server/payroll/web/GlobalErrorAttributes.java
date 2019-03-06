@@ -5,7 +5,7 @@ import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
-import chain.fxgj.server.payroll.dto.ErrorDTO;
+import chain.fxgj.server.payroll.dto.base.ErrorDTO;
 import chain.fxgj.server.payroll.exception.ForbiddenServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;

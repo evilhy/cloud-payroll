@@ -1,4 +1,4 @@
-package chain.fxgj.server.payroll.dto;
+package chain.fxgj.server.payroll.dto.base;
 
 import chain.css.exception.ErrorMsg;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
