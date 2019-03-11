@@ -5,6 +5,8 @@ package chain.fxgj.server.payroll.constant;
  * create by chain on 2018/10/31 4:18 PM
  **/
 public class PayrollConstants {
+    public final static String JSESSIONID = "jsession_id";
+
     public final static String PREFIX = "ids";
     public final static String LOG_TOKEN = "log_token";  //日志
     public final static String JSESSION_ID = "jsession_id";    //登录会话ID

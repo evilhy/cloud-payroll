@@ -1,13 +1,10 @@
 package chain.fxgj.server.payroll.dto.base;
 
 import chain.css.exception.ErrorMsg;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -16,7 +13,6 @@ import java.util.Date;
  * @author chain
  * create by chain on 2018/6/8 下午8:34
  **/
-
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -31,7 +27,6 @@ public class ErrorDTO {
      */
     @Builder.Default
     int status = 500;
-
     /**
      * 错误码
      */
@@ -42,7 +37,6 @@ public class ErrorDTO {
      */
     @JsonProperty("error_msg")
     String errMsg;
-
     /**
      * 时间戳
      */
@@ -51,7 +45,6 @@ public class ErrorDTO {
      * 请求url
      */
     String path;
-
     /**
      * 请求方法
      */

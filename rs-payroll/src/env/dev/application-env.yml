@@ -33,3 +33,12 @@ fxgj:
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
   passwd: MvEpyqjedb4Hvai3vnFakmYxQsebEVCe84RNcVxw79USzc85FPAmbA9NuPxqfGsMh5pPuyzL
+
+# 过滤不需要验证权限的路径【自定义】
+auth:
+  #权限准许的路径列表（此列表下访问路径，不验证token）
+  permitall:
+    #访问路径
+    - pattern: /inside/bindWX/**
+    - pattern: /inside/rz/**
+    - pattern: /roll/checkCar/**

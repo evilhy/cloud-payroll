@@ -53,7 +53,7 @@ public class WebContextFilter implements WebFilter, Ordered {
             });
         });
         log.info(logBuffer.toString());
-//        log.info("{}", exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR).toString());
+        //log.info("{}", exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR).toString());
         //log.info("{}", exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR).toString());
         exchange.getAttributes().put(START_TIME, System.currentTimeMillis());
         exchange.getAttributes().put(REQ, reqId);

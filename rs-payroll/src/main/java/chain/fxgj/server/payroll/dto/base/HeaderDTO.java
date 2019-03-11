@@ -2,10 +2,7 @@ package chain.fxgj.server.payroll.dto.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * http header
@@ -13,12 +10,14 @@ import lombok.Setter;
  * @author chain
  * create by chain on 2018/12/12 6:25 PM
  **/
-@Setter
-@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class HeaderDTO {
     /**
      * 登录用户jsessionId

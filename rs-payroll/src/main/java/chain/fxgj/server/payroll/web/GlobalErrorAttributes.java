@@ -111,7 +111,7 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
         errorAttributes.put("error_msg", errorDTO.getErrMsg());
         errorAttributes.put("path", errorDTO.getPath());
         errorAttributes.put("method", errorDTO.getMethod());
-        errorAttributes.put("timestamp",errorDTO.getTimestamp());
+        errorAttributes.put("timestamp", errorDTO.getTimestamp());
         return errorAttributes;
     }
 }
