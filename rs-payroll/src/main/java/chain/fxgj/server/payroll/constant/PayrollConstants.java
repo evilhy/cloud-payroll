@@ -7,7 +7,7 @@ package chain.fxgj.server.payroll.constant;
 public class PayrollConstants {
     public final static String JSESSIONID = "jsession_id";
 
-    public final static String PREFIX = "ids";
+    public final static String PREFIX = "fxgj";
     public final static String LOG_TOKEN = "log_token";  //日志
     public final static String JSESSION_ID = "jsession_id";    //登录会话ID
     public final static String LOGIN_USER_ID = "login_user_id";    //登录用户ID

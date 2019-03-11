@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
  * @author chain
  * create by xiongjj on 2018 /5/3 下午7:23
  */
-public class FxgjDBConstant {
+public class PayrollDBConstant {
     /**
      * The constant ENTITY_PAGES.
      */

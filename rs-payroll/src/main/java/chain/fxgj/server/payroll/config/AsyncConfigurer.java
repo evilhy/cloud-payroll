@@ -20,6 +20,7 @@ import java.util.concurrent.Executor;
 public class AsyncConfigurer implements org.springframework.scheduling.annotation.AsyncConfigurer {
     private static final Logger log = LoggerFactory.getLogger(AsyncConfigurer.class);
 
+    @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor threadPool = new ThreadPoolTaskExecutorMdcWrapper();
         threadPool.setCorePoolSize(1000);//当前线程数
@@ -32,6 +33,7 @@ public class AsyncConfigurer implements org.springframework.scheduling.annotatio
     }
 
 
+    @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
 
         return new MyAsyncExceptionHandler();

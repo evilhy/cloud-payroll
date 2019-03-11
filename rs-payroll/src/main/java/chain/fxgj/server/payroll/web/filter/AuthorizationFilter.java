@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.web.filter;
 
 import chain.css.exception.ParamsIllegalException;
+import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.constant.PermitAllUrlProperties;
@@ -25,13 +26,13 @@ import java.time.LocalDateTime;
 
 
 @Slf4j
-//@Component
+@Component
 public class AuthorizationFilter implements WebFilter, Ordered {
 
     @Autowired
     private PermitAllUrlProperties permitAllUrlProperties;
-//    @Autowired
-//    private EmpWechatService empWechatService;
+    @Autowired
+    private EmpWechatService empWechatService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -45,16 +46,16 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         //验证访问 报文头header 是否有  jsessionId
         this.predicate(exchange);
 
-//        UserPrincipal principal = empWechatService.getWechatInfo(sessionId);
-//        if (principal == null) {
-//            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
-//        }
-//        LocalDateTime sessionTimeOut = principal.getSessionTimeOut();
-//        if (LocalDateTime.now().isAfter(sessionTimeOut)) {
-//            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
-//        }
-//
-//        WebContext.setCurrentUser(principal);
+        UserPrincipal principal = empWechatService.getWechatInfo(jsessionId);
+        if (principal == null) {
+            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
+        }
+        LocalDateTime sessionTimeOut = principal.getSessionTimeOut();
+        if (LocalDateTime.now().isAfter(sessionTimeOut)) {
+            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
+        }
+
+        WebContext.setCurrentUser(principal);
 
         return chain.filter(exchange);
     }

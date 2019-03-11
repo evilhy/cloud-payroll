@@ -1,6 +1,6 @@
 package chain.fxgj.core.common.config;
 
-import chain.fxgj.core.common.constant.FxgjDBConstant;
+import chain.fxgj.core.common.constant.PayrollDBConstant;
 import chain.utils.jpa.dao.config.ChainRepositoryFactoryBean;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
@@ -28,13 +28,13 @@ import java.util.Map;
  */
 @Configuration
 @EnableJpaRepositories(
-        entityManagerFactoryRef = FxgjDBConstant.ENTITY_MANAGER_FACTORY_REF,
-        transactionManagerRef = FxgjDBConstant.TRANSACTION_MANAGER_REF,
+        entityManagerFactoryRef = PayrollDBConstant.ENTITY_MANAGER_FACTORY_REF,
+        transactionManagerRef = PayrollDBConstant.TRANSACTION_MANAGER_REF,
         repositoryFactoryBeanClass = ChainRepositoryFactoryBean.class,
-        basePackages = {FxgjDBConstant.DAO_PAGES})
-public class FxgjDataSourceConfig {
+        basePackages = {PayrollDBConstant.DAO_PAGES})
+public class PayrollDataSourceConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(FxgjDataSourceConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(PayrollDataSourceConfig.class);
     @Resource
     private JpaProperties jpaProperties;
 
@@ -43,16 +43,16 @@ public class FxgjDataSourceConfig {
      *
      * @return the data source
      */
-    @Bean(name = FxgjDBConstant.DATA_SOURCE_NAME)
+    @Bean(name = PayrollDBConstant.DATA_SOURCE_NAME)
     @Primary
-    @ConfigurationProperties(prefix = FxgjDBConstant.DATA_SOURCE_PROPERTIES)
+    @ConfigurationProperties(prefix = PayrollDBConstant.DATA_SOURCE_PROPERTIES)
     public HikariDataSource primaryDataSource() {
-        log.info(" dataSource {} 加载完成", FxgjDBConstant.DATA_SOURCE_NAME);
+        log.info(" dataSource {} 加载完成", PayrollDBConstant.DATA_SOURCE_NAME);
         return new HikariDataSource();
     }
 
     @Primary
-    @Bean(name = FxgjDBConstant.ENTITY_MANAGER_REF)
+    @Bean(name = PayrollDBConstant.ENTITY_MANAGER_REF)
     public EntityManager entityManager(EntityManagerFactoryBuilder builder) {
         return entityManagerFactory(builder).getObject().createEntityManager();
     }
@@ -67,23 +67,23 @@ public class FxgjDataSourceConfig {
      * 设置实体类所在位置
      */
     @Primary
-    @Bean(name = FxgjDBConstant.ENTITY_MANAGER_FACTORY_REF)
+    @Bean(name = PayrollDBConstant.ENTITY_MANAGER_FACTORY_REF)
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder) {
         return builder
                 .dataSource(primaryDataSource())
-                .packages(FxgjDBConstant.ENTITY_PAGES)
-                .persistenceUnit(FxgjDBConstant.PERSISTENCE_UNIT)
+                .packages(PayrollDBConstant.ENTITY_PAGES)
+                .persistenceUnit(PayrollDBConstant.PERSISTENCE_UNIT)
                 .properties(getVendorProperties())
                 .build();
     }
 
     @Primary
-    @Bean(name = FxgjDBConstant.TRANSACTION_MANAGER_REF)
+    @Bean(name = PayrollDBConstant.TRANSACTION_MANAGER_REF)
     public PlatformTransactionManager transactionManagerFoo(EntityManagerFactoryBuilder builder) {
         return new JpaTransactionManager(entityManagerFactory(builder).getObject());
     }
 
-    @Bean(name = FxgjDBConstant.JDBC_TEMPLATE_REF)
+    @Bean(name = PayrollDBConstant.JDBC_TEMPLATE_REF)
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(primaryDataSource());
     }
