@@ -42,3 +42,7 @@ auth:
     - pattern: /inside/bindWX/**
     - pattern: /inside/rz/**
     - pattern: /roll/checkCar/**
+
+property:
+  # 微信公众号分组id
+  id: fxgj
