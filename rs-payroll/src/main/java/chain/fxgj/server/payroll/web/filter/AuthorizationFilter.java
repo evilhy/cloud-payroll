@@ -7,7 +7,6 @@ import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.constant.PermitAllUrlProperties;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
-import chain.fxgj.server.payroll.web.WebSecurityContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.time.LocalDateTime;

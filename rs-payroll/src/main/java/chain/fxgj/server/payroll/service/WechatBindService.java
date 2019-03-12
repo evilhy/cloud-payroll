@@ -4,7 +4,6 @@ import chain.fxgj.core.common.constant.DictEnums.EmployeeStatusEnum;
 import chain.fxgj.core.jpa.model.EmployeeCardLog;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
