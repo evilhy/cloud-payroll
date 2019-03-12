@@ -65,8 +65,8 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
     @Async
     public Future<Response> updBindingInfo(WechatLoginDTO wechatLoginDTO) {
         log.info("请求参数:{}", wechatLoginDTO);
-        log.info("请求路径:{}", wechatProperties.getHost() + "/roll/login");
-        Response response = wechatClient.target(wechatProperties.getHost() + "/roll/login")
+        log.info("请求路径:{}", payrollProperties.getInsideUrl() + "roll/login");
+        Response response = wechatClient.target(payrollProperties.getInsideUrl() + "roll/login")
                 .request()
                 .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
                 .post(Entity.entity(wechatLoginDTO, MediaType.APPLICATION_JSON_TYPE));
@@ -124,7 +124,7 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
     }
 
     @Override
-    @Async
+//    @Async
     public Future<List<EntInfoDTO>> getGroups(String idNumber) {
         return new AsyncResult<>(wechatBindService.getEntInfos(idNumber));
     }

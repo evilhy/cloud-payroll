@@ -6,6 +6,13 @@ spring:
   devtools:
     restart:
      enabled: false
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
+    naming:
+      physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
 jasypt:
   encryptor:
     password: BHE9QEPUvh8HFjm2DCXm6j7wS4Fi

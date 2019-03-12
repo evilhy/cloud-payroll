@@ -82,9 +82,10 @@ public class PayRollRSTest {
     }
 
     @Test
-    public void index() {
+    public void index() throws Exception{
         login();
-        webTestClient.get().uri("/roll/index")
+        log.info("++++++++++++++++++++++++++++登录成功！");
+        webTestClient.get().uri("roll/index")
                 .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(IndexDTO.class)
                 .consumeWith(document("roll_index", relaxedResponseFields(JavaDocReader.javaDoc(IndexDTO.class)))).
@@ -149,15 +150,12 @@ public class PayRollRSTest {
     public void entUser() {
     }
 
-    public void login() {
+    public void login() throws Exception {
         sessionId = UUIDUtil.createUUID32();
         String openId= "oFnSLv0w4nipfwH0hFBwBimXjleY";
         String nickName = "%E9%9F%A9%E5%BE%B7%E8%89%AF";
         String headImg = "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTK2TdCQXNqUrzY9u3SFgRLdI5kOs0yh3jHrwEzic8n5tB9RDHHMqNsOX8l06rVAibVHHsrA273wwwjw/132";
         String idNumber = "420704199304164673";
-        try {
-            UserPrincipal userPrincipal = empWechatService.setWechatInfo(sessionId, openId, nickName, headImg,idNumber);
-        } catch (Exception e) {
-        }
+        UserPrincipal userPrincipal = empWechatService.setWechatInfo(sessionId, openId, nickName, headImg,idNumber);
     }
 }

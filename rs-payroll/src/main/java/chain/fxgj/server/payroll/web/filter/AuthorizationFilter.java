@@ -34,7 +34,8 @@ public class AuthorizationFilter implements WebFilter, Ordered {
     public static final String[] excludeUrls = new String[]{
             "/roll/sdt",
             "/roll/entEmp",
-            "/inside/sendCode"
+            "/inside/sendCode",
+            "/actuator"
     };
 
     @Autowired
