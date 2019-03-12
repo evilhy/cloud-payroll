@@ -24,7 +24,7 @@ spring:
 #        include: ["*"]
 fxgj:
   datasource:
-    jdbc-url: jdbc:mysql://10.5.0.182:3306/kayak_fxgj?useSSL=false&characterEncoding=utf-8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
+    jdbc-url: jdbc:mysql://10.5.0.182:3306/kayak_fxgj?useSSL=false&characterEncoding=utf-8&allowMultiQueries=true
     username: kayak_enterprise
     password: WHDev@20160714
     maximum-pool-size: 5
@@ -45,4 +45,4 @@ auth:
 
 property:
   # 微信公众号分组id
-  id: fxgj
+  id: zo

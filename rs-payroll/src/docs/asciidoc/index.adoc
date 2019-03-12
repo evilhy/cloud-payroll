@@ -1,0 +1,11 @@
+= 微信api文档
+开发团队;
+:toc: left
+:toc-title: 目录
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+
+include::getJsapiSignature_wechat.adoc[]
+include::signatureGet_wechat.adoc[]
+include::signaturePost_wechat.adoc[]

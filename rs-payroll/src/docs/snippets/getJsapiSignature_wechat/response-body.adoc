@@ -1,0 +1,12 @@
+[source,options="nowrap"]
+----
+{
+  "appid" : "wx5d62562cc467fe38",
+  "url" : "http://www.baidu.com",
+  "noncestr" : "b0ec9267-600a-4267-babd-396295a91f43",
+  "timestamp" : "1552387201",
+  "signature" : "41c45402f4d84798bc48dff5b29029c1fe077582",
+  "jsapi_ticket" : "LIKLckvwlJT9cWIhEQTwfA5no_jck1Gki6EoQ5c8K9p4IfIZDg4goNnTtvZaDYkBSwR2gS2KNieSOyic4qJF7Q",
+  "expires_in" : 7200
+}
+----

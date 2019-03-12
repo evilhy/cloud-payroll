@@ -7,9 +7,11 @@ import chain.fxgj.core.common.constant.DictEnums.EnterpriseStatusEnum;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.jpa.dao.EmployeeInfoDao;
+import chain.fxgj.core.jpa.dao.WechatFollowInfoDao;
 import chain.fxgj.core.jpa.model.EntErpriseInfo;
 import chain.fxgj.core.jpa.model.QEmployeeInfo;
 import chain.fxgj.core.jpa.model.QEntErpriseInfo;
+import chain.fxgj.core.jpa.model.WechatFollowInfo;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.ReadWageDTO;
@@ -30,6 +32,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -55,6 +58,8 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
     EmployeeInfoDao employeeInfoDao;
     @Autowired
     WechatBindService wechatBindService;
+    @Autowired
+    WechatFollowInfoDao wechatFollowInfoDao;
 
     @Override
     @Async
@@ -88,12 +93,21 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
     @Override
     @Async
     public Future<Response> eventHandle(EventDTO eventDTO) {
-        WebTarget webTarget = insideClient.target(payrollProperties.getInsideUrl() + "weixin/subscribe");
-        log.info("管家url:{}", webTarget.getUri());
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(eventDTO, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
+        WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.findFirstByOpenId(eventDTO.getOpenId());
+        if (wechatFollowInfo == null) {
+            wechatFollowInfo = new WechatFollowInfo();
+            wechatFollowInfo.setCrtDateTime(LocalDateTime.now());
+        }
+        //事件类型，subscribe(订阅)、unsubscribe(取消订阅)
+        if (eventDTO.getEvent().equals("subscribe")) {
+            wechatFollowInfo.setDelStatusEnum(DelStatusEnum.normal);
+        } else if (eventDTO.getEvent().equals("unsubscribe")) {
+            wechatFollowInfo.setDelStatusEnum(DelStatusEnum.delete);
+        }
+        wechatFollowInfo.setOpenId(eventDTO.getOpenId());
+        wechatFollowInfo.setUpdDateTime(LocalDateTime.now());
+
+        wechatFollowInfoDao.save(wechatFollowInfo);
         return new AsyncResult<>(null);
     }
 

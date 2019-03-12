@@ -1,0 +1,17 @@
+== 获取微信扩展属性: GET
+weixin/getWechatCfg
+
+include::{snippets}/getJsapiSignature_wechat/curl-request.adoc[]
+
+==== Path Parameters
+
+include::{snippets}/getJsapiSignature_wechat/request-parameters.adoc[]
+
+==== HTTP response:
+
+include::{snippets}/getJsapiSignature_wechat/http-response.adoc[]
+
+==== Response fields:
+
+include::{snippets}/getJsapiSignature_wechat/response-fields.adoc[]
+

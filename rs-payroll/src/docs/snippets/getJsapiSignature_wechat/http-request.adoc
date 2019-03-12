@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /weixin/getJsapiSignature?url=http%3A%2F%2Fwww.baidu.com HTTP/1.1
+Host: localhost:8080
+id: zo
+
+----

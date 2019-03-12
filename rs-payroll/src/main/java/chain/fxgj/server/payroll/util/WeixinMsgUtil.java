@@ -28,14 +28,14 @@ public class WeixinMsgUtil {
         };
     }
 
-    public static String processRequest(WeixinTextMsgBaseDTO textMessage, String Content, Map<String, String> wxMap, String Event, String MsgType) throws Exception {
-        if (Content.contains("豆")) {
-            textMessage.setContent(processParams(wxMap, menuSelect(Integer.valueOf(6))));
+    public static String processRequest(WeixinTextMsgBaseDTO textMessage, String Content, String authorizeurl, String Event, String MsgType) throws Exception {
+        if (StringUtils.isNotEmpty(Content)&&Content.contains("豆")) {
+            textMessage.setContent(processParams(authorizeurl, menuSelect(Integer.valueOf(6))));
             return MsgUtil.messageToXml(textMessage);
         } else if (StringUtils.isNumeric(Content)) {
             Integer index = Integer.valueOf(Content.toString());
             if (index > 0 && index <= menu.length) {
-                textMessage.setContent(processParams(wxMap, menuSelect(Integer.valueOf(Content))));
+                textMessage.setContent(processParams(authorizeurl, menuSelect(Integer.valueOf(Content))));
                 return MsgUtil.messageToXml(textMessage);
             }
         }
@@ -46,7 +46,7 @@ public class WeixinMsgUtil {
             // 关注
             if (eventType.equals(MsgUtil.EVENT_TYPE_SUBSCRIBE)) {
                 String message = subscribe();
-                textMessage.setContent(message.replace("${oauth_url}", wxMap.get("oauth_url").toString()));
+                textMessage.setContent(message.replace("${oauth_url}", authorizeurl));
 
                 return MsgUtil.messageToXml(textMessage);
             }
@@ -55,7 +55,7 @@ public class WeixinMsgUtil {
                 // TODO 取消订阅后用户不会再收到公众账号发送的消息，因此不需要回复
             }
         }
-        textMessage.setContent(processParams(wxMap, defaultMsg()));
+        textMessage.setContent(processParams(authorizeurl, defaultMsg()));
         return MsgUtil.messageToXml(textMessage);
     }
 
@@ -84,9 +84,7 @@ public class WeixinMsgUtil {
         return msg.toString();
     }
 
-    static String processParams(Map<String, String> wxMap, String msg) {
-        return msg.replace("${oauth_url}", wxMap.get("oauth_url").toString());
-        //.replace("${appid}", wxMap.get("appid").toString())
-        //.replace("${mpid}", wxMap.get("mpid").toString());
+    static String processParams(String authorizeurl, String msg) {
+        return msg.replace("${oauth_url}", authorizeurl);
     }
 }

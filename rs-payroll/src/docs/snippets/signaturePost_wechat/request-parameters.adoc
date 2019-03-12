@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+echostr+`
+|随机字符串
+
+|===

@@ -51,7 +51,7 @@ startScripts {
 ext {
     springCloudVersion = 'Greenwich.RC2'
     snippetsDir = file('build/generated-snippets')
-    docsSnippetsDir = file('src/docs/asciidoc/snippets')
+    docsSnippetsDir = file('src/docs/snippets')
     jdkHome = System.getenv("JAVA_HOME")
 }
 dependencyManagement {
@@ -110,14 +110,18 @@ test {
     }
 }
 
-asciidoctor {
+//asciidoctor {
 //    outputDir "${buildDir}/asciidoc"
-    sources {
-        include 'insideAPI.adoc','oilOrder.adoc'
-    }
-    options doctype: 'book', ruby: 'erubis'
-    attributes 'snippets': docsSnippetsDir,
-            'backends': "pdf"
+//    attributes 'snippets': docsSnippetsDir
+//    sources {
+//        include 'insideAPI.adoc','oilOrder.adoc'
+//    }
+//    options doctype: 'book', ruby: 'erubis'
+//    attributes 'snippets': docsSnippetsDir,
+//            'backends': "pdf"
+//}
+asciidoctor {
+    attributes 'snippets': docsSnippetsDir
 }
 jar {
     dependsOn asciidoctor

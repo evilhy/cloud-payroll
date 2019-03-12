@@ -1,0 +1,12 @@
+[source,bash]
+----
+$ echo '<xml><ToUserName><![CDATA[gh_2daa360513df]]></ToUserName>
+<FromUserName><![CDATA[oikrq5giuCd4Rw4qG3fYY3sxn2sI]]></FromUserName>
+<CreateTime>1551779035</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[0]]></Content>
+<MsgId>22216132666205741</MsgId>
+</xml>' | http POST 'http://localhost:8080/weixin/signature?signature=b1610e49e63a692c5543f9dc000058ec75b4aeb7&timestamp=1551701634&nonce=631307959&echostr=2142728365402838963&id=zo' \
+    'Content-Type:text/xml' \
+    'Accept:text/xml'
+----

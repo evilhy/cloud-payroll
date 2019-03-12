@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.dto.response.Res100705;
+import chain.outside.common.dto.wechat.WeixinAuthorizeUrlDTO;
 import chain.outside.common.dto.wechat.WeixinExtResponeDTO;
 import chain.outside.common.dto.wechat.WeixinJsapiDTO;
 import chain.wechat.client.feign.IwechatFeignService;
@@ -77,7 +78,7 @@ public class WechatRsTest {
     }
 
     /**
-     * Junit
+     * Junit ok
      * 验证消息的确来自微信服务器
      */
     @Test
@@ -90,7 +91,7 @@ public class WechatRsTest {
                 .isOk()
                 .expectBody(String.class)//返回是什么类型的对象
                 .consumeWith(body -> log.info(body.getResponseBody()))
-                .consumeWith(document("signatureGet_wx",
+                .consumeWith(document("signatureGet_wechat",
                         relaxedRequestParameters(parameterWithName("id").description("微信公众号分组id")
                                 ,parameterWithName("signature").description("微信加密签名")
                                 ,parameterWithName("timestamp").description("时间戳")
@@ -101,7 +102,9 @@ public class WechatRsTest {
     }
 
     /**
-     *Junit
+     *Junit ok
+     * 用户发送信息->微信接收信息后再调用->后台服务(后台验签，通过后返回对应消息)->微信->用户
+     * </p>
      * 验证消息的确来自微信服务器 然后发送消息
      */
     @Test
@@ -115,8 +118,8 @@ public class WechatRsTest {
                 "</xml>";
 
         webTestClient.post()
-                .uri("/weixin/signature?signature={signature}&timestamp={timestamp}&nonce={nonce}&echostr=&id={id}",
-                        "14db2243775a914cdd28d46087ce49992efb9f26", "1551792808", "1322842665","zo")
+                .uri("/weixin/signature?signature={signature}&timestamp={timestamp}&nonce={nonce}&echostr={echostr}&id={id}",
+                        "b1610e49e63a692c5543f9dc000058ec75b4aeb7", "1551701634", "631307959","2142728365402838963","zo")
                 .contentType(MediaType.TEXT_XML)
                 .accept(MediaType.TEXT_XML)
                 .syncBody(xml)//入参
@@ -124,7 +127,7 @@ public class WechatRsTest {
                 .expectStatus()
                 .isOk()
                 .expectBody(String.class)//返回是什么类型的对象
-                .consumeWith(document("signaturePost_payroll",
+                .consumeWith(document("signaturePost_wechat",
                         relaxedRequestParameters(parameterWithName("signature").description("微信加密签名")),
                         relaxedRequestParameters(parameterWithName("timestamp").description("时间戳")),
                         relaxedRequestParameters(parameterWithName("nonce").description("随机数")),
@@ -133,12 +136,16 @@ public class WechatRsTest {
     }
 
     /**
-     * Junit
+     * Junit 获取code再待测试
      * 微信回调接口
      * @throws Exception
      */
     @Test
     public void wxCallback() throws Exception {
+        WeixinAuthorizeUrlDTO weixinAuthorizeUrlDTO = new WeixinAuthorizeUrlDTO();
+        weixinAuthorizeUrlDTO.setUrl("www.baidu.com");
+        WeixinAuthorizeUrlDTO zo = iwechatFeignService.getOAuthUrl("zo", weixinAuthorizeUrlDTO);
+        String url = zo.getUrl();
         webTestClient.get()
                 .uri("/weixin/wxCallback?code={code}&wageSheetId={wageSheetId}&routeName={routeName}",
                         "1","2","3")
@@ -146,14 +153,14 @@ public class WechatRsTest {
                 .expectStatus()
                 .isOk()
                 .expectBody(String.class)//返回是什么类型的对象
-                .consumeWith(document("wxCallback_payroll",
+                .consumeWith(document("wxCallback_wechat",
                         relaxedRequestParameters(parameterWithName("code").description("code"),
                                 parameterWithName("wageSheetId").description("wageSheetId"),
                                 parameterWithName("routeName").description("routeName")),
                         relaxedResponseFields(JavaDocReader.javaDoc(Res100705.class))));//出参对象描述
     }
     /**
-     * Junit
+     * Junit ok
      * JS分享产生分享签名
      *
      * @throws Exception
@@ -167,17 +174,9 @@ public class WechatRsTest {
                 .expectStatus()
                 .isOk()
                 .expectBody(WeixinJsapiDTO.class)
-                .consumeWith(document("getJsapiSignature_wx",
+                .consumeWith(document("getJsapiSignature_wechat",
                         relaxedRequestParameters(parameterWithName("url").description("获取url")),
                         relaxedResponseFields()));
-    }
-
-    @Test
-    public void onlyTest() throws Exception {
-
-        List<WeixinExtResponeDTO> wechatCfg = iwechatFeignService.getWechatCfg("zo", "");
-
-        log.info("test ok ");
     }
 
 } 
