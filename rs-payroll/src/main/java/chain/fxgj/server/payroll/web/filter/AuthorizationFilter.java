@@ -19,6 +19,7 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.time.LocalDateTime;
 
@@ -26,6 +27,15 @@ import java.time.LocalDateTime;
 @Slf4j
 @Component
 public class AuthorizationFilter implements WebFilter, Ordered {
+
+    /**
+     * 不需要登录的url
+     */
+    public static final String[] excludeUrls = new String[]{
+            "/roll/sdt",
+            "/roll/entEmp",
+            "/inside/sendCode"
+    };
 
     @Autowired
     private PermitAllUrlProperties permitAllUrlProperties;
@@ -40,6 +50,11 @@ public class AuthorizationFilter implements WebFilter, Ordered {
 
         HttpMethod method = serverHttpRequest.getMethod();
         String requestUrl = serverHttpRequest.getURI().getPath();
+        for (String url : excludeUrls) {
+            if (StringUtils.indexOf(requestUrl, url) > -1) {
+                return chain.filter(exchange);
+            }
+        }
 
         //验证访问 报文头header 是否有  jsessionId
         this.predicate(exchange);
