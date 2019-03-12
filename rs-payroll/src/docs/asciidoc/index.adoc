@@ -1,11 +1,29 @@
 = 微信api文档
 开发团队;
 :toc: left
+:toclevels: 3
 :toc-title: 目录
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
+:idprefix: id_
+:author_name: author
+:author_email: kayak@kayak.com
+:author: {author_name}
+:email: {author_email}
+:revnumber:
+:revdate: 2019-03-12
+:revremark:  适用于3月底版本
+:sectlinks:
+:sectanchors:
+:sectnums:
+:sectnumlevels: 5
+
+== 微信
+* 账户服务
+** [*] <<id_获取微信扩展属性>>
 
 include::getJsapiSignature_wechat.adoc[]
 include::signatureGet_wechat.adoc[]
 include::signaturePost_wechat.adoc[]
+include::roll.adoc[]

@@ -176,7 +176,7 @@ public class WechatRsTest {
                 .expectBody(WeixinJsapiDTO.class)
                 .consumeWith(document("getJsapiSignature_wechat",
                         relaxedRequestParameters(parameterWithName("url").description("获取url")),
-                        relaxedResponseFields()));
+                        relaxedResponseFields(JavaDocReader.javaDoc(WeixinJsapiDTO.class))));
     }
 
 } 

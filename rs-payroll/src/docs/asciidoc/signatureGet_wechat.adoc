@@ -1,4 +1,4 @@
-== 获取微信扩展属性: GET
+=== 获取微信扩展属性: GET
 weixin/getWechatCfg
 
 include::{snippets}/signatureGet_wechat/curl-request.adoc[]

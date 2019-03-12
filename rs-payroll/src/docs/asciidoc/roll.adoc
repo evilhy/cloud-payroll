@@ -1,0 +1,19 @@
+:snippets: ../snippets
+== 工资条
+=== 获取服务器当前时间
+* Query Parameters:
++
+include::{snippets}/payroll/roll_sdt/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_sdt/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_sdt/http-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_sdt/http-response.adoc[]
+
+
