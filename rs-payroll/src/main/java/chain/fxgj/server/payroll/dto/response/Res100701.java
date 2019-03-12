@@ -19,7 +19,8 @@ public class Res100701 {
     /**
      * 是否绑定 1已绑定 0未绑定
      */
-    private String bindStatus;
+    @Builder.Default
+    private String bindStatus = "0";
     /**
      * 员工信息列表(身份证号为绑定时显示)
      */

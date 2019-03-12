@@ -34,17 +34,17 @@ import java.util.stream.Collectors;
 public class WechatBindServiceImpl implements WechatBindService {
 
     @Autowired
-    EmployeeWechatInfoDao employeeWechatInfoDao;
+    EmployeeWechatInfoDao employeeWechatInfoDao;  //员工微信信息表
     @Autowired
-    EmployeeInfoDao employeeInfoDao;
+    EmployeeInfoDao employeeInfoDao; //员工表
     @Autowired
-    EmployeeCardInfoDao employeeCardInfoDao;
+    EmployeeCardInfoDao employeeCardInfoDao;//员工卡号表
     @Autowired
-    EntErpriseInfoDao entErpriseInfoDao;
+    EntErpriseInfoDao entErpriseInfoDao;//企业初始化信息表
     @Autowired
-    EntGroupInfoDao entGroupInfoDao;
+    EntGroupInfoDao entGroupInfoDao;//机构表
     @Autowired
-    EntGroupInvoiceInfoDao entGroupInvoiceInfoDao;
+    EntGroupInvoiceInfoDao entGroupInvoiceInfoDao; //机构发票表
     @Autowired
     UserInfoDao userInfoDao;
 
@@ -58,23 +58,24 @@ public class WechatBindServiceImpl implements WechatBindService {
 
     private static ObjectMapper mapper = new ObjectMapper();
 
-
+    /**
+     * 获取员工企业
+     *
+     * @param idNumber 身份证（明文）
+     * @return
+     */
     @Override
     public Res100701 getEntList(String idNumber) {
-        Res100701 res100701 = new Res100701();
+        Res100701 res100701 = Res100701.builder().build();
 
-        String bindStatus = "0";
+        String bindStatus = res100701.getBindStatus();
         //判断微信是否绑定
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.findFirstByIdNumberAndAndDelStatusEnum(employeeEncrytorService.encryptIdNumber(idNumber), DelStatusEnum.normal);
         if (employeeWechatInfo != null) {
             bindStatus = "1";
-        }
-
-        if (bindStatus.equals("0")) {
+        } else if (bindStatus.equals("0")) {
             res100701.setEmployeeList(this.getEntPhone(idNumber));
         }
-
-
         res100701.setBindStatus(bindStatus);
         return res100701;
     }
@@ -84,11 +85,12 @@ public class WechatBindServiceImpl implements WechatBindService {
         //查询员工信息
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         QEntErpriseInfo qEntErpriseInfo = QEntErpriseInfo.entErpriseInfo;
-        List<Tuple> tuples = employeeInfoDao.select(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone,qEntErpriseInfo.id, qEntErpriseInfo.entName)
+        List<Tuple> tuples = employeeInfoDao.select(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .from(qEmployeeInfo)
                 .leftJoin(qEntErpriseInfo).on(qEntErpriseInfo.id.eq(qEmployeeInfo.entId))
                 .where(qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
-                .groupBy(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone,qEntErpriseInfo.id, qEntErpriseInfo.entName).fetch();
+                .groupBy(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
+                .fetch();
 
         List<Res100701.EmployeeListBean> employeeList = new ArrayList<>();
         for (Tuple tuple : tuples) {
@@ -108,6 +110,12 @@ public class WechatBindServiceImpl implements WechatBindService {
         return employeeList;
     }
 
+    /**
+     * 员工个人信息
+     *
+     * @param idNumber
+     * @return
+     */
     @Override
     public List<Res100708> empList(String idNumber) {
 
@@ -136,6 +144,12 @@ public class WechatBindServiceImpl implements WechatBindService {
         return employeeList;
     }
 
+    /**
+     * 机构发票
+     *
+     * @param idNumber
+     * @return
+     */
     @Override
     public List<GroupInvoiceDTO> invoiceList(String idNumber) {
         //员工机构
@@ -276,7 +290,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         for (Map.Entry<String, LinkedHashMap<String, String>> entryEnt : convertEntGroup.entrySet()) {
             String entId = entryEnt.getKey();
             String entName = null;
-            String shortEntName=null;
+            String shortEntName = null;
             LinkedHashMap<String, String> groupMap = entryEnt.getValue();
 
             try {
@@ -351,7 +365,7 @@ public class WechatBindServiceImpl implements WechatBindService {
                     groupInfoList.add(groupInfo);
 
                     entName = entGroupInfo.getEntErpriseInfo().getEntName();
-                    shortEntName=entGroupInfo.getEntErpriseInfo().getShortEntName();
+                    shortEntName = entGroupInfo.getEntErpriseInfo().getShortEntName();
                 }
 
             }
@@ -383,20 +397,20 @@ public class WechatBindServiceImpl implements WechatBindService {
 
     @Override
     public int checkCardNo(String idNumber, String cardNo) {
-        int isstatus=IsStatusEnum.NO.getCode();
-        idNumber=employeeEncrytorService.decryptIdNumber(idNumber);
-        List<EmployeeInfo> employeeInfos=employeeInfoDao.findByIdNumberAndAndDelStatusEnum(idNumber,DelStatusEnum.normal);
+        int isstatus = IsStatusEnum.NO.getCode();
+        idNumber = employeeEncrytorService.decryptIdNumber(idNumber);
+        List<EmployeeInfo> employeeInfos = employeeInfoDao.findByIdNumberAndAndDelStatusEnum(idNumber, DelStatusEnum.normal);
 
-        if(employeeInfos.size()<=0){
+        if (employeeInfos.size() <= 0) {
             throw new ParamsIllegalException(ErrorConstant.WECHAR_001.getErrorMsg());
         }
 
         for (EmployeeInfo employeeInfo : employeeInfos) {
-            List<EmployeeCardInfo> employeeCardInfos= employeeInfo.getEmpCardList();
+            List<EmployeeCardInfo> employeeCardInfos = employeeInfo.getEmpCardList();
             for (EmployeeCardInfo employeeCardInfo : employeeCardInfos) {
-                if(employeeCardInfo.getDelStatusEnum().equals(DelStatusEnum.normal) &&
-                  employeeCardInfo.getCardNo().substring(employeeCardInfo.getCardNo().length()-6,employeeCardInfo.getCardNo().length()).equals(cardNo)){
-                    isstatus=IsStatusEnum.YES.getCode();
+                if (employeeCardInfo.getDelStatusEnum().equals(DelStatusEnum.normal) &&
+                        employeeCardInfo.getCardNo().substring(employeeCardInfo.getCardNo().length() - 6, employeeCardInfo.getCardNo().length()).equals(cardNo)) {
+                    isstatus = IsStatusEnum.YES.getCode();
                     break;
                 }
             }
@@ -411,11 +425,11 @@ public class WechatBindServiceImpl implements WechatBindService {
         List<EntInfoDTO> entInfoDTOS = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getEntInfoDTOS();
         List<EmpEntDTO> list = new ArrayList<>();
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
-            EmpEntDTO empEntDTO=new EmpEntDTO();
+            EmpEntDTO empEntDTO = new EmpEntDTO();
             empEntDTO.setEntName(entInfoDTO.getEntName());
             empEntDTO.setShortEntName(entInfoDTO.getShortEntName());
-            List<Res100708> items=new ArrayList<>();
-            List<EmpEntDTO.BankCard> bankCards=new ArrayList<>();
+            List<Res100708> items = new ArrayList<>();
+            List<EmpEntDTO.BankCard> bankCards = new ArrayList<>();
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {
                 EmployeeDTO employeeDTO = new EmployeeDTO(groupInfo.getEmployeeInfo());
                 employeeDTO.setGroupId(groupInfo.getGroupId());
@@ -437,40 +451,40 @@ public class WechatBindServiceImpl implements WechatBindService {
                     //添加银行卡修改信息
                     EmployeeCardLog employeeCardLog = null;
                     List<EmployeeCardLog> employeeCardLogs = getEmployeeCardLogs(employeeCardInfo.getId());
-                    if(employeeCardLogs.size()>0){
+                    if (employeeCardLogs.size() > 0) {
                         employeeCardLog = employeeCardLogs.get(0);
                     }
 
                     bankCardList.add(new Res100708.BankCardListBean(employeeCardInfo));
 
-                    boolean hasCard=false;
-                    EmpEntDTO.BankCard card=new EmpEntDTO.BankCard();
-                    List<EmpEntDTO.BankCardGroup> bankCardGroups=new ArrayList<>();
+                    boolean hasCard = false;
+                    EmpEntDTO.BankCard card = new EmpEntDTO.BankCard();
+                    List<EmpEntDTO.BankCardGroup> bankCardGroups = new ArrayList<>();
                     for (EmpEntDTO.BankCard bankCard : bankCards) {
-                        if(employeeCardInfo.getCardNo().equals(bankCard.getOldCardNo())){
-                            hasCard=true;
-                            card=bankCard;
-                            bankCardGroups=bankCard.getBankCardGroups();
+                        if (employeeCardInfo.getCardNo().equals(bankCard.getOldCardNo())) {
+                            hasCard = true;
+                            card = bankCard;
+                            bankCardGroups = bankCard.getBankCardGroups();
                             break;
                         }
                     }
-                    if(!hasCard){
+                    if (!hasCard) {
                         card.setOldCardNo(employeeCardInfo.getCardNo());
                         card.setCardNo(employeeCardInfo.getCardNo());
                         card.setIssuerName(employeeCardInfo.getIssuerName());
-                        if(employeeCardLog!=null){
+                        if (employeeCardLog != null) {
                             card.setCardUpdStatus(employeeCardLog.getUpdStatus().getCode());
                             card.setCardUpdStatusVal(employeeCardLog.getUpdStatus().getDesc());
                             card.setUpdDesc(employeeCardLog.getUpdDesc());
                             card.setIsNew(employeeCardLog.getIsNew().getCode());
-                            if(CardUpdStatusEnum.UNKOWN.equals(employeeCardLog.getUpdStatus())){
+                            if (CardUpdStatusEnum.UNKOWN.equals(employeeCardLog.getUpdStatus())) {
                                 card.setCardNo(employeeCardLog.getCardNo());
                                 card.setIssuerName(employeeCardLog.getIssuerName());
                             }
                         }
                     }
 
-                    EmpEntDTO.BankCardGroup bankCardGroup=new EmpEntDTO.BankCardGroup();
+                    EmpEntDTO.BankCardGroup bankCardGroup = new EmpEntDTO.BankCardGroup();
                     bankCardGroup.setId(employeeCardInfo.getId());
                     bankCardGroup.setGroupId(groupInfo.getGroupId());
                     bankCardGroup.setShortGroupName(groupInfo.getGroupShortName());
@@ -478,7 +492,7 @@ public class WechatBindServiceImpl implements WechatBindService {
 
                     card.setBankCardGroups(bankCardGroups);
 
-                    if(!hasCard){
+                    if (!hasCard) {
                         bankCards.add(card);
                     }
                 }
@@ -497,20 +511,20 @@ public class WechatBindServiceImpl implements WechatBindService {
 
     @Override
     public List<EmpCardLogDTO> empCardLog(String[] ids) {
-        List<EmpCardLogDTO> list=new ArrayList<>();
+        List<EmpCardLogDTO> list = new ArrayList<>();
 
-        List<EmployeeCardInfo> employeeCardInfos=employeeCardInfoDao.findByIdIn(ids);
+        List<EmployeeCardInfo> employeeCardInfos = employeeCardInfoDao.findByIdIn(ids);
         for (EmployeeCardInfo employeeCardInfo : employeeCardInfos) {
             List<EmployeeCardLog> employeeCardLogs = getEmployeeCardLogs(employeeCardInfo.getId());
-            String groupName="";
-            if(employeeCardLogs!=null && employeeCardLogs.size()>0){
-                EntGroupInfo entGroupInfo=entGroupInfoDao.findById(employeeCardLogs.get(0).getGroupId())
+            String groupName = "";
+            if (employeeCardLogs != null && employeeCardLogs.size() > 0) {
+                EntGroupInfo entGroupInfo = entGroupInfoDao.findById(employeeCardLogs.get(0).getGroupId())
                         .orElseThrow(() -> new ParamsIllegalException(ErrorConstant.Error0001.format("机构")));
-                groupName=entGroupInfo.getShortGroupName();
+                groupName = entGroupInfo.getShortGroupName();
             }
 
             for (EmployeeCardLog employeeCardLog : employeeCardLogs) {
-                EmpCardLogDTO empCardLogDTO=new EmpCardLogDTO();
+                EmpCardLogDTO empCardLogDTO = new EmpCardLogDTO();
                 empCardLogDTO.setCardNo(employeeCardLog.getCardNo());
                 empCardLogDTO.setIssuerName(employeeCardLog.getIssuerName());
                 empCardLogDTO.setCardNoOld(employeeCardLog.getCardNoOld());
@@ -520,8 +534,8 @@ public class WechatBindServiceImpl implements WechatBindService {
                 empCardLogDTO.setUpdStatus(employeeCardLog.getUpdStatus().getCode());
                 empCardLogDTO.setUpdStatusVal(employeeCardLog.getUpdStatus().getDesc());
                 empCardLogDTO.setUpdDesc(employeeCardLog.getUpdDesc());
-                empCardLogDTO.setUpdDateTime(employeeCardLog.getUpdDateTime()==null?null:employeeCardLog.getUpdDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                if(IsStatusEnum.YES.equals(employeeCardLog.getIsNew())){
+                empCardLogDTO.setUpdDateTime(employeeCardLog.getUpdDateTime() == null ? null : employeeCardLog.getUpdDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                if (IsStatusEnum.YES.equals(employeeCardLog.getIsNew())) {
                     empCardLogDTO.setLogId(employeeCardLog.getId());
                 }
                 list.add(empCardLogDTO);
@@ -543,20 +557,20 @@ public class WechatBindServiceImpl implements WechatBindService {
     public List<EntUserDTO> entUser(String entId) {
 
         //企业超管
-        List<EntUserDTO> userInfos=new ArrayList<>();
-        QUserInfo qUserInfo=QUserInfo.userInfo;
-        List<UserInfo> userInfoList=userInfoDao.selectFrom(qUserInfo)
+        List<EntUserDTO> userInfos = new ArrayList<>();
+        QUserInfo qUserInfo = QUserInfo.userInfo;
+        List<UserInfo> userInfoList = userInfoDao.selectFrom(qUserInfo)
                 .where(qUserInfo.entId.eq(entId).and(qUserInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
         for (UserInfo userInfo : userInfoList) {
-            boolean has=false;
-            Collection<SystemAuthorityInfo> userAuthority=userInfo.getUserAuthority();
+            boolean has = false;
+            Collection<SystemAuthorityInfo> userAuthority = userInfo.getUserAuthority();
             for (SystemAuthorityInfo systemAuthorityInfo : userAuthority) {
-                if(systemAuthorityInfo.getId().equals(PermissionConstant.UPD_INFO)){
-                    has=true;
+                if (systemAuthorityInfo.getId().equals(PermissionConstant.UPD_INFO)) {
+                    has = true;
                     break;
                 }
             }
-            if(has) {
+            if (has) {
                 EntUserDTO user = new EntUserDTO();
                 user.setName(userInfo.getUserName());
                 user.setPhone(userInfo.getPhone());
@@ -573,13 +587,13 @@ public class WechatBindServiceImpl implements WechatBindService {
 
     @Override
     public void checkPhone(String idNumber, String phone) {
-        QEmployeeInfo qEmployeeInfo=QEmployeeInfo.employeeInfo;
+        QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
 
-        List<EmployeeInfo> list=employeeInfoDao.selectFrom(qEmployeeInfo)
+        List<EmployeeInfo> list = employeeInfoDao.selectFrom(qEmployeeInfo)
                 .where(qEmployeeInfo.phone.eq(phone).and(qEmployeeInfo.idNumber.notEqualsIgnoreCase(idNumber))
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
 
-        if(list.size()>0){
+        if (list.size() > 0) {
             throw new ParamsIllegalException(ErrorConstant.WECHAR_009.getErrorMsg());
         }
     }
@@ -587,17 +601,17 @@ public class WechatBindServiceImpl implements WechatBindService {
     @Override
     public Integer getCardUpdIsNew(String idNumber) {
         Integer isNew = 0;
-        QEmployeeInfo qEmployeeInfo=QEmployeeInfo.employeeInfo;
+        QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
 
-        List<EmployeeInfo> list=employeeInfoDao.selectFrom(qEmployeeInfo)
+        List<EmployeeInfo> list = employeeInfoDao.selectFrom(qEmployeeInfo)
                 .where(qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)
-                        .and(qEmployeeInfo.empCardList.any().delStatusEnum.eq(DelStatusEnum.normal)))).fetch();
+                                .and(qEmployeeInfo.empCardList.any().delStatusEnum.eq(DelStatusEnum.normal)))).fetch();
         for (EmployeeInfo employeeInfo : list) {
             for (EmployeeCardInfo employeeCardInfo : employeeInfo.getNormalEmpCardList()) {
                 List<EmployeeCardLog> employeeCardLogs = getEmployeeCardLogs(employeeCardInfo.getId());
                 for (EmployeeCardLog employeeCardLog : employeeCardLogs) {
-                    if(IsStatusEnum.YES.equals(employeeCardLog.getIsNew())){
+                    if (IsStatusEnum.YES.equals(employeeCardLog.getIsNew())) {
                         isNew = 1;
                         break;
                     }
@@ -619,7 +633,7 @@ public class WechatBindServiceImpl implements WechatBindService {
     }
 
     @Override
-    public List<EmployeeCardLog> getEmployeeCardLogs(String bankCardId){
+    public List<EmployeeCardLog> getEmployeeCardLogs(String bankCardId) {
         //添加银行卡修改信息
         QEmployeeCardLog qEmployeeCardLog = QEmployeeCardLog.employeeCardLog;
         return employeeCardLogDao.selectFrom(qEmployeeCardLog)
