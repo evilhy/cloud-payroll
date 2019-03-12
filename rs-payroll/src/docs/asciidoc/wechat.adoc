@@ -1,0 +1,55 @@
+:snippets: ../snippets/wechat
+=== 获取微信扩展属性: GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/wechat/getJsapiSignature_wechat/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wechat/getJsapiSignature_wechat/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wechat/getJsapiSignature_wechat/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wechat/getJsapiSignature_wechat/http-response.adoc[]
+
+
+=== 验证消息的确来自微信服务器 GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/wechat/signatureGet_wechat/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wechat/signatureGet_wechat/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wechat/signatureGet_wechat/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wechat/signatureGet_wechat/http-response.adoc[]
+
+=== 验证消息的确来自微信服务器 POST
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/wechat/getJsapiSignature_wechat/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wechat/getJsapiSignature_wechat/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wechat/getJsapiSignature_wechat/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wechat/getJsapiSignature_wechat/http-response.adoc[]

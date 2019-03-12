@@ -23,7 +23,6 @@
 * 账户服务
 ** [*] <<id_获取微信扩展属性>>
 
-include::getJsapiSignature_wechat.adoc[]
-include::signatureGet_wechat.adoc[]
-include::signaturePost_wechat.adoc[]
+include::wechat.adoc[]
+
 include::roll.adoc[]
