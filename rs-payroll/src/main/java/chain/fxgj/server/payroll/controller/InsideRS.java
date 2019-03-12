@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.client.Client;
@@ -63,24 +65,26 @@ public class InsideRS {
     @PostMapping("/sendCode")
     @TrackLog
     @PermitAll
-    public Response sendCode(@RequestBody Req100302 req100302) {
-        MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
-        dto.setSystemId(0);
-        dto.setCheckType(1);
-        dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-        dto.setMsgMedium(req100302.getPhone());
+    public Mono<Res100302> sendCode(@RequestBody Req100302 req100302) {
+        return Mono.fromCallable(()->{
+            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
+            dto.setSystemId(0);
+            dto.setCheckType(1);
+            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+            dto.setMsgMedium(req100302.getPhone());
 
-        Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCode");
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
-        MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
+            Client client = ClientBuilder.newClient();
+            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCode");
+            Response response = webTarget.request()
+                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                    .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
+            MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
 
-        Res100302 res100302 = new Res100302();
-        res100302.setCodeId(responeDTO.getCodeId());
-        res100302.setCode(responeDTO.getCode());
-        return Response.ok(res100302).build();
+            Res100302 res100302 = new Res100302();
+            res100302.setCodeId(responeDTO.getCodeId());
+            res100302.setCode(responeDTO.getCode());
+            return res100302;
+        }).subscribeOn(Schedulers.elastic());
     }
 
     /**
@@ -90,19 +94,18 @@ public class InsideRS {
      */
     @TrackLog
     @PostMapping("/receipt")
-    public Response receipt(@RequestBody ResReceiptDTO resReceiptDTO) {
-
-        //请求管家回执
-        Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/receipt");
-        log.info("管家url:{}", webTarget.getUri());
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(resReceiptDTO, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
-
-
-        return Response.ok().build();
+    public Mono<Void> receipt(@RequestBody ResReceiptDTO resReceiptDTO) {
+        return Mono.fromCallable(()->{
+            //请求管家回执
+            Client client = ClientBuilder.newClient();
+            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/receipt");
+            log.info("管家url:{}", webTarget.getUri());
+            Response response = webTarget.request()
+                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                    .post(Entity.entity(resReceiptDTO, MediaType.APPLICATION_JSON_TYPE));
+            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
     /**
@@ -112,11 +115,13 @@ public class InsideRS {
      */
     @PostMapping("/read")
     @TrackLog
-    public Response readWage(@RequestBody ReadWageDTO readWageDTO) {
-        String idNumber = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getIdNumberEncrytor();
-        readWageDTO.setIdNumber(idNumber);
-        payRollAsyncService.readWage(readWageDTO);
-        return Response.ok().build();
+    public Mono<Void> readWage(@RequestBody ReadWageDTO readWageDTO) {
+        return Mono.fromCallable(()->{
+            String idNumber = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getIdNumberEncrytor();
+            readWageDTO.setIdNumber(idNumber);
+            payRollAsyncService.readWage(readWageDTO);
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
     /**
@@ -127,31 +132,29 @@ public class InsideRS {
      */
     @PostMapping("/bindWX")
     @TrackLog
-    public Response bandWX(@RequestBody Req100702 req100702) throws Exception {
-        UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
-        String sessionId = userPrincipal.getSessionId();
-        String openId = userPrincipal.getOpenId();
-        String idNumber = req100702.getIdNumber();
-
-        //验证短信码
-        this.checkPhoneCode(req100702.getPhone(),req100702.getCode());
-
-        //请求管家绑定
-        Client client = ClientBuilder.newClient();
-        BindWechatDTO bindWechatDTO = new BindWechatDTO();
-        bindWechatDTO.setOpenId(openId);
-        bindWechatDTO.setIdNumber(idNumber);
-        bindWechatDTO.setPhone(req100702.getPhone());
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/bindWechat");
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(bindWechatDTO, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
-
-        //绑定成功后确认登录
-        empWechatService.setWechatInfo(sessionId, openId,userPrincipal.getNickname(),userPrincipal.getHeadimgurl(), idNumber);
-
-        return Response.ok().build();
+    public Mono<Void> bandWX(@RequestBody Req100702 req100702) throws Exception {
+        return Mono.fromCallable(()->{
+            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            String sessionId = userPrincipal.getSessionId();
+            String openId = userPrincipal.getOpenId();
+            String idNumber = req100702.getIdNumber();
+            //验证短信码
+            this.checkPhoneCode(req100702.getPhone(),req100702.getCode());
+            //请求管家绑定
+            Client client = ClientBuilder.newClient();
+            BindWechatDTO bindWechatDTO = new BindWechatDTO();
+            bindWechatDTO.setOpenId(openId);
+            bindWechatDTO.setIdNumber(idNumber);
+            bindWechatDTO.setPhone(req100702.getPhone());
+            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/bindWechat");
+            Response response = webTarget.request()
+                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                    .post(Entity.entity(bindWechatDTO, MediaType.APPLICATION_JSON_TYPE));
+            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
+            //绑定成功后确认登录
+            empWechatService.setWechatInfo(sessionId, openId,userPrincipal.getNickname(),userPrincipal.getHeadimgurl(), idNumber);
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
     /**
@@ -162,35 +165,35 @@ public class InsideRS {
      */
     @PostMapping("/rz")
     @TrackLog
-    public Response rz(@RequestBody Req100701 req100701) throws Exception {
-        UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
-        String sessionId = userPrincipal.getSessionId();
-        String openId = userPrincipal.getOpenId();
-        String idNumber=employeeEncrytorService.decryptIdNumber(req100701.getIdNumber());
-        log.info("请求参数:{}",req100701);
-        //验证手机号是否存在
-        wechatBindService.checkPhone(idNumber,req100701.getPhone());
+    public Mono<Void> rz(@RequestBody Req100701 req100701) throws Exception {
+        return Mono.fromCallable(()->{
+            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            String sessionId = userPrincipal.getSessionId();
+            String openId = userPrincipal.getOpenId();
+            String idNumber=employeeEncrytorService.decryptIdNumber(req100701.getIdNumber());
+            log.info("请求参数:{}",req100701);
+            //验证手机号是否存在
+            wechatBindService.checkPhone(idNumber,req100701.getPhone());
 
-        //验证短信码
-        this.checkPhoneCode(req100701.getPhone(),req100701.getCode());
+            //验证短信码
+            this.checkPhoneCode(req100701.getPhone(),req100701.getCode());
 
-        //请求管家绑定
-        Client client = ClientBuilder.newClient();
-        BindWechatDTO bindWechatDTO = new BindWechatDTO();
-        bindWechatDTO.setOpenId(openId);
-        bindWechatDTO.setIdNumber(idNumber);
-        bindWechatDTO.setPhone(req100701.getPhone());
-        bindWechatDTO.setPwd(req100701.getPwd());
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/bindWechat1");
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(bindWechatDTO, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
-
-        //绑定成功后确认登录
-        empWechatService.setWechatInfo(sessionId, openId,userPrincipal.getNickname(),userPrincipal.getHeadimgurl(),idNumber);
-
-        return Response.ok().build();
+            //请求管家绑定
+            Client client = ClientBuilder.newClient();
+            BindWechatDTO bindWechatDTO = new BindWechatDTO();
+            bindWechatDTO.setOpenId(openId);
+            bindWechatDTO.setIdNumber(idNumber);
+            bindWechatDTO.setPhone(req100701.getPhone());
+            bindWechatDTO.setPwd(req100701.getPwd());
+            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/bindWechat1");
+            Response response = webTarget.request()
+                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                    .post(Entity.entity(bindWechatDTO, MediaType.APPLICATION_JSON_TYPE));
+            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
+            //绑定成功后确认登录
+            empWechatService.setWechatInfo(sessionId, openId,userPrincipal.getNickname(),userPrincipal.getHeadimgurl(),idNumber);
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
 
@@ -202,30 +205,32 @@ public class InsideRS {
      */
     @PostMapping("/setPwd")
     @TrackLog
-    public Response setPwd(String pwd) throws Exception {
-        UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
-        log.info("userPrincipal:{}",userPrincipal);
-        UserPrincipal wechatInfo = empWechatService.getWechatInfo(userPrincipal.getSessionId());
-        log.info("wechatInfo:{}",wechatInfo);
-        SetPwdDTO setPwdDTO=new SetPwdDTO();
-        setPwdDTO.setPwd(pwd);
-        setPwdDTO.setWechatId(userPrincipal.getWechatId());
-        log.info("设置密码请求参数前:{}",setPwdDTO);
-        if(StringUtils.isBlank(userPrincipal.getWechatId())){
-            String wechatId = empWechatService.getWechatId(wechatInfo.getOpenId());
-            setPwdDTO.setWechatId(wechatId);
-            log.info("设置密码请求参数后:{}",setPwdDTO);
-        }
-        Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/setPwd");
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(setPwdDTO, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
+    public Mono<Void> setPwd(String pwd) throws Exception {
+        return Mono.fromCallable(()->{
+            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            log.info("userPrincipal:{}",userPrincipal);
+            UserPrincipal wechatInfo = empWechatService.getWechatInfo(userPrincipal.getSessionId());
+            log.info("wechatInfo:{}",wechatInfo);
+            SetPwdDTO setPwdDTO=new SetPwdDTO();
+            setPwdDTO.setPwd(pwd);
+            setPwdDTO.setWechatId(userPrincipal.getWechatId());
+            log.info("设置密码请求参数前:{}",setPwdDTO);
+            if(StringUtils.isBlank(userPrincipal.getWechatId())){
+                String wechatId = empWechatService.getWechatId(wechatInfo.getOpenId());
+                setPwdDTO.setWechatId(wechatId);
+                log.info("设置密码请求参数后:{}",setPwdDTO);
+            }
+            Client client = ClientBuilder.newClient();
+            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/setPwd");
+            Response response = webTarget.request()
+                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                    .post(Entity.entity(setPwdDTO, MediaType.APPLICATION_JSON_TYPE));
+            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
 
-        empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(),userPrincipal.getNickname(),userPrincipal.getHeadimgurl(),userPrincipal.getIdNumber());
+            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(),userPrincipal.getNickname(),userPrincipal.getHeadimgurl(),userPrincipal.getIdNumber());
 
-        return Response.ok().build();
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
     /**
@@ -236,17 +241,16 @@ public class InsideRS {
      */
     @PostMapping("/updPwd")
     @TrackLog
-    public Response updPwd(@RequestBody UpdPwdDTO updPwdDTO) throws Exception {
-        String queryPwd = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getQueryPwd();
-
-        //判断原密码是否正确
-        if(!queryPwd.equals(employeeEncrytorService.encryptPwd(updPwdDTO.getOldPwd()))){
-            throw new ParamsIllegalException(ErrorConstant.WECHAR_005.getErrorMsg());
-        }
-
-        this.setPwd(updPwdDTO.getPwd());
-
-        return Response.ok().build();
+    public Mono<Void> updPwd(@RequestBody UpdPwdDTO updPwdDTO) throws Exception {
+        return Mono.fromCallable(()->{
+            String queryPwd = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getQueryPwd();
+            //判断原密码是否正确
+            if(!queryPwd.equals(employeeEncrytorService.encryptPwd(updPwdDTO.getOldPwd()))){
+                throw new ParamsIllegalException(ErrorConstant.WECHAR_005.getErrorMsg());
+            }
+            this.setPwd(updPwdDTO.getPwd());
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
     /**
@@ -257,10 +261,11 @@ public class InsideRS {
      */
     @PostMapping("/checkPhoneCode")
     @TrackLog
-    public Response checkPhoneCode(@RequestBody ReqPhone reqPhone) throws Exception {
-        this.checkPhoneCode(reqPhone.getPhone(),reqPhone.getCode());
-
-        return Response.ok().build();
+    public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone) throws Exception {
+        return Mono.fromCallable(()->{
+            this.checkPhoneCode(reqPhone.getPhone(),reqPhone.getCode());
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
     /**
@@ -271,30 +276,29 @@ public class InsideRS {
      */
     @PostMapping("/updPhone")
     @TrackLog
-    public Response updPhone(@RequestBody ReqPhone reqPhone) throws Exception {
-        UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
-        if(StringUtils.isNotBlank(reqPhone.getCode())) {
-            this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
-        }
+    public Mono<Void> updPhone(@RequestBody ReqPhone reqPhone) throws Exception {
+        return Mono.fromCallable(()->{
+            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            if(StringUtils.isNotBlank(reqPhone.getCode())) {
+                this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
+            }
+            //验证手机号是否存在
+            wechatBindService.checkPhone(userPrincipal.getIdNumber(),reqPhone.getPhone());
+            UpdPhoneDTO updPhoneDTO=new UpdPhoneDTO();
+            updPhoneDTO.setIdNumber(userPrincipal.getIdNumber());
+            updPhoneDTO.setPhone(reqPhone.getPhone());
+            updPhoneDTO.setWechatId(userPrincipal.getWechatId());
+            Client client = ClientBuilder.newClient();
+            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/updPhone");
+            Response response = webTarget.request()
+                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                    .post(Entity.entity(updPhoneDTO, MediaType.APPLICATION_JSON_TYPE));
+            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
 
-        //验证手机号是否存在
-        wechatBindService.checkPhone(userPrincipal.getIdNumber(),reqPhone.getPhone());
+            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(),userPrincipal.getNickname(),userPrincipal.getHeadimgurl(),userPrincipal.getIdNumber());
 
-        UpdPhoneDTO updPhoneDTO=new UpdPhoneDTO();
-        updPhoneDTO.setIdNumber(userPrincipal.getIdNumber());
-        updPhoneDTO.setPhone(reqPhone.getPhone());
-        updPhoneDTO.setWechatId(userPrincipal.getWechatId());
-
-        Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/updPhone");
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(updPhoneDTO, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
-
-        empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(),userPrincipal.getNickname(),userPrincipal.getHeadimgurl(),userPrincipal.getIdNumber());
-
-        return Response.ok().build();
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
     //验证短信验证码
@@ -334,26 +338,28 @@ public class InsideRS {
      */
     @PostMapping("/updBankCard")
     @TrackLog
-    public Response updBankCard(@RequestBody UpdBankCardDTO updBankCardDTO) throws Exception {
-        UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
-        String regex = "[0-9]{1,}";
-        if(!updBankCardDTO.getCardNo().matches(regex)){
-            throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());
-        }
-        //验证银行卡
-        CardbinInfo cardbinInfo=empWechatService.checkCard(userPrincipal.getIdNumber(), updBankCardDTO);
+    public Mono<String> updBankCard(@RequestBody UpdBankCardDTO updBankCardDTO) throws Exception {
+        return Mono.fromCallable(()->{
+            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            String regex = "[0-9]{1,}";
+            if(!updBankCardDTO.getCardNo().matches(regex)){
+                throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());
+            }
+            //验证银行卡
+            CardbinInfo cardbinInfo=empWechatService.checkCard(userPrincipal.getIdNumber(), updBankCardDTO);
 
-        updBankCardDTO.setIssuerBankId(cardbinInfo.getIssuerCode());
-        updBankCardDTO.setIssuerName(cardbinInfo.getIssuerName());
+            updBankCardDTO.setIssuerBankId(cardbinInfo.getIssuerCode());
+            updBankCardDTO.setIssuerName(cardbinInfo.getIssuerName());
 
-        Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/updBankCard");
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(updBankCardDTO, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
+            Client client = ClientBuilder.newClient();
+            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/updBankCard");
+            Response response = webTarget.request()
+                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                    .post(Entity.entity(updBankCardDTO, MediaType.APPLICATION_JSON_TYPE));
+            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
 
-        return Response.ok(cardbinInfo.getIssuerName()).build();
+            return cardbinInfo.getIssuerName();
+        }).subscribeOn(Schedulers.elastic());
     }
 
     /**
@@ -364,16 +370,16 @@ public class InsideRS {
     @PostMapping("/bankCardIsNew")
     @TrackLog
     @Async
-    public Response bankCardIsNew(@RequestBody List<String> logIds){
-
-        Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/bankCardIsNew");
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(logIds, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
-
-        return Response.ok().build();
+    public Mono<Void> bankCardIsNew(@RequestBody List<String> logIds){
+        return Mono.fromCallable(()->{
+            Client client = ClientBuilder.newClient();
+            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "roll/bankCardIsNew");
+            Response response = webTarget.request()
+                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                    .post(Entity.entity(logIds, MediaType.APPLICATION_JSON_TYPE));
+            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
 }
