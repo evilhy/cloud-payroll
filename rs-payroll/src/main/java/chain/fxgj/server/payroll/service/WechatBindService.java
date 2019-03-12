@@ -4,12 +4,15 @@ import chain.fxgj.core.common.constant.DictEnums.EmployeeStatusEnum;
 import chain.fxgj.core.jpa.model.EmployeeCardLog;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Transactional
 public interface WechatBindService {
+    Logger log = LoggerFactory.getLogger(WechatBindService.class);
 
     /**
      * 获取员工企业
@@ -73,7 +76,6 @@ public interface WechatBindService {
 
     /**
      * 银行卡操作记录
-     *
      * @param ids
      * @return
      */
@@ -81,14 +83,12 @@ public interface WechatBindService {
 
     /**
      * 企业超管
-     *
      * @return
      */
     List<EntUserDTO> entUser(String entId);
 
     /**
      * 验证手机号
-     *
      * @param idNumber
      * @param phone
      */
@@ -100,7 +100,6 @@ public interface WechatBindService {
 
     /**
      * 根据银行卡id获取银行卡修改信息
-     *
      * @param bankCardId
      * @return
      */
