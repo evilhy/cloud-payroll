@@ -107,7 +107,7 @@ subprojects {
     }
 
     dependencies {
-        compile('chain:cloud-common:1.0.3')
+        compile('chain:cloud-common:1.0.7')
 
         compile 'org.projectlombok:lombok:1.18.2'
         compile('chain:css-log:2.0.3')

@@ -38,4 +38,9 @@ public class EmpInfoDTO {
      */
     private String phoneStar;
 
+    /**
+     * 银行卡修改是否最新记录（0：已看 1：新，未看）
+     */
+    private Integer isNew;
+
 }

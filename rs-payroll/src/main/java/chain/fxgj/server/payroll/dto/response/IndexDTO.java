@@ -20,6 +20,11 @@ public class IndexDTO {
     private DataListBean bean;
 
     /**
+     * 银行卡修改是否最新记录（0：已看 1：新，未看）
+     */
+    private Integer isNew;
+
+    /**
      * 最新企业
      */
     @Getter
