@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/groupList' -i -X GET \
+    -H 'jsession_id: 57febad58fdf4f3f8ae6bdc1371db944'
+----

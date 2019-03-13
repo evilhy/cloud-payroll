@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/roll/empInfo' \
+    'jsession_id:59f853a67f124f1b9b69d07677f2eb08'
+----

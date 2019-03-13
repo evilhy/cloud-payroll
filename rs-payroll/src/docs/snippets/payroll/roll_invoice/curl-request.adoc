@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/invoice' -i -X GET \
+    -H 'jsession_id: 8dafe133def84f21a1384d84a9c9cade'
+----

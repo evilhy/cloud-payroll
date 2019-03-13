@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /roll/wageList?groupId=ff808081690a2b1c016913374f4a0006&year=2019&type=1 HTTP/1.1
+jsession_id: ea3a8d8bef75475cb0a96c88904f9b11
+Host: localhost:8080
+
+----

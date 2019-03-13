@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/roll/wageList?groupId=ff808081690a2b1c016913374f4a0006&year=2019&type=1' \
+    'jsession_id:ea3a8d8bef75475cb0a96c88904f9b11'
+----

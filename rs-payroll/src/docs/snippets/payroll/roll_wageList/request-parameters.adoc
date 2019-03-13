@@ -1,0 +1,13 @@
+|===
+|Parameter|Description
+
+|`+groupId+`
+|机构id
+
+|`+year+`
+|年份
+
+|`+type+`
+|类型 0资金到账 1合计
+
+|===

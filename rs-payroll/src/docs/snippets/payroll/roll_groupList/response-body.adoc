@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+[{"entId":"ff80808168a8503e0168da9830c9000a","entName":"虎符测试","groupId":"ff808081692304f0016928d74681008e","groupName":"重复测试","groupShortName":"重复","createDate":1551412004080,"inServiceStatus":"0","isRead":"0"}]
+----

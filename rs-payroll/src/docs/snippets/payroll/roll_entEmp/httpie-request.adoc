@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/roll/entEmp?idNumber=120105197801050320'
+----

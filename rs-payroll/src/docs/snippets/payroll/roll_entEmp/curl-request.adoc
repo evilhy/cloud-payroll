@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/entEmp?idNumber=120105197801050320' -i -X GET
+----

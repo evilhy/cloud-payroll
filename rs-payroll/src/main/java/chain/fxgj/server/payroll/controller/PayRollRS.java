@@ -231,8 +231,8 @@ public class PayRollRS {
     @GetMapping("/checkPwd")
     @TrackLog
     public Mono<Void> checkPwd(@RequestParam("pwd") String pwd) {
+        UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(()->{
-            UserPrincipal principal = WebContext.getCurrentUser();
             if(StringUtils.isEmpty(pwd)){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }

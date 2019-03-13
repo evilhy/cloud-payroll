@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/wageDetail?wageSheetId=3861bb29c33b424b966d7f1cb587e7d3&groupId=ff808081690a2b1c016913374f4a0006' -i -X GET \
+    -H 'jsession_id: cdf1906a845f408285cccae44e1fdcee'
+----

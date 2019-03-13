@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /roll/invoice HTTP/1.1
+jsession_id: 8dafe133def84f21a1384d84a9c9cade
+Host: localhost:8080
+
+----

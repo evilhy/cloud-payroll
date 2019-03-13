@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/index' -i -X GET \
+    -H 'jsession_id: 966c2568577c4cdbb9517012a2f71388'
+----

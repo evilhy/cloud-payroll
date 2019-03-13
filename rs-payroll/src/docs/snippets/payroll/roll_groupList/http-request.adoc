@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /roll/groupList HTTP/1.1
+jsession_id: 57febad58fdf4f3f8ae6bdc1371db944
+Host: localhost:8080
+
+----
