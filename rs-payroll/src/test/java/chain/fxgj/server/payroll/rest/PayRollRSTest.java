@@ -21,6 +21,8 @@ import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.time.Duration;
+
 import static org.junit.Assert.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
@@ -61,7 +63,9 @@ public class PayRollRSTest {
                 new SpringBootWebTestClientBuilderCustomizer(Lists.newArrayList(codecCustomizer));
         //将自定义的序列化配置应用到webTestCliend
         builderCustomizer.customize(builder);
-        this.webTestClient = builder.baseUrl("http://localhost:8080/")
+        this.webTestClient = builder
+                .responseTimeout(Duration.ofMinutes(10))
+                .baseUrl("http://localhost:8080/")
                 .filter(documentationConfiguration(restDocumentation))
                 .build();
     }

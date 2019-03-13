@@ -124,7 +124,7 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
     }
 
     @Override
-//    @Async
+    @Async
     public Future<List<EntInfoDTO>> getGroups(String idNumber) {
         return new AsyncResult<>(wechatBindService.getEntInfos(idNumber));
     }

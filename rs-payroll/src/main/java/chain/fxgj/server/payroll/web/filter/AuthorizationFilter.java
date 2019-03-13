@@ -43,6 +43,10 @@ public class AuthorizationFilter implements WebFilter, Ordered {
     @Autowired
     private EmpWechatService empWechatService;
 
+    public AuthorizationFilter(EmpWechatService empWechatService){
+        this.empWechatService = empWechatService;
+    }
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
