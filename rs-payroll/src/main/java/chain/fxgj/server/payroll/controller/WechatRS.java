@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.BusiVerifyException;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.PayRollAsyncService;
@@ -44,16 +45,13 @@ import java.util.List;
 public class WechatRS {
 
     @Autowired
+    PayrollProperties payrollProperties;
+    @Autowired
     IwechatFeignService iwechatFeignService;
     @Autowired
     EmpWechatService empWechatService;
     @Autowired
     PayRollAsyncService payRollAsyncService;
-    /**
-     * 微信公众号分组id(配置文件)
-     */
-    @Value("${property.id}")
-    String id;
 
     /**
      * (GET方式)验证消息的确来自微信服务器
@@ -77,7 +75,7 @@ public class WechatRS {
         return Mono.fromCallable(() -> {
             log.info("微信服务器发送的消: signature ={} , timestamp ={} ,nonce ={} ,echostr ={}", signature, timestamp, nonce, echostr);
             //接口调用
-            String echostrRet = iwechatFeignService.signature(id, signature, timestamp, nonce, echostr);
+            String echostrRet = iwechatFeignService.signature(payrollProperties.getId(), signature, timestamp, nonce, echostr);
             if (!echostr.equals(echostrRet)) {
                 log.info("验签失败！");
                 throw new ParamsIllegalException(ErrorConstant.WZWAGE_011.getErrorMsg());
@@ -186,7 +184,7 @@ public class WechatRS {
             if (!"authdeny".equals(code)) {
                 log.info("=========wageSheetId={},code={},routeName={}", StringUtils.trimToEmpty(wageSheetId), code, routeName);
                 log.info("一次性code:[{}]",code);
-                log.info("id:[{}]",id);
+                log.info("id:[{}]",payrollProperties.getId());
                 //网页授权接口访问凭证
                 WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = new WeixinOauthTokenResponeDTO();//iwechatFeignService.oauth2Acces(id, code);
                 weixinOauthTokenResponeDTO.setAccessToken("");
@@ -238,7 +236,7 @@ public class WechatRS {
     @PermitAll
     public Mono<WeixinJsapiDTO> getJsapiSignature(@RequestParam("url") String url) throws BusiVerifyException {
         return Mono.fromCallable(() -> {
-            WeixinJsapiDTO weixinJsapiDTO = iwechatFeignService.getJsapiSignature(id,url);
+            WeixinJsapiDTO weixinJsapiDTO = iwechatFeignService.getJsapiSignature(payrollProperties.getId(),url);
             log.info("weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
             return weixinJsapiDTO;
         }).subscribeOn(Schedulers.elastic());
