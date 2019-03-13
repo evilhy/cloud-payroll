@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+POST /inside/setPwd?pwd=654321 HTTP/1.1
+jsession_id: a945199980c64bfc8a0c607716431b6f
+Content-Type: application/json
+Host: localhost:8080
+
+pwd=654321
+----

@@ -16,7 +16,6 @@ import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
 import chain.fxgj.server.payroll.dto.request.WechatLoginDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
-import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/inside/setPwd?pwd=654321' -i -X POST \
+    -H 'jsession_id: a945199980c64bfc8a0c607716431b6f' \
+    -H 'Content-Type: application/json'
+----

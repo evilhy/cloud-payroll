@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+wageSheetId+`
+|`+String+`
+|工资方案id
+
+|`+idNumber+`
+|`+String+`
+|员工
+
+|===

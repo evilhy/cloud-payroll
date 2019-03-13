@@ -1,0 +1,10 @@
+[source,http,options="nowrap"]
+----
+POST /inside/updPhone HTTP/1.1
+jsession_id: 0c1ea3eb0a314fc5920708158e1ab07e
+Content-Type: application/json
+Content-Length: 57
+Host: localhost:8080
+
+{"codeId":"111111","code":"666666","phone":"15527682917"}
+----

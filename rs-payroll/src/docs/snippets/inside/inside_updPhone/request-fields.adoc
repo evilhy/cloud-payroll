@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+codeId+`
+|`+String+`
+|信息ID
+
+|`+code+`
+|`+String+`
+|验证码
+
+|`+phone+`
+|`+String+`
+|手机号
+
+|===

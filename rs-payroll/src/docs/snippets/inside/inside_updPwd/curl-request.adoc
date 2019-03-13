@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/inside/updPwd' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'jsession_id: 07e027921805403dbfe83fc1a7ac9c0e' \
+    -d '{"oldPwd":"654321","pwd":"123456"}'
+----

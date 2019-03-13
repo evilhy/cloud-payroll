@@ -1,0 +1,130 @@
+:snippets: ../snippets
+== 内部修改操作
+=== 提交回执
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_receipt/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_receipt/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_receipt/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_receipt/http-response.adoc[]
+
+=== 已读工资条
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_read/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_read/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_read/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_read/http-response.adoc[]
+
+=== 微信号绑定身份证号
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_bindWX/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_bindWX/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_bindWX/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_bindWX/http-response.adoc[]
+
+=== 微信号绑定身份证号,无手机号
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_rz/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_rz/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_rz/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_rz/http-response.adoc[]
+
+=== 设置密码
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_setPwd/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_setPwd/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_setPwd/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_setPwd/http-response.adoc[]
+
+=== 修改查询密码
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_updPwd/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_updPwd/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_updPwd/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_updPwd/http-response.adoc[]
+
+=== 修改手机号
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_updPhone/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_updPhone/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_updPhone/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_updPhone/http-response.adoc[]
+
+
+

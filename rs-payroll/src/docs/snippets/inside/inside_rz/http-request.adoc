@@ -1,0 +1,10 @@
+[source,http,options="nowrap"]
+----
+POST /inside/rz HTTP/1.1
+Content-Type: application/json
+Content-Length: 117
+Host: localhost:8080
+jsession_id: 8eca2e924b1c42788eb51968361759b0
+
+{"codeId":"11111","code":"666666","phone":"18627879315","idNumber":"2kerXcaeyc6D6pTxJawRhHa/VFbmTXjl","pwd":"123456"}
+----

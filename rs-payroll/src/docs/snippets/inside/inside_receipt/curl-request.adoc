@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/inside/receipt' -i -X POST \
+    -H 'jsession_id: 894374ffe0a54578911d4fdcceea09d9' \
+    -H 'Content-Type: application/json' \
+    -d '{"wageDetailId":"ff808081694d24ff016950dcfc89000f","receiptsStatus":1,"msg":"我有意见"}'
+----

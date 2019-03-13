@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/inside/read' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'jsession_id: d8453fb084a74f028db2277f270b4dd1' \
+    -d '{"wageSheetId":"3861bb29c33b424b966d7f1cb587e7d3","idNumber":null}'
+----

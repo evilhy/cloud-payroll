@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+oldPwd+`
+|`+String+`
+|原密码
+
+|`+pwd+`
+|`+String+`
+|密码
+
+|===

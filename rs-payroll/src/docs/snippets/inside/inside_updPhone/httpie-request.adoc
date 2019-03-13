@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"codeId":"111111","code":"666666","phone":"15527682917"}' | http POST 'http://localhost:8080/inside/updPhone' \
+    'jsession_id:0c1ea3eb0a314fc5920708158e1ab07e' \
+    'Content-Type:application/json'
+----

@@ -1,0 +1,10 @@
+[source,http,options="nowrap"]
+----
+POST /inside/updPwd HTTP/1.1
+Content-Type: application/json
+Content-Length: 34
+Host: localhost:8080
+jsession_id: 07e027921805403dbfe83fc1a7ac9c0e
+
+{"oldPwd":"654321","pwd":"123456"}
+----

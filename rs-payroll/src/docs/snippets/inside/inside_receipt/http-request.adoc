@@ -1,0 +1,10 @@
+[source,http,options="nowrap"]
+----
+POST /inside/receipt HTTP/1.1
+jsession_id: 894374ffe0a54578911d4fdcceea09d9
+Content-Type: application/json
+Content-Length: 91
+Host: localhost:8080
+
+{"wageDetailId":"ff808081694d24ff016950dcfc89000f","receiptsStatus":1,"msg":"我有意见"}
+----

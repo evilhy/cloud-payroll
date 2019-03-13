@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/inside/updPhone' -i -X POST \
+    -H 'jsession_id: 0c1ea3eb0a314fc5920708158e1ab07e' \
+    -H 'Content-Type: application/json' \
+    -d '{"codeId":"111111","code":"666666","phone":"15527682917"}'
+----

@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"codeId":"11111","code":"666666","phone":"18627879315","idNumber":"2kerXcaeyc6D6pTxJawRhHa/VFbmTXjl"}
+----

@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"codeId":"11111","code":"666666","phone":"18627879315","idNumber":"2kerXcaeyc6D6pTxJawRhHa/VFbmTXjl","pwd":"123456"}' | http POST 'http://localhost:8080/inside/rz' \
+    'Content-Type:application/json' \
+    'jsession_id:8eca2e924b1c42788eb51968361759b0'
+----

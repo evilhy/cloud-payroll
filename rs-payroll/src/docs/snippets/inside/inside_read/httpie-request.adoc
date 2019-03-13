@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"wageSheetId":"3861bb29c33b424b966d7f1cb587e7d3","idNumber":null}' | http POST 'http://localhost:8080/inside/read' \
+    'Content-Type:application/json' \
+    'jsession_id:d8453fb084a74f028db2277f270b4dd1'
+----

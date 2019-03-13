@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/inside/bindWX' -i -X POST \
+    -H 'jsession_id: 2c7d663afa884b9f8d1515c68c066da0' \
+    -H 'Content-Type: application/json' \
+    -d '{"codeId":"11111","code":"666666","phone":"18627879315","idNumber":"2kerXcaeyc6D6pTxJawRhHa/VFbmTXjl"}'
+----

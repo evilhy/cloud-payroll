@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"wageDetailId":"ff808081694d24ff016950dcfc89000f","receiptsStatus":1,"msg":"我有意见"}
+----
