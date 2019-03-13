@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"productId":"ff808081671710a301671bc90aaf0005","entId":null,"custManagerId":null,"clientName":"张张","idNumber":"420704199304164673","clientPhone":"13333333333","intentAmount":null,"channel":"0","fxId":null,"openId":null,"protocol":1}' | http POST 'http://localhost:8080/tfinance/intent' \
+    'jsession_id:6f9b000b101b43808bcb60a4f28929bf' \
+    'Content-Type:application/json'
+----

@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /tfinance/userInfo?entId=ff80808168a8503e0168da9830c9000a HTTP/1.1
+Host: localhost:8080
+jsession_id: a611a254f0ac423d9287ed023c0f0a2b
+
+----

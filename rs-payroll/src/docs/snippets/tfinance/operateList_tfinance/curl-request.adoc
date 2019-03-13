@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/tfinance/operateList?productId=ff8080816900035b016904d3b6e2003d&entId=ff80808168a8503e0168da9830c9000a&operate=0' -i -X GET \
+    -H 'size: 10' \
+    -H 'page: 1' \
+    -H 'jsession_id: 447ee32d64b943b6b402bf8f49366c6f'
+----

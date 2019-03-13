@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+[]+`
+|`+Array+`
+|理财产品
+
+|`+[]productId+`
+|`+String+`
+|产品id
+
+|`+[]entId+`
+|`+String+`
+|企业id
+
+|===

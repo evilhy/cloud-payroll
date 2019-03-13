@@ -86,5 +86,10 @@ public interface FinanceService {
 
     String getBankProductInfo();
 
-
+    /**
+     * 添加预约理财
+     *
+     * @param intentRequestDTO
+     */
+    void addIntent(IntentRequestDTO intentRequestDTO);
 }

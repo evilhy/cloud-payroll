@@ -1,0 +1,16 @@
+|===
+|Parameter|Description
+
+|`+productId+`
+|产品Id
+
+|`+entId+`
+|企业Id
+
+|`+channel+`
+|渠道(0公众号菜单 1banner 2分享)
+
+|`+fxId+`
+|分享人id
+
+|===

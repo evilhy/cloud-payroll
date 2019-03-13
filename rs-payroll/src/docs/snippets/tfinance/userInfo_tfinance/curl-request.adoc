@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/tfinance/userInfo?entId=ff80808168a8503e0168da9830c9000a' -i -X GET \
+    -H 'jsession_id: a611a254f0ac423d9287ed023c0f0a2b'
+----

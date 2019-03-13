@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /tfinance/intentInfo?productId=ff8080816707679e01670b07a4a30000 HTTP/1.1
+jsession_id: ae51aedb3dc2488d8e48530b8bf5eea2
+Host: localhost:8080
+
+----

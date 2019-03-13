@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/tfinance/product?productId=ff808081671710a301671bc90aaf0005&entId=123&channel=0&fxId=234' \
+    'jsession_id:e4e62e03d4a441c0974c5f770f592b6c'
+----

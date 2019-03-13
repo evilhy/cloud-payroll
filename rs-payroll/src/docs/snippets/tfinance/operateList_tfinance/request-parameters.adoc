@@ -1,0 +1,13 @@
+|===
+|Parameter|Description
+
+|`+productId+`
+|产品Id
+
+|`+entId+`
+|企业Id
+
+|`+operate+`
+|操作类型 0 浏览 1预约
+
+|===

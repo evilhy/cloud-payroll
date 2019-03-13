@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"nowDate":1552470249979,"intentNum":0,"size":15,"list":[]}
+----

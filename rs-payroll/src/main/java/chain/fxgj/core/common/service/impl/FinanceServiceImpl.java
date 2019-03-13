@@ -282,4 +282,37 @@ public class FinanceServiceImpl implements FinanceService {
         String id = bankProductInfo.getId();
         return id;
     }
+    @Override
+    public void addIntent(IntentRequestDTO intentRequestDTO) {
+        //添加预约记录
+        BankProductIntention bankProductIntention = new BankProductIntention();
+        bankProductIntention.setEntId(intentRequestDTO.getEntId());
+        bankProductIntention.setProductId(intentRequestDTO.getProductId());
+        bankProductIntention.setCustManagerId(intentRequestDTO.getCustManagerId());
+        bankProductIntention.setHandleFlag("0");
+        bankProductIntention.setNewMark(IsStatusEnum.YES);
+        bankProductIntention.setClientName(intentRequestDTO.getClientName());
+        bankProductIntention.setClientPhone(intentRequestDTO.getClientPhone());
+        bankProductIntention.setIdNumber(intentRequestDTO.getIdNumber());
+        bankProductIntention.setIntentStatus(IntentStatusEnum.INTENT_SUCESS);
+        bankProductIntention.setIntentDateTime(LocalDateTime.now());
+        bankProductIntention.setCrtDateTime(LocalDateTime.now());
+        bankProductIntention.setIntentAmount(intentRequestDTO.getIntentAmount());
+        bankProductIntention.setProtocol(IsStatusEnum.values()[intentRequestDTO.getProtocol()]);
+
+        bankProductIntentionDao.save(bankProductIntention);
+
+        //添加操作记录
+        BankProductOperate bankProductOperate = new BankProductOperate();
+        bankProductOperate.setOpenId(intentRequestDTO.getOpenId());
+        bankProductOperate.setProductId(intentRequestDTO.getProductId());
+        bankProductOperate.setEntId(intentRequestDTO.getEntId());
+        bankProductOperate.setOperateType(ProductOperateEnum.INTENT);
+        bankProductOperate.setCrtDateTime(LocalDateTime.now());
+        bankProductOperate.setChannel(intentRequestDTO.getChannel());
+        bankProductOperate.setFxId(intentRequestDTO.getFxId());
+
+        bankProductOperateDao.save(bankProductOperate);
+
+    }
 }

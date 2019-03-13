@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"productId":"ff808081671710a301671bc90aaf0005","entId":null,"custManagerId":null,"clientName":"张张","idNumber":"420704199304164673","clientPhone":"13333333333","intentAmount":null,"channel":"0","fxId":null,"openId":null,"protocol":1}
+----

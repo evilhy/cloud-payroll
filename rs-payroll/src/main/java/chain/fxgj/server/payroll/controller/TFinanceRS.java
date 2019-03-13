@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
@@ -49,7 +48,6 @@ import java.util.List;
 /**
  * 同事理财团
  */
-@CrossOrigin
 @RestController
 @Validated
 @RequestMapping("/tfinance")
@@ -68,8 +66,8 @@ public class TFinanceRS {
     @GetMapping("/list")
     @TrackLog
     public Mono<List<ProductDTO>> list() {
-        return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
             ProductDTO productDTO = new ProductDTO();
             String productId = financeService.getBankProductInfo();
             productDTO.setProductId(productId);
@@ -89,21 +87,22 @@ public class TFinanceRS {
     }
 
     /**
-     *同事团理财产品
+     * 同事团理财产品
+     *
      * @param productId 产品Id
-     * @param entId 企业Id
-     * @param channel 渠道(0公众号菜单 1banner 2分享)
-     * @param fxId 分享人id
+     * @param entId     企业Id
+     * @param channel   渠道(0公众号菜单 1banner 2分享)
+     * @param fxId      分享人id
      * @return
      */
     @GetMapping("/product")
     @TrackLog
-    public Mono<ProductInfoDTO> productInfo(@RequestParam(value = "productId") String productId,
-                                    @RequestParam("entId") String entId,
-                                    @RequestParam("channel") String channel,
-                                    @RequestParam("fxId") String fxId) {
-        return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
+    public Mono<ProductInfoDTO> productInfo(@RequestParam("productId") String productId,
+                                            @RequestParam("entId") String entId,
+                                            @RequestParam("channel") String channel,
+                                            @RequestParam("fxId") String fxId) {
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
             //查询理财产品基本信息
             ProductInfoDTO productInfoDTO = financeService.getProductInfo(productId, payrollProperties.getImgUrl());
             productInfoDTO.setNowDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
@@ -203,6 +202,7 @@ public class TFinanceRS {
 
     /**
      * 平台产品预约列表
+     *
      * @param productId 产品Id
      * @return
      */
@@ -210,7 +210,7 @@ public class TFinanceRS {
     @TrackLog
     @PermitAll
     public Mono<IntentListDTO> intentionList(@RequestParam("productId") String productId) {
-        return Mono.fromCallable(()->{
+        return Mono.fromCallable(() -> {
             IntentListDTO intentListDTO = financeService.getIntentList(productId);
             intentListDTO.setNowDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
             return intentListDTO;
@@ -219,12 +219,13 @@ public class TFinanceRS {
     }
 
     /**
-     *操作列表
-     * @param pageNum 当前页数
-     * @param size 每页显示条数
+     * 操作列表
+     *
+     * @param pageNum   当前页数
+     * @param size      每页显示条数
      * @param productId 产品Id
-     * @param entId 企业Id
-     * @param operate 操作类型 0 浏览 1预约
+     * @param entId     企业Id
+     * @param operate   操作类型 0 浏览 1预约
      * @return
      */
     @GetMapping("/operateList")
@@ -235,8 +236,8 @@ public class TFinanceRS {
             @RequestParam("productId") String productId,
             @RequestParam("entId") String entId,
             @RequestParam("operate") Integer operate) {
-        return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
 
             Page<OperateDTO> page = financeService.getOperate(productId, entId, operate, PageRequest.of(pageNum - 1, size), userPrincipal.getOpenId());
 
@@ -249,14 +250,15 @@ public class TFinanceRS {
 
     /**
      * 预约明细
+     *
      * @param productId 产品Id
      * @return
      */
     @GetMapping("/intentInfo")
     @TrackLog
     public Mono<IntentInfoDTO> intentInfo(@RequestParam("productId") String productId) {
-        return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
             IntentInfoDTO intentInfoDTO = financeService.getIntetByIdNumber(productId, userPrincipal.getIdNumber());
             if (intentInfoDTO != null) {
                 //产品信息
@@ -305,14 +307,15 @@ public class TFinanceRS {
 
     /**
      * 预约人信息
+     *
      * @param entId 企业Id
      * @return
      */
     @GetMapping("/userInfo")
     @TrackLog
     public Mono<UserInfoDTO> userInfo(@RequestParam("entId") String entId) {
-        return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
             if (StringUtils.isEmpty(userPrincipal.getIdNumber())) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_003.getErrorMsg());
             }
@@ -341,8 +344,8 @@ public class TFinanceRS {
     @PostMapping("/intent")
     @TrackLog
     public Mono<Void> addIntent(@RequestBody IntentRequestDTO intentRequestDTO) {
-        return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
             if (StringUtils.isEmpty(userPrincipal.getIdNumber())) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_003.getErrorMsg());
             }
@@ -369,13 +372,16 @@ public class TFinanceRS {
                 throw new ParamsIllegalException(ErrorConstant.FINANCE_001.getErrorMsg());
             }
             intentRequestDTO.setOpenId(userPrincipal.getOpenId());
-            Client client = ClientBuilder.newClient();
-            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "finance/intent");
-            log.info("管家url:{}", webTarget.getUri());
-            Response response = webTarget.request()
-                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                    .post(Entity.entity(intentRequestDTO, MediaType.APPLICATION_JSON_TYPE));
-            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
+
+            financeService.addIntent(intentRequestDTO);
+            log.info("预约完成！");
+//            Client client = ClientBuilder.newClient();
+//            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "finance/intent");
+//            log.info("管家url:{}", webTarget.getUri());
+//            Response response = webTarget.request()
+//                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+//                    .post(Entity.entity(intentRequestDTO, MediaType.APPLICATION_JSON_TYPE));
+//            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
 
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
@@ -384,6 +390,7 @@ public class TFinanceRS {
 
     /**
      * 获取Code的url
+     *
      * @param redirectUrl 跳转url
      * @return
      */
@@ -391,7 +398,7 @@ public class TFinanceRS {
     @TrackLog
     @PermitAll
     public Mono<String> getCodeUrl(@RequestParam("redirectUrl") String redirectUrl) {
-        return Mono.fromCallable(()->{
+        return Mono.fromCallable(() -> {
             WeixinAuthorizeUrlDTO weixinAuthorizeUrlDTO = new WeixinAuthorizeUrlDTO();
             weixinAuthorizeUrlDTO.setUrl(redirectUrl);
             weixinAuthorizeUrlDTO.setState("STATE");

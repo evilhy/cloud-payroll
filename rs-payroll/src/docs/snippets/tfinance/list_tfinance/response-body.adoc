@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+[{"productId":"ff8080816900035b016904d3b6e2003d","entId":"ff80808168effcdb0168fe90c0d50005"}]
+----

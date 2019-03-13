@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+redirectUrl+`
+|跳转url
+
+|===

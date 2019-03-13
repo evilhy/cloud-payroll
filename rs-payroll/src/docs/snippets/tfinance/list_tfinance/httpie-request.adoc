@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/tfinance/list' \
+    'jsession_id:4bf68cb35c584541a01bbc4a043548f9'
+----

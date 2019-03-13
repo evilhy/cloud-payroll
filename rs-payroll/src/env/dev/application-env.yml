@@ -29,7 +29,6 @@ fxgj:
     password: WHDev@20160714
     maximum-pool-size: 5
     pool-name: fxgj_db
-    read-only: true
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
   passwd: MvEpyqjedb4Hvai3vnFakmYxQsebEVCe84RNcVxw79USzc85FPAmbA9NuPxqfGsMh5pPuyzL

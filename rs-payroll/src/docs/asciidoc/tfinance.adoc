@@ -1,0 +1,145 @@
+:snippets: ../snippets/wechat
+== 同事理财团
+=== 获取Code的url: GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/tfinance/codeUrl_tfinance/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/tfinance/codeUrl_tfinance/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tfinance/codeUrl_tfinance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tfinance/codeUrl_tfinance/http-response.adoc[]
+
+=== 预约产品: POST
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/tfinance/intent_tfinance/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/tfinance/intent_tfinance/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tfinance/intent_tfinance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tfinance/intent_tfinance/http-response.adoc[]
+
+=== 预约明细: GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/tfinance/intentInfo_tfinance/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/tfinance/intentInfo_tfinance/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tfinance/intentInfo_tfinance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tfinance/intentInfo_tfinance/http-response.adoc[]
+
+=== 平台产品预约列表: GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/tfinance/intentionList_tfinance/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/tfinance/intentionList_tfinance/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tfinance/intentionList_tfinance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tfinance/intentionList_tfinance/http-response.adoc[]
+
+=== 活动产品列表: GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/tfinance/list_tfinance/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/tfinance/list_tfinance/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tfinance/list_tfinance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tfinance/list_tfinance/http-response.adoc[]
+
+=== 操作列表: GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/tfinance/operateList_tfinance/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/tfinance/operateList_tfinance/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tfinance/operateList_tfinance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tfinance/operateList_tfinance/http-response.adoc[]
+
+=== 同事团理财产品: GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/tfinance/product_tfinance/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/tfinance/product_tfinance/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tfinance/product_tfinance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tfinance/product_tfinance/http-response.adoc[]
+
+=== 预约人信息: GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/tfinance/userInfo_tfinance/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/tfinance/userInfo_tfinance/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tfinance/userInfo_tfinance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tfinance/userInfo_tfinance/http-response.adoc[]
