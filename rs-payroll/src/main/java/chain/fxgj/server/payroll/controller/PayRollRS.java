@@ -272,8 +272,8 @@ public class PayRollRS {
     @GetMapping("/emp")
     @TrackLog
     public Mono<EmpInfoDTO> emp() {
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
             EmpInfoDTO empInfoDTO=new EmpInfoDTO();
             empInfoDTO.setHeadimgurl(userPrincipal.getHeadimgurl());
             empInfoDTO.setIdNumber(userPrincipal.getIdNumber());
@@ -297,8 +297,8 @@ public class PayRollRS {
     @GetMapping("/empEnt")
     @TrackLog
     public Mono<List<EmpEntDTO>> empEnt() {
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
             List<EmpEntDTO> list=wechatBindService.empEntList(userPrincipal.getIdNumber());
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -311,8 +311,8 @@ public class PayRollRS {
     @GetMapping("/empCard")
     @TrackLog
     public Mono<List<EmpEntDTO>> empCard() {
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
             List<EmpEntDTO> list=wechatBindService.empEntList(userPrincipal.getIdNumber());
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -329,11 +329,11 @@ public class PayRollRS {
         return Mono.fromCallable(()->{
             //ids "|"分割
             List<EmpCardLogDTO> list=wechatBindService.empCardLog(ids.split("\\|"));
-            //异步更新记录已读
-            List<String> logIds = list.stream().map(EmpCardLogDTO::getLogId).collect(Collectors.toList());
-            if(logIds.size()>0 && logIds !=null){
-                insideRS.bankCardIsNew(logIds);
-            }
+//            //异步更新记录已读
+//            List<String> logIds = list.stream().map(EmpCardLogDTO::getLogId).collect(Collectors.toList());
+//            if(logIds.size()>0 && logIds !=null){
+//                insideRS.bankCardIsNew(logIds);
+//            }
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -345,10 +345,10 @@ public class PayRollRS {
      */
     @GetMapping("/entPhone")
     @TrackLog
-    public Mono<List<Res100701.EmployeeListBean>> entPhone() {
+    public Mono<List<EmployeeListBean>> entPhone() {
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebContext.getCurrentUser();
-            List<Res100701.EmployeeListBean>  list = wechatBindService.getEntPhone(userPrincipal.getIdNumber());
+            List<EmployeeListBean>  list = wechatBindService.getEntPhone(userPrincipal.getIdNumber());
             return list;
         }).subscribeOn(Schedulers.elastic());
     }

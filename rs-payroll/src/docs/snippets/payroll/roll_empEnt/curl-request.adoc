@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/empEnt' -i -X GET \
+    -H 'jsession_id: dec2ee803f464167a98c4bb9d486c90f'
+----

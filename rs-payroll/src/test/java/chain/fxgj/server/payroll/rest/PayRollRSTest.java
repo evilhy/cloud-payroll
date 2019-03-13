@@ -203,30 +203,102 @@ public class PayRollRSTest {
 
     @Test
     public void checkCard() {
+        login();
+        String cardNo = "153433";
+        String idNumber= "SZqiUsfAC7mztlvQ6kSxy5zddhXWf3UK";
+        webTestClient.get().uri("roll/checkCard?cardNo={cardNo}&idNumber={idNumber}",cardNo,idNumber)
+                .header("jsession_id",sessionId)
+                .exchange().expectStatus().isOk().expectBody(String.class)
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("roll_checkCard",
+                        relaxedRequestParameters(parameterWithName("cardNo").description("银行卡后6位"))
+                                .and(parameterWithName("idNumber").description("身份证号"))));
     }
 
     @Test
     public void emp() {
+        login();
+        webTestClient.get().uri("roll/emp")
+                .header("jsession_id",sessionId)
+                .exchange().expectStatus().isOk().expectBody(String.class)
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("roll_emp",
+                        relaxedResponseFields(JavaDocReader.javaDoc(EmpInfoDTO.class))));
     }
 
     @Test
     public void empEnt() {
+        login();
+        webTestClient.get().uri("roll/empEnt")
+                .header("jsession_id",sessionId)
+                .exchange().expectStatus().isOk().expectBody(String.class)
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("roll_empEnt",
+                        relaxedResponseFields(fieldWithPath("[]").description("员工企业"))
+                                .andWithPrefix("[].", JavaDocReader
+                                        .javaDoc(EmpEntDTO.class))
+                                .andWithPrefix("items[].",JavaDocReader.javaDoc(Res100708.class))
+                                .andWithPrefix("cards[].",JavaDocReader.javaDoc(BankCard.class))
+                                .andWithPrefix("cards.bankCardGroups[].",JavaDocReader.javaDoc(BankCardGroup.class))));
     }
 
     @Test
     public void empCard() {
+        login();
+        webTestClient.get().uri("roll/empCard")
+                .header("jsession_id",sessionId)
+                .exchange().expectStatus().isOk().expectBody(String.class)
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("roll_empCard",
+                        relaxedResponseFields(fieldWithPath("[]").description("员工银行卡"))
+                                .andWithPrefix("[].", JavaDocReader
+                                        .javaDoc(EmpEntDTO.class))
+                                .andWithPrefix("items[].",JavaDocReader.javaDoc(Res100708.class))
+                                .andWithPrefix("cards[].",JavaDocReader.javaDoc(BankCard.class))
+                                .andWithPrefix("cards.bankCardGroups[].",JavaDocReader.javaDoc(BankCardGroup.class))));
     }
 
     @Test
     public void empCardLog() {
+        login();
+        String ids ="ff808081692304f001692901d81600f8";
+        webTestClient.get().uri("roll/empCardLog?ids={ids}",ids)
+                .header("jsession_id",sessionId)
+                .exchange().expectStatus().isOk().expectBody(String.class)
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("roll_empCardLog",
+                        relaxedRequestParameters(parameterWithName("ids").description("银行卡id|集合")),
+                        relaxedResponseFields(fieldWithPath("[]").description("员工银行卡修改记录"))
+                                .andWithPrefix("[].", JavaDocReader
+                                        .javaDoc(EmpCardLogDTO.class))));
     }
 
     @Test
     public void entPhone() {
+        login();
+        webTestClient.get().uri("roll/entPhone")
+                .header("jsession_id",sessionId)
+                .exchange().expectStatus().isOk().expectBody(String.class)
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("roll_entPhone",
+                        relaxedResponseFields(fieldWithPath("[]").description("手机号和公司列表"))
+                                .andWithPrefix("[].", JavaDocReader
+                                        .javaDoc(EmployeeListBean.class))));
     }
 
     @Test
     public void entUser() {
+        login();
+        String entId="ff808081690f0e3201691330d0950024";
+        webTestClient.get().uri("roll/entUser?entId={entId}",entId)
+                .header("jsession_id",sessionId)
+                .exchange().expectStatus().isOk().expectBody(String.class)
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("roll_entUser",
+                        relaxedRequestParameters(parameterWithName("entId").description("企业id")),
+                        relaxedResponseFields(fieldWithPath("[]").description("企业超管"))
+                                .andWithPrefix("[].", JavaDocReader
+                                        .javaDoc(EntUserDTO.class))));
     }
 
     public void login() {

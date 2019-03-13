@@ -6,6 +6,7 @@ import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.constant.PermissionConstant;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
+import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +56,8 @@ public class WechatBindServiceImpl implements WechatBindService {
     EmpWechatService empWechatService;
     @Autowired
     EmployeeCardLogDao employeeCardLogDao;
+    @Autowired
+    WechatBindService wechatBindService;
 
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -81,7 +85,7 @@ public class WechatBindServiceImpl implements WechatBindService {
     }
 
     @Override
-    public List<Res100701.EmployeeListBean> getEntPhone(String idNumber) {
+    public List<EmployeeListBean> getEntPhone(String idNumber) {
         //查询员工信息
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         QEntErpriseInfo qEntErpriseInfo = QEntErpriseInfo.entErpriseInfo;
@@ -92,9 +96,9 @@ public class WechatBindServiceImpl implements WechatBindService {
                 .groupBy(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .fetch();
 
-        List<Res100701.EmployeeListBean> employeeList = new ArrayList<>();
+        List<EmployeeListBean> employeeList = new ArrayList<>();
         for (Tuple tuple : tuples) {
-            Res100701.EmployeeListBean bean = new Res100701.EmployeeListBean();
+            EmployeeListBean bean = new EmployeeListBean();
             bean.setEmployeeName(tuple.get(qEmployeeInfo.employeeName));
             bean.setIdNumber(employeeEncrytorService.encryptIdNumber(tuple.get(qEmployeeInfo.idNumber)));
             String phone = tuple.get(qEmployeeInfo.phone);
@@ -422,14 +426,14 @@ public class WechatBindServiceImpl implements WechatBindService {
     @Override
     public List<EmpEntDTO> empEntList(String idNumber) {
 
-        List<EntInfoDTO> entInfoDTOS = WebContext.getCurrentUser().getEntInfoDTOS();
+        List<EntInfoDTO> entInfoDTOS = wechatBindService.getEntInfos(idNumber);
         List<EmpEntDTO> list = new ArrayList<>();
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
             EmpEntDTO empEntDTO = new EmpEntDTO();
             empEntDTO.setEntName(entInfoDTO.getEntName());
             empEntDTO.setShortEntName(entInfoDTO.getShortEntName());
             List<Res100708> items = new ArrayList<>();
-            List<EmpEntDTO.BankCard> bankCards = new ArrayList<>();
+            List<BankCard> bankCards = new ArrayList<>();
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {
                 EmployeeDTO employeeDTO = new EmployeeDTO(groupInfo.getEmployeeInfo());
                 employeeDTO.setGroupId(groupInfo.getGroupId());
@@ -458,9 +462,9 @@ public class WechatBindServiceImpl implements WechatBindService {
                     bankCardList.add(new Res100708.BankCardListBean(employeeCardInfo));
 
                     boolean hasCard = false;
-                    EmpEntDTO.BankCard card = new EmpEntDTO.BankCard();
-                    List<EmpEntDTO.BankCardGroup> bankCardGroups = new ArrayList<>();
-                    for (EmpEntDTO.BankCard bankCard : bankCards) {
+                    BankCard card = new BankCard();
+                    List<BankCardGroup> bankCardGroups = new ArrayList<>();
+                    for (BankCard bankCard : bankCards) {
                         if (employeeCardInfo.getCardNo().equals(bankCard.getOldCardNo())) {
                             hasCard = true;
                             card = bankCard;
@@ -484,7 +488,7 @@ public class WechatBindServiceImpl implements WechatBindService {
                         }
                     }
 
-                    EmpEntDTO.BankCardGroup bankCardGroup = new EmpEntDTO.BankCardGroup();
+                    BankCardGroup bankCardGroup = new BankCardGroup();
                     bankCardGroup.setId(employeeCardInfo.getId());
                     bankCardGroup.setGroupId(groupInfo.getGroupId());
                     bankCardGroup.setShortGroupName(groupInfo.getGroupShortName());
@@ -538,6 +542,7 @@ public class WechatBindServiceImpl implements WechatBindService {
                 if (IsStatusEnum.YES.equals(employeeCardLog.getIsNew())) {
                     empCardLogDTO.setLogId(employeeCardLog.getId());
                 }
+                employeeCardLog.setIsNew(IsStatusEnum.NO);
                 list.add(empCardLogDTO);
             }
         }

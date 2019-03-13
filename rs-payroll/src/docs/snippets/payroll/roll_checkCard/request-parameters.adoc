@@ -1,0 +1,10 @@
+|===
+|Parameter|Description
+
+|`+cardNo+`
+|银行卡后6位
+
+|`+idNumber+`
+|身份证号
+
+|===

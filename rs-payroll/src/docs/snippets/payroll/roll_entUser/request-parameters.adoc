@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+entId+`
+|企业id
+
+|===

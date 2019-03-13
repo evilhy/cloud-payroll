@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /roll/checkCard?cardNo=153433&idNumber=SZqiUsfAC7mztlvQ6kSxy5zddhXWf3UK HTTP/1.1
+jsession_id: 730b5f822d624f888068d8c096f881b2
+Host: localhost:8080
+
+----

@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/roll/checkCard?cardNo=153433&idNumber=SZqiUsfAC7mztlvQ6kSxy5zddhXWf3UK' \
+    'jsession_id:730b5f822d624f888068d8c096f881b2'
+----

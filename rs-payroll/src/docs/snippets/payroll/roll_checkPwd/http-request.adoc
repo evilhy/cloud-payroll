@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /roll/checkPwd?pwd=123456 HTTP/1.1
+jsession_id: 25daabb8f777419ea5d6a008b75c75f0
+Host: localhost:8080
+
+----

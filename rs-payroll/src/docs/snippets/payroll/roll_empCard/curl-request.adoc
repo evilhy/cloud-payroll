@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/empCard' -i -X GET \
+    -H 'jsession_id: 837ed7aa29c04ade899e5a9f42e0e563'
+----

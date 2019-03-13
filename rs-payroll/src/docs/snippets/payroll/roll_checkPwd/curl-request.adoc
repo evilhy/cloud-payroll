@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/checkPwd?pwd=123456' -i -X GET \
+    -H 'jsession_id: 25daabb8f777419ea5d6a008b75c75f0'
+----

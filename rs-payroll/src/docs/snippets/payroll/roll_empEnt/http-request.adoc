@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /roll/empEnt HTTP/1.1
+jsession_id: dec2ee803f464167a98c4bb9d486c90f
+Host: localhost:8080
+
+----

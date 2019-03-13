@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/entUser?entId=ff808081690f0e3201691330d0950024' -i -X GET \
+    -H 'jsession_id: 757e96b790664e3fb52ac5c40c0b110f'
+----

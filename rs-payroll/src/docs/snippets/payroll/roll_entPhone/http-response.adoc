@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 788
+Content-Type: application/json;charset=UTF-8
+
+[{"phone":"15527689216","phoneStar":"155*****9216","employeeName":"123","sex":"3","idNumber":"SZqiUsfAC7mztlvQ6kSxy5zddhXWf3UK","entName":"杜颖测试企业","entId":"ff80808168effcdb0168fe90c0d50005"},{"phone":null,"phoneStar":"","employeeName":"韩德良","sex":"3","idNumber":"SZqiUsfAC7mztlvQ6kSxy5zddhXWf3UK","entName":"香香企业","entId":"ff808081708a9a460169332195ea0002"},{"phone":"15527689216","phoneStar":"155*****9216","employeeName":"韩德良","sex":"3","idNumber":"SZqiUsfAC7mztlvQ6kSxy5zddhXWf3UK","entName":"虎符测试","entId":"ff80808168a8503e0168da9830c9000a"},{"phone":"15527689216","phoneStar":"155*****9216","employeeName":"韩德良","sex":"3","idNumber":"SZqiUsfAC7mztlvQ6kSxy5zddhXWf3UK","entName":"安卓测试","entId":"ff808081690f0e3201691330d0950024"}]
+----

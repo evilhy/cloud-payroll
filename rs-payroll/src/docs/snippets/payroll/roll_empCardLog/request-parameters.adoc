@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+ids+`
+|银行卡id\|集合
+
+|===

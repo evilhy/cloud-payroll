@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.dto.request;
 
+import chain.fxgj.server.payroll.dto.response.BankCardGroup;
 import chain.fxgj.server.payroll.dto.response.EmpEntDTO;
 import lombok.*;
 
@@ -31,7 +32,7 @@ public class UpdBankCardDTO {
     /**
      * 银行卡ID
      */
-    private List<EmpEntDTO.BankCardGroup> bankCardGroups;
+    private List<BankCardGroup> bankCardGroups;
 
 
 }

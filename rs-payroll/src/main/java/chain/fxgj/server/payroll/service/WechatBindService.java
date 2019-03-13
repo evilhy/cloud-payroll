@@ -19,7 +19,7 @@ public interface WechatBindService {
      */
     Res100701 getEntList(String idNumber);
 
-    List<Res100701.EmployeeListBean> getEntPhone(String idNumber);
+    List<EmployeeListBean> getEntPhone(String idNumber);
 
 
     /**

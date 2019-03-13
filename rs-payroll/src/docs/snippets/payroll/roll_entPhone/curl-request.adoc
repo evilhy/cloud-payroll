@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/entPhone' -i -X GET \
+    -H 'jsession_id: b837758496b34f71a57e5618066738cd'
+----

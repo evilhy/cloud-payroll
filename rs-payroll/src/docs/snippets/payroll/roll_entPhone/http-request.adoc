@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /roll/entPhone HTTP/1.1
+Host: localhost:8080
+jsession_id: b837758496b34f71a57e5618066738cd
+
+----

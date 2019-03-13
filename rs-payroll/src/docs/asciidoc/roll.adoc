@@ -144,4 +144,147 @@ include::{snippets}/payroll/roll_invoice/curl-request.adoc[]
 +
 include::{snippets}/payroll/roll_invoice/http-response.adoc[]
 
+=== 验证密码
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_checkPwd/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_checkPwd/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_checkPwd/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_checkPwd/http-response.adoc[]
+
+=== 验证银行卡后六位
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_checkCard/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_checkCard/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_checkCard/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_checkCard/http-response.adoc[]
+
+=== 员工个人信息
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_emp/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_emp/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_emp/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_empEnt/http-response.adoc[]
+
+=== 员工企业
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_empEnt/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_empEnt/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_empEnt/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_emp/http-response.adoc[]
+
+=== 员工银行卡
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_empCard/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_empCard/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_empCard/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_empCard/http-response.adoc[]
+
+=== 员工银行卡修改记录
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_empCardLog/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_empCardLog/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_empCardLog/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_empCardLog/http-response.adoc[]
+
+=== 手机号和公司列表
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_entPhone/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_entPhone/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_entPhone/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_entPhone/http-response.adoc[]
+
+=== 企业超管
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_entUser/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_entUser/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_entUser/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_entUser/http-response.adoc[]
 
