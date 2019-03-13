@@ -87,7 +87,7 @@ public class PayRollRS {
 
         String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(()->{
-            IndexDTO.DataListBean bean = wageWechatService.newGroupPushInfo(idNumber);
+            NewestWageLogDTO bean = wageWechatService.newGroupPushInfo(idNumber);
 
             IndexDTO indexDTO = new IndexDTO();
             indexDTO.setBean(bean);
@@ -105,10 +105,10 @@ public class PayRollRS {
      */
     @GetMapping("/groupList")
     @TrackLog
-    public Mono<List<IndexDTO.DataListBean>> groupList() {
+    public Mono<List<NewestWageLogDTO>> groupList() {
+        String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(()->{
-            String idNumber = WebContext.getCurrentUser().getIdNumber();
-            List<IndexDTO.DataListBean> list = wageWechatService.groupList(idNumber);
+            List<NewestWageLogDTO> list = wageWechatService.groupList(idNumber);
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -147,9 +147,8 @@ public class PayRollRS {
                                     @RequestParam("year") String year,
                                     @RequestParam("type") String type) {
 
+        String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(()->{
-            String idNumber = WebContext.getCurrentUser().getIdNumber();
-
             Res100703 res100703 = null;
             if (LocalDate.now().getYear() == Integer.parseInt(year)) {
                 res100703 = wageWechatService.wageList(idNumber, groupId, year, type);
@@ -172,9 +171,8 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<WageDetailDTO>> wageDetail(@RequestParam("wageSheetId") String wageSheetId,
                                                 @RequestParam("groupId") String groupId) {
+        UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(()->{
-
-            UserPrincipal principal = WebContext.getCurrentUser();
             List<WageDetailDTO> list = new ArrayList<>();
             try {
                 String redisKey = FxgjDBConstant.PREFIX + ":payroll:" + principal.getIdNumberEncrytor() + ":" + wageSheetId + ":wechatpush";
@@ -204,8 +202,8 @@ public class PayRollRS {
     @GetMapping("/empInfo")
     @TrackLog
     public Mono<List<Res100708>> empInfo() {
+        String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(()->{
-            String idNumber = WebContext.getCurrentUser().getIdNumber();
             List<Res100708> res100708 = wechatBindService.empList(idNumber);
             return res100708;
         }).subscribeOn(Schedulers.elastic());
@@ -218,8 +216,8 @@ public class PayRollRS {
     @GetMapping("/invoice")
     @TrackLog
     public Mono<List<GroupInvoiceDTO>> invoice() {
+        String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(()->{
-            String idNumber = WebContext.getCurrentUser().getIdNumber();
             List<GroupInvoiceDTO> list = wechatBindService.invoiceList(idNumber);
             return list;
         }).subscribeOn(Schedulers.elastic());

@@ -1,4 +1,5 @@
 :snippets: ../snippets/wechat
+== 微信
 === 获取微信扩展属性: GET
 ==== 接口定义
 

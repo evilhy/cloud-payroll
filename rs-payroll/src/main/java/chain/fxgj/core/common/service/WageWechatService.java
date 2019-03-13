@@ -1,9 +1,6 @@
 package chain.fxgj.core.common.service;
 
-import chain.fxgj.server.payroll.dto.response.IndexDTO;
-import chain.fxgj.server.payroll.dto.response.Res100703;
-import chain.fxgj.server.payroll.dto.response.Res100712;
-import chain.fxgj.server.payroll.dto.response.WageDetailDTO;
+import chain.fxgj.server.payroll.dto.response.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,7 +17,7 @@ public interface WageWechatService {
      *
      * @return
      */
-    IndexDTO.DataListBean newGroupPushInfo(String idNumber);
+    NewestWageLogDTO newGroupPushInfo(String idNumber);
 
 
     /**
@@ -28,7 +25,7 @@ public interface WageWechatService {
      *
      * @return
      */
-    List<IndexDTO.DataListBean> groupList(String idNumber);
+    List<NewestWageLogDTO> groupList(String idNumber);
 
 
     /**

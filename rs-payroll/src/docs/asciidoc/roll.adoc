@@ -1,19 +1,147 @@
 :snippets: ../snippets
 == 工资条
 === 获取服务器当前时间
+==== 接口定义
+
 * Query Parameters:
 +
 include::{snippets}/payroll/roll_sdt/request-body.adoc[]
 * Response Body:
 +
-include::{snippets}/payroll/roll_sdt/response-body.adoc[]
+include::{snippets}/payroll/roll_sdt/response-fields.adoc[]
 
 ==== 示例
 * Request:
 +
-include::{snippets}/payroll/roll_sdt/http-request.adoc[]
+include::{snippets}/payroll/roll_sdt/curl-request.adoc[]
 * Response:
 +
 include::{snippets}/payroll/roll_sdt/http-response.adoc[]
+
+=== 首页
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_index/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_index/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_index/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_index/http-response.adoc[]
+
+=== 企业机构列表
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_groupList/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_groupList/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_groupList/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_groupList/http-response.adoc[]
+
+=== 根据身份账号返回手机和公司列表
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_entEmp/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_entEmp/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_entEmp/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_entEmp/http-response.adoc[]
+
+=== 个人薪资列表
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_wageList/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_wageList/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_wageList/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_wageList/http-response.adoc[]
+
+=== 查看工资条详情
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_wageDetail/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_wageDetail/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_wageDetail/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_wageDetail/http-response.adoc[]
+
+=== 员工个人信息
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_empInfo/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_empInfo/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_empInfo/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_empInfo/http-response.adoc[]
+
+=== 查询发票信息列表
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_invoice/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/payroll/roll_invoice/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_invoice/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_invoice/http-response.adoc[]
 
 

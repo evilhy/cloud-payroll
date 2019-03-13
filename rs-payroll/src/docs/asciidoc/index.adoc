@@ -19,10 +19,6 @@
 :sectnums:
 :sectnumlevels: 5
 
-== 微信
-* 账户服务
-** [*] <<id_获取微信扩展属性>>
-
 include::wechat.adoc[]
 
 include::roll.adoc[]

@@ -49,10 +49,10 @@ public class WageWechatServiceImpl implements WageWechatService {
 
 
     @Override
-    public IndexDTO.DataListBean newGroupPushInfo(String idNumber) {
-        IndexDTO.DataListBean bean = new IndexDTO.DataListBean();
+    public NewestWageLogDTO newGroupPushInfo(String idNumber) {
+        NewestWageLogDTO bean = new NewestWageLogDTO();
         //用户最新一条推送记录
-        List<IndexDTO.DataListBean> list = this.groupList(idNumber);
+        List<NewestWageLogDTO> list = this.groupList(idNumber);
         if (list != null && list.size() > 0) {
             bean = list.get(0);
         }
@@ -61,11 +61,11 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
     @Override
-    public List<IndexDTO.DataListBean> groupList(String idNumber) {
+    public List<NewestWageLogDTO> groupList(String idNumber) {
         List<EmployeeDTO> employeeDTOS = empWechatService.getEmpList(idNumber);
 
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
-        List<IndexDTO.DataListBean> list = new ArrayList<>();
+        List<NewestWageLogDTO> list = new ArrayList<>();
         for (EmployeeDTO employeeDTO : employeeDTOS) {
             //根据最新的代发记录
             WageDetailInfo wageDetailInfo = wageDetailInfoDao.selectFrom(qWageDetailInfo)
@@ -74,7 +74,7 @@ public class WageWechatServiceImpl implements WageWechatService {
                     .orderBy(qWageDetailInfo.cntDateTime.desc()).fetchFirst();
 
             if (wageDetailInfo != null) {
-                IndexDTO.DataListBean bean = new IndexDTO.DataListBean(employeeDTO);
+                NewestWageLogDTO bean = new NewestWageLogDTO(employeeDTO);
                 bean.setCreateDate(wageDetailInfo.getCntDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
                 bean.setIsRead(wageDetailInfo.getIsRead().getCode() + "");
 
@@ -82,9 +82,9 @@ public class WageWechatServiceImpl implements WageWechatService {
             }
         }
 
-        Collections.sort(list, new Comparator<IndexDTO.DataListBean>() {
+        Collections.sort(list, new Comparator<NewestWageLogDTO>() {
             @Override
-            public int compare(IndexDTO.DataListBean o1, IndexDTO.DataListBean o2) {
+            public int compare(NewestWageLogDTO o1, NewestWageLogDTO o2) {
                 return o2.getCreateDate().compareTo(o1.getCreateDate());
             }
         });
@@ -210,9 +210,9 @@ public class WageWechatServiceImpl implements WageWechatService {
         BigDecimal shouldTotalAmt = new BigDecimal(0);
         BigDecimal deductTotalAmt = new BigDecimal(0);
         BigDecimal realTotalAmt = new BigDecimal(0);
-        List<Res100703.PlanListBean> planList = new ArrayList<>();
+        List<PlanListBean> planList = new ArrayList<>();
         for (Tuple tuple : tuples) {
-            Res100703.PlanListBean bean = new Res100703.PlanListBean(tuple.get(qWageDetailInfo.wageSheetId), tuple.get(qWageDetailInfo.realTotalAmt.sum()));
+            PlanListBean bean = new PlanListBean(tuple.get(qWageDetailInfo.wageSheetId), tuple.get(qWageDetailInfo.realTotalAmt.sum()));
             //方案信息
             WageSheetInfo wageSheetInfo = wageSheetInfoDao.findById(bean.getWageSheetId()).get();
             bean.setSpName(wageSheetInfo.getWageName());
@@ -260,9 +260,9 @@ public class WageWechatServiceImpl implements WageWechatService {
             realTotalAmt = realTotalAmt.add(tuple.get(qWageDetailInfo.realTotalAmt.sum())==null?BigDecimal.ZERO:tuple.get(qWageDetailInfo.realTotalAmt.sum()));
         }
 
-        Collections.sort(planList, new Comparator<Res100703.PlanListBean>() {
+        Collections.sort(planList, new Comparator<PlanListBean>() {
             @Override
-            public int compare(Res100703.PlanListBean o1, Res100703.PlanListBean o2) {
+            public int compare(PlanListBean o1, PlanListBean o2) {
                 return o2.getCreateDateTime().compareTo(o1.getCreateDateTime());
             }
         });
