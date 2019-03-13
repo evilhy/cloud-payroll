@@ -13,7 +13,7 @@ import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.WechatBindService;
-import chain.fxgj.server.payroll.web.WebSecurityContext;
+import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -422,7 +422,7 @@ public class WechatBindServiceImpl implements WechatBindService {
     @Override
     public List<EmpEntDTO> empEntList(String idNumber) {
 
-        List<EntInfoDTO> entInfoDTOS = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getEntInfoDTOS();
+        List<EntInfoDTO> entInfoDTOS = WebContext.getCurrentUser().getEntInfoDTOS();
         List<EmpEntDTO> list = new ArrayList<>();
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
             EmpEntDTO empEntDTO = new EmpEntDTO();

@@ -3,12 +3,9 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.BusiVerifyException;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
-import chain.fxgj.core.common.dto.weixin.msg.WeixinTextMsgBaseDTO;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.PayRollAsyncService;
-import chain.fxgj.core.jpa.model.WechatFollowInfo;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.base.weixin.WeixinXMLDTO;
@@ -17,6 +14,7 @@ import chain.fxgj.server.payroll.util.WeixinMsgUtil;
 import chain.fxgj.server.payroll.util.XmlUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.outside.common.dto.wechat.*;
+import chain.outside.common.dto.wechat.msg.WeixinTextMsgBaseDTO;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
@@ -32,7 +30,6 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
 import java.net.URLEncoder;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 

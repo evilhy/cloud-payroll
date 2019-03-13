@@ -12,7 +12,7 @@ import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.WechatBindService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
-import chain.fxgj.server.payroll.web.WebSecurityContext;
+import chain.fxgj.server.payroll.web.WebContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +30,6 @@ import reactor.core.scheduler.Schedulers;
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -88,8 +85,8 @@ public class PayRollRS {
     @TrackLog
     public Mono<IndexDTO> index() {
 
+        String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(()->{
-            String idNumber = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getIdNumber();
             IndexDTO.DataListBean bean = wageWechatService.newGroupPushInfo(idNumber);
 
             IndexDTO indexDTO = new IndexDTO();
@@ -110,7 +107,7 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<IndexDTO.DataListBean>> groupList() {
         return Mono.fromCallable(()->{
-            String idNumber = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getIdNumber();
+            String idNumber = WebContext.getCurrentUser().getIdNumber();
             List<IndexDTO.DataListBean> list = wageWechatService.groupList(idNumber);
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -151,7 +148,7 @@ public class PayRollRS {
                                     @RequestParam("type") String type) {
 
         return Mono.fromCallable(()->{
-            String idNumber = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getIdNumber();
+            String idNumber = WebContext.getCurrentUser().getIdNumber();
 
             Res100703 res100703 = null;
             if (LocalDate.now().getYear() == Integer.parseInt(year)) {
@@ -177,7 +174,7 @@ public class PayRollRS {
                                                 @RequestParam("groupId") String groupId) {
         return Mono.fromCallable(()->{
 
-            UserPrincipal principal = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal principal = WebContext.getCurrentUser();
             List<WageDetailDTO> list = new ArrayList<>();
             try {
                 String redisKey = FxgjDBConstant.PREFIX + ":payroll:" + principal.getIdNumberEncrytor() + ":" + wageSheetId + ":wechatpush";
@@ -208,7 +205,7 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<Res100708>> empInfo() {
         return Mono.fromCallable(()->{
-            String idNumber = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getIdNumber();
+            String idNumber = WebContext.getCurrentUser().getIdNumber();
             List<Res100708> res100708 = wechatBindService.empList(idNumber);
             return res100708;
         }).subscribeOn(Schedulers.elastic());
@@ -222,7 +219,7 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<GroupInvoiceDTO>> invoice() {
         return Mono.fromCallable(()->{
-            String idNumber = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getIdNumber();
+            String idNumber = WebContext.getCurrentUser().getIdNumber();
             List<GroupInvoiceDTO> list = wechatBindService.invoiceList(idNumber);
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -237,7 +234,7 @@ public class PayRollRS {
     @TrackLog
     public Mono<Void> checkPwd(@RequestParam("pwd") String pwd) {
         return Mono.fromCallable(()->{
-            UserPrincipal principal = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal principal = WebContext.getCurrentUser();
             if(StringUtils.isEmpty(pwd)){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
@@ -278,7 +275,7 @@ public class PayRollRS {
     @TrackLog
     public Mono<EmpInfoDTO> emp() {
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal userPrincipal = WebContext.getCurrentUser();
             EmpInfoDTO empInfoDTO=new EmpInfoDTO();
             empInfoDTO.setHeadimgurl(userPrincipal.getHeadimgurl());
             empInfoDTO.setIdNumber(userPrincipal.getIdNumber());
@@ -303,7 +300,7 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<EmpEntDTO>> empEnt() {
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal userPrincipal = WebContext.getCurrentUser();
             List<EmpEntDTO> list=wechatBindService.empEntList(userPrincipal.getIdNumber());
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -317,7 +314,7 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<EmpEntDTO>> empCard() {
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal userPrincipal = WebContext.getCurrentUser();
             List<EmpEntDTO> list=wechatBindService.empEntList(userPrincipal.getIdNumber());
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -352,7 +349,7 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<Res100701.EmployeeListBean>> entPhone() {
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal userPrincipal = WebContext.getCurrentUser();
             List<Res100701.EmployeeListBean>  list = wechatBindService.getEntPhone(userPrincipal.getIdNumber());
             return list;
         }).subscribeOn(Schedulers.elastic());

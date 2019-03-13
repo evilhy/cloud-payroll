@@ -16,7 +16,7 @@ import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
 import chain.fxgj.server.payroll.dto.request.WechatLoginDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
-import chain.fxgj.server.payroll.web.WebSecurityContext;
+import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import javax.ws.rs.client.Client;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -107,7 +108,15 @@ public class EmpWechatServiceImpl implements EmpWechatService {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
         }
 
-        List<EntInfoDTO> entInfoDTOS = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getEntInfoDTOS();
+        List<EntInfoDTO> entInfoDTOS = new ArrayList<>();
+        try {
+            entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
         List<EmployeeDTO> list = new ArrayList<>();
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {

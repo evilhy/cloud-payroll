@@ -19,7 +19,7 @@ import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.service.WechatBindService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
-import chain.fxgj.server.payroll.web.WebSecurityContext;
+import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -117,7 +117,7 @@ public class InsideRS {
     @TrackLog
     public Mono<Void> readWage(@RequestBody ReadWageDTO readWageDTO) {
         return Mono.fromCallable(()->{
-            String idNumber = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getIdNumberEncrytor();
+            String idNumber = WebContext.getCurrentUser().getIdNumberEncrytor();
             readWageDTO.setIdNumber(idNumber);
             payRollAsyncService.readWage(readWageDTO);
             return null;
@@ -134,7 +134,7 @@ public class InsideRS {
     @TrackLog
     public Mono<Void> bandWX(@RequestBody Req100702 req100702) throws Exception {
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal userPrincipal= WebContext.getCurrentUser();
             String sessionId = userPrincipal.getSessionId();
             String openId = userPrincipal.getOpenId();
             String idNumber = req100702.getIdNumber();
@@ -167,7 +167,7 @@ public class InsideRS {
     @TrackLog
     public Mono<Void> rz(@RequestBody Req100701 req100701) throws Exception {
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal userPrincipal=WebContext.getCurrentUser();
             String sessionId = userPrincipal.getSessionId();
             String openId = userPrincipal.getOpenId();
             String idNumber=employeeEncrytorService.decryptIdNumber(req100701.getIdNumber());
@@ -207,7 +207,7 @@ public class InsideRS {
     @TrackLog
     public Mono<Void> setPwd(String pwd) throws Exception {
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal userPrincipal=WebContext.getCurrentUser();
             log.info("userPrincipal:{}",userPrincipal);
             UserPrincipal wechatInfo = empWechatService.getWechatInfo(userPrincipal.getSessionId());
             log.info("wechatInfo:{}",wechatInfo);
@@ -243,7 +243,7 @@ public class InsideRS {
     @TrackLog
     public Mono<Void> updPwd(@RequestBody UpdPwdDTO updPwdDTO) throws Exception {
         return Mono.fromCallable(()->{
-            String queryPwd = WebSecurityContext.getCurrentWebSecurityContext().getPrincipal().getQueryPwd();
+            String queryPwd = WebContext.getCurrentUser().getQueryPwd();
             //判断原密码是否正确
             if(!queryPwd.equals(employeeEncrytorService.encryptPwd(updPwdDTO.getOldPwd()))){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_005.getErrorMsg());
@@ -278,7 +278,7 @@ public class InsideRS {
     @TrackLog
     public Mono<Void> updPhone(@RequestBody ReqPhone reqPhone) throws Exception {
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal userPrincipal=WebContext.getCurrentUser();
             if(StringUtils.isNotBlank(reqPhone.getCode())) {
                 this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             }
@@ -340,7 +340,7 @@ public class InsideRS {
     @TrackLog
     public Mono<String> updBankCard(@RequestBody UpdBankCardDTO updBankCardDTO) throws Exception {
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal=WebSecurityContext.getCurrentWebSecurityContext().getPrincipal();
+            UserPrincipal userPrincipal=WebContext.getCurrentUser();
             String regex = "[0-9]{1,}";
             if(!updBankCardDTO.getCardNo().matches(regex)){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());

@@ -19,7 +19,6 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.time.LocalDateTime;
 
@@ -72,7 +71,6 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         if (LocalDateTime.now().isAfter(sessionTimeOut)) {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
         }
-
         WebContext.setCurrentUser(principal);
 
         return chain.filter(exchange);

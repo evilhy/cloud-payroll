@@ -1,7 +1,7 @@
 package chain.fxgj.server.payroll.util;
 
-import chain.fxgj.core.common.dto.weixin.msg.WeixinTextMsgBaseDTO;
-import chain.fxgj.core.common.util.MsgUtil;
+import chain.outside.common.dto.wechat.msg.WeixinTextMsgBaseDTO;
+import chain.outside.common.dto.wechat.util.MsgUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ import java.util.Map;
  * create by chain on 2018/8/9 下午3:05
  **/
 public class WeixinMsgUtil {
-    private static final Logger log = LoggerFactory.getLogger(chain.fxgj.core.common.util.WeixinMsgUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(WeixinMsgUtil.class);
 
     static String[][] menu;
 
