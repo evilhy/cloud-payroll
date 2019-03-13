@@ -8,13 +8,13 @@ import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.EventDTO;
-import chain.fxgj.server.payroll.dto.base.weixin.WeixinXMLDTO;
+import chain.fxgj.server.payroll.dto.wechat.WeixinTextMsgBaseDTO;
+import chain.fxgj.server.payroll.dto.wechat.WeixinXMLDTO;
 import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.util.WeixinMsgUtil;
 import chain.fxgj.server.payroll.util.XmlUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.outside.common.dto.wechat.*;
-import chain.outside.common.dto.wechat.msg.WeixinTextMsgBaseDTO;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
@@ -173,8 +173,8 @@ public class WechatRS {
     @TrackLog
     @PermitAll
     public Mono<Res100705> wxCallback(@RequestParam("code") String code,
-                                      @RequestParam("wageSheetId") String wageSheetId,
-                                      @RequestParam("routeName") String routeName) throws Exception {
+                                      @RequestParam(value = "wageSheetId",required = false) String wageSheetId,
+                                      @RequestParam(value = "routeName",required = false) String routeName) throws Exception {
         return Mono.fromCallable(() -> {
 
             String jsessionId = UUIDUtil.createUUID32();
@@ -186,8 +186,11 @@ public class WechatRS {
             if (!"authdeny".equals(code)) {
                 log.info("=========wageSheetId={},code={},routeName={}", StringUtils.trimToEmpty(wageSheetId), code, routeName);
                 log.info("一次性code:[{}]",code);
+                log.info("id:[{}]",id);
                 //网页授权接口访问凭证
-                WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = iwechatFeignService.oauth2Acces(id, code);
+                WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = new WeixinOauthTokenResponeDTO();//iwechatFeignService.oauth2Acces(id, code);
+                weixinOauthTokenResponeDTO.setAccessToken("");
+                weixinOauthTokenResponeDTO.setOpenid("");
                 String openId = weixinOauthTokenResponeDTO.getOpenid();
                 String accessToken = weixinOauthTokenResponeDTO.getAccessToken();
                 log.info("============openId={}", openId);

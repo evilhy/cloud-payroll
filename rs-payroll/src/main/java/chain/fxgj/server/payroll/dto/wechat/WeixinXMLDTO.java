@@ -1,4 +1,4 @@
-package chain.fxgj.server.payroll.dto.base.weixin;
+package chain.fxgj.server.payroll.dto.wechat;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

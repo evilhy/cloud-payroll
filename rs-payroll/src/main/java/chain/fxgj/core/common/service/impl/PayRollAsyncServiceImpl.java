@@ -4,20 +4,22 @@ import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.config.properties.WechatProperties;
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.EnterpriseStatusEnum;
+import chain.fxgj.core.common.constant.DictEnums.SystemIdEnum;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.jpa.dao.EmployeeInfoDao;
+import chain.fxgj.core.jpa.dao.MsgModelInfoDao;
 import chain.fxgj.core.jpa.dao.WechatFollowInfoDao;
-import chain.fxgj.core.jpa.model.EntErpriseInfo;
-import chain.fxgj.core.jpa.model.QEmployeeInfo;
-import chain.fxgj.core.jpa.model.QEntErpriseInfo;
-import chain.fxgj.core.jpa.model.WechatFollowInfo;
+import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.ReadWageDTO;
 import chain.fxgj.server.payroll.dto.request.WechatLoginDTO;
 import chain.fxgj.server.payroll.dto.response.EntInfoRes;
 import chain.fxgj.server.payroll.service.WechatBindService;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -60,6 +62,8 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
     WechatBindService wechatBindService;
     @Autowired
     WechatFollowInfoDao wechatFollowInfoDao;
+    @Autowired
+    MsgModelInfoDao msgModelInfoDao;
 
     @Override
     @Async
@@ -91,8 +95,8 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
     }
 
     @Override
-    @Async
     public Future<Response> eventHandle(EventDTO eventDTO) {
+
         WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.findFirstByOpenId(eventDTO.getOpenId());
         if (wechatFollowInfo == null) {
             wechatFollowInfo = new WechatFollowInfo();
