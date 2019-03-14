@@ -1,0 +1,10 @@
+[source,http,options="nowrap"]
+----
+POST /manager/distribute HTTP/1.1
+jsession_id: 9f8eb692656d4319a9a1aaa437f3c234
+Content-Type: application/json
+Content-Length: 46
+Host: localhost:8080
+
+{"groupId":"ff8080816899924301689e0297240001"}
+----

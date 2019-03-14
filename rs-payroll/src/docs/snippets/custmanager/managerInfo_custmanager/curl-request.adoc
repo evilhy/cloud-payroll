@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/manager/managerInfo' -i -X GET \
+    -H 'jsession_id: 5f360ad71e4b42db8f54d2afb78fde73'
+----

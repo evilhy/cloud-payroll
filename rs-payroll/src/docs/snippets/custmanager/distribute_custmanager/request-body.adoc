@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"groupId":"ff8080816899924301689e0297240001"}
+----

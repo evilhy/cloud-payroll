@@ -186,9 +186,8 @@ public class WechatRS {
                 log.info("一次性code:[{}]",code);
                 log.info("id:[{}]",payrollProperties.getId());
                 //网页授权接口访问凭证
-                WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = new WeixinOauthTokenResponeDTO();//iwechatFeignService.oauth2Acces(id, code);
-                weixinOauthTokenResponeDTO.setAccessToken("");
-                weixinOauthTokenResponeDTO.setOpenid("");
+                WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = iwechatFeignService.oauth2Acces(payrollProperties.getId(), code);
+
                 String openId = weixinOauthTokenResponeDTO.getOpenid();
                 String accessToken = weixinOauthTokenResponeDTO.getAccessToken();
                 log.info("============openId={}", openId);

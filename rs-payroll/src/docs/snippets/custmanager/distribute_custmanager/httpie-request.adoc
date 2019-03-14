@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"groupId":"ff8080816899924301689e0297240001"}' | http POST 'http://localhost:8080/manager/distribute' \
+    'jsession_id:9f8eb692656d4319a9a1aaa437f3c234' \
+    'Content-Type:application/json'
+----

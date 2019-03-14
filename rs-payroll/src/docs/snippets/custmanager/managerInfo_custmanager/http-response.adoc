@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 409
+Content-Type: application/json;charset=UTF-8
+
+{"id":"123456","managerName":"张三行","mobile":"18800000000","branchOrgNo":"1255","branchOrgName":"重庆分行行行行","officer":"123456","subBranchOrgNo":"1255","subBranchOrgName":"营业部行行","status":"正常","avatarUrl":"","isConfirmed":"1","wechatId":"wudawei904923","wechatQrUrl":"http://weixin.qq.com/r/csnUzE7EAhN9rQqv95xg","wechatQrImgae":"f4b861865be74a8cbc6f5febe3eaa1f8.jpg","score":55}
+----

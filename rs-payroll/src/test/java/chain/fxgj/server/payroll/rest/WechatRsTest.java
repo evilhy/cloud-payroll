@@ -143,14 +143,10 @@ public class WechatRsTest {
      */
     @Test
     public void wxCallback() throws Exception {
-//        WeixinAuthorizeUrlDTO weixinAuthorizeUrlDTO = new WeixinAuthorizeUrlDTO();
-//        weixinAuthorizeUrlDTO.setUrl("www.baidu.com");
-//        WeixinAuthorizeUrlDTO zo = iwechatFeignService.getOAuthUrl("zo", weixinAuthorizeUrlDTO);
-//        String url = zo.getUrl();
 
         webTestClient.get()
                 .uri("/weixin/wxCallback?code={code}&wageSheetId={wageSheetId}&routeName={routeName}",
-                        "011pSDcu1rWfyf0Toacu1fKJcu1pSDcS","2","3")
+                        "001xIfAi00Bffp1Ph7yi0Y9mAi0xIfAF","2","3")
                 .exchange()
                 .expectStatus()
                 .isOk()

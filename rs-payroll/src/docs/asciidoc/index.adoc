@@ -23,6 +23,8 @@ include::wechat.adoc[]
 
 include::tfinance.adoc[]
 
+include::custmanager.adoc[]
+
 include::roll.adoc[]
 
 include::inside.adoc[]

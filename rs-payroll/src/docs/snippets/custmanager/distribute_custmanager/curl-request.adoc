@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/manager/distribute' -i -X POST \
+    -H 'jsession_id: 9f8eb692656d4319a9a1aaa437f3c234' \
+    -H 'Content-Type: application/json' \
+    -d '{"groupId":"ff8080816899924301689e0297240001"}'
+----
