@@ -126,5 +126,23 @@ include::{snippets}/inside/inside_updPhone/curl-request.adoc[]
 +
 include::{snippets}/inside/inside_updPhone/http-response.adoc[]
 
+=== 修改银行卡
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_updBankCard/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_updBankCard/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_updBankCard/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_updBankCard/http-response.adoc[]
+
 
 

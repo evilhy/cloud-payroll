@@ -305,8 +305,8 @@ public class InsideRS {
     @PostMapping("/updBankCard")
     @TrackLog
     public Mono<String> updBankCard(@RequestBody UpdBankCardDTO updBankCardDTO) throws Exception {
+        UserPrincipal userPrincipal=WebContext.getCurrentUser();
         return Mono.fromCallable(()->{
-            UserPrincipal userPrincipal=WebContext.getCurrentUser();
             String regex = "[0-9]{1,}";
             if(!updBankCardDTO.getCardNo().matches(regex)){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());

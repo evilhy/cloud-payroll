@@ -2,6 +2,8 @@ package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.dto.request.*;
+import chain.fxgj.server.payroll.dto.response.BankCardGroup;
+import chain.fxgj.server.payroll.dto.response.PlanListBean;
 import chain.fxgj.server.payroll.dto.response.Res100302;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -18,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.util.Arrays;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
@@ -178,7 +182,13 @@ public class InsideRSTest extends BaseRSTest {
     @Test
     public void updBankCard() {
         login();
-        UpdBankCardDTO build = UpdBankCardDTO.builder().issuerBankId("")
+        BankCardGroup build1 = BankCardGroup.builder()
+                .groupId("ff808081690a2b1c016913374f4a0006")
+                .shortGroupName("安卓")
+                .id("ff808081692304f001692901d81600f8")
+                .build();
+        UpdBankCardDTO build = UpdBankCardDTO.builder()
+                .issuerBankId("03040000").cardNo("6230200165153434").issuerName("华夏银行").bankCardGroups(Arrays.asList(build1))
                 .build();
         webTestClient.post().uri("/inside/updBankCard")
                 .header("jsession_id", sessionId)
@@ -188,7 +198,8 @@ public class InsideRSTest extends BaseRSTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .consumeWith(document("inside_updBankCard",
-                        relaxedRequestFields(JavaDocReader.javaDoc(ReqPhone.class))));
+                        relaxedRequestFields(JavaDocReader.javaDoc(UpdBankCardDTO.class))
+                                .andWithPrefix("[]",JavaDocReader.javaDoc(BankCardGroup.class))));
     }
 
     @Test

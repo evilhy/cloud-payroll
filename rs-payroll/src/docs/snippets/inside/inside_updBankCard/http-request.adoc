@@ -1,0 +1,10 @@
+[source,http,options="nowrap"]
+----
+POST /inside/updBankCard HTTP/1.1
+jsession_id: 4786f269ccc54b7e8cbef46c4b605656
+Content-Length: 215
+Content-Type: application/json
+Host: localhost:8080
+
+{"cardNo":"6230200165153434","issuerBankId":"03040000","issuerName":"华夏银行","bankCardGroups":[{"id":"ff808081692304f001692901d81600f8","groupId":"ff808081690a2b1c016913374f4a0006","shortGroupName":"安卓"}]}
+----

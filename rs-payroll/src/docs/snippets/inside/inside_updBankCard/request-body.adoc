@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"cardNo":"6230200165153434","issuerBankId":"03040000","issuerName":"华夏银行","bankCardGroups":[{"id":"ff808081692304f001692901d81600f8","groupId":"ff808081690a2b1c016913374f4a0006","shortGroupName":"安卓"}]}
+----
