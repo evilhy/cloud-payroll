@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 
 
 @Slf4j
-//@Component
+@Component
 public class AuthorizationFilter implements WebFilter, Ordered {
 
     /**
