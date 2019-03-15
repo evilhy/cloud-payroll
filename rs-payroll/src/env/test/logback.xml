@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- dev -->
 <configuration scan="true" scanPeriod="60 seconds">
-    <property name="log_dir" value="/tmp/logs/cloud-payroll"/>
+    <property name="log_dir" value="/home/sit-tiger/logs/rs-payroll"/>
     <property name="maxHistory" value="60"/>
     <property name="pattern"
-              value="%d{HHmmss.SSS}-%-5level-[%thread].[%X{log_token}%X{msg_trans_code}]-%lo{5}: %msg %n"/>
+              value="%d{HHmmss.SSS}-%-5level-[%thread].[%X{log_token}]-%lo{5}: %msg %n"/>
     <property name="charset" value="utf8"/>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -40,7 +40,8 @@
             <appender name="TRANS_LOG_FILE"
                       class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-                    <fileNamePattern>${log_dir}/%d{yyyyMMdd}/${sys_channel_name}-%i.log</fileNamePattern>
+                    <fileNamePattern>${log_dir}/%d{yyyyMMdd}/${sys_channel_name}-%i.log
+                    </fileNamePattern>
                     <maxFileSize>20MB</maxFileSize>
                     <maxHistory>${maxHistory}</maxHistory>
                     <totalSizeCap>500MB</totalSizeCap>
@@ -55,7 +56,9 @@
     <logger name="chain" level="DEBUG"/>
     <logger name="chain.css.log.aspect.TrackLogAspect" level="INFO"/>
     <logger name="ch.qos.logback" level="WARN"/>
-    <logger name="org.glassfish.jersey.logging" level="DEBUG"/>
+    <logger name="org.springframework.data.mongodb.core" level="DEBUG"/>
+    <logger name="com.netflix.loadbalancer.LoadBalancerContext" level="DEBUG"/>
+
     <!--<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE"/>-->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
