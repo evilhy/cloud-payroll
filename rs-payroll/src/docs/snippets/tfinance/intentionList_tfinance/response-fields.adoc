@@ -17,4 +17,20 @@
 |`+List+`
 |列表
 
+|`+list.[].nowDate+`
+|`+Long+`
+|系统当前时间
+
+|`+list.[].intentNum+`
+|`+Integer+`
+|当前预约人数
+
+|`+list.[].size+`
+|`+Integer+`
+|条数
+
+|`+list.[].list+`
+|`+List+`
+|列表
+
 |===

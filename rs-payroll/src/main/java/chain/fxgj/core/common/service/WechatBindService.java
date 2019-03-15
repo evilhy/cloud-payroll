@@ -1,4 +1,4 @@
-package chain.fxgj.server.payroll.service;
+package chain.fxgj.core.common.service;
 
 import chain.fxgj.core.common.constant.DictEnums.EmployeeStatusEnum;
 import chain.fxgj.core.jpa.model.EmployeeCardLog;

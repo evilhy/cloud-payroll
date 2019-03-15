@@ -7,7 +7,7 @@ Content-Type: text/xml;charset=UTF-8
 <xml>
   <ToUserName><![CDATA[oikrq5giuCd4Rw4qG3fYY3sxn2sI]]></ToUserName>
   <FromUserName><![CDATA[gh_2daa360513df]]></FromUserName>
-  <CreateTime><![CDATA[1552387125682]]></CreateTime>
+  <CreateTime><![CDATA[1552573670390]]></CreateTime>
   <MsgType><![CDATA[text]]></MsgType>
   <Content><![CDATA[您好，欢迎来到放薪管家，请回复序号查看服务：
 [1]如何查看工资条内容？

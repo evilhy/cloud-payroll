@@ -1,7 +1,7 @@
 [source,http,options="nowrap"]
 ----
 POST /weixin/signature?signature=b1610e49e63a692c5543f9dc000058ec75b4aeb7&timestamp=1551701634&nonce=631307959&echostr=2142728365402838963&id=zo HTTP/1.1
-Content-Length: 272
+Content-Length: 297
 Content-Type: text/xml
 Accept: text/xml
 Host: localhost:8080
@@ -12,5 +12,6 @@ Host: localhost:8080
 <MsgType><![CDATA[text]]></MsgType>
 <Content><![CDATA[0]]></Content>
 <MsgId>22216132666205741</MsgId>
+<Event>subscribe</Event>
 </xml>
 ----

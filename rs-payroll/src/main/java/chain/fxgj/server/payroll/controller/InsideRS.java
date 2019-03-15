@@ -10,24 +10,22 @@ import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogCheckRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
-import chain.fxgj.core.common.service.EmpWechatService;
-import chain.fxgj.core.common.service.EmployeeEncrytorService;
-import chain.fxgj.core.common.service.InsideService;
-import chain.fxgj.core.common.service.PayRollAsyncService;
+import chain.fxgj.core.common.service.*;
 import chain.fxgj.core.jpa.model.CardbinInfo;
 import chain.fxgj.server.payroll.dto.base.ErrorDTO;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.response.Res100302;
-import chain.fxgj.server.payroll.service.WechatBindService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -38,7 +36,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @RestController
 @Validated
@@ -62,6 +59,7 @@ public class InsideRS {
 
     /**
      * 发送短信验证码
+     *
      * @param req100302
      * @return
      */
@@ -69,7 +67,7 @@ public class InsideRS {
     @TrackLog
     @PermitAll
     public Mono<Res100302> sendCode(@RequestBody Req100302 req100302) {
-        return Mono.fromCallable(()->{
+        return Mono.fromCallable(() -> {
             MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
             dto.setSystemId(0);
             dto.setCheckType(1);
@@ -92,13 +90,14 @@ public class InsideRS {
 
     /**
      * 员工回执
+     *
      * @param resReceiptDTO
      * @return
      */
     @TrackLog
     @PostMapping("/receipt")
     public Mono<Void> receipt(@RequestBody ResReceiptDTO resReceiptDTO) {
-        return Mono.fromCallable(()->{
+        return Mono.fromCallable(() -> {
             insideService.recepitConfirm(resReceiptDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
@@ -106,6 +105,7 @@ public class InsideRS {
 
     /**
      * 已读工资条
+     *
      * @param readWageDTO
      * @return
      */
@@ -113,7 +113,7 @@ public class InsideRS {
     @TrackLog
     public Mono<Void> readWage(@RequestBody ReadWageDTO readWageDTO) {
         String idNumber = WebContext.getCurrentUser().getIdNumberEncrytor();
-        return Mono.fromCallable(()->{
+        return Mono.fromCallable(() -> {
             readWageDTO.setIdNumber(idNumber);
             insideService.readWage(readWageDTO);
             return null;
@@ -122,6 +122,7 @@ public class InsideRS {
 
     /**
      * 微信号绑定身份证号
+     *
      * @param req100702
      * @return
      * @throws Exception
@@ -129,24 +130,25 @@ public class InsideRS {
     @PostMapping("/bindWX")
     @TrackLog
     public Mono<Void> bandWX(@RequestBody Req100702 req100702) throws Exception {
-        UserPrincipal userPrincipal= WebContext.getCurrentUser();
-        return Mono.fromCallable(()->{
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
             String sessionId = userPrincipal.getSessionId();
             String openId = userPrincipal.getOpenId();
             String idNumber = req100702.getIdNumber();
             //验证短信码
-            this.checkPhoneCode(req100702.getPhone(),req100702.getCode());
+            this.checkPhoneCode(req100702.getPhone(), req100702.getCode());
             //请求绑定
-            insideService.bandWechat(openId,idNumber,req100702.getPhone());
+            insideService.bandWechat(openId, idNumber, req100702.getPhone());
             //绑定成功后确认登录
             idNumber = employeeEncrytorService.decryptIdNumber(req100702.getIdNumber());
-            empWechatService.setWechatInfo(sessionId, openId,userPrincipal.getNickname(),userPrincipal.getHeadimgurl(), idNumber);
+            empWechatService.setWechatInfo(sessionId, openId, userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), idNumber);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
 
     /**
      * 微信号绑定身份证号,无手机号
+     *
      * @param req100701
      * @return
      * @throws Exception
@@ -154,22 +156,22 @@ public class InsideRS {
     @PostMapping("/rz")
     @TrackLog
     public Mono<Void> rz(@RequestBody Req100701 req100701) throws Exception {
-        UserPrincipal userPrincipal=WebContext.getCurrentUser();
-        return Mono.fromCallable(()->{
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
             String sessionId = userPrincipal.getSessionId();
             String openId = userPrincipal.getOpenId();
-            String idNumber=employeeEncrytorService.decryptIdNumber(req100701.getIdNumber());
-            log.info("请求参数:{}",req100701);
+            String idNumber = employeeEncrytorService.decryptIdNumber(req100701.getIdNumber());
+            log.info("请求参数:{}", req100701);
             //验证手机号是否存在
-            wechatBindService.checkPhone(idNumber,req100701.getPhone());
+            wechatBindService.checkPhone(idNumber, req100701.getPhone());
 
             //验证短信码
-            this.checkPhoneCode(req100701.getPhone(),req100701.getCode());
+            this.checkPhoneCode(req100701.getPhone(), req100701.getCode());
 
             //请求管家绑定
-            insideService.bandWechatAndPhone(openId,idNumber,req100701.getPhone(),req100701.getPwd());
+            insideService.bandWechatAndPhone(openId, idNumber, req100701.getPhone(), req100701.getPwd());
             //绑定成功后确认登录
-            empWechatService.setWechatInfo(sessionId, openId,userPrincipal.getNickname(),userPrincipal.getHeadimgurl(),idNumber);
+            empWechatService.setWechatInfo(sessionId, openId, userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), idNumber);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -177,6 +179,7 @@ public class InsideRS {
 
     /**
      * 设置密码
+     *
      * @param pwd
      * @return
      * @throws Exception
@@ -184,24 +187,24 @@ public class InsideRS {
     @PostMapping("/setPwd")
     @TrackLog
     public Mono<Void> setPwd(String pwd) throws Exception {
-        UserPrincipal userPrincipal=WebContext.getCurrentUser();
-        return Mono.fromCallable(()->{
-            log.info("userPrincipal:{}",userPrincipal);
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
+            log.info("userPrincipal:{}", userPrincipal);
             UserPrincipal wechatInfo = empWechatService.getWechatInfo(userPrincipal.getSessionId());
-            log.info("wechatInfo:{}",wechatInfo);
-            SetPwdDTO setPwdDTO=new SetPwdDTO();
+            log.info("wechatInfo:{}", wechatInfo);
+            SetPwdDTO setPwdDTO = new SetPwdDTO();
             setPwdDTO.setPwd(pwd);
             setPwdDTO.setWechatId(userPrincipal.getWechatId());
-            log.info("设置密码请求参数前:{}",setPwdDTO);
-            if(StringUtils.isBlank(userPrincipal.getWechatId())){
+            log.info("设置密码请求参数前:{}", setPwdDTO);
+            if (StringUtils.isBlank(userPrincipal.getWechatId())) {
                 String wechatId = empWechatService.getWechatId(wechatInfo.getOpenId());
                 setPwdDTO.setWechatId(wechatId);
-                log.info("设置密码请求参数后:{}",setPwdDTO);
+                log.info("设置密码请求参数后:{}", setPwdDTO);
             }
 
-            insideService.setPwd(setPwdDTO.getWechatId(),pwd);
+            insideService.setPwd(setPwdDTO.getWechatId(), pwd);
 
-            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(),userPrincipal.getNickname(),userPrincipal.getHeadimgurl(),userPrincipal.getIdNumber());
+            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(), userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), userPrincipal.getIdNumber());
 
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
@@ -209,6 +212,7 @@ public class InsideRS {
 
     /**
      * 修改查询密码
+     *
      * @param updPwdDTO
      * @return
      * @throws Exception
@@ -217,9 +221,9 @@ public class InsideRS {
     @TrackLog
     public Mono<Void> updPwd(@RequestBody UpdPwdDTO updPwdDTO) throws Exception {
         String queryPwd = WebContext.getCurrentUser().getQueryPwd();
-        return Mono.fromCallable(()->{
+        return Mono.fromCallable(() -> {
             //判断原密码是否正确
-            if(!queryPwd.equals(employeeEncrytorService.encryptPwd(updPwdDTO.getOldPwd()))){
+            if (!queryPwd.equals(employeeEncrytorService.encryptPwd(updPwdDTO.getOldPwd()))) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_005.getErrorMsg());
             }
             this.setPwd(updPwdDTO.getPwd());
@@ -229,6 +233,7 @@ public class InsideRS {
 
     /**
      * 验证手机验证码
+     *
      * @param reqPhone
      * @return
      * @throws Exception
@@ -236,14 +241,15 @@ public class InsideRS {
     @PostMapping("/checkPhoneCode")
     @TrackLog
     public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone) throws Exception {
-        return Mono.fromCallable(()->{
-            this.checkPhoneCode(reqPhone.getPhone(),reqPhone.getCode());
+        return Mono.fromCallable(() -> {
+            this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
 
     /**
      * 修改手机号
+     *
      * @param reqPhone
      * @return
      * @throws Exception
@@ -251,24 +257,23 @@ public class InsideRS {
     @PostMapping("/updPhone")
     @TrackLog
     public Mono<Void> updPhone(@RequestBody ReqPhone reqPhone) throws Exception {
-        UserPrincipal userPrincipal=WebContext.getCurrentUser();
-        return Mono.fromCallable(()->{
-            if(StringUtils.isNotBlank(reqPhone.getCode())) {
-
-//                this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
+            if (StringUtils.isNotBlank(reqPhone.getCode())) {
+                this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             }
             //验证手机号是否存在
-            wechatBindService.checkPhone(userPrincipal.getIdNumber(),reqPhone.getPhone());
+            wechatBindService.checkPhone(userPrincipal.getIdNumber(), reqPhone.getPhone());
 
-            insideService.updPhone(userPrincipal.getWechatId(),userPrincipal.getIdNumber(),reqPhone.getPhone());
-            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(),userPrincipal.getNickname(),userPrincipal.getHeadimgurl(),userPrincipal.getIdNumber());
+            insideService.updPhone(userPrincipal.getWechatId(), userPrincipal.getIdNumber(), reqPhone.getPhone());
+            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(), userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), userPrincipal.getIdNumber());
 
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
 
     //验证短信验证码
-    private void checkPhoneCode(String phone,String code){
+    private void checkPhoneCode(String phone, String code) {
         //验证短信码
         MsgCodeLogCheckRequestDTO dto = new MsgCodeLogCheckRequestDTO();
         dto.setSystemId(0);
@@ -298,6 +303,7 @@ public class InsideRS {
 
     /**
      * 修改银行卡
+     *
      * @param updBankCardDTO
      * @return
      * @throws Exception
@@ -305,14 +311,14 @@ public class InsideRS {
     @PostMapping("/updBankCard")
     @TrackLog
     public Mono<String> updBankCard(@RequestBody UpdBankCardDTO updBankCardDTO) throws Exception {
-        UserPrincipal userPrincipal=WebContext.getCurrentUser();
-        return Mono.fromCallable(()->{
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
             String regex = "[0-9]{1,}";
-            if(!updBankCardDTO.getCardNo().matches(regex)){
+            if (!updBankCardDTO.getCardNo().matches(regex)) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());
             }
             //验证银行卡
-            CardbinInfo cardbinInfo=empWechatService.checkCard(userPrincipal.getIdNumber(), updBankCardDTO);
+            CardbinInfo cardbinInfo = empWechatService.checkCard(userPrincipal.getIdNumber(), updBankCardDTO);
 
             updBankCardDTO.setIssuerBankId(cardbinInfo.getIssuerCode());
             updBankCardDTO.setIssuerName(cardbinInfo.getIssuerName());

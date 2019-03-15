@@ -1,4 +1,4 @@
-package chain.fxgj.server.payroll.service.impl;
+package chain.fxgj.core.common.service.impl;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.core.common.constant.DictEnums.*;
@@ -6,15 +6,13 @@ import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.constant.PermissionConstant;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
-import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
-import chain.fxgj.server.payroll.service.WechatBindService;
-import chain.fxgj.server.payroll.web.WebContext;
+import chain.fxgj.core.common.service.WechatBindService;
 import chain.utils.commons.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -583,10 +580,7 @@ public class WechatBindServiceImpl implements WechatBindService {
 
                 userInfos.add(user);
             }
-
         }
-
-
         return userInfos;
     }
 

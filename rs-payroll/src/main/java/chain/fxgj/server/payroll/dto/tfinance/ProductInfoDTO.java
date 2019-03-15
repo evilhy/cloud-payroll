@@ -90,10 +90,6 @@ public class ProductInfoDTO {
      */
     private Integer minIntentAmt;
     /**
-     * 档位
-     */
-    private List<ProductMarkDTO> markList;
-    /**
      * 当前档位
      */
     @Builder.Default
@@ -125,6 +121,11 @@ public class ProductInfoDTO {
     private String show = "0";
 
     private LocalDateTime subscribeEndDate1;
+
+    /**
+     * 档位
+     */
+    private List<ProductMarkDTO> markList;
 
     public ProductInfoDTO(BankProductInfo bankProductInfo, String imgUrl) {
         this.productId = bankProductInfo.getId();

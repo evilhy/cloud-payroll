@@ -9,5 +9,6 @@ $ curl 'http://localhost:8080/weixin/signature?signature=b1610e49e63a692c5543f9d
 <MsgType><![CDATA[text]]></MsgType>
 <Content><![CDATA[0]]></Content>
 <MsgId>22216132666205741</MsgId>
+<Event>subscribe</Event>
 </xml>'
 ----

@@ -133,7 +133,8 @@ public class TFinanceRSTest{
                                 parameterWithName("entId").description("企业Id"),
                                 parameterWithName("channel").description("渠道(0公众号菜单 1banner 2分享)"),
                                 parameterWithName("fxId").description("分享人id")),
-                        relaxedResponseFields(JavaDocReader.javaDoc(ProductInfoDTO.class))));//出参对象描述
+                        relaxedResponseFields(JavaDocReader.javaDoc(ProductInfoDTO.class))
+                                .andWithPrefix("markList.[].",JavaDocReader.javaDoc(ProductInfoDTO.ProductMarkDTO.class))));//出参对象描述
 
     }
 
@@ -156,7 +157,8 @@ public class TFinanceRSTest{
                 .consumeWith(document("intentionList_tfinance",
                         relaxedRequestParameters(
                                 parameterWithName("productId").description("产品Id")),
-                        relaxedResponseFields(JavaDocReader.javaDoc(IntentListDTO.class))));//出参对象描述
+                        relaxedResponseFields(JavaDocReader.javaDoc(IntentListDTO.class))
+                                .andWithPrefix("list.[].",JavaDocReader.javaDoc(IntentListDTO.IntentRealDTO.class))));//出参对象描述
 
     }
 
@@ -205,7 +207,8 @@ public class TFinanceRSTest{
                 .consumeWith(document("intentInfo_tfinance",
                         relaxedRequestParameters(
                                 parameterWithName("productId").description("产品Id")),
-                        relaxedResponseFields(JavaDocReader.javaDoc(IntentInfoDTO.class))));//出参对象描述
+                        relaxedResponseFields(JavaDocReader.javaDoc(IntentInfoDTO.class))
+                                .andWithPrefix("list.[].",JavaDocReader.javaDoc(IntentInfoDTO.WechatUser.class))));//出参对象描述
     }
 
     /**

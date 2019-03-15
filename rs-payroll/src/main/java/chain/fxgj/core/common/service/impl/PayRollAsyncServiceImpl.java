@@ -4,7 +4,6 @@ import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.config.properties.WechatProperties;
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.EnterpriseStatusEnum;
-import chain.fxgj.core.common.constant.DictEnums.SystemIdEnum;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.jpa.dao.EmployeeInfoDao;
@@ -16,10 +15,7 @@ import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.ReadWageDTO;
 import chain.fxgj.server.payroll.dto.request.WechatLoginDTO;
 import chain.fxgj.server.payroll.dto.response.EntInfoRes;
-import chain.fxgj.server.payroll.service.WechatBindService;
-import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import chain.fxgj.core.common.service.WechatBindService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -96,8 +92,10 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
 
     @Override
     public Future<Response> eventHandle(EventDTO eventDTO) {
-
-        WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.findFirstByOpenId(eventDTO.getOpenId());
+        String openId = eventDTO.getOpenId();
+        QWechatFollowInfo qWechatFollowInfo = QWechatFollowInfo.wechatFollowInfo;
+        WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.selectFrom(qWechatFollowInfo).where(qWechatFollowInfo.openId.eq(openId)).fetchFirst();
+//        WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.findFirstByOpenId(eventDTO.getOpenId());
         if (wechatFollowInfo == null) {
             wechatFollowInfo = new WechatFollowInfo();
             wechatFollowInfo.setCrtDateTime(LocalDateTime.now());

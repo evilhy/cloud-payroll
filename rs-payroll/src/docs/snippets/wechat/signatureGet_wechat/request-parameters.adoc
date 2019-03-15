@@ -1,9 +1,6 @@
 |===
 |Parameter|Description
 
-|`+id+`
-|微信公众号分组id
-
 |`+signature+`
 |微信加密签名
 

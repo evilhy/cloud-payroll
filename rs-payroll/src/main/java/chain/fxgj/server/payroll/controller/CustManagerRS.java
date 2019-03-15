@@ -33,13 +33,14 @@ public class CustManagerRS {
 
     /**
      * 查询客户经理信息
+     *
      * @return
      */
     @GetMapping("/managerInfo")
     @TrackLog
     public Mono<ManagerInfoDTO> sendCode() {
         UserPrincipal currentUser = WebContext.getCurrentUser();
-        return Mono.fromCallable(()->{
+        return Mono.fromCallable(() -> {
             String idNumber = currentUser.getIdNumber();
             logger.debug("==>身份证号:{}", idNumber);
             ManagerInfoDTO managerInfoDTO = managerService.managerInfoByIdNumber(idNumber);
@@ -55,7 +56,7 @@ public class CustManagerRS {
     @TrackLog
     public Mono<Void> distribute(@RequestBody DistributeDTO distributeDTO) {
 
-        return Mono.fromCallable(()->{
+        return Mono.fromCallable(() -> {
             managerService.noticEnterprise(distributeDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();

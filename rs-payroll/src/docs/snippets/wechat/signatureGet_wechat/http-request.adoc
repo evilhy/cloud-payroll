@@ -1,6 +1,6 @@
 [source,http,options="nowrap"]
 ----
-GET /weixin/signature?signature=b1610e49e63a692c5543f9dc000058ec75b4aeb7&timestamp=1551701634&nonce=631307959&echostr=2142728365402838963&id=zo HTTP/1.1
+GET /weixin/signature?signature=b1610e49e63a692c5543f9dc000058ec75b4aeb7&timestamp=1551701634&nonce=631307959&echostr=2142728365402838963 HTTP/1.1
 Host: localhost:8080
 
 ----

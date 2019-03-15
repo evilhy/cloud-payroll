@@ -1,4 +1,4 @@
 [source,bash]
 ----
-$ curl 'http://localhost:8080/weixin/signature?signature=b1610e49e63a692c5543f9dc000058ec75b4aeb7&timestamp=1551701634&nonce=631307959&echostr=2142728365402838963&id=zo' -i -X GET
+$ curl 'http://localhost:8080/weixin/signature?signature=b1610e49e63a692c5543f9dc000058ec75b4aeb7&timestamp=1551701634&nonce=631307959&echostr=2142728365402838963' -i -X GET
 ----

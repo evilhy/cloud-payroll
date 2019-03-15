@@ -84,16 +84,15 @@ public class WechatRsTest {
     @Test
     public void signatureGet() throws Exception {
         webTestClient.get()
-                .uri("/weixin/signature?signature={signature}&timestamp={timestamp}&nonce={nonce}&echostr={echostr}&id={id}",
-                        "b1610e49e63a692c5543f9dc000058ec75b4aeb7", "1551701634", "631307959", "2142728365402838963","zo")
+                .uri("/weixin/signature?signature={signature}&timestamp={timestamp}&nonce={nonce}&echostr={echostr}",
+                        "b1610e49e63a692c5543f9dc000058ec75b4aeb7", "1551701634", "631307959", "2142728365402838963")
                 .exchange()
                 .expectStatus()
                 .isOk()
                 .expectBody(String.class)//返回是什么类型的对象
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("signatureGet_wechat",
-                        relaxedRequestParameters(parameterWithName("id").description("微信公众号分组id")
-                                ,parameterWithName("signature").description("微信加密签名")
+                        relaxedRequestParameters(parameterWithName("signature").description("微信加密签名")
                                 ,parameterWithName("timestamp").description("时间戳")
                                 ,parameterWithName("nonce").description("随机数")
                                 ,parameterWithName("echostr").description("随机字符串")),

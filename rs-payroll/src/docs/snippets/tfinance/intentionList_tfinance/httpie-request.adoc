@@ -1,5 +1,5 @@
 [source,bash]
 ----
 $ http GET 'http://localhost:8080/tfinance/intentionList?productId=ff808081671710a301671bc90aaf0005' \
-    'jsession_id:d1a1f12ee095476f95d078458d625bb0'
+    'jsession_id:d33059310103427c8cf5333c309efd04'
 ----

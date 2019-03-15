@@ -1,23 +1,5 @@
 :snippets: ../snippets/wechat
 == 微信
-=== 获取微信扩展属性: GET
-==== 接口定义
-
-* Query Parameters:
-+
-include::{snippets}/wechat/getJsapiSignature_wechat/request-parameters.adoc[]
-* Response Body:
-+
-include::{snippets}/wechat/getJsapiSignature_wechat/response-fields.adoc[]
-
-==== 示例
-* Request:
-+
-include::{snippets}/wechat/getJsapiSignature_wechat/curl-request.adoc[]
-* Response:
-+
-include::{snippets}/wechat/getJsapiSignature_wechat/http-response.adoc[]
-
 
 === 验证消息的确来自微信服务器 GET
 ==== 接口定义
@@ -42,6 +24,24 @@ include::{snippets}/wechat/signatureGet_wechat/http-response.adoc[]
 
 * Query Parameters:
 +
+include::{snippets}/wechat/signaturePost_wechat/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wechat/signaturePost_wechat/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wechat/signaturePost_wechat/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wechat/signaturePost_wechat/http-response.adoc[]
+
+=== JS分享产生分享签名: GET
+==== 接口定义
+
+* Query Parameters:
++
 include::{snippets}/wechat/getJsapiSignature_wechat/request-parameters.adoc[]
 * Response Body:
 +
@@ -54,3 +54,4 @@ include::{snippets}/wechat/getJsapiSignature_wechat/curl-request.adoc[]
 * Response:
 +
 include::{snippets}/wechat/getJsapiSignature_wechat/http-response.adoc[]
+
