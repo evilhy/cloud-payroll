@@ -1,13 +1,13 @@
 server:
-  port: 8080
+  port: 7148
 ## dev
 spring:
   data:
     mongodb:
-      uri: mongodb://fxgjlogs:123456@10.5.0.182:27017/fxgjlogs
+      uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
   redis:
-    database: 2
-    host: 10.5.0.182
+    database: 1
+    host: 127.0.0.1
     port: 6380
     password:
     timeout: 1s
