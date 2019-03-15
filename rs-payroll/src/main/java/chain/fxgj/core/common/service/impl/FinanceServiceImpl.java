@@ -315,4 +315,18 @@ public class FinanceServiceImpl implements FinanceService {
         bankProductOperateDao.save(bankProductOperate);
 
     }
+
+    @Override
+    public void addBrowse(BrowseRequestDTO browseRequestDTO) {
+        BankProductOperate bankProductOperate = new BankProductOperate();
+        bankProductOperate.setOpenId(browseRequestDTO.getOpenId());
+        bankProductOperate.setProductId(browseRequestDTO.getProductId());
+        bankProductOperate.setEntId(browseRequestDTO.getEntId());
+        bankProductOperate.setOperateType(ProductOperateEnum.BROWSE);
+        bankProductOperate.setCrtDateTime(LocalDateTime.now());
+        bankProductOperate.setChannel(browseRequestDTO.getChannel());
+        bankProductOperate.setFxId(browseRequestDTO.getFxId());
+
+        bankProductOperateDao.save(bankProductOperate);
+    }
 }

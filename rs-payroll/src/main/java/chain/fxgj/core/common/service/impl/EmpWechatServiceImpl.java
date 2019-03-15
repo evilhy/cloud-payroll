@@ -7,6 +7,7 @@ import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
+import chain.fxgj.core.common.service.InsideService;
 import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
@@ -43,7 +44,8 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     CardbinInfoDao cardbinInfoDao;
     @Autowired
     EmployeeCardInfoDao employeeCardInfoDao;
-
+    @Autowired
+    InsideService insideService;
     @Autowired
     Client wechatClient;
     @Autowired
@@ -87,7 +89,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
             wechatLoginDTO.setJsessionId(jsessionId);
             wechatLoginDTO.setNickname(nickname);
             wechatLoginDTO.setHeadimgurl(headimgurl);
-            payRollAsyncService.updBindingInfo(wechatLoginDTO);
+            insideService.login(openId,jsessionId,nickname,headimgurl);
         }
         //用户机构
         List<EntInfoDTO> entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();

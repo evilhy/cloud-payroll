@@ -10,11 +10,11 @@ import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.FinanceService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.model.EmployeeInfo;
-import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.PageResponseDTO;
 import chain.fxgj.server.payroll.dto.tfinance.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.outside.common.dto.wechat.EventDTO;
 import chain.outside.common.dto.wechat.WeixinAuthorizeUrlDTO;
 import chain.wechat.client.feign.IwechatFeignService;
 import lombok.extern.slf4j.Slf4j;
@@ -159,12 +159,7 @@ public class TFinanceRS {
                         browseRequestDTO.setChannel(channel);
                         browseRequestDTO.setFxId(fxId);
                         Client client = ClientBuilder.newClient();
-                        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "finance/browse");
-                        log.info("管家url:{}", webTarget.getUri());
-                        Response response = webTarget.request()
-                                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                                .post(Entity.entity(browseRequestDTO, MediaType.APPLICATION_JSON_TYPE));
-                        log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
+                        financeService.addBrowse(browseRequestDTO);
                     } catch (Exception e) {
                     }
                 }
@@ -182,13 +177,8 @@ public class TFinanceRS {
                             eventDTO.setOpenId(userPrincipal.getOpenId());
                             eventDTO.setEvent("subscribe");
                             //请求关注/取关
+                            iwechatFeignService.addWechatFollow(eventDTO);
                             Client client = ClientBuilder.newClient();
-                            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "weixin/subscribe");
-                            log.info("管家url:{}", webTarget.getUri());
-                            Response response = webTarget.request()
-                                    .header(FxgjDBConstant.LOGTOKEN, org.apache.commons.lang3.StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                                    .post(Entity.entity(eventDTO, MediaType.APPLICATION_JSON_TYPE));
-                            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
                         } catch (Exception e) {
                         }
                     }
@@ -376,14 +366,6 @@ public class TFinanceRS {
 
             financeService.addIntent(intentRequestDTO);
             log.info("预约完成！");
-//            Client client = ClientBuilder.newClient();
-//            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "finance/intent");
-//            log.info("管家url:{}", webTarget.getUri());
-//            Response response = webTarget.request()
-//                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-//                    .post(Entity.entity(intentRequestDTO, MediaType.APPLICATION_JSON_TYPE));
-//            log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
-
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
 

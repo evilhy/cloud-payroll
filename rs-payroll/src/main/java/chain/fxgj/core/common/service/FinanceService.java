@@ -92,4 +92,12 @@ public interface FinanceService {
      * @param intentRequestDTO
      */
     void addIntent(IntentRequestDTO intentRequestDTO);
+
+    /**
+     * 添加浏览记录
+     *
+     * @param browseRequestDTO
+     */
+    void addBrowse(BrowseRequestDTO browseRequestDTO);
+
 }

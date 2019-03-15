@@ -75,7 +75,7 @@ public class InsideRS {
             dto.setMsgMedium(req100302.getPhone());
 
             Client client = ClientBuilder.newClient();
-            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCode");
+            WebTarget webTarget = client.target("payrollProperties.getInsideUrl()" + "msgCode/smsCode");
             Response response = webTarget.request()
                     .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
                     .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
@@ -282,7 +282,7 @@ public class InsideRS {
         dto.setCode(code);
         dto.setMsgMedium(phone);
         Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCodeCheck");
+        WebTarget webTarget = client.target("payrollProperties.getInsideUrl()" + "msgCode/smsCodeCheck");
         log.info("管家url:{}", webTarget.getUri());
         Response response = webTarget.request()
                 .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
