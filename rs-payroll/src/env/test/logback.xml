@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- dev -->
 <configuration scan="true" scanPeriod="60 seconds">
-    <property name="log_dir" value="/home/sit-tiger/logs/rs-payroll"/>
+    <property name="log_dir" value="/home/sit_tiger/logs/rs-payroll"/>
     <property name="maxHistory" value="60"/>
     <property name="pattern"
               value="%d{HHmmss.SSS}-%-5level-[%thread].[%X{log_token}]-%lo{5}: %msg %n"/>
