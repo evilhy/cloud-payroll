@@ -99,11 +99,10 @@ public class WechatRS {
     public Mono<String> signaturegPost(@RequestParam("signature") String signature,
                                        @RequestParam("timestamp") String timestamp,
                                        @RequestParam("nonce") String nonce,
-                                       @RequestParam("id") String id,
                                        @RequestBody String xml) {
 
         return Mono.fromCallable(() -> {
-
+            String id = payrollProperties.getId();
             String uuid32 = UUIDUtil.createUUID32();
             //验签
             String echostrRet = iwechatFeignService.signature(id, signature, timestamp, nonce, uuid32);
