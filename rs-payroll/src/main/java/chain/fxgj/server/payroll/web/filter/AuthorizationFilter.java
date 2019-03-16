@@ -34,7 +34,10 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/roll/sdt",
             "/roll/entEmp",
             "/inside/sendCode",
-            "/actuator"
+            "/actuator",
+            "/weixin/signature",
+            "/weixin/wxCallback",
+            "/weixin/getJsapiSignature"
     };
 
     @Autowired
