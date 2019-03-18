@@ -176,6 +176,7 @@ public class WechatRS {
 
             String jsessionId = UUIDUtil.createUUID32();
             Res100705 res100705 = new Res100705();
+            log.info("set之前打印jsessionId:[{}]",jsessionId);
             res100705.setJsessionId(jsessionId);
             res100705.setBindStatus("0");
 
@@ -222,6 +223,7 @@ public class WechatRS {
                 log.info("微信：{},{},{},{},{}", res100705.getJsessionId(), userPrincipal.getPhone(), res100705.getBindStatus(), userPrincipal.getIdNumber(), res100705.getIfPwd());
             }
             //todo 重定向地址
+            log.info("res100705返回的所有值:[{}]",res100705.toString());
             return res100705;
         }).subscribeOn(Schedulers.elastic());
     }
