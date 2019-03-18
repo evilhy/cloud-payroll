@@ -53,6 +53,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
         String jsessionId = exchange.getRequest().getHeaders().getFirst(PayrollConstants.JSESSIONID);
+        log.info("--------------->jsessionId:[{}]",jsessionId);
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
 
         HttpMethod method = serverHttpRequest.getMethod();
