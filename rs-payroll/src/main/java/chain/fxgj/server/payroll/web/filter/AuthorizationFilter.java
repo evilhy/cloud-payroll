@@ -57,6 +57,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
 
         HttpMethod method = serverHttpRequest.getMethod();
         String requestUrl = serverHttpRequest.getURI().getPath();
+        log.info("filter.requestUrl:[{}]",requestUrl);
         for (String url : excludeUrls) {
             if (StringUtils.indexOf(requestUrl, url) > -1) {
                 return chain.filter(exchange);
