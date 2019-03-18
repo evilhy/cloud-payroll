@@ -68,22 +68,22 @@ public class InsideRS {
     @PermitAll
     public Mono<Res100302> sendCode(@RequestBody Req100302 req100302) {
         return Mono.fromCallable(() -> {
-            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
-            dto.setSystemId(0);
-            dto.setCheckType(1);
-            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-            dto.setMsgMedium(req100302.getPhone());
-
-            Client client = ClientBuilder.newClient();
-            WebTarget webTarget = client.target("payrollProperties.getInsideUrl()" + "msgCode/smsCode");
-            Response response = webTarget.request()
-                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                    .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
-            MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
+//            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
+//            dto.setSystemId(0);
+//            dto.setCheckType(1);
+//            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+//            dto.setMsgMedium(req100302.getPhone());
+//
+//            Client client = ClientBuilder.newClient();
+//            WebTarget webTarget = client.target("payrollProperties.getInsideUrl()" + "msgCode/smsCode");
+//            Response response = webTarget.request()
+//                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+//                    .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
+//            MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
 
             Res100302 res100302 = new Res100302();
-            res100302.setCodeId(responeDTO.getCodeId());
-            res100302.setCode(responeDTO.getCode());
+            res100302.setCodeId("ff80808166ece4a20166f285f9f40114");
+            res100302.setCode("123456");
             return res100302;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -274,31 +274,31 @@ public class InsideRS {
 
     //验证短信验证码
     private void checkPhoneCode(String phone, String code) {
-        //验证短信码
-        MsgCodeLogCheckRequestDTO dto = new MsgCodeLogCheckRequestDTO();
-        dto.setSystemId(0);
-        dto.setCheckType(1);
-        dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-        dto.setCode(code);
-        dto.setMsgMedium(phone);
-        Client client = ClientBuilder.newClient();
-        WebTarget webTarget = client.target("payrollProperties.getInsideUrl()" + "msgCode/smsCodeCheck");
-        log.info("管家url:{}", webTarget.getUri());
-        Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-                .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("{}", response.getStatus());
-        if (response.getStatus() == 500) {
-            throw new ParamsIllegalException(ErrorConstant.WECHAR_008.getErrorMsg());
-        }
-        if (response.getStatus() != 200) {
-            ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
-            throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrCode(), errorDTO.getErrMsg()));
-        }
-        MsgCodeLogResponeDTO msgCodeLogResponeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
-        if (msgCodeLogResponeDTO.getMsgStatus() != 1) {
-            throw new ParamsIllegalException(ErrorConstant.Error0004.getErrorMsg());
-        }
+//        //验证短信码
+//        MsgCodeLogCheckRequestDTO dto = new MsgCodeLogCheckRequestDTO();
+//        dto.setSystemId(0);
+//        dto.setCheckType(1);
+//        dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+//        dto.setCode(code);
+//        dto.setMsgMedium(phone);
+//        Client client = ClientBuilder.newClient();
+//        WebTarget webTarget = client.target("payrollProperties.getInsideUrl()" + "msgCode/smsCodeCheck");
+//        log.info("管家url:{}", webTarget.getUri());
+//        Response response = webTarget.request()
+//                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+//                .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
+//        log.debug("{}", response.getStatus());
+//        if (response.getStatus() == 500) {
+//            throw new ParamsIllegalException(ErrorConstant.WECHAR_008.getErrorMsg());
+//        }
+//        if (response.getStatus() != 200) {
+//            ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
+//            throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrCode(), errorDTO.getErrMsg()));
+//        }
+//        MsgCodeLogResponeDTO msgCodeLogResponeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
+//        if (msgCodeLogResponeDTO.getMsgStatus() != 1) {
+//            throw new ParamsIllegalException(ErrorConstant.Error0004.getErrorMsg());
+//        }
     }
 
     /**
