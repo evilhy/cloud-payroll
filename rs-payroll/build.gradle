@@ -97,7 +97,7 @@ dependencies {
     compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.8'
     compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
     //引入微信包
-    compile('cloud.outside:wechat-client:1.0.7')
+    compile('cloud.outside:wechat-client:1.0.8')
 }
 
 test {
