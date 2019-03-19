@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 /**
  * 跨域允许
  */
+@Slf4j
 @Configuration
 public class CorsConfig {
     private static final String MAX_AGE = "18000L";
@@ -39,7 +41,10 @@ public class CorsConfig {
                 headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
                 headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
                 headers.add(HttpHeaders.ACCESS_CONTROL_MAX_AGE, MAX_AGE);
+                log.info("request.getMethod():[{}]",request.getMethod());
+                log.info("HttpMethod.OPTIONS:[{}]",HttpMethod.OPTIONS);
                 if (request.getMethod() == HttpMethod.OPTIONS) {
+                    log.info("[true]");
                     response.setStatusCode(HttpStatus.OK);
                     return Mono.empty();
                 }
