@@ -14,6 +14,8 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * 跨域允许
  */
@@ -26,6 +28,10 @@ public class CorsConfig {
     public WebFilter corsFilter() {
         return (ServerWebExchange ctx, WebFilterChain chain) -> {
             ServerHttpRequest request = ctx.getRequest();
+            List<String> strings = request.getHeaders().get(HttpHeaders.ORIGIN);
+            log.info("request.getMethod():[{}]",request.getMethod());
+            log.info(" request.getHeaders().get(HttpHeaders.ORIGIN):[{}]", strings);
+
             if (CorsUtils.isCorsRequest(request)) {
                 HttpHeaders requestHeaders = request.getHeaders();
                 ServerHttpResponse response = ctx.getResponse();
@@ -41,8 +47,7 @@ public class CorsConfig {
                 headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
                 headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
                 headers.add(HttpHeaders.ACCESS_CONTROL_MAX_AGE, MAX_AGE);
-                log.info("request.getMethod():[{}]",request.getMethod());
-                log.info("HttpMethod.OPTIONS:[{}]",HttpMethod.OPTIONS);
+
                 if (request.getMethod() == HttpMethod.OPTIONS) {
                     log.info("[true]");
                     response.setStatusCode(HttpStatus.OK);
