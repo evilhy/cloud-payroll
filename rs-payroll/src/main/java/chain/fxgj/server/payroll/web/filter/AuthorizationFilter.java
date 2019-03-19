@@ -4,7 +4,6 @@ import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
-import chain.fxgj.server.payroll.constant.PermitAllUrlProperties;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 
 
@@ -39,11 +37,12 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/weixin/wxCallback",
             "/weixin/getJsapiSignature",
             "/tfinance/intentionList",
+            "/inside/bindWX",
+            "/inside/rz/",
+            "/roll/checkCar",
             "/tfinance/codeUrl"
     };
 
-    @Autowired
-    private PermitAllUrlProperties permitAllUrlProperties;
     @Autowired
     private EmpWechatService empWechatService;
 
@@ -68,10 +67,6 @@ public class AuthorizationFilter implements WebFilter, Ordered {
                 return chain.filter(exchange);
             }
         }
-
-        //验证访问 报文头header 是否有  jsessionId
-        this.predicate(exchange);
-
         UserPrincipal principal = empWechatService.getWechatInfo(jsessionId);
         if (principal == null) {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
@@ -86,23 +81,19 @@ public class AuthorizationFilter implements WebFilter, Ordered {
     }
 
 
-    public void predicate(ServerWebExchange serverWebExchange) {
-        log.info("验证访问路径 是否 核验 jsessionId");
-
-        URI uri = serverWebExchange.getRequest().getURI();
-        String requestUri = uri.getPath();
-        log.info("访问路径  URI={}, PATH={}", uri, requestUri);
-        String jsessionId = serverWebExchange.getRequest().getHeaders().getFirst(PayrollConstants.JSESSIONID);
-        log.info("jsessionId = {} ", jsessionId);
-        if (isPermitUrl(requestUri) && StringUtils.isEmpty(StringUtils.trimToEmpty(jsessionId))) {
-            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
-        }
-    }
-
-
-    private boolean isPermitUrl(String url) {
-        return permitAllUrlProperties.isPermitAllUrl(url);
-    }
+//    public Mono<Void> predicate(ServerWebExchange serverWebExchange,WebFilterChain chain) {
+//        log.info("验证访问路径 是否 核验 jsessionId");
+//
+//        URI uri = serverWebExchange.getRequest().getURI();
+//        String requestUri = uri.getPath();
+//        log.info("访问路径  URI={}, PATH={}", uri, requestUri);
+//        String jsessionId = serverWebExchange.getRequest().getHeaders().getFirst(PayrollConstants.JSESSIONID);
+//        log.info("jsessionId = {} ", jsessionId);
+//        if (isPermitUrl(requestUri)) {
+//            return chain.filter(serverWebExchange);
+//        }
+//
+//    }
 
 
     @Override
