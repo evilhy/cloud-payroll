@@ -48,6 +48,7 @@ import java.util.List;
 /**
  * 同事理财团
  */
+@CrossOrigin
 @RestController
 @Validated
 @RequestMapping("/tfinance")
