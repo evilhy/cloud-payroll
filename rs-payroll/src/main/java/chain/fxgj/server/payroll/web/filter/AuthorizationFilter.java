@@ -37,7 +37,6 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/weixin/wxCallback",
             "/weixin/getJsapiSignature",
             "/tfinance/intentionList",
-            "/inside/bindWX",
             "/inside/rz/",
             "/roll/checkCar",
             "/tfinance/codeUrl"
