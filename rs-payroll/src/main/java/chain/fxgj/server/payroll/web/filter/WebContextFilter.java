@@ -18,12 +18,12 @@ import reactor.core.publisher.Mono;
  * create by chain on 2019-01-26 11:10
  **/
 @Slf4j
-//@Component
+@Component
 public class WebContextFilter implements WebFilter, Ordered {
 
-    private static final String START_TIME = "start_time";
+    private static final String START_TIME = "start-time";
 
-    private static final String REQ = "req_id";
+    private static final String REQ = "req-id";
 
 
     public WebContextFilter() {

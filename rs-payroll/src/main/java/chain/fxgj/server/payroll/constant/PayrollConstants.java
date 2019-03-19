@@ -15,7 +15,7 @@ public class PayrollConstants {
     public final static String LOGIN_ORG_ID = "login-org-id";    //登录用户所属机构
     public final static String PAGE_NUM = "page-num";    //分页页码起始为1
     public final static String LIMIT = "limit";    //每页显示条数，默认为20
-    public final static String SORT_FIELD = "sort_field";    //排序字段名
+    public final static String SORT_FIELD = "sort-field";    //排序字段名
     public final static String DIRECTION = "direction";    //排序方向：DESC-倒序，ASC-正序。默认为ASC
-    public final static String PLAT_ID = "plat_id";    //平台id(EnumPlatform)
+    public final static String PLAT_ID = "plat-id";    //平台id(EnumPlatform)
 }
