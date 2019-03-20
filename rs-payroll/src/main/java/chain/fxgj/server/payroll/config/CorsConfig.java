@@ -30,8 +30,7 @@ public class CorsConfig {
             ServerHttpRequest request = ctx.getRequest();
             List<String> strings = request.getHeaders().get(HttpHeaders.ORIGIN);
             log.info("request.getMethod():[{}]",request.getMethod());
-            log.info(" request.getHeaders().get(HttpHeaders.ORIGIN):[{}]", strings);
-
+            log.info(" request.getHeaders().get('Origin'):[{}]", strings);
             if (CorsUtils.isCorsRequest(request)) {
                 HttpHeaders requestHeaders = request.getHeaders();
                 ServerHttpResponse response = ctx.getResponse();
@@ -49,7 +48,6 @@ public class CorsConfig {
                 headers.add(HttpHeaders.ACCESS_CONTROL_MAX_AGE, MAX_AGE);
 
                 if (request.getMethod() == HttpMethod.OPTIONS) {
-                    log.info("[true]");
                     response.setStatusCode(HttpStatus.OK);
                     return Mono.empty();
                 }

@@ -58,14 +58,14 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         log.info("--------------->jsessionId:[{}]",jsessionId);
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
 
-        HttpMethod method = serverHttpRequest.getMethod();
         String requestUrl = serverHttpRequest.getURI().getPath();
-        log.info("filter.requestUrl:[{}]",requestUrl);
         for (String url : excludeUrls) {
             if (StringUtils.indexOf(requestUrl, url) > -1) {
+                log.info("[{}]不需要验证jsessionId",requestUrl);
                 return chain.filter(exchange);
             }
         }
+        log.info("[{}]需要验证jsessionId",requestUrl);
         UserPrincipal principal = empWechatService.getWechatInfo(jsessionId);
         if (principal == null) {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());

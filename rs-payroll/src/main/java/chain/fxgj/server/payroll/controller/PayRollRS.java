@@ -119,7 +119,7 @@ public class PayRollRS {
      * @return
      */
     @GetMapping("/entEmp")
-    @PermitAll
+    @TrackLog
     public Mono<Res100701> entEmp(@RequestParam("idNumber") String idNumber) {
         return Mono.fromCallable(() -> {
             Res100701 res100701 = wechatBindService.getEntList(idNumber);
@@ -129,7 +129,6 @@ public class PayRollRS {
             if (res100701.getEmployeeList() == null || res100701.getEmployeeList().size() <= 0) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_001.getErrorMsg());
             }
-
             return res100701;
         }).subscribeOn(Schedulers.elastic());
     }
