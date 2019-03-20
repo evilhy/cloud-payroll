@@ -101,7 +101,7 @@ public class TFinanceRS {
     public Mono<ProductInfoDTO> productInfo(@RequestParam("productId") String productId,
                                             @RequestParam("entId") String entId,
                                             @RequestParam("channel") String channel,
-                                            @RequestParam("fxId") String fxId) {
+                                            @RequestParam(value = "fxId", required = false) String fxId) {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             //查询理财产品基本信息
