@@ -97,10 +97,8 @@ public class AuthorizationFilter implements WebFilter, Ordered {
 
     @Override
     public int getOrder() {
-//        return 0;
-        return 1;
+        return 0;
     }
-
 
 }
 

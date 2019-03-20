@@ -22,9 +22,8 @@ import java.util.List;
  * 跨域允许
  */
 @Slf4j
-//@Configuration
-@Component
-public class CorsConfig implements Ordered {
+@Configuration
+public class CorsConfig {
     private static final String MAX_AGE = "18000L";
 
     @Bean
@@ -58,10 +57,5 @@ public class CorsConfig implements Ordered {
             }
             return chain.filter(ctx);
         };
-    }
-
-    @Override
-    public int getOrder() {
-        return -1;
     }
 }
