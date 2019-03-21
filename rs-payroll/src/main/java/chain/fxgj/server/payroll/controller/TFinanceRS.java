@@ -16,6 +16,7 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.outside.common.dto.wechat.EventDTO;
 import chain.outside.common.dto.wechat.WeixinAuthorizeUrlDTO;
+import chain.utils.commons.JacksonUtil;
 import chain.wechat.client.feign.IwechatFeignService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -185,7 +186,7 @@ public class TFinanceRS {
                     }
                 }
             }
-
+            log.info("productInfoDTO:[{}]", JacksonUtil.objectToJson(productInfoDTO));
             return productInfoDTO;
         }).subscribeOn(Schedulers.elastic());
 
