@@ -184,7 +184,7 @@ public class InsideRS {
      */
     @PostMapping("/setPwd")
     @TrackLog
-    public Mono<Void> setPwd(@RequestParam("pwd") String pwd) throws Exception {
+    public Mono<Void> setPwd(@RequestBody String pwd) throws Exception {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             log.info("userPrincipal:{}", userPrincipal);
