@@ -71,10 +71,11 @@ public class TFinanceRS {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             ProductDTO productDTO = new ProductDTO();
+            //查询正常、进行中、0同事团 产品id
             String productId = financeService.getBankProductInfo();
             productDTO.setProductId(productId);
             if (StringUtils.isNotBlank(userPrincipal.getIdNumber())) {
-                //判断用户是否预约
+                //判断用户是否预约 (根据产品id、身份证、查询预约表)
                 String yEntId = financeService.getIdNumberIntent(productDTO.getProductId(), userPrincipal.getIdNumber());
                 if (StringUtils.isEmpty(yEntId))
                     productDTO.setEntId(userPrincipal.getEntId());
@@ -388,7 +389,9 @@ public class TFinanceRS {
             WeixinAuthorizeUrlDTO weixinAuthorizeUrlDTO = new WeixinAuthorizeUrlDTO();
             weixinAuthorizeUrlDTO.setUrl(redirectUrl);
             weixinAuthorizeUrlDTO.setState("STATE");
+            log.info("req.redirectUrl:[{}]",redirectUrl);
             String url = iwechatFeignService.getOAuthUrl(payrollProperties.getId(), weixinAuthorizeUrlDTO).getAuthorizeurl();
+            log.info("ret.url:[{}]",url);
             return url;
         }).subscribeOn(Schedulers.elastic());
     }

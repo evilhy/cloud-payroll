@@ -237,7 +237,7 @@ public class WechatRS {
     public Mono<WeixinJsapiDTO> getJsapiSignature(@RequestParam("url") String url) throws BusiVerifyException {
         return Mono.fromCallable(() -> {
             WeixinJsapiDTO weixinJsapiDTO = iwechatFeignService.getJsapiSignature(payrollProperties.getId(),url);
-            log.info("weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
+            log.info("ret.weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
             return weixinJsapiDTO;
         }).subscribeOn(Schedulers.elastic());
     }
