@@ -83,6 +83,7 @@ public class TFinanceRS {
             }
             List<ProductDTO> list = new ArrayList();
             list.add(productDTO);
+            log.info("ret.list:[{}]",JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
 
@@ -186,7 +187,7 @@ public class TFinanceRS {
                     }
                 }
             }
-            log.info("productInfoDTO:[{}]", JacksonUtil.objectToJson(productInfoDTO));
+            log.info("ret.productInfoDTO:[{}]", JacksonUtil.objectToJson(productInfoDTO));
             return productInfoDTO;
         }).subscribeOn(Schedulers.elastic());
 
