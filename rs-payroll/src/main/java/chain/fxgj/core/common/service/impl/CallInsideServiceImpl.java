@@ -1,10 +1,18 @@
 package chain.fxgj.core.common.service.impl;
 
+import chain.css.exception.ErrorMsg;
+import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
+import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
+import chain.fxgj.core.common.constant.ErrorConstant;
+import chain.fxgj.core.common.dto.msg.MsgCodeLogCheckRequestDTO;
+import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
+import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
 import chain.fxgj.server.payroll.dto.base.*;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.CallInsideService;
 import chain.fxgj.server.payroll.dto.EventDTO;
+import chain.fxgj.server.payroll.dto.response.Res100302;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -136,5 +144,47 @@ public class CallInsideServiceImpl implements CallInsideService {
         WeixinJsapiDTO weixinJsapiDTO = response.readEntity(WeixinJsapiDTO.class);
 
         return weixinJsapiDTO;
+    }
+
+    @Override
+    public MsgCodeLogResponeDTO sendCode(MsgCodeLogRequestDTO msgCodeLogRequestDTO) {
+        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCode");
+        Response response = webTarget.request()
+                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .post(Entity.entity(msgCodeLogRequestDTO, MediaType.APPLICATION_JSON_TYPE));
+        MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
+
+        Res100302 res100302 = new Res100302();
+        res100302.setCodeId(responeDTO.getCodeId());
+        res100302.setCode(responeDTO.getCode());
+        return responeDTO;
+    }
+
+    @Override
+    public void checkPhoneCode(String phone, String code) {
+        //验证短信码
+        MsgCodeLogCheckRequestDTO dto = new MsgCodeLogCheckRequestDTO();
+        dto.setSystemId(0);
+        dto.setCheckType(1);
+        dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+        dto.setCode(code);
+        dto.setMsgMedium(phone);
+        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCodeCheck");
+        log.info("管家url:{}", webTarget.getUri());
+        Response response = webTarget.request()
+                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
+        log.debug("{}", response.getStatus());
+        if (response.getStatus() == 500) {
+            throw new ParamsIllegalException(ErrorConstant.WECHAR_008.getErrorMsg());
+        }
+        if (response.getStatus() != 200) {
+            ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
+            throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrCode(), errorDTO.getErrMsg()));
+        }
+        MsgCodeLogResponeDTO msgCodeLogResponeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
+        if (msgCodeLogResponeDTO.getMsgStatus() != 1) {
+            throw new ParamsIllegalException(ErrorConstant.Error0004.getErrorMsg());
+        }
     }
 }

@@ -1,5 +1,7 @@
 package chain.fxgj.core.common.service;
 
+import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
+import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
 import chain.fxgj.server.payroll.dto.base.*;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import org.springframework.cache.annotation.Cacheable;
@@ -46,4 +48,15 @@ public interface CallInsideService {
      * JS分享产生分享签名
      */
     WeixinJsapiDTO getJsapiSignature(String url);
+
+
+    /**
+     * 短信验证码
+     * @param msgCodeLogRequestDTO
+     * @return
+     */
+    MsgCodeLogResponeDTO sendCode(MsgCodeLogRequestDTO msgCodeLogRequestDTO);
+
+
+    void checkPhoneCode(String phone, String code);
 }
