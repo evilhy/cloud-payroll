@@ -7,17 +7,17 @@ import chain.fxgj.core.common.constant.DictEnums.IntentStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
+import chain.fxgj.core.common.service.CallInsideService;
 import chain.fxgj.core.common.service.FinanceService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.model.EmployeeInfo;
+import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.PageResponseDTO;
+import chain.fxgj.server.payroll.dto.base.WeixinAuthorizeUrlDTO;
 import chain.fxgj.server.payroll.dto.tfinance.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
-import chain.outside.common.dto.wechat.EventDTO;
-import chain.outside.common.dto.wechat.WeixinAuthorizeUrlDTO;
 import chain.utils.commons.JacksonUtil;
-import chain.wechat.client.feign.IwechatFeignService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -60,7 +60,8 @@ public class TFinanceRS {
     @Inject
     FinanceService financeService;
     @Autowired
-    IwechatFeignService iwechatFeignService;
+    CallInsideService callInsideService;
+
 
     /**
      * 活动产品列表
@@ -82,7 +83,7 @@ public class TFinanceRS {
                 else
                     productDTO.setEntId(yEntId);
             }
-            List<ProductDTO> list = new ArrayList();
+            List<ProductDTO> list = new ArrayList<>();
             list.add(productDTO);
             log.info("ret.list:[{}]",JacksonUtil.objectToJson(list));
             return list;
@@ -181,8 +182,9 @@ public class TFinanceRS {
                             eventDTO.setOpenId(userPrincipal.getOpenId());
                             eventDTO.setEvent("subscribe");
                             //请求关注/取关
-                            iwechatFeignService.addWechatFollow(eventDTO);
-                            Client client = ClientBuilder.newClient();
+//                            iwechatFeignService.addWechatFollow(eventDTO);
+                            callInsideService.subscribe(eventDTO);
+
                         } catch (Exception e) {
                         }
                     }
@@ -235,7 +237,7 @@ public class TFinanceRS {
 
             Page<OperateDTO> page = financeService.getOperate(productId, entId, operate, PageRequest.of(pageNum - 1, size), userPrincipal.getOpenId());
 
-            PageResponseDTO<OperateDTO> response = new PageResponseDTO(page.getContent(), page.getTotalPages(), page.getTotalElements(), pageNum, size);
+            PageResponseDTO<OperateDTO> response = new PageResponseDTO<>(page.getContent(), page.getTotalPages(), page.getTotalElements(), pageNum, size);
 
             return response;
         }).subscribeOn(Schedulers.elastic());
@@ -390,7 +392,8 @@ public class TFinanceRS {
             weixinAuthorizeUrlDTO.setUrl(redirectUrl);
             weixinAuthorizeUrlDTO.setState("STATE");
             log.info("req.redirectUrl:[{}]",redirectUrl);
-            String url = iwechatFeignService.getOAuthUrl(payrollProperties.getId(), weixinAuthorizeUrlDTO).getAuthorizeurl();
+//            String url = iwechatFeignService.getOAuthUrl(payrollProperties.getId(), weixinAuthorizeUrlDTO).getAuthorizeurl();
+            String url = callInsideService.getOAuthUrl(weixinAuthorizeUrlDTO).getAuthorizeurl();
             log.info("ret.url:[{}]",url);
             return url;
         }).subscribeOn(Schedulers.elastic());

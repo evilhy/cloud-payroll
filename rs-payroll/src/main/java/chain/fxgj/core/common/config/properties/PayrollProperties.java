@@ -20,4 +20,5 @@ import org.springframework.stereotype.Component;
 public class PayrollProperties {
     private String id;
     private String imgUrl;
+    private String insideUrl;
 }

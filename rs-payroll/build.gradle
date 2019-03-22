@@ -84,7 +84,7 @@ dependencies {
     compile group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.0.6'
     compile group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
     compile 'org.springframework.cloud:spring-cloud-starter-consul-all'
-    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
+//    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     compile('mysql:mysql-connector-java:5.1.38')
 
@@ -95,9 +95,11 @@ dependencies {
     compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.27'
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider
     compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.8'
-    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    //application/json
+    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.26'
+//    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
     //引入微信包
-    compile('cloud.outside:wechat-client:1.0.8')
+//    compile('cloud.outside:wechat-client:1.0.8')
 }
 
 test {

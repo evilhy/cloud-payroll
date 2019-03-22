@@ -1,7 +1,6 @@
 package chain.fxgj.core.common.service.impl;
 
 import chain.fxgj.core.common.config.properties.PayrollProperties;
-import chain.fxgj.core.common.config.properties.WechatProperties;
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.EnterpriseStatusEnum;
 import chain.fxgj.core.common.service.PayRollAsyncService;
@@ -40,8 +39,7 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
     @Autowired
     @Qualifier("insideClient")
     Client insideClient;
-    @Autowired
-    private WechatProperties wechatProperties;
+
     @Autowired
     private PayrollProperties payrollProperties;
     @Autowired

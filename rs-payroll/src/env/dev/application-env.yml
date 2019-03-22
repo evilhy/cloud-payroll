@@ -35,8 +35,7 @@ encrypt:
 payroll:
   # 微信公众号分组id
   id: zo
-
-  inside-url: http://10.5.0.248:8085/rest/
+  inside-url: http://10.5.1.30:8081/rest/
   img-url: https://sitwxp.cardpu.com/
 # 过滤不需要验证权限的路径【自定义】
 auth:

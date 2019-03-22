@@ -35,6 +35,7 @@ encrypt:
 payroll:
   # 微信公众号分组id
   id: fxgj
+  inside-url: http://127.0.0.1:8081/rest/
   img-url: https://sitwxp.cardpu.com/
 # 过滤不需要验证权限的路径【自定义】
 auth:
@@ -45,6 +46,9 @@ auth:
     - pattern: /inside/rz/**
     - pattern: /roll/checkCar/**
 
-property:
-  # 微信公众号分组id
-  id: fxgj
+logcss:
+  sysId: fxgj
+  activateMongodb: true
+  pool-size: 2
+  mongodb:
+    uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
