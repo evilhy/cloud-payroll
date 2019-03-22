@@ -35,7 +35,7 @@ encrypt:
 payroll:
   # 微信公众号分组id
   id: fxgj
-  inside-url: http://127.0.0.1:8081/rest/
+  inside-url: http://127.0.0.1:7124/rest/
   img-url: https://sitwxp.cardpu.com/
 # 过滤不需要验证权限的路径【自定义】
 auth:
