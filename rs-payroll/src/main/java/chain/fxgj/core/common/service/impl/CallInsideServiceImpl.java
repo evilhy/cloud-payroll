@@ -107,7 +107,7 @@ public class CallInsideServiceImpl implements CallInsideService {
                 .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
                 .get();
 
-        WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = response.readEntity(WeixinOauthTokenResponeDTO.class);
+         WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = response.readEntity(WeixinOauthTokenResponeDTO.class);
 
         return weixinOauthTokenResponeDTO;
     }
@@ -180,7 +180,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         }
         if (response.getStatus() != 200) {
             ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
-            throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrCode(), errorDTO.getErrMsg()));
+            throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrorCode(), errorDTO.getErrorMsg()));
         }
         MsgCodeLogResponeDTO msgCodeLogResponeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
         if (msgCodeLogResponeDTO.getMsgStatus() != 1) {

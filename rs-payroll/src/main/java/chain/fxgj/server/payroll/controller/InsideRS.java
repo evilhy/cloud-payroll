@@ -12,7 +12,6 @@ import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
 import chain.fxgj.core.common.service.*;
 import chain.fxgj.core.jpa.model.CardbinInfo;
-import chain.fxgj.server.payroll.dto.base.ErrorDTO;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.web.UserPrincipal;

@@ -107,8 +107,8 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
                     request.path(), request.methodName());
         }
         errorAttributes.put("status", errorDTO.getStatus());
-        errorAttributes.put("error_code", errorDTO.getErrCode());
-        errorAttributes.put("error_msg", errorDTO.getErrMsg());
+        errorAttributes.put("error_code", errorDTO.getErrorCode());
+        errorAttributes.put("error_msg", errorDTO.getErrorMsg());
         errorAttributes.put("path", errorDTO.getPath());
         errorAttributes.put("method", errorDTO.getMethod());
 //        errorAttributes.put("timestamp", errorDTO.getTimestamp());

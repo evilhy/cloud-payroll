@@ -31,12 +31,12 @@ public class ErrorDTO {
      * 错误码
      */
     @JsonProperty("error_code")
-    String errCode;
+    String errorCode;
     /**
      * 错误信息
      */
     @JsonProperty("error_msg")
-    String errMsg;
+    String errorMsg;
     /**
      * 时间戳
      */
@@ -52,8 +52,8 @@ public class ErrorDTO {
 
     public ErrorDTO(int status, String errorCode, String errorMsg, String path, String method) {
         this.status = status;
-        this.errCode = errorCode;
-        this.errMsg = errorMsg;
+        this.errorCode = errorCode;
+        this.errorMsg = errorMsg;
         this.path = path;
         this.method = method;
         this.timestamp = new Date();
