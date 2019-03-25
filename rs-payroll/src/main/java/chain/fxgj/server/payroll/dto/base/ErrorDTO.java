@@ -30,12 +30,10 @@ public class ErrorDTO {
     /**
      * 错误码
      */
-    @JsonProperty("error_code")
     String errorCode;
     /**
      * 错误信息
      */
-    @JsonProperty("error_msg")
     String errorMsg;
     /**
      * 时间戳
