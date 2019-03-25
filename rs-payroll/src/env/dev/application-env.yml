@@ -28,7 +28,9 @@ spring:
         max-idle: 50
         max-wait: -1ms
         min-idle: 0
-
+#  data:
+#    mongodb:
+#      uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
 fxgj:
   datasource:
     jdbc-url: jdbc:mysql://10.5.0.182:3306/kayak_fxgj?useSSL=false&characterEncoding=utf-8&allowMultiQueries=true
@@ -53,9 +55,9 @@ management:
       exposure:
         include: ["*"]
 
-logcss:
-  sysId: fxgj
-  activateMongodb: true
-  pool-size: 2
-  mongodb:
-    uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
+#logcss:
+#  sysId: fxgj
+#  activateMongodb: true
+#  pool-size: 2
+#  mongodb:
+#    uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
