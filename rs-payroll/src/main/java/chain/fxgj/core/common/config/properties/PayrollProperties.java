@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PayrollProperties {
-    private String id;
     private String imgUrl;
     private String insideUrl;
 }

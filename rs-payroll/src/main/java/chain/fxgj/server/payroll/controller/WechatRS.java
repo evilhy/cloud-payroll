@@ -107,7 +107,6 @@ public class WechatRS {
                                        @RequestBody String xml) {
 
         return Mono.fromCallable(() -> {
-            String id = payrollProperties.getId();
             String uuid32 = UUIDUtil.createUUID32();
             //验签
 //            String echostrRet = iwechatFeignService.signature(id, signature, timestamp, nonce, uuid32);
@@ -195,7 +194,6 @@ public class WechatRS {
             if (!"authdeny".equals(code)) {
                 log.info("=========wageSheetId={},code={},routeName={}", StringUtils.trimToEmpty(wageSheetId), code, routeName);
                 log.info("一次性code:[{}]", code);
-                log.info("id:[{}]", payrollProperties.getId());
 //                //网页授权接口访问凭证
 //                WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = iwechatFeignService.oauth2Acces(payrollProperties.getId(), code);
                 WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = callInsideService.getOauth2AccessToken(code);

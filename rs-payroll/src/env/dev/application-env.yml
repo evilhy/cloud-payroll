@@ -1,10 +1,21 @@
 server:
   port: 8080
-## dev
+
 spring:
-  data:
-    mongodb:
-      uri: mongodb://fxgjlogs:123456@10.5.0.182:27017/fxgjlogs
+  profiles:
+    active: env
+  aop:
+    proxyTargetClass: true
+  devtools:
+    restart:
+      enabled: false
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
+    naming:
+      physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
   redis:
     database: 2
     host: 10.5.0.182
@@ -17,11 +28,7 @@ spring:
         max-idle: 50
         max-wait: -1ms
         min-idle: 0
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: ["*"]
+
 fxgj:
   datasource:
     jdbc-url: jdbc:mysql://10.5.0.182:3306/kayak_fxgj?useSSL=false&characterEncoding=utf-8&allowMultiQueries=true
@@ -29,23 +36,26 @@ fxgj:
     password: WHDev@20160714
     maximum-pool-size: 5
     pool-name: fxgj_db
+
+payroll:
+  #调用inside地址
+  inside-url: http://127.0.0.1:7124/rest/
+  #产品图片
+  img-url: https://sitwxp.cardpu.com/
+
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
   passwd: MvEpyqjedb4Hvai3vnFakmYxQsebEVCe84RNcVxw79USzc85FPAmbA9NuPxqfGsMh5pPuyzL
-payroll:
-  # 微信公众号分组id
-  id: zo
-  inside-url: http://10.5.1.30:8081/rest/
-  img-url: https://sitwxp.cardpu.com/
-# 过滤不需要验证权限的路径【自定义】
-auth:
-  #权限准许的路径列表（此列表下访问路径，不验证token）
-  permitall:
-    #访问路径
-    - pattern: /inside/bindWX/**
-    - pattern: /inside/rz/**
-    - pattern: /roll/checkCar/**
 
-property:
-  # 微信公众号分组id
-  id: zo
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ["*"]
+
+#logcss:
+#  sysId: fxgj
+#  activateMongodb: true
+#  pool-size: 2
+#  mongodb:
+#    uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
