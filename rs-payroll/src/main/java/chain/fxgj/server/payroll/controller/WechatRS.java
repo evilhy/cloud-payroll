@@ -101,6 +101,7 @@ public class WechatRS {
      * @throws BusiVerifyException
      */
     @PostMapping(value = "/signature", consumes = {MediaType.TEXT_XML_VALUE})
+    @TrackLog
     public Mono<String> signaturegPost(@RequestParam("signature") String signature,
                                        @RequestParam("timestamp") String timestamp,
                                        @RequestParam("nonce") String nonce,
