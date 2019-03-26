@@ -13,7 +13,7 @@ spring:
         enabled: true
         service-name: ${spring.application.name}
         instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}  #实例ID
-        prefer-ip-address: true
+        prefer-ip-address: false
 
 management:
   endpoints:
