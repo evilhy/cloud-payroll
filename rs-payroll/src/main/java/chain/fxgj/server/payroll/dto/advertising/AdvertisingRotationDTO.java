@@ -37,7 +37,7 @@ public class AdvertisingRotationDTO {
     /**
      * 轮播序号(0 - ...
      */
-    private Integer sort;
+    private Integer sortNo;
 
     /**
      * 发布状态(0已发布、1未发布、2已下架)

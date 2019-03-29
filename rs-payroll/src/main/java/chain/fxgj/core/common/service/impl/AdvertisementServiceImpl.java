@@ -49,7 +49,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             advertisingRotationDTO.setLink(advertisingInfo.getLink());
             advertisingRotationDTO.setReleaseStatus(advertisingInfo.getReleaseStatus().getCode());
             advertisingRotationDTO.setReleaseStatusDesc(advertisingInfo.getReleaseStatus().getDesc());
-            advertisingRotationDTO.setSort(advertisingInfo.getSortNo());
+            advertisingRotationDTO.setSortNo(advertisingInfo.getSortNo());
             advertisingRotationDTO.setUrl(advertisingInfo.getUrl());
             advertisingRotationDTOS.add(advertisingRotationDTO);
         }

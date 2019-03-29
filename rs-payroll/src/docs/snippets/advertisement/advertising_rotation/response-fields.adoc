@@ -9,7 +9,7 @@
 |`+String+`
 |图片超链接
 
-|`+sort+`
+|`+sortNo+`
 |`+Integer+`
 |轮播序号(0 - ...
 
