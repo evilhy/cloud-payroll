@@ -1,0 +1,24 @@
+|===
+|Path|Type|Description
+
+|`+url+`
+|`+String+`
+|图片url
+
+|`+link+`
+|`+String+`
+|图片超链接
+
+|`+sort+`
+|`+Integer+`
+|轮播序号(0 - ...
+
+|`+releaseStatus+`
+|`+Integer+`
+|发布状态(0已发布、1未发布、2已下架)
+
+|`+releaseStatusDesc+`
+|`+String+`
+|发布状态描述(0已发布、1未发布、2已下架)
+
+|===

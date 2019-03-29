@@ -50,11 +50,14 @@ public class WebContextFilter implements WebFilter, Ordered {
         MDC.put(REQ, reqId);
 
         StringBuffer logBuffer = new StringBuffer();
-        logBuffer.append(String.format("%s %s %s Query:%s \n",
+        logBuffer.append(String.format("%s %s Query:%s \n",
                 exchange.getRequest().getMethod().name(),
                 exchange.getRequest().getURI().getPath(),
-                exchange.getRequest().getRemoteAddress().getHostString(),
                 exchange.getRequest().getQueryParams()));
+        //getRemoteAddress 可能获取不到，所以判断
+        if (null != exchange.getRequest().getRemoteAddress()) {
+            logBuffer.append(exchange.getRequest().getRemoteAddress().getHostString());
+        }
         exchange.getRequest().getHeaders().forEach((name, values) -> {
             values.forEach(value -> {
                 logBuffer.append("> ").append(name).append(": ").append(value).append('\n');
