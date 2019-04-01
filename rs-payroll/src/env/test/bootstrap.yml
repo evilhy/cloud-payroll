@@ -14,13 +14,13 @@
 #        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}  #实例ID
 #        prefer-ip-address: false
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,env,metrics
-        #include: health,info,env,prometheus,metrics,httptrace,threaddump,heapdump,springmetrics
-  endpoint:
-    health:
-      # 是否展示健康检查详情
-      show-details: always
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info,env,metrics
+#        #include: health,info,env,prometheus,metrics,httptrace,threaddump,heapdump,springmetrics
+#  endpoint:
+#    health:
+#      # 是否展示健康检查详情
+#      show-details: always
