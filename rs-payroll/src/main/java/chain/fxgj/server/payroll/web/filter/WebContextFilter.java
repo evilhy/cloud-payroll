@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.web.filter;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,7 @@ public class WebContextFilter implements WebFilter, Ordered {
         }
 
         MDC.put(REQ, reqId);
+        MDC.put(FxgjDBConstant.LOG_TOKEN, reqId);
 
         StringBuffer logBuffer = new StringBuffer();
         logBuffer.append(String.format("%s %s Query:%s \n",

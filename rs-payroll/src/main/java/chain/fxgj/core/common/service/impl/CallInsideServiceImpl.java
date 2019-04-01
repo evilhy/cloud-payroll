@@ -43,7 +43,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "weixin/subscribe");
         log.info("管家url:{}", webTarget.getUri());
         Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, org.apache.commons.lang3.StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(FxgjDBConstant.LOGTOKEN,StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
                 .post(Entity.entity(eventDTO, MediaType.APPLICATION_JSON_TYPE));
         log.debug("{},{}", response.getStatus(), response.readEntity(String.class));
     }
