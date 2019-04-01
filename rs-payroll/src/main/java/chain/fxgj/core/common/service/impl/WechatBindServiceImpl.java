@@ -637,7 +637,8 @@ public class WechatBindServiceImpl implements WechatBindService {
         //添加银行卡修改信息
         QEmployeeCardLog qEmployeeCardLog = QEmployeeCardLog.employeeCardLog;
         return employeeCardLogDao.selectFrom(qEmployeeCardLog)
-                .where(qEmployeeCardLog.bankCardId.eq(bankCardId))
+                .where(qEmployeeCardLog.bankCardId.eq(bankCardId)
+                        .and(qEmployeeCardLog.delStatus.eq(DelStatusEnum.normal)))
                 .orderBy(qEmployeeCardLog.crtDateTime.desc())
                 .fetch();
     }
