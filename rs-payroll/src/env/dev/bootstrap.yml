@@ -1,19 +1,18 @@
-spring:
-  application:
-    name: rs-payroll
-  cloud:
-    consul:
-      host: 10.5.0.182
-      #host: 10.5.5.116
-      port: 8500
-      discovery:
-        # consul 健康检测频率
-        health-check-interval: 15s
-        # 配置注册到consul 服务的id
-        enabled: true
-        service-name: ${spring.application.name}
-        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}  #实例ID
-        prefer-ip-address: false
+#spring:
+#  application:
+#    name: rs-payroll
+#  cloud:
+#    consul:
+#      host: 10.5.0.182
+#      port: 8500
+#      discovery:
+#        # consul 健康检测频率
+#        health-check-interval: 15s
+#        # 配置注册到consul 服务的id
+#        enabled: true
+#        service-name: ${spring.application.name}
+#        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}  #实例ID
+#        prefer-ip-address: false
 
 management:
   endpoints:
