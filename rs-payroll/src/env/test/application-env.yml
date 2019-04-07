@@ -53,6 +53,7 @@ management:
       exposure:
         include: ["*"]
 
+# mongodb 日志记录
 logcss:
   sysId: fxgj
   activateMongodb: true
