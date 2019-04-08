@@ -1,0 +1,18 @@
+:snippets: ../snippets
+== 广告
+=== 轮播图查询
+==== 接口定义
+* Part Parameters:
++
+include::{snippets}/advertisement/advertising_rotation/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/advertisement/advertising_rotation/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/advertisement/advertising_rotation/curl-request.adoc[]
+* Response:
++
+include::{snippets}/advertisement/advertising_rotation/http-response.adoc[]

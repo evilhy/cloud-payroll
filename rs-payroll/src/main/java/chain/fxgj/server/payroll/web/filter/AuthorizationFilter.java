@@ -39,7 +39,8 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/tfinance/intentionList",
             "/inside/rz/",
             "/roll/checkCar",
-            "/tfinance/codeUrl"
+            "/tfinance/codeUrl",
+            "/advertising/rotation"
     };
 
     @Autowired

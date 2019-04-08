@@ -236,8 +236,9 @@ public class WechatBindServiceImpl implements WechatBindService {
 
 
         OrderSpecifier orderSpecifier = qEmployeeInfo.crtDateTime.asc();
-
+        log.info("员工信息查询start");
         List<EmployeeInfo> employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo).where(predicate).orderBy(orderSpecifier).fetch();
+        log.info("员工信息查询end");
 
         //员工信息 以 groupid 为key 存储 用户信息
         HashMap<String, EmployeeInfo> convertGroupEmp = new HashMap<String, EmployeeInfo>();
@@ -636,7 +637,8 @@ public class WechatBindServiceImpl implements WechatBindService {
         //添加银行卡修改信息
         QEmployeeCardLog qEmployeeCardLog = QEmployeeCardLog.employeeCardLog;
         return employeeCardLogDao.selectFrom(qEmployeeCardLog)
-                .where(qEmployeeCardLog.bankCardId.eq(bankCardId))
+                .where(qEmployeeCardLog.bankCardId.eq(bankCardId)
+                        .and(qEmployeeCardLog.delStatus.eq(DelStatusEnum.normal)))
                 .orderBy(qEmployeeCardLog.crtDateTime.desc())
                 .fetch();
     }

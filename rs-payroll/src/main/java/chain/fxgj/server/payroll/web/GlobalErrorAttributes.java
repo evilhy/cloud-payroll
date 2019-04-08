@@ -41,12 +41,12 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
         Map<String, Object> errorAttributes = new LinkedHashMap<>();
         Throwable error = getError(request);
         ErrorDTO errorDTO = null;
-        if (error instanceof IllegalArgumentException ||
+        /*if (error instanceof IllegalArgumentException ||
                 error instanceof HttpMessageNotReadableException) {
             log.error("IllegalArgumentException || HttpMessageNotReadableException :{}", error.getMessage(), error);
             errorDTO = new ErrorDTO(500, ErrorConstant.SYS_ERR.getErrorMsg(),
                     request.path(), request.methodName());
-        } else if (error instanceof ParamsIllegalException) {
+        } else */if (error instanceof ParamsIllegalException) {
             log.warn("ParamsIllegalException :{}", error.getMessage());
             errorDTO = new ErrorDTO(400, ((ParamsIllegalException) error).getErrorMsg(),
                     request.path().toString(), request.methodName());
@@ -107,11 +107,11 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
                     request.path(), request.methodName());
         }
         errorAttributes.put("status", errorDTO.getStatus());
-        errorAttributes.put("error_code", errorDTO.getErrCode());
-        errorAttributes.put("error_msg", errorDTO.getErrMsg());
+        errorAttributes.put("error_code", errorDTO.getErrorCode());
+        errorAttributes.put("error_msg", errorDTO.getErrorMsg());
         errorAttributes.put("path", errorDTO.getPath());
         errorAttributes.put("method", errorDTO.getMethod());
-        errorAttributes.put("timestamp", errorDTO.getTimestamp());
+//        errorAttributes.put("timestamp", errorDTO.getTimestamp());
         return errorAttributes;
     }
 }

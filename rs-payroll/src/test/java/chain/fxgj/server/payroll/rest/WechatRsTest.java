@@ -1,11 +1,9 @@
 package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.server.payroll.JavaDocReader;
+import chain.fxgj.server.payroll.dto.base.WeixinJsapiDTO;
 import chain.fxgj.server.payroll.dto.response.Res100705;
-import chain.outside.common.dto.wechat.WeixinAuthorizeUrlDTO;
-import chain.outside.common.dto.wechat.WeixinExtResponeDTO;
-import chain.outside.common.dto.wechat.WeixinJsapiDTO;
-import chain.wechat.client.feign.IwechatFeignService;
+
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.*;
@@ -51,8 +49,6 @@ public class WechatRsTest {
 
     public WebTestClient webTestClient;
 
-    @Autowired
-    IwechatFeignService iwechatFeignService;
 
     @Autowired
     @Qualifier("jacksonCodecCustomizer")

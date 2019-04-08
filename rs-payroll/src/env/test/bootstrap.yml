@@ -1,41 +1,26 @@
-spring:
-  application:
-    name: rs-payroll
-  cloud:
-    consul:
-      host: 127.0.0.1
-      #host: 10.5.5.116
-      port: 8500
-      discovery:
-        # consul 健康检测频率
-        health-check-interval: 150s
-        # 配置注册到consul 服务的id
-        enabled: false
-        service-name: ${spring.application.name}
-        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}  #实例ID
-        prefer-ip-address: true
-#  data:
-#    mongodb:
-#      uri: mongodb://fxgjlogs:123456@10.5.0.182:27017/fxgjlogs
-#  redis:
-#    database: 2
-#    host: 10.5.0.182
-#    port: 6380
-#    password:
-#    timeout: 1s
-#    jedis:
-#      pool:
-#        max-active: 8
-#        max-idle: 50
-#        max-wait: -1ms
-#        min-idle: 0
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,env,metrics
-        #include: health,info,env,prometheus,metrics,httptrace,threaddump,heapdump,springmetrics
-  endpoint:
-    health:
-      # 是否展示健康检查详情
-      show-details: always
+#spring:
+#  application:
+#    name: rs-payroll
+#  cloud:
+#    consul:
+#      host: 127.0.0.1
+#      port: 8500
+#      discovery:
+#        # consul 健康检测频率
+#        health-check-interval: 150s
+#        # 配置注册到consul 服务的id
+#        enabled: false
+#        service-name: ${spring.application.name}
+#        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}  #实例ID
+#        prefer-ip-address: true
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info,env,metrics
+#        #include: health,info,env,prometheus,metrics,httptrace,threaddump,heapdump,springmetrics
+#  endpoint:
+#    health:
+#      # 是否展示健康检查详情
+#      show-details: always

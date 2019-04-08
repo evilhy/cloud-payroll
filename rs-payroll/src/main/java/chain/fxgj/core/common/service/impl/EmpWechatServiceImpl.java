@@ -1,7 +1,6 @@
 package chain.fxgj.core.common.service.impl;
 
 import chain.css.exception.ParamsIllegalException;
-import chain.fxgj.core.common.config.properties.WechatProperties;
 import chain.fxgj.core.common.constant.DictEnums.CardUpdStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
@@ -48,8 +47,6 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     InsideService insideService;
     @Autowired
     Client wechatClient;
-    @Autowired
-    WechatProperties wechatProperties;
     @Autowired
     PayRollAsyncService payRollAsyncService;
     @Autowired

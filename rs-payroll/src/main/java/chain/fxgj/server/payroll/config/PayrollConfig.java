@@ -20,7 +20,7 @@ public class PayrollConfig {
     public Client wechatClient() throws Exception {
         return ClientBuilder.newBuilder()
                 .build()
-                .register(new LoggingFeature(null, Level.INFO, LoggingFeature.Verbosity.PAYLOAD_TEXT, 100));
+                .register(new LoggingFeature(null, Level.INFO, LoggingFeature.Verbosity.PAYLOAD_TEXT, 1000));
 
     }
 

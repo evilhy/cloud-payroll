@@ -12,7 +12,6 @@ import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
 import chain.fxgj.core.common.service.*;
 import chain.fxgj.core.jpa.model.CardbinInfo;
-import chain.fxgj.server.payroll.dto.base.ErrorDTO;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -54,6 +53,9 @@ public class InsideRS {
     WechatBindService wechatBindService;
     @Autowired
     InsideService insideService;
+    @Autowired
+    CallInsideService callInsideService;
+
 
     /**
      * 发送短信验证码
@@ -66,22 +68,17 @@ public class InsideRS {
     @PermitAll
     public Mono<Res100302> sendCode(@RequestBody Req100302 req100302) {
         return Mono.fromCallable(() -> {
-//            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
-//            dto.setSystemId(0);
-//            dto.setCheckType(1);
-//            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-//            dto.setMsgMedium(req100302.getPhone());
-//
-//            Client client = ClientBuilder.newClient();
-//            WebTarget webTarget = client.target("payrollProperties.getInsideUrl()" + "msgCode/smsCode");
-//            Response response = webTarget.request()
-//                    .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-//                    .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
-//            MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
+            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
+            dto.setSystemId(0);
+            dto.setCheckType(1);
+            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+            dto.setMsgMedium(req100302.getPhone());
+
+            MsgCodeLogResponeDTO msgCodeLogResponeDTO = callInsideService.sendCode(dto);
 
             Res100302 res100302 = new Res100302();
-            res100302.setCodeId("ff80808166ece4a20166f285f9f40114");
-            res100302.setCode("123456");
+            res100302.setCodeId(msgCodeLogResponeDTO.getCodeId());
+            res100302.setCode(msgCodeLogResponeDTO.getCode());
             return res100302;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -134,7 +131,8 @@ public class InsideRS {
             String openId = userPrincipal.getOpenId();
             String idNumber = req100702.getIdNumber();
             //验证短信码
-            this.checkPhoneCode(req100702.getPhone(), req100702.getCode());
+//            this.checkPhoneCode(req100702.getPhone(), req100702.getCode());
+            callInsideService.checkPhoneCode(req100702.getPhone(), req100702.getCode());
             //请求绑定
             insideService.bandWechat(openId, idNumber, req100702.getPhone());
             //绑定成功后确认登录
@@ -164,7 +162,8 @@ public class InsideRS {
             wechatBindService.checkPhone(idNumber, req100701.getPhone());
 
             //验证短信码
-            this.checkPhoneCode(req100701.getPhone(), req100701.getCode());
+//            this.checkPhoneCode(req100701.getPhone(), req100701.getCode());
+            callInsideService.checkPhoneCode(req100701.getPhone(), req100701.getCode());
 
             //请求管家绑定
             insideService.bandWechatAndPhone(openId, idNumber, req100701.getPhone(), req100701.getPwd());
@@ -240,7 +239,8 @@ public class InsideRS {
     @TrackLog
     public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone) throws Exception {
         return Mono.fromCallable(() -> {
-            this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
+//            this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
+            callInsideService.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -258,7 +258,8 @@ public class InsideRS {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             if (StringUtils.isNotBlank(reqPhone.getCode())) {
-                this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
+//                this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
+                callInsideService.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             }
             //验证手机号是否存在
             wechatBindService.checkPhone(userPrincipal.getIdNumber(), reqPhone.getPhone());
@@ -270,34 +271,6 @@ public class InsideRS {
         }).subscribeOn(Schedulers.elastic()).then();
     }
 
-    //验证短信验证码
-    private void checkPhoneCode(String phone, String code) {
-//        //验证短信码
-//        MsgCodeLogCheckRequestDTO dto = new MsgCodeLogCheckRequestDTO();
-//        dto.setSystemId(0);
-//        dto.setCheckType(1);
-//        dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-//        dto.setCode(code);
-//        dto.setMsgMedium(phone);
-//        Client client = ClientBuilder.newClient();
-//        WebTarget webTarget = client.target("payrollProperties.getInsideUrl()" + "msgCode/smsCodeCheck");
-//        log.info("管家url:{}", webTarget.getUri());
-//        Response response = webTarget.request()
-//                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
-//                .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
-//        log.debug("{}", response.getStatus());
-//        if (response.getStatus() == 500) {
-//            throw new ParamsIllegalException(ErrorConstant.WECHAR_008.getErrorMsg());
-//        }
-//        if (response.getStatus() != 200) {
-//            ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
-//            throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrCode(), errorDTO.getErrMsg()));
-//        }
-//        MsgCodeLogResponeDTO msgCodeLogResponeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
-//        if (msgCodeLogResponeDTO.getMsgStatus() != 1) {
-//            throw new ParamsIllegalException(ErrorConstant.Error0004.getErrorMsg());
-//        }
-    }
 
     /**
      * 修改银行卡

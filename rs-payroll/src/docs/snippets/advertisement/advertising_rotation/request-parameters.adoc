@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+channelId+`
+|渠道id(0 放薪管家web,1 放薪经理 2 微信工资条 3 放薪虎符)
+
+|===
