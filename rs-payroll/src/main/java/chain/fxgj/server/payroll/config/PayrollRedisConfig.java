@@ -61,10 +61,12 @@ public class PayrollRedisConfig {
         // 设置一个初始化的缓存空间set集合
         Set<String> cacheNames = new HashSet<>();
         cacheNames.add("loginSessionId");
+        cacheNames.add("advertisement");  //广告位(轮播图)
 
         // 对每个缓存空间应用不同的配置
         Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
         configMap.put("loginSessionId", cacheConfiguration.entryTtl(Duration.ofMinutes(10)));
+        configMap.put("advertisement", cacheConfiguration.entryTtl(Duration.ofMinutes(5)));
 
         log.debug("自定义RedisCacheManager加载完成");
         return RedisCacheManager
