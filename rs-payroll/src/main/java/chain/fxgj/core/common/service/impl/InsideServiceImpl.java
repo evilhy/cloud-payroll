@@ -208,6 +208,7 @@ public class InsideServiceImpl implements InsideService {
             employeeCardLog.setGroupId(item.getGroupId());
             employeeCardLog.setIsNew(IsStatusEnum.NO);
             employeeCardLog.setBankCardId(item.getId());
+            employeeCardLog.setDelStatus(DelStatusEnum.normal);
             employeeCardLogs.add(employeeCardLog);
 
             //修改银行卡

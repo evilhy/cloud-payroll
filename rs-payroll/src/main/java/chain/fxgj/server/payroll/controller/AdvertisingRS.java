@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,9 @@ public class AdvertisingRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
-            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId);
+//            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId);
+            //todo 先返回空数组，后续再查库
+            List<AdvertisingRotationDTO> advertisingRotationDTOS = new ArrayList<>();
             return advertisingRotationDTOS;
         }).subscribeOn(Schedulers.elastic());
     }

@@ -135,7 +135,7 @@ public class CallInsideServiceImpl implements CallInsideService {
     @Override
     public WeixinJsapiDTO getJsapiSignature(String url) {
         // 验证消息 消息
-        Response response = client.target(payrollProperties.getInsideUrl() + "/weixin/getJsapiSignature")
+        Response response = client.target(payrollProperties.getInsideUrl() + "weixin/getJsapiSignature")
                 .queryParam("url", url)
                 .request()
                 .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
