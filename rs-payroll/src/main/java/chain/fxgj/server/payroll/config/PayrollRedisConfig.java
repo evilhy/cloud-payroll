@@ -62,11 +62,19 @@ public class PayrollRedisConfig {
         Set<String> cacheNames = new HashSet<>();
         cacheNames.add("loginSessionId");
         cacheNames.add("advertisement");  //广告位(轮播图)
+        cacheNames.add("weixin");  //微信
+        cacheNames.add("weixinOauth2");  //微信网页授权 获取code
+        cacheNames.add("weixinOauth2AccessToken");  //微信网页授权 通过 code --> 获取 access_token
+        cacheNames.add("weixinOauth2AccessTokenOpenid");  //微信网页授权 通过 access_token -->获取  用户信息
 
         // 对每个缓存空间应用不同的配置
         Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
         configMap.put("loginSessionId", cacheConfiguration.entryTtl(Duration.ofMinutes(10)));
         configMap.put("advertisement", cacheConfiguration.entryTtl(Duration.ofMinutes(5)));
+        configMap.put("weixin", cacheConfiguration.entryTtl(Duration.ofHours(2)));
+        configMap.put("weixinOauth2", cacheConfiguration.entryTtl(Duration.ofMinutes(5)));
+        configMap.put("weixinOauth2AccessToken", cacheConfiguration.entryTtl(Duration.ofSeconds(7200)));
+        configMap.put("weixinOauth2AccessTokenOpenid", cacheConfiguration.entryTtl(Duration.ofSeconds(7200)));
 
         log.debug("自定义RedisCacheManager加载完成");
         return RedisCacheManager
