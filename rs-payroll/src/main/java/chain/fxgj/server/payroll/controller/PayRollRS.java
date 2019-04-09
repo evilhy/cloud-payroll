@@ -175,22 +175,24 @@ public class PayRollRS {
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             List<WageDetailDTO> list = new ArrayList<>();
-            try {
-                String redisKey = FxgjDBConstant.PREFIX + ":payroll:" + principal.getIdNumberEncrytor() + ":" + wageSheetId + ":wechatpush";
-                Object value = redisTemplate.opsForValue().get(redisKey);
-                if (value != null && StringUtils.isNotBlank(value.toString())) {
-                    ObjectMapper mapper = new ObjectMapper();
-                    JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, WageDetailDTO.class);
-                    list = (List<WageDetailDTO>) mapper.readValue(value.toString(), javaType);
-                    log.info("{}:读取redis工资,{}", principal.getOpenId(), list.size());
-                } else {
-                    list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
-                }
-            } catch (Exception e) {
-                log.debug("redis读取失败", e);
-                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
-            }
+            //注释原因：读取redis中 WageDetailDTO 路径 与库中路径不一致
+//            try {
+//                String redisKey = FxgjDBConstant.PREFIX + ":payroll:" + principal.getIdNumberEncrytor() + ":" + wageSheetId + ":wechatpush";
+//                Object value = redisTemplate.opsForValue().get(redisKey);
+//                if (value != null && StringUtils.isNotBlank(value.toString())) {
+//                    ObjectMapper mapper = new ObjectMapper();
+//                    JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, WageDetailDTO.class);
+//                    list = (List<WageDetailDTO>) mapper.readValue(value.toString(), javaType);
+//                    log.info("{}:读取redis工资,{}", principal.getOpenId(), list.size());
+//                } else {
+//                    list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
+//                }
+//            } catch (Exception e) {
+//                log.debug("redis读取失败", e);
+//                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
+//            }
 
+            list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
 
             return list;
         }).subscribeOn(Schedulers.elastic());
