@@ -106,6 +106,8 @@ public class WebContextFilter implements WebFilter, Ordered {
 
         return chain.filter(build).then(Mono.fromRunnable(() -> {
             MDC.put(REQ, finalReqId);
+            MDC.put(FxgjDBConstant.LOG_TOKEN, finalReqId);
+
             Long startTime = exchange.getAttribute(START_TIME);
             if (startTime != null) {
                 Long executeTime = (System.currentTimeMillis() - startTime);
