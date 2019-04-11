@@ -52,11 +52,7 @@ management:
     web:
       exposure:
         include: ["*"]
-logcss:
-  maxEntitySize: 500
-  headerReqId: reqid
-  headerLogToken: logtoken
-  headerSessionId: jsessionid
+
 
 # mongodb 日志记录
 logcss:
