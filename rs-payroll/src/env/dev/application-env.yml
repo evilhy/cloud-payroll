@@ -53,6 +53,7 @@ management:
       exposure:
         include: ["*"]
 
+
 # mongodb 日志记录
 logcss:
   sysId: rs-payroll
@@ -60,3 +61,7 @@ logcss:
   pool-size: 2
   mongodb:
     uri: mongodb://fxgjlogs:123456@10.5.0.182:27017/fxgjlogs
+  maxEntitySize: 500
+  headerReqId: reqid
+  headerLogToken: logtoken
+  headerSessionId: jsessionid
