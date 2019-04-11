@@ -55,7 +55,7 @@ management:
 
 # mongodb 日志记录
 logcss:
-  sysId: fxgj
+  sysId: rs-payroll
   activateMongodb: true
   pool-size: 2
   mongodb:
