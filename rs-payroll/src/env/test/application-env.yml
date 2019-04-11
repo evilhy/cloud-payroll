@@ -52,6 +52,11 @@ management:
     web:
       exposure:
         include: ["*"]
+logcss:
+  maxEntitySize: 500
+  headerReqId: reqid
+  headerLogToken: logtoken
+  headerSessionId: jsessionid
 
 # mongodb 日志记录
 logcss:
@@ -60,3 +65,7 @@ logcss:
   pool-size: 2
   mongodb:
     uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
+  maxEntitySize: 500
+  headerReqId: reqid
+  headerLogToken: logtoken
+  headerSessionId: jsessionid
