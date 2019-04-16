@@ -1,6 +1,8 @@
 package chain.fxgj.server.payroll.dto.merchant;
 
 
+import chain.css.exception.ParamsIllegalException;
+import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import lombok.*;
 
@@ -48,6 +50,7 @@ public class MerchantHeadDTO {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw new ParamsIllegalException(ErrorConstant.MERCHANT_03.getErrorMsg());
         }
         return merchantHead;
     }

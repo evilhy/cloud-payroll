@@ -1,5 +1,7 @@
 package chain.fxgj.server.payroll.dto.merchant;
 
+import chain.css.exception.ParamsIllegalException;
+import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.util.Sha1;
 import lombok.*;
@@ -53,22 +55,23 @@ public class MerchantDTO {
         MerchantDTO merchant = null;
         try {
             merchant = MerchantDTO.builder()
-                    .name(RSAEncrypt.decrypt(merchantDTO.getName(), decrypt) )
-                    .idType(RSAEncrypt.decrypt(merchantDTO.getIdType(), decrypt) )
-                    .idNumber(RSAEncrypt.decrypt(merchantDTO.getIdNumber(), decrypt) )
-                    .phone(RSAEncrypt.decrypt(merchantDTO.getPhone(), decrypt) )
-                    .uid(RSAEncrypt.decrypt(merchantDTO.getUid(), decrypt) )
+                    .name(RSAEncrypt.decrypt(merchantDTO.getName(), decrypt))
+                    .idType(RSAEncrypt.decrypt(merchantDTO.getIdType(), decrypt))
+                    .idNumber(RSAEncrypt.decrypt(merchantDTO.getIdNumber(), decrypt))
+                    .phone(RSAEncrypt.decrypt(merchantDTO.getPhone(), decrypt))
+                    .uid(RSAEncrypt.decrypt(merchantDTO.getUid(), decrypt))
                     .nickname(merchantDTO.getNickname())
                     .headimgurl(merchantDTO.getHeadimgurl())
                     .build();
         } catch (Exception e) {
             e.printStackTrace();
+            throw new ParamsIllegalException(ErrorConstant.MERCHANT_03.getErrorMsg());
         }
         return merchant;
     }
 
 
-    public static String signature(MerchantDTO merchantDTO, MerchantHeadDTO merchantHeadDTO) throws DigestException {
+    public static String signature(MerchantDTO merchantDTO, MerchantHeadDTO merchantHeadDTO) {
         LinkedHashMap<String, Object> signatureMap = new LinkedHashMap<>();
         signatureMap.put("name", merchantDTO.getName());
         signatureMap.put("idType", merchantDTO.getIdType());
@@ -82,7 +85,13 @@ public class MerchantDTO {
         //signatureMap.put("signature", merchantHeadDTO.getSignature());
         //signatureMap.put("merchantCode", merchantHeadDTO.getMerchantCode());
 
-        String signature = Sha1.SHA1(signatureMap);
+        String signature = null;
+        try {
+            signature = Sha1.SHA1(signatureMap);
+        } catch (DigestException e) {
+            e.printStackTrace();
+            throw new ParamsIllegalException(ErrorConstant.MERCHANT_05.getErrorMsg());
+        }
         return signature;
     }
 

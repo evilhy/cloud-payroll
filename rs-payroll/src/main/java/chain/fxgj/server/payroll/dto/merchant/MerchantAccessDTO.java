@@ -1,5 +1,7 @@
 package chain.fxgj.server.payroll.dto.merchant;
 
+import chain.css.exception.ParamsIllegalException;
+import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.util.Sha1;
 import lombok.*;
@@ -37,12 +39,13 @@ public class MerchantAccessDTO {
         MerchantAccessDTO merchantAccess = null;
         try {
             merchantAccess = MerchantAccessDTO.builder()
-                    .accessToken(RSAEncrypt.encrypt(merchantAccessDTO.getAccessToken(), encryption))
+                    .accessToken(merchantAccessDTO.getAccessToken())
                     .expiresIn(merchantAccessDTO.getExpiresIn())
-                    .accessUrl(merchantAccessDTO.getAccessUrl())
+                    .accessUrl(RSAEncrypt.encrypt(merchantAccessDTO.getAccessUrl(), encryption))
                     .build();
         } catch (Exception e) {
             e.printStackTrace();
+            throw new ParamsIllegalException(ErrorConstant.MERCHANT_04.getErrorMsg());
         }
         return merchantAccess;
     }

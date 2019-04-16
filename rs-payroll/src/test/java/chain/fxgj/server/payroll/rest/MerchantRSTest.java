@@ -11,6 +11,7 @@ import chain.fxgj.server.payroll.dto.response.PlanListBean;
 import chain.fxgj.server.payroll.dto.response.Res100703;
 import chain.fxgj.server.payroll.dto.tfinance.IntentRequestDTO;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
+import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.FixMethodOrder;
@@ -78,7 +79,6 @@ public class MerchantRSTest extends BaseRSTest {
         String headimgurl = "http://wwww.baidu.com";
 
 
-
         MerchantDTO merchantDTO = MerchantDTO.builder()
                 .name(name)
                 .idType(idType)
@@ -89,7 +89,7 @@ public class MerchantRSTest extends BaseRSTest {
                 .headimgurl(headimgurl)
                 .build();
 
-       String signature = MerchantDTO.signature(merchantDTO,merchantHeadDTO);
+        String signature = MerchantDTO.signature(merchantDTO, merchantHeadDTO);
 
         MerchantDTO merchantDTO_Encrypt = MerchantDTO.builder()
                 .name(RSAEncrypt.encrypt(name, merchant.getRsaPublicKey()))
@@ -102,8 +102,10 @@ public class MerchantRSTest extends BaseRSTest {
                 .build();
 
 
-
-
+        log.info("merchantDTO_Encrypt={}", JacksonUtil.objectToJson(merchantDTO_Encrypt));
+        log.info("signature={}", signature);
+        log.info("appid={}", appid);
+        log.info("version={}", RSAEncrypt.encrypt(version, merchant.getRsaPublicKey()));
 
 
         webTestClient.post()
