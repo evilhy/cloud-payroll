@@ -40,7 +40,9 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/inside/rz/",
             "/roll/checkCar",
             "/tfinance/codeUrl",
-            "/advertising/rotation"
+            "/advertising/rotation",
+            "/merchant/getAccess"
+
     };
 
     @Autowired

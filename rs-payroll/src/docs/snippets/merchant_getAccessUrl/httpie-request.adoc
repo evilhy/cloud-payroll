@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ echo '{"name":"gp8phKU9z/AeL+0stjJ90Y9dB51NrBkeN1V8AxpUUfnMJw9IaZE6HF80jMl9fOd1uj0sy0/f2HarN8Tbwln3NYnUMUFESx9ATArHYyEJnL213XHCocdNqTtRDc3COkjFzxaW55oRuZjlh+fnpe9O7vBRa4tEFNyOHqr5YgB2Bkw=","idType":"D54ir92sthD6pCPE5G5FReAROUQPNv3OTEaPrmSqZPTz9txu+hNBTSi2RkZ2A7a3NbjXRToAr7jJdhwcLnNEMB1o7zZ4HphWRwUppplcl/zviCm9EusSJoxhFr8rOFvEMqfkb1iJmbmK20ybiS0d4gyzrEbgsV7fCJ5pYflCYPI=","idNumber":"USGWncsq1+VkZ0luFqa0uIidNBWm/t2a/3QpYHtdgFxx6Ypr3RFcEIc65fyfElpKNDmx3lqkJvpCGtGw/xO4BPMwG9RNFH+36hcGq59iX3XwwwqV0FPsxF+U2uNOaXs7/at2qxb4XcVX6OJNNLL709hzTzjQzuuAY5kZrzlFHqE=","phone":"Wo3iyo29YASJ16uffZnltTXKhsACwGG1JL98S+Pm9KR5KVBCuWlEOHcd5qzEc8V5QrmotiC+OCqa/+knGfjJKjlqCmluWy15BAUfsqdXF2c+j3L8SpJS3ISHgiqA5srOxDlWq8Uld/g+edzUL0CJz8rMcwS785cJzG1FcCjN8YY=","uid":"ZQgetD62SpYb5zYvTrzp5jD6Sgq1tEmiZBp5ZpUhrb8PKdm/kqTb6lubPFn0r6uKVkUpAtQ7qKiFK2P0vcYo2u+uPoOEy31UX42l0uo8AcxnuUQXTRk/Q2aRm21WI+rnrxkWic4nghg0ySehhJ3sl5qzvxCYSQLqwe43qIw5H2A=","nickname":"用户微信昵称","headimgurl":"http://wwww.baidu.com"}' | http POST 'http://localhost:8080/merchant/getAccess' \
+    'merchantCode:1' \
+    'signature:BAE84CCE25D3B97C6EF87B923CB526DC56BCDF80' \
+    'version:A6bYG9a2vXGFCKMKOloVvzdux30tx7v4dQfIJlnHkK3M6Lguzut8cu0mYjQJ9+iPDoCv318FlynkT/JBKr0GIbVgfevjWCZ4K2kfn3cawHvEfjdfe5mTCJLtjemN/hTvSrB/iCOlGKipIWZ2z+PmEntRTX2FRVfFxHJqBTXFotM=' \
+    'Content-Type:application/json'
+----
