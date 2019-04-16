@@ -38,7 +38,7 @@ public class MerchantRS {
 
     private MerchantsProperties.Merchant getMerchant(String id) {
         Optional<MerchantsProperties.Merchant> qWechat = merchantProperties.getMerchant().stream()
-                .filter(item -> item.getId().equalsIgnoreCase(id)).findFirst();
+                .filter(item -> item.getAppid().equalsIgnoreCase(id)).findFirst();
         MerchantsProperties.Merchant merchant = qWechat.orElse(null);
         return merchant;
     }
@@ -49,12 +49,12 @@ public class MerchantRS {
     @PostMapping("/getAccess")
     //@TrackLog
     public Mono<MerchantAccessDTO> getAccessUrl(@RequestHeader(value = "signature", required = true) String signature,
-                                                @RequestHeader(value = "merchantCode", required = true) String merchantCode,
+                                                @RequestHeader(value = "appid", required = true) String appid,
                                                 @RequestHeader(value = "version", defaultValue = "1.0") String version,
                                                 @RequestBody MerchantDTO merchantDTO
     ) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(merchantCode));
+        MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(appid));
 
         if (merchant == null) {
             //todo merchantCode信息不存在
@@ -63,7 +63,7 @@ public class MerchantRS {
         MerchantHeadDTO merchantHeadDTO = MerchantHeadDTO.builder()
                 .version(version)
                 .signature(signature)
-                .merchantCode(merchantCode)
+                .appid(appid)
                 .build();
 
 

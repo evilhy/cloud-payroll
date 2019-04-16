@@ -77,6 +77,8 @@ public class MerchantDTO {
         signatureMap.put("uid", merchantDTO.getUid());
 
         signatureMap.put("version", merchantHeadDTO.getVersion());
+        signatureMap.put("appid", merchantHeadDTO.getAppid());
+
         //signatureMap.put("signature", merchantHeadDTO.getSignature());
         //signatureMap.put("merchantCode", merchantHeadDTO.getMerchantCode());
 

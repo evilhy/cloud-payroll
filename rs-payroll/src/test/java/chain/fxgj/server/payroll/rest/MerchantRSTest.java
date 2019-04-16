@@ -44,7 +44,7 @@ public class MerchantRSTest extends BaseRSTest {
 
     private MerchantsProperties.Merchant getMerchant(String id) {
         Optional<MerchantsProperties.Merchant> qWechat = merchantProperties.getMerchant().stream()
-                .filter(item -> item.getId().equalsIgnoreCase(id)).findFirst();
+                .filter(item -> item.getAppid().equalsIgnoreCase(id)).findFirst();
         MerchantsProperties.Merchant merchant = qWechat.orElse(null);
         return merchant;
     }
@@ -56,16 +56,18 @@ public class MerchantRSTest extends BaseRSTest {
     public void getAccessUrl() throws Exception {
 
         //String signature = "123456789";
-        String merchantCode = "1";
+        //String merchantCode = "1";
         String version = "1.0";
+        String appid = "wx0345ad9614fe9567";
 
         MerchantHeadDTO merchantHeadDTO = MerchantHeadDTO.builder()
-                .merchantCode(merchantCode)
+                .appid(appid)
+                //.merchantCode(merchantCode)
                 .version(version)
                 .build();
 
 
-        MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(merchantCode));
+        MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(appid));
 
         String name = "测试";
         String idType = "01";
@@ -107,7 +109,7 @@ public class MerchantRSTest extends BaseRSTest {
         webTestClient.post()
                 .uri("/merchant/getAccess")
                 .header("signature", signature)
-                .header("merchantCode", merchantCode )
+                .header("appid", appid)
                 .header("version", RSAEncrypt.encrypt(version, merchant.getRsaPublicKey()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .syncBody(merchantDTO_Encrypt)//入参

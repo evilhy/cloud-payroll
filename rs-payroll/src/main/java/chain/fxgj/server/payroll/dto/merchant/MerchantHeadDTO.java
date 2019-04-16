@@ -29,7 +29,7 @@ public class MerchantHeadDTO {
     /**
      * 接入平台编号
      */
-    private String merchantCode;
+    //private String merchantCode;
     /**
      * appid
      */
@@ -41,7 +41,7 @@ public class MerchantHeadDTO {
         try {
             merchantHead = MerchantHeadDTO.builder()
                     .version(RSAEncrypt.decrypt(merchantHeadDTO.getVersion(), decrypt))
-                    .merchantCode(merchantHeadDTO.getMerchantCode())
+                   // .merchantCode(merchantHeadDTO.getMerchantCode())
                     .appid(merchantHeadDTO.getAppid())
                     .signature(merchantHeadDTO.getSignature())
                     .build();

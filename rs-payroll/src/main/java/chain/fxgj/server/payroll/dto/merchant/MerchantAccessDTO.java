@@ -52,7 +52,7 @@ public class MerchantAccessDTO {
         signatureMap.put("accessUrl", merchantAccessDTO.accessUrl);
 
         signatureMap.put("version", merchantHeadDTO.getVersion());
-        signatureMap.put("merchantCode", merchantHeadDTO.getMerchantCode());
+        signatureMap.put("appid", merchantHeadDTO.getAppid());
 
         String signature = Sha1.SHA1(signatureMap);
         return signature;
