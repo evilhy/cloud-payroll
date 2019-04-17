@@ -75,11 +75,11 @@ merchants:
       #分组名称
       name: 中人联微信对接
       #接入平台编号
-      merchantCode: 001
+      merchantCode: 1
       #请求地扯
       url: http://www.baidu.com
       #重定向工资条地址
-      accessUrl: http://wwww.baiud.com
+      accessUrl: http://localhost:8080/merchant/checkToken
       #rsa 公钥
       rsaPublicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCGYHGGPlZvE4DE7ExTBMDNwJlDKXBiQYaprvxGZ+rf7YqJhxO08UnecTHKpPdA0KGe6vMwgT58AN3Cj1WsytIQ6Y2ybiqSwlpjlFQaNb3jiiE4gnSMkMvxxzRaHQ+Y10Qtfil47wqVq2TCKMMWrgSfMNINoTbSEp10FFbhbVrxpQIDAQAB
       #rsa 私钥

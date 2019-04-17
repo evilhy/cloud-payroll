@@ -1,29 +1,32 @@
 package chain.fxgj.server.payroll.controller;
 
-
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.fxgj.core.common.constant.FxgjDBConstant;
+import chain.fxgj.core.common.service.EmployeeEncrytorService;
+import chain.fxgj.core.common.service.MerchantService;
+import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
+import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.merchant.MerchantAccessDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantHeadDTO;
-import chain.fxgj.server.payroll.dto.request.DistributeDTO;
-import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.utils.commons.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.security.DigestException;
+import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 工资条  对外输出接口
@@ -38,6 +41,12 @@ public class MerchantRS {
 
     @Autowired
     MerchantsProperties merchantProperties;
+    @Autowired
+    MerchantService merchantService;
+    @Autowired
+    EmployeeEncrytorService employeeEncrytorService;
+    @Resource
+    RedisTemplate redisTemplate;
 
 
     private MerchantsProperties.Merchant getMerchant(String id) {
@@ -60,6 +69,8 @@ public class MerchantRS {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         //取对接商户 信息
         MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(appid));
+        String merchantAppid = StringUtils.trimToEmpty(merchant.getAppid());
+
         //
         if (merchant == null) {
             log.error("appid={}，不存在", appid);
@@ -80,7 +91,6 @@ public class MerchantRS {
         //1、解析 返回报文体信息
         MerchantDTO merchantDecrypt = MerchantDTO.decrypt(merchantDTO, merchant.getRsaPrivateKey());
 
-
         //2、生成签名信息
         String checkSignature = MerchantDTO.signature(merchantDecrypt, merchantHeadDecrypt);
 
@@ -95,12 +105,40 @@ public class MerchantRS {
             MDC.setContextMap(mdcContext);
 
             //4、生成访问信息
+            EmployeeWechatInfo employeeWechatInfo = merchantDecrypt.conver();
+
+            String idNumber = employeeEncrytorService.encryptIdNumber(employeeWechatInfo.getIdNumber());
+
+            String phone = employeeEncrytorService.encryptPhone(employeeWechatInfo.getPhone());
+            log.info("手机号phone:{}", phone);
+
+            employeeWechatInfo.setIdNumber(idNumber);
+            employeeWechatInfo.setPhone(phone);
+
+            employeeWechatInfo.setAppPartner(AppPartnerEnum.values()[Integer.valueOf(merchant.getMerchantCode())]);
+
+            EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
+            if (employeeWechat != null) {
+                log.info("用户信息存在！");
+                employeeWechat.setNickname(employeeWechatInfo.getNickname());
+                employeeWechat.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
+                merchantService.saveMerchant(employeeWechat);
+            } else {
+                log.info("用户信息不存在！");
+                merchantService.saveMerchant(employeeWechatInfo);
+            }
+
+            Integer accessToken = (int) (Math.random() * 100000);
+
+            String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + merchantAppid + ":" + employeeWechatInfo.getIdNumber();
+            redisTemplate.opsForValue().set(redisKey, accessToken, PayrollConstants.MERCHANT_EXPIRESIN, TimeUnit.SECONDS);
 
             //5、生成签名信息
+
             MerchantAccessDTO merchantAccessDTO = MerchantAccessDTO.builder()
-                    .accessToken("12345")
-                    .expiresIn(600)
-                    .accessUrl("http://localhost:8080/merchant/checkToken")
+                    .accessToken(accessToken.toString())
+                    .expiresIn(PayrollConstants.MERCHANT_EXPIRESIN)
+                    .accessUrl(merchant.getAccessUrl())
                     .build();
             MerchantAccessDTO merchantAccess = MerchantAccessDTO.encryption(merchantAccessDTO, merchant.getRsaPublicKey());
 
@@ -112,7 +150,6 @@ public class MerchantRS {
             //response.getHeaders().set("signature",retureSignature);
             return merchantAccess;
         }).subscribeOn(Schedulers.elastic());
-
 
     }
 

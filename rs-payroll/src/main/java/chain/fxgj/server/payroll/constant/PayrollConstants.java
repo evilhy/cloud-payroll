@@ -18,4 +18,12 @@ public class PayrollConstants {
     public final static String SORT_FIELD = "sort-field";    //排序字段名
     public final static String DIRECTION = "direction";    //排序方向：DESC-倒序，ASC-正序。默认为ASC
     public final static String PLAT_ID = "plat-id";    //平台id(EnumPlatform)
+
+    /**
+     * 凭证超时时间
+     */
+    public final static Integer MERCHANT_EXPIRESIN = 600;
+
+
+
 }

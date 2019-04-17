@@ -1,11 +1,22 @@
 package chain.fxgj.server.payroll.dto.merchant;
 
 import chain.css.exception.ParamsIllegalException;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.fxgj.core.common.constant.DictEnums.CertTypeEnum;
+import chain.fxgj.core.jpa.model.ActivityInfo;
+import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.util.Sha1;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.DigestException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -21,6 +32,7 @@ import java.util.LinkedList;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Slf4j
 public class MerchantDTO {
     /**
      * 客户姓名
@@ -50,6 +62,10 @@ public class MerchantDTO {
      * 用户微信头像地址
      */
     private String headimgurl;
+    /**
+     * 合作商平台标识
+     */
+    private AppPartnerEnum appPartner;
 
     public static MerchantDTO decrypt(MerchantDTO merchantDTO, String decrypt) {
         MerchantDTO merchant = null;
@@ -60,13 +76,22 @@ public class MerchantDTO {
                     .idNumber(RSAEncrypt.decrypt(merchantDTO.getIdNumber(), decrypt))
                     .phone(RSAEncrypt.decrypt(merchantDTO.getPhone(), decrypt))
                     .uid(RSAEncrypt.decrypt(merchantDTO.getUid(), decrypt))
-                    .nickname(merchantDTO.getNickname())
+                    //.nickname(merchantDTO.getNickname())
                     .headimgurl(merchantDTO.getHeadimgurl())
                     .build();
         } catch (Exception e) {
             e.printStackTrace();
             throw new ParamsIllegalException(ErrorConstant.MERCHANT_03.getErrorMsg());
         }
+
+        String nickName ="";
+        try {
+             nickName = URLEncoder.encode(merchantDTO.getNickname(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            log.error("获取昵称出现异常！");
+        }
+        merchant.setNickname(nickName);
         return merchant;
     }
 
@@ -96,4 +121,19 @@ public class MerchantDTO {
     }
 
 
+    public EmployeeWechatInfo conver() {
+        EmployeeWechatInfo employeeWechatInfo = EmployeeWechatInfo.builder()
+                .name(name)
+                .idType(CertTypeEnum.values()[Integer.valueOf(this.idType)])
+                .idNumber(this.idNumber)
+                .phone(phone)
+                .uid(uid)
+                .nickname(this.nickname)
+                .headimgurl(this.headimgurl)
+                .appPartner(this.appPartner)
+                .build();
+
+        return employeeWechatInfo;
+
+    }
 }

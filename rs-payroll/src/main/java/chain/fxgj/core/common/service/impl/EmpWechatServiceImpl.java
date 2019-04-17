@@ -59,13 +59,14 @@ public class EmpWechatServiceImpl implements EmpWechatService {
 
     @Override
     public UserPrincipal setWechatInfo(String jsessionId, String openId, String nickname, String headimgurl,String idNumber) throws Exception {
-        UserPrincipal userPrincipal = new UserPrincipal();
-        userPrincipal.setSessionId(jsessionId);
-        userPrincipal.setOpenId(openId);
-        userPrincipal.setSessionTimeOut(LocalDateTime.now().plusHours(8));
-        userPrincipal.setNickname(nickname);
-        userPrincipal.setHeadimgurl(headimgurl);
-        userPrincipal.setIdNumber(idNumber);
+        UserPrincipal userPrincipal = UserPrincipal.builder()
+                .sessionId(jsessionId)
+                .openId(openId)
+                .sessionTimeOut(LocalDateTime.now().plusHours(8))
+                .nickname(nickname)
+                .headimgurl(headimgurl)
+                .idNumber(idNumber)
+                .build();
 
         //判断openId是否绑定
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.findFirstByOpenIdAndAndDelStatusEnum(openId, DelStatusEnum.normal);
@@ -75,11 +76,13 @@ public class EmpWechatServiceImpl implements EmpWechatService {
             userPrincipal.setIdNumberEncrytor(idNumberEncrypt);
             idNumber = employeeEncrytorService.decryptIdNumber(idNumberEncrypt);
             userPrincipal.setIdNumber(idNumber);
+
             String phone = employeeEncrytorService.decryptPhone(employeeWechatInfo.getPhone());
             log.info("手机号phone:{}",phone);
             userPrincipal.setPhone(phone);
             userPrincipal.setWechatId(employeeWechatInfo.getId());
             userPrincipal.setQueryPwd(employeeWechatInfo.getQueryPwd());
+
             //修改绑定信息
             WechatLoginDTO wechatLoginDTO = new WechatLoginDTO();
             wechatLoginDTO.setOpenId(openId);
@@ -88,6 +91,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
             wechatLoginDTO.setHeadimgurl(headimgurl);
             insideService.login(openId,jsessionId,nickname,headimgurl);
         }
+
         //用户机构
         List<EntInfoDTO> entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
         userPrincipal.setEntInfoDTOS(entInfoDTOS);
