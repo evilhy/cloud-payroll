@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.MerchantService;
@@ -13,7 +14,11 @@ import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.merchant.MerchantAccessDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantHeadDTO;
+import chain.fxgj.server.payroll.dto.response.Res100705;
+import chain.fxgj.server.payroll.web.UserPrincipal;
+import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
+import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,18 +130,20 @@ public class MerchantRS {
                 merchantService.saveMerchant(employeeWechat);
             } else {
                 log.info("用户信息不存在！");
-                merchantService.saveMerchant(employeeWechatInfo);
+                employeeWechatInfo = merchantService.saveMerchant(employeeWechatInfo);
             }
 
-            Integer accessToken = (int) (Math.random() * 100000);
 
-            String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + merchantAppid + ":" + employeeWechatInfo.getIdNumber();
-            redisTemplate.opsForValue().set(redisKey, accessToken, PayrollConstants.MERCHANT_EXPIRESIN, TimeUnit.SECONDS);
+            String accessToken = UUIDUtil.createUUID8();
+
+            String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + accessToken;
+            String emp = JacksonUtil.objectToJson(merchantDecrypt);
+            redisTemplate.opsForValue().set(redisKey, emp, PayrollConstants.MERCHANT_EXPIRESIN, TimeUnit.SECONDS);
 
             //5、生成签名信息
 
             MerchantAccessDTO merchantAccessDTO = MerchantAccessDTO.builder()
-                    .accessToken(accessToken.toString())
+                    .accessToken(accessToken)
                     .expiresIn(PayrollConstants.MERCHANT_EXPIRESIN)
                     .accessUrl(merchant.getAccessUrl())
                     .build();
@@ -149,6 +156,60 @@ public class MerchantRS {
             log.info("返回签名：{}", retureSignature);
             //response.getHeaders().set("signature",retureSignature);
             return merchantAccess;
+        }).subscribeOn(Schedulers.elastic());
+
+    }
+
+
+    /**
+     * 访问凭证
+     */
+    @GetMapping("/callback")
+    //@TrackLog
+    public Mono<Res100705> wxCallback(@RequestParam String accessToken) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
+        String token = StringUtils.trimToEmpty(accessToken);
+
+        String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + token;
+        Object value = redisTemplate.opsForValue().get(redisKey);
+
+        if (value == null) {
+            throw new ParamsIllegalException(ErrorConstant.MERCHANT_06.getErrorMsg());
+        }
+
+
+        MerchantDTO merchantDecrypt = JacksonUtil.jsonToBean((String) value, MerchantDTO.class);
+
+        EmployeeWechatInfo employeeWechatInfo = merchantDecrypt.conver();
+        employeeWechatInfo.setIdNumber(employeeEncrytorService.encryptIdNumber(employeeWechatInfo.getIdNumber()));
+
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
+            String jsessionId = UUIDUtil.createUUID32();
+            Res100705 res100705 = Res100705.builder().build();
+
+            log.info("set之前打印jsessionId:[{}]", jsessionId);
+            res100705.setJsessionId(jsessionId);
+
+            EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
+            if (employeeWechat != null) {
+                log.info("用户信息存在！");
+                UserPrincipal userPrincipal = merchantService.setWechatInfo(jsessionId, employeeWechat);
+                if (StringUtils.isNotBlank(userPrincipal.getIdNumber())) {
+                    res100705.setBindStatus("1");
+                    res100705.setIdNumber(userPrincipal.getIdNumberEncrytor());
+                    res100705.setIfPwd(StringUtils.isEmpty(StringUtils.trimToEmpty(userPrincipal.getQueryPwd())) ? IsStatusEnum.NO.getCode() : IsStatusEnum.YES.getCode());
+                    res100705.setName(userPrincipal.getName());
+                    res100705.setPhone(userPrincipal.getPhone());
+                    res100705.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
+                }
+            } else {
+                log.info("用户信息不存在！");
+            }
+
+            return res100705;
         }).subscribeOn(Schedulers.elastic());
 
     }

@@ -9,6 +9,7 @@ import chain.fxgj.server.payroll.dto.merchant.MerchantHeadDTO;
 import chain.fxgj.server.payroll.dto.request.DistributeDTO;
 import chain.fxgj.server.payroll.dto.response.PlanListBean;
 import chain.fxgj.server.payroll.dto.response.Res100703;
+import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.tfinance.IntentRequestDTO;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.utils.commons.JacksonUtil;
@@ -122,6 +123,29 @@ public class MerchantRSTest extends BaseRSTest {
                 .consumeWith(WebTestClientRestDocumentation.document("merchant_getAccessUrl",
                         relaxedResponseFields(JavaDocReader.javaDoc(MerchantAccessDTO.class))
                 ));
-
     }
+
+
+    /**
+     * 访问凭证
+     */
+    @Test
+    public void callback() {
+        String accessToken = "HivcNXzz";
+
+        webTestClient.get()
+                .uri("/merchant/callback?accessToken={accessToken}", accessToken)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody()
+                .consumeWith(WebTestClientRestDocumentation.document("merchant_callback",
+                        requestParameters(
+                                parameterWithName("accessToken").description("访问凭证")
+                        ),
+                        relaxedResponseFields(JavaDocReader.javaDoc(Res100705.class))
+                ));
+    }
+
+
 }

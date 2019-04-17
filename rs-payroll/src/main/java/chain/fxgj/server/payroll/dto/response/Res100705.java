@@ -18,7 +18,8 @@ public class Res100705 {
     /**
      * 是否绑定 1已绑定 0未绑定
      */
-    private String bindStatus;
+    @Builder.Default
+    private String bindStatus = "0";
     /**
      * 登录凭证
      */

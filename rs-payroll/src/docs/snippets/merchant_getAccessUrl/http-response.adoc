@@ -1,8 +1,8 @@
 [source,http,options="nowrap"]
 ----
 HTTP/1.1 200 OK
-Content-Length: 226
+Content-Length: 229
 Content-Type: application/json;charset=UTF-8
 
-{"accessToken":"29931","expiresIn":600,"accessUrl":"GcP+dLkK6ZRhg0TFvama2g9dnYmm8mT2tOORl8+2VypGaObrlaldFotcVCYfXAfZgGXF6v3skhooBbVtVdTWWs0b9QJ2/AUN8vWeMGjNRjZAmtoY/LUyym1MrSdvcKZiqXvG9CKANNZ8Jrj2X83clwzIynfelSgQmoCj+u/3EQo="}
+{"accessToken":"HivcNXzz","expiresIn":600,"accessUrl":"dAzE5pH6b0+7+3NOyPRNuW67XP7ZWXK0vOSl+M47APy2j8ezJRjk3TsDbm/dcwc0M8YqTGsFyY2q4dbfv5sHufGyuyKjQlmxUNNpMUw51GzjJtPHmeY9MsQlW54nVOczcHmCruXGlLtbZq6YqqH3aHpyDjP6p0XX9cA+xcMbWLc="}
 ----
