@@ -327,7 +327,11 @@ public class WechatBindServiceImpl implements WechatBindService {
                     //entStatus = false;
                 }
 
-                EntErpriseInfo entErpriseInfo = entGroupInfo.getEntErpriseInfo();
+                //懒加载失效，导致无法从机构中加载出企业信息，所以，需要重新查询
+//                EntErpriseInfo entErpriseInfo = entGroupInfo.getEntErpriseInfo();
+                String entIdTemp = entGroupInfo.getEntId();
+                EntErpriseInfo entErpriseInfo =entErpriseInfoDao.findById(entIdTemp).get();
+
                 EnterpriseStatusEnum enterpriseStatusEnum = entErpriseInfo.getEntStatus();
                 if (enterpriseStatusEnum.getCode() != EnterpriseStatusEnum.NORMAL.getCode()) {
                     log.info("企业信息不正={}", enterpriseStatusEnum.getCode());
