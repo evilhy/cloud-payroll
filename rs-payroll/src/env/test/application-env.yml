@@ -10,8 +10,13 @@ spring:
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    hibernate:
-      ddl-auto: update
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        ### 懒加载使用此方法
+        enable_lazy_load_no_trans: true
+    show-sql: true
     naming:
       physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
   redis:
