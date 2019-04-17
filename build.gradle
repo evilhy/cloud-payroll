@@ -109,7 +109,7 @@ subprojects {
     dependencies {
         compile('chain:cloud-common:1.0.10')
         compile 'org.projectlombok:lombok:1.18.2'
-        compile('chain:css-log:2.1.1')
+        compile('chain:css-log:2.1.2')
         compile('chain:utils-commons:1.0.6')
         runtimeOnly 'org.springframework.boot:spring-boot-devtools'
         testCompile('org.springframework.boot:spring-boot-starter-test')
