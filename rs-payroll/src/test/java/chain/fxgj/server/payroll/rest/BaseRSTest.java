@@ -1,14 +1,15 @@
 package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.core.common.service.EmpWechatService;
-import chain.fxgj.server.payroll.PayrollApplication;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.reactive.SpringBootWebTestClientBuilderCustomizer;

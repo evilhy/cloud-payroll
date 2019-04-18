@@ -9,6 +9,7 @@ import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -33,8 +34,6 @@ public class WebContextFilter implements WebFilter, Ordered {
 
     private static final String REQ = "req-id";
 
-    private static final String MAX_AGE = "18000L";
-
     public WebContextFilter() {
         log.info("Loaded WebFilter [WebContextFilter]");
     }
@@ -47,15 +46,12 @@ public class WebContextFilter implements WebFilter, Ordered {
         if (StringUtils.isBlank(reqId)) {
             reqId = UUIDUtil.createUUID24();
         }
-
         MDC.put(REQ, reqId);
         MDC.put(FxgjDBConstant.LOG_TOKEN, reqId);
 
         StringBuffer logBuffer = new StringBuffer();
-        logBuffer.append(String.format("%s %s Query:%s \n",
-                exchange.getRequest().getMethod().name(),
-                exchange.getRequest().getURI().getPath(),
-                exchange.getRequest().getQueryParams()));
+        ServerHttpRequest request = exchange.getRequest();
+        logBuffer.append(String.format("%s %s Query:%s \n", request.getMethod().name(),request.getURI().getPath(),request.getQueryParams()));
         //getRemoteAddress 可能获取不到，所以判断
         if (null != exchange.getRequest().getRemoteAddress()) {
             logBuffer.append(exchange.getRequest().getRemoteAddress().getHostString());
@@ -75,45 +71,13 @@ public class WebContextFilter implements WebFilter, Ordered {
         ServerHttpRequest host = exchange.getRequest().mutate().header(REQ, reqId).build();
         ServerWebExchange build = exchange.mutate().request(host).build();
 
-//- 先判断 OPTIONS
-        ServerHttpRequest request = build.getRequest();
-        List<String> strings = request.getHeaders().get(HttpHeaders.ORIGIN);
-        log.info("request.getMethod():[{}]",request.getMethod());
-        log.info(" request.getHeaders().get('Origin'):[{}]", strings);
-        if (CorsUtils.isCorsRequest(request)) {
-            HttpHeaders requestHeaders = request.getHeaders();
-            ServerHttpResponse response = build.getResponse();
-            HttpMethod requestMethod = requestHeaders.getAccessControlRequestMethod();
-            HttpHeaders headers = response.getHeaders();
-//                headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, requestHeaders.getOrigin());
-            headers.setAccessControlAllowOrigin("*");
-            headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders
-                    .getAccessControlRequestHeaders());
-            if (requestMethod != null) {
-                headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestMethod.name());
-            }
-            headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-            headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
-            headers.add(HttpHeaders.ACCESS_CONTROL_MAX_AGE, MAX_AGE);
-
-            if (request.getMethod() == HttpMethod.OPTIONS) {
-                response.setStatusCode(HttpStatus.OK);
-                return Mono.empty();
-            }
-
-        }
-//-
-
         return chain.filter(build).then(Mono.fromRunnable(() -> {
             MDC.put(REQ, finalReqId);
             MDC.put(FxgjDBConstant.LOG_TOKEN, finalReqId);
-
             Long startTime = exchange.getAttribute(START_TIME);
             if (startTime != null) {
                 Long executeTime = (System.currentTimeMillis() - startTime);
-                log.info("{} {} {}", exchange.getRequest().getURI().getRawPath(),
-                        exchange.getResponse().getStatusCode(), executeTime +
-                                "ms");
+                log.info("{} {} {} ms", exchange.getRequest().getURI().getRawPath(), exchange.getResponse().getStatusCode(), executeTime);
             }
         }));
     }

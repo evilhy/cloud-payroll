@@ -49,10 +49,13 @@ startScripts {
     }
 }
 ext {
-    springCloudVersion = 'Greenwich.RC2'
+    springCloudVersion = 'Greenwich.RELEASE'
     snippetsDir = file('build/generated-snippets')
     docsSnippetsDir = file('src/docs/snippets')
     jdkHome = System.getenv("JAVA_HOME")
+    if (jdkHome == null) {
+        jdkHome = "/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home";
+    }
 }
 dependencyManagement {
     imports {
@@ -95,7 +98,6 @@ dependencies {
     //compile('io.swagger:swagger-jersey2-jaxrs:1.5.20')
     compile group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.27'
     compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.27'
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider
     compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.8'
     //application/json
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.26'
