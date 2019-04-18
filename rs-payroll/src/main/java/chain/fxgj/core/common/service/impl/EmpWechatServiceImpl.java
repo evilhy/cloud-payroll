@@ -112,11 +112,15 @@ public class EmpWechatServiceImpl implements EmpWechatService {
 
         List<EntInfoDTO> entInfoDTOS = new ArrayList<>();
         try {
+            log.info("idNumber:[{}]",idNumber);
             entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
+            log.info("go on");
         } catch (InterruptedException e) {
             e.printStackTrace();
+            log.error("e.printStackTrace()->[{}]",e.getMessage());
         } catch (ExecutionException e) {
             e.printStackTrace();
+            log.error("e.printStackTrace()-->[{}]",e.getMessage());
         }
 
         List<EmployeeDTO> list = new ArrayList<>();
