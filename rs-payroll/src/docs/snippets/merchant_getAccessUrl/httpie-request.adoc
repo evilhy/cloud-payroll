@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ echo '{"name":"CPEHeBsxFXXIJP0zhDeA4v8HfTyvyYdjw3w4jMS+Ex/if9bzT9zVAdl3A5Kpqw7npbIiy0WIKTJcIbvGo9TNweit0sFO+AAhzOOhnR2cTmeJ49k5sRON2eZ5sQmLVOvcZK6uRii8PPVyvU1KtZhR4LCxBned/HuEgN7FnTI3Mio=","idType":"HQuh/GSxq29Zvi712VtSJXxg9pQLuWBUomoE+rbkJ+qzUZQdibae59h0bPRpM1LoCOFW9OrWjTzgQjGk9rlKZiNi1k3s8Xr7rjl5wZ6uTPkCIphz2dFcEuJ3MV6uf9uvPslcLoLYZM+80XX3c0gBT+YR+AJEBrTgJgFmy0j65bs=","idNumber":"dULYaj6YDCWdcNy3s+0ThSZaVJgiMiI5kmKBtfVm/cs/byeKPkyNjfhMDZpVFBaCp9vOERxPpgnWyNKXJaBLx5D76BkJJWiFalctsfZKlg6VkN/73YRE7Ro7TV81Xl0v7jvZN2+WDqsD8+E3NePLPVC3Hwv27Cz5G4hVSAK7oBE=","phone":"JGIrDM3hiNo7dlBk3jQ0LbM5VR/y/lS3sGq+m0m2F3X42Ug807H3FIVsZuoHLEZT2jqK+xG8lgczb2UPEA1dufXyprOhADpLiHmLX+1zMLtu1Eue3ppqbImaQqWSaR0AinPmnveyvA9BVsc/ZDhTF7WGltY1I8G52g61R2I2Vsk=","uid":"CC2wF0RVEpoxhjaJZ0zzGu7zmxjRHJC9BupgfmTIS5WCeP7aVmLYdlbkZXf638KyGk/kwSv1mSVQqp1dFUutdVIkUwyJXV8mJMyhw0vnpbfPOH4Qmgzc7pkBLz0rLhOkn6qZ5lmHKJ52eCrUXsRndvTnTZyUoSDXLUXD91H6aoY=","nickname":"用户微信昵称","headimgurl":"http://wwww.baidu.com","appPartner":null}' | http POST 'http://localhost:8080/merchant/getAccess' \
+    'signature:DDB6A937DBED8DD936A03FE4E27DCDEDED06A28C' \
+    'appid:wx0345ad9614fe9567' \
+    'Content-Type:application/json' \
+    'version:GAx6CGEcHAM8lRsAmVBAwL9rcC69B3nlW5mNHv3lpvh5l9tbZGn87t/hhaw2ut7Xyl7hstd0CkR1v67Y7yL9Pzr4hQ8lFWA7vwuwFA5lBKjqN0ymZgvDDi3/SMV76HVrx+TEV50Om80RKoswxlYzQR2th4cVYJGJxKXrpq8muoU='
+----

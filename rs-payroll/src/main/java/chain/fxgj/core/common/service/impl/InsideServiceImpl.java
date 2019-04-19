@@ -84,14 +84,16 @@ public class InsideServiceImpl implements InsideService {
 
     @Override
     public void bandWechat(String openId, String idNumber, String phone) {
-        log.info("绑定信息openId:{},idNumber:{},phone:{}",openId,idNumber,phone);
+        log.info("绑定信息openId:{},idNumber:{},phone:{}", openId, idNumber, phone);
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
 
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
-                .where(qEmployeeWechatInfo.idNumber.equalsIgnoreCase(idNumber).and(qEmployeeWechatInfo.openId.eq(openId)))
+                .where(qEmployeeWechatInfo.idNumber.equalsIgnoreCase(idNumber)
+                        .and(qEmployeeWechatInfo.openId.eq(openId))
+                )
                 .fetchFirst();
         if (employeeWechatInfo == null) {
-            employeeWechatInfo = new EmployeeWechatInfo();
+            employeeWechatInfo = EmployeeWechatInfo.builder().build();
             employeeWechatInfo.setCrtDateTime(LocalDateTime.now());
         }
 
@@ -110,7 +112,7 @@ public class InsideServiceImpl implements InsideService {
     @Override
     public void bandWechatAndPhone(String openId, String idNumber, String phone, String pwd) {
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
-        log.info("绑定信息openId:{},idNumber:{},phone:{}",openId,idNumber,phone);
+        log.info("绑定信息openId:{},idNumber:{},phone:{}", openId, idNumber, phone);
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
                 .where(qEmployeeWechatInfo.idNumber.equalsIgnoreCase(idNumber).and(qEmployeeWechatInfo.openId.eq(openId)))
                 .fetchFirst();
@@ -129,12 +131,12 @@ public class InsideServiceImpl implements InsideService {
         employeeWechatInfoDao.save(employeeWechatInfo);
 
         //更新手机号
-        QEmployeeInfo qEmployeeInfo=QEmployeeInfo.employeeInfo;
+        QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         List<EmployeeInfo> fetch = employeeInfoDao.selectFrom(qEmployeeInfo)
                 .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
                 .fetch();
-        log.info("员工的size:{}",fetch.size());
+        log.info("员工的size:{}", fetch.size());
         for (EmployeeInfo employeeInfo : fetch) {
             employeeInfo.setPhone(phone);
         }
@@ -169,19 +171,19 @@ public class InsideServiceImpl implements InsideService {
     @Override
     public void setPwd(String wechatId, String pwd) {
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
-        employeeWechatInfoDao.update(qEmployeeWechatInfo).set(qEmployeeWechatInfo.queryPwd,employeeEncrytorService.encryptPwd(pwd))
+        employeeWechatInfoDao.update(qEmployeeWechatInfo).set(qEmployeeWechatInfo.queryPwd, employeeEncrytorService.encryptPwd(pwd))
                 .where(qEmployeeWechatInfo.id.eq(wechatId)).execute();
     }
 
     @Override
     public void updPhone(String wechatId, String idNumber, String phone) {
         //更新手机号
-        QEmployeeWechatInfo qEmployeeWechatInfo=QEmployeeWechatInfo.employeeWechatInfo;
-        employeeWechatInfoDao.update(qEmployeeWechatInfo).set(qEmployeeWechatInfo.phone,employeeEncrytorService.encryptPhone(phone))
+        QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
+        employeeWechatInfoDao.update(qEmployeeWechatInfo).set(qEmployeeWechatInfo.phone, employeeEncrytorService.encryptPhone(phone))
                 .where(qEmployeeWechatInfo.id.eq(wechatId)).execute();
 
-        QEmployeeInfo qEmployeeInfo=QEmployeeInfo.employeeInfo;
-        employeeInfoDao.update(qEmployeeInfo).set(qEmployeeInfo.phone,phone)
+        QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
+        employeeInfoDao.update(qEmployeeInfo).set(qEmployeeInfo.phone, phone)
                 .where(qEmployeeInfo.idNumber.eq(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))).execute();
     }
 
@@ -190,13 +192,13 @@ public class InsideServiceImpl implements InsideService {
 
         //创建联合id
         String unionId = UUIDUtil.createUUID32();
-        List<EmployeeCardLog> employeeCardLogs=new ArrayList<>();
+        List<EmployeeCardLog> employeeCardLogs = new ArrayList<>();
         for (BankCardGroup item : updBankCardDTO.getBankCardGroups()) {
-            EmployeeCardInfo employeeCardInfo=employeeCardInfoDao.findById(item.getId())
+            EmployeeCardInfo employeeCardInfo = employeeCardInfoDao.findById(item.getId())
                     .orElseThrow(() -> new ParamsIllegalException(ErrorConstant.Error0001.format("银行卡")));
 
             //银行卡修改记录
-            EmployeeCardLog employeeCardLog=new EmployeeCardLog();
+            EmployeeCardLog employeeCardLog = new EmployeeCardLog();
             employeeCardLog.setUnionId(unionId);
             employeeCardLog.setCardNo(updBankCardDTO.getCardNo());
             employeeCardLog.setIssuerBankId(updBankCardDTO.getIssuerBankId());
@@ -228,4 +230,8 @@ public class InsideServiceImpl implements InsideService {
             employeeCardLog.setIsNew(IsStatusEnum.NO);
         }
     }
+
+
+
+
 }

@@ -103,6 +103,7 @@ public class WageWechatServiceImpl implements WageWechatService {
             }
         }
         if (employee == null) {
+            log.info("员工信息为空");
             throw new ParamsIllegalException(ErrorConstant.Error0001.format("员工机构"));
         }
         String employeeSid = employeeEncrytorService.encryptEmployeeId(employee.getEmployeeId());

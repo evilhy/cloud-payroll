@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.web;
 
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import lombok.*;
 
@@ -51,6 +52,15 @@ public class UserPrincipal implements Principal {
      * 用户 微信openId
      */
     private String openId;
+    /**
+     * 用户 微信openId
+     */
+    private String uid;
+    /**
+     * 合作商平台标识
+     */
+    private AppPartnerEnum appPartner;
+
     /**
      * 用户身份证号码（明文）
      */

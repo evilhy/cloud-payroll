@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+accessToken+`
+|访问凭证
+
+|===

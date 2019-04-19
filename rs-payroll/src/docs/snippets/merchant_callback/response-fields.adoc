@@ -1,0 +1,32 @@
+|===
+|Path|Type|Description
+
+|`+bindStatus+`
+|`+String+`
+|是否绑定 1已绑定 0未绑定
+
+|`+jsessionId+`
+|`+String+`
+|登录凭证
+
+|`+idNumber+`
+|`+String+`
+|身份证号
+
+|`+ifPwd+`
+|`+Integer+`
+|是否设置查询密码 1是 0否
+
+|`+headimgurl+`
+|`+String+`
+|头像
+
+|`+name+`
+|`+String+`
+|姓名
+
+|`+phone+`
+|`+String+`
+|手机号
+
+|===

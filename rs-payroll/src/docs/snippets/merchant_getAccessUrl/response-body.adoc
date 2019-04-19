@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"accessToken":"HivcNXzz","expiresIn":600,"accessUrl":"dAzE5pH6b0+7+3NOyPRNuW67XP7ZWXK0vOSl+M47APy2j8ezJRjk3TsDbm/dcwc0M8YqTGsFyY2q4dbfv5sHufGyuyKjQlmxUNNpMUw51GzjJtPHmeY9MsQlW54nVOczcHmCruXGlLtbZq6YqqH3aHpyDjP6p0XX9cA+xcMbWLc="}
+----

@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"bindStatus":"1","jsessionId":"bc62b64391704f18ae2706b2f3638863","idNumber":"SDu0wcTqeTw=","ifPwd":0,"headimgurl":"http://wwww.baidu.com","name":null,"phone":"13899997777"}
+----
