@@ -73,8 +73,9 @@ public class WageWechatServiceImpl implements WageWechatService {
             log.info("employeeId:[{}]", employeeId);
             //根据最新的代发记录
             WageDetailInfo wageDetailInfo = wageDetailInfoDao.selectFrom(qWageDetailInfo)
-                    .where(qWageDetailInfo.employeeSid.eq(employeeId)
-                            .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES)))
+                    .where(qWageDetailInfo.employeeSid.eq(employeeId))
+                    //isContStatus字段没用，所以注释掉
+//                            .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES)))
                     .orderBy(qWageDetailInfo.cntDateTime.desc()).fetchFirst();
 
             if (wageDetailInfo != null) {
