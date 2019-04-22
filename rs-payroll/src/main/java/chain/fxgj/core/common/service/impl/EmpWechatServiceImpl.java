@@ -114,7 +114,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         try {
             log.info("idNumber:[{}]",idNumber);
             entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
-            log.info("go on");
+            log.info("go on,entInfoDTOS.size()",entInfoDTOS.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
             log.error("e.printStackTrace()->[{}]",e.getMessage());
