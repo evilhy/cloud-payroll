@@ -80,7 +80,8 @@ public class WageWechatServiceImpl implements WageWechatService {
 
             if (wageDetailInfo != null) {
                 NewestWageLogDTO bean = new NewestWageLogDTO(employeeDTO);
-                bean.setCreateDate(wageDetailInfo.getCntDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                //wageDetailInfo.getCntDateTime() 工资统计时间为空，这里不取值，所以注释
+//                bean.setCreateDate(wageDetailInfo.getCntDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
                 bean.setIsRead(wageDetailInfo.getIsRead().getCode() + "");
 
                 list.add(bean);
