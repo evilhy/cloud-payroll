@@ -63,7 +63,7 @@ public class WageWechatServiceImpl implements WageWechatService {
     @Override
     public List<NewestWageLogDTO> groupList(String idNumber) {
         List<EmployeeDTO> employeeDTOS = empWechatService.getEmpList(idNumber);
-
+        log.info("employeeDTOS:[{}]",JacksonUtil.objectToJson(employeeDTOS));
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
         List<NewestWageLogDTO> list = new ArrayList<>();
         for (EmployeeDTO employeeDTO : employeeDTOS) {
