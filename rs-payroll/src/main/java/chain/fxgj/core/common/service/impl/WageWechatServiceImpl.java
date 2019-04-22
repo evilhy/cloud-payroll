@@ -67,9 +67,13 @@ public class WageWechatServiceImpl implements WageWechatService {
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
         List<NewestWageLogDTO> list = new ArrayList<>();
         for (EmployeeDTO employeeDTO : employeeDTOS) {
+            String employeeId1 = employeeDTO.getEmployeeId();
+            log.info("employeeId1:[{}]", employeeId1);
+            String employeeId = employeeEncrytorService.encryptEmployeeId(employeeId1);
+            log.info("employeeId:[{}]", employeeId);
             //根据最新的代发记录
             WageDetailInfo wageDetailInfo = wageDetailInfoDao.selectFrom(qWageDetailInfo)
-                    .where(qWageDetailInfo.employeeSid.eq(employeeEncrytorService.encryptEmployeeId(employeeDTO.getEmployeeId()))
+                    .where(qWageDetailInfo.employeeSid.eq(employeeId)
                             .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES)))
                     .orderBy(qWageDetailInfo.cntDateTime.desc()).fetchFirst();
 
@@ -88,7 +92,7 @@ public class WageWechatServiceImpl implements WageWechatService {
                 return o2.getCreateDate().compareTo(o1.getCreateDate());
             }
         });
-
+        log.info("list.size():[{}]",list.size());
         return list;
     }
 
