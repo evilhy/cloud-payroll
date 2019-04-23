@@ -85,7 +85,7 @@ merchants:
       url: http://www.baidu.com
       #重定向工资条地址
       #accessUrl: https://wxp.cardpu.com/fx-payroll/#/token?accessToken=tww9WR8f
-      accessUrl: https://wxp.cardpu.com/fx-payroll/#/token?accessToken=tww9WR8f
+      accessUrl: https://wxp.cardpu.com/fx-payroll/#/token
       #rsa 公钥
       rsaPublicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCGYHGGPlZvE4DE7ExTBMDNwJlDKXBiQYaprvxGZ+rf7YqJhxO08UnecTHKpPdA0KGe6vMwgT58AN3Cj1WsytIQ6Y2ybiqSwlpjlFQaNb3jiiE4gnSMkMvxxzRaHQ+Y10Qtfil47wqVq2TCKMMWrgSfMNINoTbSEp10FFbhbVrxpQIDAQAB
       #rsa 私钥
