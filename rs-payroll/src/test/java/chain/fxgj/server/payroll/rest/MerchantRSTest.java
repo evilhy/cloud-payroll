@@ -119,6 +119,7 @@ public class MerchantRSTest extends BaseRSTest {
                 .exchange()
                 .expectStatus()
                 .isOk()
+                .expectHeader().exists("signature")
                 .expectBody()//返回是什么类型的对象
                 .consumeWith(WebTestClientRestDocumentation.document("merchant_getAccessUrl",
                         relaxedResponseFields(JavaDocReader.javaDoc(MerchantAccessDTO.class))

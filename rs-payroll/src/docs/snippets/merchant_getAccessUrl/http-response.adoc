@@ -1,8 +1,9 @@
 [source,http,options="nowrap"]
 ----
 HTTP/1.1 200 OK
+signature: 571A0C8605018EF40667CAF5FAF33F539943D5D4
 Content-Length: 229
 Content-Type: application/json;charset=UTF-8
 
-{"accessToken":"HivcNXzz","expiresIn":600,"accessUrl":"dAzE5pH6b0+7+3NOyPRNuW67XP7ZWXK0vOSl+M47APy2j8ezJRjk3TsDbm/dcwc0M8YqTGsFyY2q4dbfv5sHufGyuyKjQlmxUNNpMUw51GzjJtPHmeY9MsQlW54nVOczcHmCruXGlLtbZq6YqqH3aHpyDjP6p0XX9cA+xcMbWLc="}
+{"accessToken":"XQP8CvPD","expiresIn":600,"accessUrl":"hiCZefRfoRHH7JYjShRTdNq9cuFikfzmKMWPiGhiWax4AJDkMnzkSo+6IrnLPFBtIm6JXVF58Ka9jTtSDLihfGXD/ie+he2EY4oyiOl9bqFArGr6LQU1CWfPn9Yz/APXDeOgmDoLMB9aUg/Vk9wwbT8MvFQ2HJr6JgRn7cj9pnw="}
 ----

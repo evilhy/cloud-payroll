@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -69,7 +70,8 @@ public class MerchantRS {
     public Mono<MerchantAccessDTO> getAccessUrl(@RequestHeader(value = "signature", required = true) String signature,
                                                 @RequestHeader(value = "appid", required = true) String appid,
                                                 @RequestHeader(value = "version", defaultValue = "1.0") String version,
-                                                @RequestBody MerchantDTO merchantDTO
+                                                @RequestBody MerchantDTO merchantDTO,
+                                                ServerHttpResponse response
     ) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         //取对接商户 信息
@@ -125,6 +127,7 @@ public class MerchantRS {
             EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
             if (employeeWechat != null) {
                 log.info("用户信息存在！");
+                //todo 微信昵称 问题
                 employeeWechat.setNickname(employeeWechatInfo.getNickname());
                 employeeWechat.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
                 merchantService.saveMerchant(employeeWechat);
@@ -154,7 +157,8 @@ public class MerchantRS {
             //String result = java.net.URLDecoder.decode(en ,"UTF-8");
 
             log.info("返回签名：{}", retureSignature);
-            //response.getHeaders().set("signature",retureSignature);
+            response.getHeaders().set("signature",retureSignature);
+
             return merchantAccess;
         }).subscribeOn(Schedulers.elastic());
 
