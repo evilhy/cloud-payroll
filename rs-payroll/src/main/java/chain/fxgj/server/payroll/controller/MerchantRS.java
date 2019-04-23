@@ -74,7 +74,7 @@ public class MerchantRS {
                                                 ServerHttpResponse response
     ) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        //取对接商户 信息
+        //【1】根据appid -->  取配置文件里商户信息
         MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(appid));
         String merchantAppid = StringUtils.trimToEmpty(merchant.getAppid());
 
@@ -169,7 +169,7 @@ public class MerchantRS {
      * 访问凭证
      */
     @GetMapping("/callback")
-    //@TrackLog
+    @TrackLog
     public Mono<Res100705> wxCallback(@RequestParam String accessToken) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 

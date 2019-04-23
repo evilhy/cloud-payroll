@@ -1,4 +1,4 @@
 [source,options="nowrap"]
 ----
-{"accessToken":"XQP8CvPD","expiresIn":600,"accessUrl":"hiCZefRfoRHH7JYjShRTdNq9cuFikfzmKMWPiGhiWax4AJDkMnzkSo+6IrnLPFBtIm6JXVF58Ka9jTtSDLihfGXD/ie+he2EY4oyiOl9bqFArGr6LQU1CWfPn9Yz/APXDeOgmDoLMB9aUg/Vk9wwbT8MvFQ2HJr6JgRn7cj9pnw="}
+{"accessToken":"syDGvlnQ","expiresIn":3600,"accessUrl":"ZlkypWivTWjkCPlIR55ne6bSnGmym3OzsVfCXvMAunnDsBDEsbmbyuaNnluxs2rAmUAy0hBT8l2qfWTu7ySQuF9x+s+f7Nxa8teLog17AdwKm4SYg2Gh/kiP32QjFmIg7INFji/1UiM2CVoWOLBnj6eQEL0Siwx8nNghh2qve0k="}
 ----

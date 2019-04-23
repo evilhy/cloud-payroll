@@ -2,11 +2,11 @@
 ----
 POST /merchant/getAccess HTTP/1.1
 signature: DDB6A937DBED8DD936A03FE4E27DCDEDED06A28C
-version: LIYApdRkdVnotX6NZ9axJkrOUb7MwxXpN5uDDmRP1FswPcrrQLicxcYucDvdfGquuaeWO76GFUf+YiT6zWQgd8agfIXp0HMbOqeGRCykwrbMSlf5rjZ+20kNauxTi4wRnpLnmX8Xay68c0z74hS/fKwSd7/zWXjFu3IFlzNtO/w=
+version: MERJKdfJLWymjN7GKoSRytUciseyX6BknRf9BN2dEfs4E9uOzaaa6+zwR9n1j9zRHFRidLN9eAFjaMC3JT+t/g6qfaocw9EvXBlp5IvhNJirH5pP1v357hrSZwZJYZ8Zeei1MJO/KHdtbY10HJ4VoXOTwhSG2HH1IdytFw7Z5Ak=
 appid: wx0345ad9614fe9567
 Content-Length: 1004
 Content-Type: application/json
 Host: localhost:8080
 
-{"name":"bNFrd69U/PagahfqSY7+W6Y/d/PL30FuRF+ZPiWtQ1LeZT2ZOB95RLcwbX971l0DohAr19wLbVRiVM5HupHg+7iYYZuI3nHxpczn2MCUqo3ACOvtyDeJqUw4/+gamyRFwy2aN6bv5QDfq3CRz32FebdIB9vilJy/hjfDPr9awbg=","idType":"XJRgBE062hv+gYx9tuERuQe8Vm29Aw6ny6/t6D1M3KH0OB1JERZLl48Lmf3aWIJJmNEd4gBf9YoR+7DhAL63tE6JqCnd3E3Dv+g3UK4nMyM6ybfNGByPbij68BiXUrdGyhUda7Jr0Ovv+EMx5WVy6qBvNA2Y4FdwR60vRUXGmuU=","idNumber":"eq4AdKMEBqs0jsGiQaNNvtw2Ly7S+LIfAH7MfHmhB6cbD9YxklWi4vSOCAcY5c9dxz1yDmf30T4wPT/+Puqwa4+rmr28Y4t+B7Mle6HPHTg04HPGuNwPlFcdSUIZyedSRrrY6ayNb+TmGKlQSabugMistpxpdd02S6Jd5FJ3GoQ=","phone":"b9yup7beBuUvKj20eRPQXi/ofoCbEUZXDzq/U/e403XDlihJ+jm/cyb3mocS2vcFATeAeNV+0QFDVjZq/RYabCoaLd7ZW/a6zCURtyDNpMFEFqegBeajQj6k77HSCOGcQwBvXSf35AhSiFxbI0Kh4xfDoaRbxMX/+M/RKFgQZU8=","uid":"SiHVP/yLq6G/a5ISi+jnBSX6eIaXBYvWbMTXalj/oetXaPMiipmEDL6DdoDpRrX4xgNg1WXwQlRf0Xgar/uvO45sCQFm6A1d+MQYCT3dQAK8+wu+Ft372TgQkp9Sr/ZoBTByWYaIFzI//yIS2R9z1MEnxCsEKD2cjPw8odmaejk=","nickname":"用户微信昵称","headimgurl":"http://wwww.baidu.com","appPartner":null}
+{"name":"HKfZnFeSB8F8rK7mhMFDi1C1TKFl78Ab36SA2AbN971MIxdTCmYhp9ag/wb7pQ/3FZDnHYDrt+L0qrEFJN1bZRlULnVaXPDRfCBeJS1CE746+s7QeURE94pZvr+r4TckvDxQJAv/ZuLE11aR8HL/IC2VYaf63i6zQzEREdccH9Y=","idType":"fypEHOSePkxtNOluMH8FnH/2bOTRFh+6ZbotQK4inh8HXoQRopEfIcT179tRBdyHA7D/f+yxO6b8GzJdAZGIgpb6Kl7HpVVicgTg1CTtC4Q9NOVtK1+k6/rmHH4t0ReFsX27ojx5yxes+zm0GqhulefwZCRiEGHXOaq/j6Expy4=","idNumber":"HBgiGJHHl88zH910GuQtlquKBVTSyd/FsIBk5RAO72G+s+EDCnB32pGMb79Oh0fHGSlyd+TAN8WbtXVETE9361oo349xVpnxyVVjcNjwM/6qpgEeS4pLk0BaCie8ZsDWec7Zb7AE92SMy7C5L2MUs772qU6CPPFg6hqM/f/Hlgc=","phone":"OVgpwDxfMF2aLtCGQKEKAYNIBpQY9tES6kVJs6Z7LA84bkogEiAFZ7gCsOF5wvqm7dXKdFwvR+FqQEVUkRX3pFoiSWvp13z+2yy2XeNzqL/TGvxzp9mPqnxj9+HcFuPftAZVo7HbEXS9glPWsXaEc4FjHA+2qdh0hmyCa8S/fbM=","uid":"Fw5rNne6B4EDzzI6xRIh8RQMTvMkqVaV8bkupn/cIGl3hsiH73vJWSR86vYSUXs8mX3tM5JoFurd4KnNW9qqH5cxhk8rP4wWerC0gePqMYznm9oMRNBVBl4Plq+O6Uyx51PN0EcQKSL7ltxCF7T47q+5CFiom50+bQVytoRUrq4=","nickname":"用户微信昵称","headimgurl":"http://wwww.baidu.com","appPartner":null}
 ----
