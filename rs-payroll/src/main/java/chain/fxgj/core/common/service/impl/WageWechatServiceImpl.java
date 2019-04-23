@@ -103,7 +103,10 @@ public class WageWechatServiceImpl implements WageWechatService {
         //查询员工id
         EmployeeDTO employee = null;
         List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber);
+        log.info("employeeDTOList.size()[{}]",employeeDTOList.size());
         for (EmployeeDTO employeeDTO : employeeDTOList) {
+            log.info("employeeDTO[{}]",employeeDTO.toString());
+            log.info("employeeDTO.getGroupId()[{}],groupId[{}]",employeeDTO.getGroupId(),groupId);
             if (employeeDTO.getGroupId().equals(groupId)) {
                 employee = employeeDTO;
             }

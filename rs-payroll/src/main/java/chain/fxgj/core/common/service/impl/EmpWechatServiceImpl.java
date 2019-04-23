@@ -138,7 +138,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 list.add(employeeDTO);
             }
         }
-
+        log.info("list.size()[{}]",list.size());
         return list;
     }
 
