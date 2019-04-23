@@ -20,9 +20,9 @@ public class PayrollConstants {
     public final static String PLAT_ID = "plat-id";    //平台id(EnumPlatform)
 
     /**
-     * 凭证超时时间
+     * 凭证超时时间   默认值：600
      */
-    public final static Integer MERCHANT_EXPIRESIN = 600;
+    public final static Integer MERCHANT_EXPIRESIN = 3600;
 
 
 

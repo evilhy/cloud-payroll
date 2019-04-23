@@ -91,7 +91,7 @@ public class MerchantRSTest extends BaseRSTest {
                 .build();
 
         String signature = MerchantDTO.signature(merchantDTO, merchantHeadDTO);
-
+        //用公钥加密
         MerchantDTO merchantDTO_Encrypt = MerchantDTO.builder()
                 .name(RSAEncrypt.encrypt(name, merchant.getRsaPublicKey()))
                 .idType(RSAEncrypt.encrypt(idType, merchant.getRsaPublicKey()))
