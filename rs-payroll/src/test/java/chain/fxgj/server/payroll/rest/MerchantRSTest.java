@@ -102,11 +102,12 @@ public class MerchantRSTest extends BaseRSTest {
                 .headimgurl(headimgurl)
                 .build();
 
+        log.info("==>merchantDTO={}", JacksonUtil.objectToJson(merchantDTO));
 
-        log.info("merchantDTO_Encrypt={}", JacksonUtil.objectToJson(merchantDTO_Encrypt));
-        log.info("signature={}", signature);
-        log.info("appid={}", appid);
-        log.info("version={}", RSAEncrypt.encrypt(version, merchant.getRsaPublicKey()));
+        log.info("==>merchantDTO_Encrypt={}", JacksonUtil.objectToJson(merchantDTO_Encrypt));
+        log.info("==>signature={}", signature);
+        log.info("==>appid={}", appid);
+        log.info("==>version={}", RSAEncrypt.encrypt(version, merchant.getRsaPublicKey()));
 
 
         webTestClient.post()

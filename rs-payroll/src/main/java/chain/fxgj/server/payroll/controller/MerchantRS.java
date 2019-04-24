@@ -15,6 +15,7 @@ import chain.fxgj.server.payroll.dto.merchant.MerchantAccessDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantHeadDTO;
 import chain.fxgj.server.payroll.dto.response.Res100705;
+import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
@@ -83,6 +84,16 @@ public class MerchantRS {
             log.error("appid={}，不存在", appid);
             throw new ParamsIllegalException(ErrorConstant.MERCHANT_01.getErrorMsg());
         }
+
+
+        //String ss ="usDVZ9ACNgGgRolN35m52K6Js-sdz3q9QJOZY3Fk5bydFblij9urJ1a0On5Dp2P494Gry77rV6MTB2ltNDr0lZ6fIyT7l3VFD0vIG6ixNqHi7WVOkd0IWp-D_sRciVva_lPevmmlGbfzUQXPSIluQLnKgU77WhhVJSAcg09kgeaG2vhdTemCT0IQTHa_qpq0j0scnoJseBi5AQbKfa_lTaWtNCKregHmO4yTxLJ3R81p8zxMDP6N--UjMHR2vyMPfEwedjRw3ikHKfOVAFjCIHk8i9ZG80dWb3_YP66W6HMe4nitgTEQfjz5xS4_nB4I98lorMm4vFAnkMs7KllGpw";
+        String ss = "UYKneVmmXb3K1KQ1Z9SAcNdTbB4XufY9VmUZMoJkWesr9P80R_zfeu4V_aAlk6zr-ZaAs3HjRuikSRw3obGrP_n2VzW6qqt3uPI4Z54BmCaT3FJ9O0Dr-_5jwoiq-VltgaVaRiAgVow1Dc1fG4vnwInH_tDbuhmF3JUGxyd09RM";
+        try {
+            ss = RSAEncrypt.decrypt(ss, merchant.getRsaPrivateKey());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         //构建 head
         MerchantHeadDTO merchantHeadDTO = MerchantHeadDTO.builder()
@@ -157,7 +168,7 @@ public class MerchantRS {
             //String result = java.net.URLDecoder.decode(en ,"UTF-8");
 
             log.info("返回签名：{}", retureSignature);
-            response.getHeaders().set("signature",retureSignature);
+            response.getHeaders().set("signature", retureSignature);
 
             return merchantAccess;
         }).subscribeOn(Schedulers.elastic());
