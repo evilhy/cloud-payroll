@@ -15,6 +15,7 @@ import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -105,7 +106,16 @@ public class MerchantRSTest extends BaseRSTest {
         log.info("==>merchantDTO={}", JacksonUtil.objectToJson(merchantDTO));
 
         log.info("==>merchantDTO_Encrypt={}", JacksonUtil.objectToJson(merchantDTO_Encrypt));
-        log.info("==>signature={}", signature);
+
+        log.info("==>signature sha-1 ={}", signature);
+        //使用公钥加密
+        signature =  RSAEncrypt.encrypt(signature, merchant.getRsaPublicKey());
+        log.info("==>signature 使用公钥加密 ={}", signature);
+
+        Base64 base64 = new Base64();
+        signature= base64.encodeToString(signature.getBytes("UTF-8"));
+        log.info("==>signature base64 ={}", signature);
+
         log.info("==>appid={}", appid);
         log.info("==>version={}", RSAEncrypt.encrypt(version, merchant.getRsaPublicKey()));
 

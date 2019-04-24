@@ -15,11 +15,13 @@ import chain.fxgj.server.payroll.dto.merchant.MerchantAccessDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantHeadDTO;
 import chain.fxgj.server.payroll.dto.response.Res100705;
+import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,6 +32,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -72,12 +75,12 @@ public class MerchantRS {
                                                 @RequestHeader(value = "version", defaultValue = "1.0") String version,
                                                 @RequestBody MerchantDTO merchantDTO,
                                                 ServerHttpResponse response
-    ) {
+    ) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         //【1】根据appid -->  取配置文件里商户信息
         MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(appid));
         String merchantAppid = StringUtils.trimToEmpty(merchant.getAppid());
-        log.info("==>取appid={}",appid);
+        log.info("==>取appid={}", appid);
         //
         if (merchant == null) {
             log.error("==>appid={}，不存在", appid);
@@ -102,7 +105,14 @@ public class MerchantRS {
         String checkSignature = MerchantDTO.signature(merchantDecrypt, merchantHeadDecrypt);
 
         //3、对比签名信息
+
+        Base64 base64 = new Base64();
+        //signature base64 解密
+        signature = new String(base64.decode(signature), "UTF-8");
+        //signature 公钥 解密
+        signature = RSAEncrypt.decrypt(signature, merchant.getRsaPrivateKey());
         log.info("签名信息，报文中={} ,解析后生成签名={} ", signature, checkSignature);
+
 
         if (!signature.equalsIgnoreCase(checkSignature)) {
             log.error("签名信息,验证失败。报文中={} ,解析后生成签名={} ", signature, checkSignature);
@@ -158,8 +168,17 @@ public class MerchantRS {
             String retureSignature = MerchantAccessDTO.signature(merchantAccess, merchantHeadDTO);
             //String result = java.net.URLDecoder.decode(en ,"UTF-8");
 
+            log.info("retureSignature 返回签名：{}", retureSignature);
+            //公钥加密
+            retureSignature =  RSAEncrypt.encrypt(retureSignature, merchant.getParaRsaPublicKey());
+            log.info("==>retureSignature 使用公钥加密 ={}", retureSignature);
+
+            //signature base64
+            retureSignature= base64.encodeToString(retureSignature.getBytes("UTF-8"));
+            log.info("==>retureSignature base64 ={}", retureSignature);
+
+            response.getHeaders().set("signature", retureSignature);
             log.info("返回签名：{}", retureSignature);
-            response.getHeaders().set("signature",retureSignature);
 
             return merchantAccess;
         }).subscribeOn(Schedulers.elastic());
