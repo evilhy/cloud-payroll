@@ -1,5 +1,8 @@
 package chain.fxgj.server.payroll.util;
 
+import com.esotericsoftware.minlog.Log;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,6 +23,10 @@ public class Sha1 {
     public static String SHA1(Map<String, Object> maps) throws DigestException {
         //获取信息摘要 - 参数字典排序后字符串
         String decrypt = getOrderByLexicographic(maps);
+
+//       String ss =  DigestUtils.sha1Hex(decrypt);
+//        Log.info("==>另一种算法={}",ss);
+
         try {
             //指定sha1算法
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -30,11 +37,15 @@ public class Sha1 {
             StringBuffer hexString = new StringBuffer();
             // 字节数组转换为 十六进制 数
             for (int i = 0; i < messageDigest.length; i++) {
-                String shaHex = Integer.toHexString(messageDigest[i] & 0xFF);
-                if (shaHex.length() < 2) {
-                    hexString.append(0);
-                }
-                hexString.append(shaHex);
+//                String shaHex = Integer.toHexString(messageDigest[i] & 0xFF);
+//
+//                if (shaHex.length() < 2) {
+//                    hexString.append(0);
+//                }
+//                hexString.append(shaHex);
+
+                hexString.append(String.format("%02X", 0xFF & messageDigest[i]));
+
             }
             return hexString.toString().toUpperCase();
 
@@ -91,11 +102,13 @@ public class Sha1 {
         int i = 0;
         for (String paramName : paramNames) {
 
-            if (i < 1) {
-                paramStr.append(paramName);
-            } else {
-                paramStr.append(paramName).append("=");
-            }
+//            if (i < 1) {
+//                paramStr.append(paramName);
+//            } else {
+//                paramStr.append(paramName).append("=");
+//            }
+            paramStr.append(paramName).append("=");
+
             if(i<paramNames.size()-1){
                 paramStr.append(String.valueOf(maps.get(paramName))).append("&");
             }else {
@@ -111,6 +124,7 @@ public class Sha1 {
 
             i = i + 1;
         }
+        Log.info("==>拼接后的字符串={}",paramStr.toString());
         return paramStr.toString();
     }
 }

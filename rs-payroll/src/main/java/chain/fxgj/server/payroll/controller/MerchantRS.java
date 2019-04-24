@@ -77,10 +77,10 @@ public class MerchantRS {
         //【1】根据appid -->  取配置文件里商户信息
         MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(appid));
         String merchantAppid = StringUtils.trimToEmpty(merchant.getAppid());
-
+        log.info("==>取appid={}",appid);
         //
         if (merchant == null) {
-            log.error("appid={}，不存在", appid);
+            log.error("==>appid={}，不存在", appid);
             throw new ParamsIllegalException(ErrorConstant.MERCHANT_01.getErrorMsg());
         }
 
@@ -102,6 +102,8 @@ public class MerchantRS {
         String checkSignature = MerchantDTO.signature(merchantDecrypt, merchantHeadDecrypt);
 
         //3、对比签名信息
+        log.info("签名信息，报文中={} ,解析后生成签名={} ", signature, checkSignature);
+
         if (!signature.equalsIgnoreCase(checkSignature)) {
             log.error("签名信息,验证失败。报文中={} ,解析后生成签名={} ", signature, checkSignature);
             throw new ParamsIllegalException(ErrorConstant.MERCHANT_02.getErrorMsg());
