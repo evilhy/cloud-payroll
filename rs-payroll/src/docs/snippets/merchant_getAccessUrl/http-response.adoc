@@ -1,9 +1,9 @@
 [source,http,options="nowrap"]
 ----
 HTTP/1.1 200 OK
-Content-Length: 230
-signature: 679CFB4ED920B8AF27D9D3731B02F75FE7B4FA4D
+signature: 1B8E3B623F79F2643078368645913CA5047CF85E
+Content-Length: 402
 Content-Type: application/json;charset=UTF-8
 
-{"accessToken":"syDGvlnQ","expiresIn":3600,"accessUrl":"ZlkypWivTWjkCPlIR55ne6bSnGmym3OzsVfCXvMAunnDsBDEsbmbyuaNnluxs2rAmUAy0hBT8l2qfWTu7ySQuF9x+s+f7Nxa8teLog17AdwKm4SYg2Gh/kiP32QjFmIg7INFji/1UiM2CVoWOLBnj6eQEL0Siwx8nNghh2qve0k="}
+{"accessToken":"MNLRpIWE","expiresIn":3600,"accessUrl":"RsLQPs+4pCWVzJ8oBG4NJ+uVrM3MyTUgrrKfNN43jZnW1vEjDx0kazbtG8Xvddaf7qBjNMLS1GiBtZmX3OF/BY8cLk3z1sRvbkPUuhCC2GDRI7FV+nt4H/6K7+/qo5sFh20i4WPi4UfXAHYMRWLHIHZlpsWn4ITmAHMl2Seu9M6hUCZTKLp8Ft0SyKhy3ptWcp4A+V+jPspNCm8nvJKcYoucs2P8qaHnEhTNYqirzGQSsJp4qcrFvGvfai8c3DnR+PuB0tZF6VXCzwS0ScsSDe+bOR/mZb38GLtRL5nUu9rgWF72wFXFdoX35vVUbn3xrpmpqwPDTrTFH1o2rNTK/A=="}
 ----

@@ -150,7 +150,7 @@ public class MerchantRS {
                     .expiresIn(PayrollConstants.MERCHANT_EXPIRESIN)
                     .accessUrl(merchant.getAccessUrl())
                     .build();
-            MerchantAccessDTO merchantAccess = MerchantAccessDTO.encryption(merchantAccessDTO, merchant.getRsaPublicKey());
+            MerchantAccessDTO merchantAccess = MerchantAccessDTO.encryption(merchantAccessDTO, merchant.getParaRsaPublicKey());
 
 
             String retureSignature = MerchantAccessDTO.signature(merchantAccess, merchantHeadDTO);

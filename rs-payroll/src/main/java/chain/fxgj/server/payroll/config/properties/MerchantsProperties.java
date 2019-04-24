@@ -54,10 +54,13 @@ public class MerchantsProperties {
          */
         private String rsaPrivateKey;
         /**
+         * rsa 公钥 -> 合作平台
+         */
+        private String paraRsaPublicKey;
+        /**
          * 备注说明
          */
         private String remarks;
-
     }
 
 
