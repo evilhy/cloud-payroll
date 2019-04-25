@@ -141,12 +141,12 @@ public class MerchantRS {
 
             EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
             if (employeeWechat != null) {  //认证绑定信息表已经存在，则说明已经绑定成功
-                log.info("认证绑定信息表已经【存在】，则说明已经绑定成功！");
+                log.info("认证绑定信息表【存在】，则说明已经绑定成功！");
                 employeeWechat.setNickname(employeeWechatInfo.getNickname());
                 employeeWechat.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
                 merchantService.saveMerchant(employeeWechat);
             } else {
-                log.info("认证绑定信息表已经【不存在】！");
+                log.info("认证绑定信息表【不存在】！");
                 //查询用户信息
                 EmployeeInfo employeeInfo = new EmployeeInfo();
                 employeeInfo.setIdNumber(merchantDecrypt.getIdNumber()); //员工证件号
