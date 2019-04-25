@@ -119,6 +119,7 @@ public class MerchantRSTest extends BaseRSTest {
         log.info("==>appid={}", appid);
         log.info("==>version={}", RSAEncrypt.encrypt(version, merchant.getRsaPublicKey()));
 
+        //appid = "wx0345ad9614fe9567999";
 
         webTestClient.post()
                 .uri("/merchant/getAccess")

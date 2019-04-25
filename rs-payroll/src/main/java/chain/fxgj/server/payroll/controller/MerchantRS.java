@@ -32,7 +32,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -57,16 +56,28 @@ public class MerchantRS {
     @Resource
     RedisTemplate redisTemplate;
 
+    /**
+     * 根据appid 查询工资条接入合作方信息
+     *
+     * @param appid 合作方id
+     */
+    private MerchantsProperties.Merchant getMerchant(String appid) {
 
-    private MerchantsProperties.Merchant getMerchant(String id) {
         Optional<MerchantsProperties.Merchant> qWechat = merchantProperties.getMerchant().stream()
-                .filter(item -> item.getAppid().equalsIgnoreCase(id)).findFirst();
-        MerchantsProperties.Merchant merchant = qWechat.orElse(null);
+                .filter(item -> item.getAppid().equalsIgnoreCase(appid)).findFirst();
+        MerchantsProperties.Merchant merchant = qWechat.orElseThrow(() -> {
+            log.error("==>appid={}，不存在，非法访问！", appid);
+            return new ParamsIllegalException(ErrorConstant.MERCHANT_01.getErrorMsg());
+        });
         return merchant;
     }
 
     /**
      * 访问凭证
+     *
+     * @param signature 签名
+     * @param appid     合作方id
+     * @param version   接口版本号
      */
     @PostMapping("/getAccess")
     @TrackLog
@@ -77,15 +88,9 @@ public class MerchantRS {
                                                 ServerHttpResponse response
     ) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         //【1】根据appid -->  取配置文件里商户信息
         MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(appid));
-        String merchantAppid = StringUtils.trimToEmpty(merchant.getAppid());
-        log.info("==>取appid={}", appid);
-        //
-        if (merchant == null) {
-            log.error("==>appid={}，不存在", appid);
-            throw new ParamsIllegalException(ErrorConstant.MERCHANT_01.getErrorMsg());
-        }
 
         //构建 head
         MerchantHeadDTO merchantHeadDTO = MerchantHeadDTO.builder()
@@ -105,14 +110,12 @@ public class MerchantRS {
         String checkSignature = MerchantDTO.signature(merchantDecrypt, merchantHeadDecrypt);
 
         //3、对比签名信息
-
         Base64 base64 = new Base64();
         //signature base64 解密
         signature = new String(base64.decode(signature), "UTF-8");
         //signature 公钥 解密
         signature = RSAEncrypt.decrypt(signature, merchant.getRsaPrivateKey());
         log.info("签名信息，报文中={} ,解析后生成签名={} ", signature, checkSignature);
-
 
         if (!signature.equalsIgnoreCase(checkSignature)) {
             log.error("签名信息,验证失败。报文中={} ,解析后生成签名={} ", signature, checkSignature);
@@ -170,11 +173,11 @@ public class MerchantRS {
 
             log.info("retureSignature 返回签名：{}", retureSignature);
             //公钥加密
-            retureSignature =  RSAEncrypt.encrypt(retureSignature, merchant.getParaRsaPublicKey());
+            retureSignature = RSAEncrypt.encrypt(retureSignature, merchant.getParaRsaPublicKey());
             log.info("==>retureSignature 使用公钥加密 ={}", retureSignature);
 
             //signature base64
-            retureSignature= base64.encodeToString(retureSignature.getBytes("UTF-8"));
+            retureSignature = base64.encodeToString(retureSignature.getBytes("UTF-8"));
             log.info("==>retureSignature base64 ={}", retureSignature);
 
             response.getHeaders().set("signature", retureSignature);
