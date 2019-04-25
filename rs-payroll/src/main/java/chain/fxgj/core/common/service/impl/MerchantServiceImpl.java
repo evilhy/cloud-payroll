@@ -5,8 +5,11 @@ import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.InsideService;
 import chain.fxgj.core.common.service.MerchantService;
 import chain.fxgj.core.common.service.PayRollAsyncService;
+import chain.fxgj.core.jpa.dao.EmployeeInfoDao;
 import chain.fxgj.core.jpa.dao.EmployeeWechatInfoDao;
+import chain.fxgj.core.jpa.model.EmployeeInfo;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
+import chain.fxgj.core.jpa.model.QEmployeeInfo;
 import chain.fxgj.core.jpa.model.QEmployeeWechatInfo;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -27,6 +30,8 @@ public class MerchantServiceImpl implements MerchantService {
     @Autowired
     EmployeeWechatInfoDao employeeWechatInfoDao;
     @Autowired
+    EmployeeInfoDao employeeInfoDao;
+    @Autowired
     EmployeeEncrytorService employeeEncrytorService;
     @Autowired
     PayRollAsyncService payRollAsyncService;
@@ -46,6 +51,33 @@ public class MerchantServiceImpl implements MerchantService {
         return employeeWechat;
     }
 
+
+    /**
+     * 查询员工信息
+     *
+     * @param employeeInfo 员工信息
+     * @return
+     */
+    @Override
+    public EmployeeInfo findEmployeeInfo(EmployeeInfo employeeInfo) {
+
+        QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
+
+        Predicate predicate = qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal);
+        if (employeeInfo.getIdNumber() != null) {
+            predicate = ExpressionUtils.and(predicate, qEmployeeInfo.idNumber.equalsIgnoreCase(employeeInfo.getIdNumber()));
+        }
+        if (employeeInfo.getEmployeeName() != null) {
+            predicate = ExpressionUtils.and(predicate, qEmployeeInfo.employeeName.eq(employeeInfo.getEmployeeName()));
+        }
+
+        EmployeeInfo employee = employeeInfoDao.selectFrom(qEmployeeInfo)
+                .where(predicate)
+                .fetchOne();
+
+        return employee;
+    }
+
     /**
      * 工资条绑定信息
      *
@@ -58,7 +90,7 @@ public class MerchantServiceImpl implements MerchantService {
 
         Predicate predicate = qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal);
         if (StringUtils.isNotBlank(employeeWechatInfo.getIdNumber())) {
-            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.idNumber.eq(employeeWechatInfo.getIdNumber()));
+            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.idNumber.equalsIgnoreCase(employeeWechatInfo.getIdNumber()));
         }
         if (employeeWechatInfo.getAppPartner() != null) {
             predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(employeeWechatInfo.getAppPartner()));

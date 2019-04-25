@@ -7,6 +7,7 @@ import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.MerchantService;
+import chain.fxgj.core.jpa.model.EmployeeInfo;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
@@ -102,7 +103,6 @@ public class MerchantRS {
         //解密
         MerchantHeadDTO merchantHeadDecrypt = MerchantHeadDTO.decrypt(merchantHeadDTO, merchant.getRsaPrivateKey());
 
-
         //1、解析 返回报文体信息
         MerchantDTO merchantDecrypt = MerchantDTO.decrypt(merchantDTO, merchant.getRsaPrivateKey());
 
@@ -140,15 +140,27 @@ public class MerchantRS {
             employeeWechatInfo.setAppPartner(AppPartnerEnum.values()[Integer.valueOf(merchant.getMerchantCode())]);
 
             EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
-            if (employeeWechat != null) {
-                log.info("用户信息存在！");
-                //todo 微信昵称 问题
+            if (employeeWechat != null) {  //认证绑定信息表已经存在，则说明已经绑定成功
+                log.info("认证绑定信息表已经【存在】，则说明已经绑定成功！");
                 employeeWechat.setNickname(employeeWechatInfo.getNickname());
                 employeeWechat.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
                 merchantService.saveMerchant(employeeWechat);
             } else {
-                log.info("用户信息不存在！");
-                employeeWechatInfo = merchantService.saveMerchant(employeeWechatInfo);
+                log.info("认证绑定信息表已经【不存在】！");
+                //查询用户信息
+                EmployeeInfo employeeInfo = new EmployeeInfo();
+                employeeInfo.setIdNumber(merchantDecrypt.getIdNumber()); //员工证件号
+                employeeInfo.setEmployeeName(merchantDecrypt.getName());//员工姓名
+
+                EmployeeInfo emp = merchantService.findEmployeeInfo(employeeInfo);
+                if (emp != null) {
+                    log.info("员工信息表中【存在】！");
+                    employeeWechatInfo = merchantService.saveMerchant(employeeWechatInfo);
+                } else {
+                    log.info("员工信息表中【不存在】！信息未认证");
+                    new ParamsIllegalException(ErrorConstant.MERCHANT_07.getErrorMsg());
+                }
+
             }
 
 

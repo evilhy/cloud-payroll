@@ -72,9 +72,9 @@ public class MerchantRSTest extends BaseRSTest {
 
         MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(appid));
 
-        String name = "测试";
+        String name = "王方玉";
         String idType = "01";
-        String idNumber = "420625";
+        String idNumber = "342622196504011319";
         String phone = "13899997777";
         String uid = "9871234";
         String nickname = "用户微信昵称";

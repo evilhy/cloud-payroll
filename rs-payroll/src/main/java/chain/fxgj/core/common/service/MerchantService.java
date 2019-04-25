@@ -1,5 +1,6 @@
 package chain.fxgj.core.common.service;
 
+import chain.fxgj.core.jpa.model.EmployeeInfo;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import org.springframework.cache.annotation.CachePut;
@@ -24,6 +25,14 @@ public interface MerchantService {
      * @return
      */
     EmployeeWechatInfo findMerchant(EmployeeWechatInfo employeeWechatInfo);
+
+    /**
+     * 查询员工信息
+     *
+     * @param employeeInfo 员工信息
+     * @return
+     */
+    EmployeeInfo findEmployeeInfo(EmployeeInfo employeeInfo);
 
     /**
      * 用户登录信息

@@ -10,6 +10,7 @@ public enum  ErrorConstant {
     MERCHANT_04("04","加密失败!"),
     MERCHANT_05("05","SHA1安全加密失败!"),
     MERCHANT_06("06","请求超时!"),
+    MERCHANT_07("07","信息未认证!"),
 
     ;
 
