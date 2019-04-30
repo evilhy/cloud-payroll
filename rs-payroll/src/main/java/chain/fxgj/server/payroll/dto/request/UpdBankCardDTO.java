@@ -1,14 +1,13 @@
 package chain.fxgj.server.payroll.dto.request;
 
 import chain.fxgj.server.payroll.dto.response.BankCardGroup;
-import chain.fxgj.server.payroll.dto.response.EmpEntDTO;
 import lombok.*;
 
 import java.util.List;
 
 /**
  * 修改银行卡
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

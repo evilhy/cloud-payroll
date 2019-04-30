@@ -2,13 +2,9 @@ package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.server.payroll.JavaDocReader;
-import chain.fxgj.server.payroll.dto.PageResponseDTO;
 import chain.fxgj.server.payroll.dto.request.DistributeDTO;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
-import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.tfinance.*;
-import chain.fxgj.server.payroll.web.UserPrincipal;
-import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.*;
@@ -27,11 +23,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Duration;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParameters;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
 

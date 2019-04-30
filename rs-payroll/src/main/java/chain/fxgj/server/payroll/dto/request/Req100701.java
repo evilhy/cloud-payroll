@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * Req100701
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -13,7 +13,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Req100701 {
-
     /**
      * 信息ID
      */

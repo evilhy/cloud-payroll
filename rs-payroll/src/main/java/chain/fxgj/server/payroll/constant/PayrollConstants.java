@@ -25,5 +25,4 @@ public class PayrollConstants {
     public final static Integer MERCHANT_EXPIRESIN = 3600;
 
 
-
 }

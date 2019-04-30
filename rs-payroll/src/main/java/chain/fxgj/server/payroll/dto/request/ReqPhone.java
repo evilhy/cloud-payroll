@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * 手机验证码
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

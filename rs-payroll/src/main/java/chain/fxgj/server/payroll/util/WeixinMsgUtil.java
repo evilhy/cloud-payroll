@@ -3,10 +3,6 @@ package chain.fxgj.server.payroll.util;
 import chain.fxgj.server.payroll.dto.wechat.WeixinTextMsgBaseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * @author chain

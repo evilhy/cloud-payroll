@@ -1,7 +1,6 @@
 package chain.fxgj.server.payroll.util;
 
 import com.esotericsoftware.minlog.Log;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.security.DigestException;
 import java.security.MessageDigest;

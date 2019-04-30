@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 
 @ReadingConverter
 @WritingConverter
-
 public class BigDecimalToDecimal128Converter implements Converter<BigDecimal, Decimal128> {
 
     public Decimal128 convert(BigDecimal bigDecimal) {

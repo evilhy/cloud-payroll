@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * 微信绑定
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

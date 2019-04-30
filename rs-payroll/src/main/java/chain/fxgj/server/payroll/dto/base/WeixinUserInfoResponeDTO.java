@@ -21,7 +21,6 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class WeixinUserInfoResponeDTO extends WeixinHeaderResponseDTO {
-
     /**
      * 用户的唯一标识
      */

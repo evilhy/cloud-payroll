@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * 已读工资
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

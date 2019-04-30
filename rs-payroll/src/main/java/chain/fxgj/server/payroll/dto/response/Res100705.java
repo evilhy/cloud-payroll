@@ -3,7 +3,6 @@ package chain.fxgj.server.payroll.dto.response;
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
 import lombok.*;
 
-
 /**
  * Res100705
  */

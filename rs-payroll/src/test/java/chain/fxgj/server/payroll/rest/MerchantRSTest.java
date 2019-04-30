@@ -1,16 +1,11 @@
 package chain.fxgj.server.payroll.rest;
 
-
 import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.merchant.MerchantAccessDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantHeadDTO;
-import chain.fxgj.server.payroll.dto.request.DistributeDTO;
-import chain.fxgj.server.payroll.dto.response.PlanListBean;
-import chain.fxgj.server.payroll.dto.response.Res100703;
 import chain.fxgj.server.payroll.dto.response.Res100705;
-import chain.fxgj.server.payroll.dto.tfinance.IntentRequestDTO;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
@@ -19,22 +14,15 @@ import org.apache.commons.codec.binary.Base64;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 
-import java.util.Map;
 import java.util.Optional;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
-import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 
 @FixMethodOrder(MethodSorters.JVM)
 @Slf4j

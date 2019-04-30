@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * 回执
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

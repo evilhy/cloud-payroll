@@ -1,7 +1,6 @@
 package chain.fxgj.server.payroll.dto.base;
 
 import chain.css.exception.ErrorMsg;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
 

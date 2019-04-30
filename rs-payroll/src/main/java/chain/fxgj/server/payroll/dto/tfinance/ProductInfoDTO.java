@@ -12,10 +12,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-
 /**
  * 理财产品
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -147,7 +146,7 @@ public class ProductInfoDTO {
 
     /**
      * 理财产品档位
-     * */
+     */
     @Getter
     @Setter
     @EqualsAndHashCode

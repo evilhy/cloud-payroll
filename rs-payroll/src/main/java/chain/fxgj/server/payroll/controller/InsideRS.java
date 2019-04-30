@@ -1,13 +1,10 @@
 package chain.fxgj.server.payroll.controller;
 
-import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.fxgj.core.common.constant.FxgjDBConstant;
-import chain.fxgj.core.common.dto.msg.MsgCodeLogCheckRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
 import chain.fxgj.core.common.service.*;
@@ -18,7 +15,6 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +22,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @CrossOrigin
 @RestController

@@ -43,8 +43,8 @@ public class MerchantAccessDTO {
                     .expiresIn(merchantAccessDTO.getExpiresIn())
                     .accessUrl(merchantAccessDTO.getAccessUrl())
                     .build();
-           String url =  merchantAccess.getAccessUrl().replaceAll("ACCESSTOKEN",merchantAccessDTO.getAccessToken());
-            url= RSAEncrypt.encrypt(url, encryption);
+            String url = merchantAccess.getAccessUrl().replaceAll("ACCESSTOKEN", merchantAccessDTO.getAccessToken());
+            url = RSAEncrypt.encrypt(url, encryption);
             merchantAccess.setAccessUrl(url);
         } catch (Exception e) {
             e.printStackTrace();

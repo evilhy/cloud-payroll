@@ -6,7 +6,6 @@ import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.IntentStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.CallInsideService;
 import chain.fxgj.core.common.service.FinanceService;
 import chain.fxgj.core.common.util.TransUtil;
@@ -20,7 +19,6 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,17 +32,12 @@ import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * 同事理财团
@@ -85,7 +78,7 @@ public class TFinanceRS {
             }
             List<ProductDTO> list = new ArrayList<>();
             list.add(productDTO);
-            log.info("ret.list:[{}]",JacksonUtil.objectToJson(list));
+            log.info("ret.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
 
@@ -391,10 +384,10 @@ public class TFinanceRS {
             WeixinAuthorizeUrlDTO weixinAuthorizeUrlDTO = new WeixinAuthorizeUrlDTO();
             weixinAuthorizeUrlDTO.setUrl(redirectUrl);
             weixinAuthorizeUrlDTO.setState("STATE");
-            log.info("req.redirectUrl:[{}]",redirectUrl);
+            log.info("req.redirectUrl:[{}]", redirectUrl);
 //            String url = iwechatFeignService.getOAuthUrl(payrollProperties.getId(), weixinAuthorizeUrlDTO).getAuthorizeurl();
             String url = callInsideService.getOAuthUrl(weixinAuthorizeUrlDTO).getAuthorizeurl();
-            log.info("ret.url:[{}]",url);
+            log.info("ret.url:[{}]", url);
             return url;
         }).subscribeOn(Schedulers.elastic());
     }

@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * 理财产品
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

@@ -11,7 +11,6 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class WeixinHeaderResponseDTO {
-
     /**
      * 错误码
      */

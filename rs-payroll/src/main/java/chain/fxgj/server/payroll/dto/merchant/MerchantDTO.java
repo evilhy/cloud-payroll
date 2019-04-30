@@ -3,7 +3,6 @@ package chain.fxgj.server.payroll.dto.merchant;
 import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.CertTypeEnum;
-import chain.fxgj.core.jpa.model.ActivityInfo;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
@@ -12,16 +11,10 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.DigestException;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-
 
 /**
  * 工资条  对外输出接口
