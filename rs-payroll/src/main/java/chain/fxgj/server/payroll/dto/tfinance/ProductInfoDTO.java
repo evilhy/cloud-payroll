@@ -120,6 +120,10 @@ public class ProductInfoDTO {
     private String show = "0";
 
     private LocalDateTime subscribeEndDate1;
+    /**
+     * 下期预告图片url
+     */
+    private String nextImageUrl;
 
     /**
      * 档位

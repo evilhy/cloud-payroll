@@ -105,7 +105,7 @@ public class TFinanceRS {
             ProductInfoDTO productInfoDTO = financeService.getProductInfo(productId, payrollProperties.getImgUrl());
             productInfoDTO.setNowDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
             productInfoDTO.setMinIntentAmt(10000);
-
+            productInfoDTO.setNextImageUrl(productInfoDTO.getNextImageUrl());
             //是否已绑定
             if (StringUtils.isNotBlank(userPrincipal.getIdNumber())) {
                 productInfoDTO.setWechatId(userPrincipal.getWechatId());
