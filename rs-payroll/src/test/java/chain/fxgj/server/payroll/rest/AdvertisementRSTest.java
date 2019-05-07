@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.rest;
 
-
 import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import lombok.extern.slf4j.Slf4j;

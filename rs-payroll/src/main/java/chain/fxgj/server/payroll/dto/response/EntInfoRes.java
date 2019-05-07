@@ -21,5 +21,4 @@ public class EntInfoRes {
      * 企业名称
      */
     private String entName;
-
 }

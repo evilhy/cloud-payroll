@@ -24,44 +24,36 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WeixinJsapiDTO {
-
-    @JsonProperty("jsapi_ticket")
     /**
      * 公众号用于调用微信JS接口的临时票据
      */
+    @JsonProperty("jsapi_ticket")
     String jsapiTicket;  //公众号用于调用微信JS接口的临时票据
-
-    @JsonProperty("expires_in")
     /**
      * 有效时间
      */
+    @JsonProperty("expires_in")
     Integer expiresIn;
-
     /**
      * appid
      */
     String appid;
-
     /**
      * 当前网页的URL，不包含#及其后面部分（前端传值）
      */
     String url;
-
     /**
      * 随机字符串（后台生成）
      */
     String noncestr;
-
     /**
      * 时间戳（后台生成）
      */
     String timestamp;
-
     /**
      * 签名算法
      */
     String signature;
-
     /**
      * 跳转url
      */

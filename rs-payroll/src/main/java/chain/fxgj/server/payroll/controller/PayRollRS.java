@@ -5,7 +5,6 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.WageWechatService;
 import chain.fxgj.core.common.service.WechatBindService;
@@ -13,8 +12,6 @@ import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,7 +192,7 @@ public class PayRollRS {
             list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
 
             return list;
-        }).subscribeOn(Schedulers.elastic());
+            }).subscribeOn(Schedulers.elastic());
     }
 
     /**

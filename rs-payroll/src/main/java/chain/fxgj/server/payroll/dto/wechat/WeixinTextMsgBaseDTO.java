@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "WeixinTextMsgBaseDTO")
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 /**
  * 文本消息内容
  */
+@XmlRootElement(name = "WeixinTextMsgBaseDTO")
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

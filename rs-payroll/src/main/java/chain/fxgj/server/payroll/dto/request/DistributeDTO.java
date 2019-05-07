@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * 通知企业分配客户经理
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

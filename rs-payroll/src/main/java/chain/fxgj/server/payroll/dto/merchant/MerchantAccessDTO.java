@@ -41,8 +41,11 @@ public class MerchantAccessDTO {
             merchantAccess = MerchantAccessDTO.builder()
                     .accessToken(merchantAccessDTO.getAccessToken())
                     .expiresIn(merchantAccessDTO.getExpiresIn())
-                    .accessUrl(RSAEncrypt.encrypt(merchantAccessDTO.getAccessUrl(), encryption))
+                    .accessUrl(merchantAccessDTO.getAccessUrl())
                     .build();
+            String url = merchantAccess.getAccessUrl().replaceAll("ACCESSTOKEN", merchantAccessDTO.getAccessToken());
+            url = RSAEncrypt.encrypt(url, encryption);
+            merchantAccess.setAccessUrl(url);
         } catch (Exception e) {
             e.printStackTrace();
             throw new ParamsIllegalException(ErrorConstant.MERCHANT_04.getErrorMsg());

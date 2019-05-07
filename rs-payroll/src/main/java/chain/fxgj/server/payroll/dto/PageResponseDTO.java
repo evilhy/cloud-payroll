@@ -9,13 +9,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-
 @XmlRootElement(name = "PageResponse")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PageResponseDTO<T> {
-
     /**
      * 分页列表
      */

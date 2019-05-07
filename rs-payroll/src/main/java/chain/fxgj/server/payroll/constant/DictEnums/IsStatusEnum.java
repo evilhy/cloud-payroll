@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.constant.DictEnums;
 
-
 import chain.fxgj.core.common.constant.SysDictEnum;
 
 /**

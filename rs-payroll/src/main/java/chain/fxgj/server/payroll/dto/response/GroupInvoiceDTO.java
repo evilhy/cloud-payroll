@@ -3,7 +3,6 @@ package chain.fxgj.server.payroll.dto.response;
 import chain.fxgj.core.jpa.model.EntGroupInvoiceInfo;
 import lombok.*;
 
-
 /**
  * 企业机构发票信息
  */

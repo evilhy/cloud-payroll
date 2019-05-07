@@ -24,17 +24,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class WeixinCfgResponeDTO extends WeixinHeaderResponseDTO {
-
     /**
      * 身份证 跳转URL
      */
     String url;
-
     /**
      * 推送工资条 跳转URL
      */
     String oauthUrl;
-
     /**
      * 公众号  menu跳转URL
      */

@@ -93,7 +93,7 @@ public class PermitAllUrlProperties {
                 return true;
             }
         }
-        log.info("访问路径{}, 需要，验证jsessionId",url);
+        log.info("访问路径{}, 需要，验证jsessionId", url);
         return false;
     }
 }

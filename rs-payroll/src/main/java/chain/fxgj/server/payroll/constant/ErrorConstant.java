@@ -155,10 +155,7 @@ public enum ErrorConstant {
     ACTIVITY_015("a015", "不在活动设置机构范围内，不能参于此活动"),
     ACTIVITY_016("a016", "活动内测中，暂未开放！"),
     ACTIVITY_017("a017", "当前银行收市(22:00-00:00),不能配置活动"),
-    ACTIVITY_018("a018", "资金清算中!"),
-    ;
-
-
+    ACTIVITY_018("a018", "资金清算中!"),;
 
 
     private String errorCode;

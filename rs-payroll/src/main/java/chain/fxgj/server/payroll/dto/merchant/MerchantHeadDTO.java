@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.dto.merchant;
 
-
 import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
@@ -43,7 +42,7 @@ public class MerchantHeadDTO {
         try {
             merchantHead = MerchantHeadDTO.builder()
                     .version(RSAEncrypt.decrypt(merchantHeadDTO.getVersion(), decrypt))
-                   // .merchantCode(merchantHeadDTO.getMerchantCode())
+                    // .merchantCode(merchantHeadDTO.getMerchantCode())
                     .appid(merchantHeadDTO.getAppid())
                     .signature(merchantHeadDTO.getSignature())
                     .build();

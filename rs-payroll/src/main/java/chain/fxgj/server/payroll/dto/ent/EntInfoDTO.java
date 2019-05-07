@@ -13,7 +13,6 @@ import java.util.LinkedList;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EntInfoDTO {
-
     /**
      * 企业id
      */

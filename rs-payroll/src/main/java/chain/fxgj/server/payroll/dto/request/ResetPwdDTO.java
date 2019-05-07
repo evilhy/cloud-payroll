@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * 重置查询密码
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

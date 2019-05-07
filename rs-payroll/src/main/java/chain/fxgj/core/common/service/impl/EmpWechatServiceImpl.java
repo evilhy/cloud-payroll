@@ -16,6 +16,7 @@ import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
 import chain.fxgj.server.payroll.dto.request.WechatLoginDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
+import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +115,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         try {
             log.info("idNumber:[{}]",idNumber);
             entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
-            log.info("go on");
+            log.info("go on,entInfoDTOS.size()[{}]",entInfoDTOS.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
             log.error("e.printStackTrace()->[{}]",e.getMessage());
@@ -124,6 +125,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         }
 
         List<EmployeeDTO> list = new ArrayList<>();
+        log.info("entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {
                 EmployeeDTO employeeDTO = new EmployeeDTO(groupInfo.getEmployeeInfo());
@@ -136,7 +138,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 list.add(employeeDTO);
             }
         }
-
+        log.info("list.size()[{}]",list.size());
         return list;
     }
 

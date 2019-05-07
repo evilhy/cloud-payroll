@@ -1,21 +1,35 @@
 package chain.fxgj.server.payroll.config.properties;
 
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @ConfigurationProperties(prefix = "merchants", ignoreInvalidFields = true)
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = true)
 public class MerchantsProperties {
-
+    @Builder.Default
     private List<Merchant> merchant = new ArrayList<Merchant>();
 
-    @Data
+    @Getter
+    @Setter
+    @EqualsAndHashCode
+    @ToString
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Accessors(chain = true)
     public static class Merchant {
         /**
          * 分组id
@@ -54,10 +68,13 @@ public class MerchantsProperties {
          */
         private String rsaPrivateKey;
         /**
+         * rsa 公钥 -> 合作平台
+         */
+        private String paraRsaPublicKey;
+        /**
          * 备注说明
          */
         private String remarks;
-
     }
 
 

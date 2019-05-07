@@ -17,7 +17,6 @@ public class IndexDTO {
      * 最新企业
      */
     private NewestWageLogDTO bean;
-
     /**
      * 银行卡修改是否最新记录（0：已看 1：新，未看）
      */

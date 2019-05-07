@@ -5,7 +5,7 @@ import lombok.*;
 
 /**
  * 预约人信息
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode

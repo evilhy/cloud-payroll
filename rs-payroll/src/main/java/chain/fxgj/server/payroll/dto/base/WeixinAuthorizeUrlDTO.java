@@ -18,7 +18,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WeixinAuthorizeUrlDTO {
-
     /**
      * 第三方用户唯一凭证
      */

@@ -25,32 +25,32 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MsgModelInfoDTO {
 
-    /*
-     **   唯一标识
+    /**
+     * 唯一标识
      */
     String id;
-    /*
-     **   使用系统(0  放薪管家)
+    /**
+     * 使用系统(0  放薪管家)
      */
     Integer systemId;
-    /*
-     **   校验业务类型(0  邮箱  1 短信 )
+    /**
+     * 校验业务类型(0  邮箱  1 短信 )
      */
     Integer checkType;
-    /*
-     **  业务类型(0 忘记密码 1修改邮箱)
+    /**
+     * 业务类型(0 忘记密码 1修改邮箱)
      */
     Integer busiType;
-    /*
-     **  标题
+    /**
+     * 标题
      */
     String title;
-    /*
-     **  消息模板
+    /**
+     * 消息模板
      */
     String content;
-    /*
-     **  微信消息模板
+    /**
+     * 微信消息模板
      */
     private String templateId;
 

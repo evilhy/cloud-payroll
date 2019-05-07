@@ -12,10 +12,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-
 /**
  * 理财产品
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -121,6 +120,10 @@ public class ProductInfoDTO {
     private String show = "0";
 
     private LocalDateTime subscribeEndDate1;
+    /**
+     * 下期预告图片url
+     */
+    private String nextImageUrl;
 
     /**
      * 档位
@@ -147,7 +150,7 @@ public class ProductInfoDTO {
 
     /**
      * 理财产品档位
-     * */
+     */
     @Getter
     @Setter
     @EqualsAndHashCode

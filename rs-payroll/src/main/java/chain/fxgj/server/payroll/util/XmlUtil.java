@@ -9,7 +9,6 @@ import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-
 @Slf4j
 public class XmlUtil {
 

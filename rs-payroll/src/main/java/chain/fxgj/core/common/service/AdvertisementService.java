@@ -1,6 +1,5 @@
 package chain.fxgj.core.common.service;
 
-
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;

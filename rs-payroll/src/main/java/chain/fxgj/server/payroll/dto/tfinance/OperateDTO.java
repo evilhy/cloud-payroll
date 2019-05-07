@@ -4,7 +4,7 @@ import lombok.*;
 
 /**
  * 用户操作列表
- * */
+ */
 @Getter
 @Setter
 @EqualsAndHashCode
