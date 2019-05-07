@@ -144,6 +144,8 @@ public class MerchantRS {
                 log.info("认证绑定信息表【存在】，则说明已经绑定成功！");
                 employeeWechat.setNickname(employeeWechatInfo.getNickname());
                 employeeWechat.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
+                employeeWechat.setUid(employeeWechatInfo.getUid());
+                employeeWechat.setOpenId(employeeWechatInfo.getUid());
                 merchantService.saveMerchant(employeeWechat);
             } else {
                 log.info("认证绑定信息表【不存在】！");
