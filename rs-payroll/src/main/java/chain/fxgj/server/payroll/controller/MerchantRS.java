@@ -158,7 +158,7 @@ public class MerchantRS {
                     employeeWechatInfo = merchantService.saveMerchant(employeeWechatInfo);
                 } else {
                     log.info("员工信息表中【不存在】！信息未认证");
-                    new ParamsIllegalException(ErrorConstant.MERCHANT_07.getErrorMsg());
+                    throw new ParamsIllegalException(ErrorConstant.MERCHANT_07.getErrorMsg());
                 }
 
             }
