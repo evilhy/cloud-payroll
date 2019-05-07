@@ -133,6 +133,7 @@ public class MerchantServiceImpl implements MerchantService {
             userPrincipal.setWechatId(employeeWechatInfo.getId());
             userPrincipal.setQueryPwd(employeeWechatInfo.getQueryPwd());
             userPrincipal.setAppPartner(employeeWechat.getAppPartner());
+            userPrincipal.setOpenId(employeeWechat.getOpenId());
             //修改绑定信息
             employeeWechat.setJsessionId(jsessionId);
 
