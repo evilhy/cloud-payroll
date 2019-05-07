@@ -99,7 +99,7 @@ public class MerchantServiceImpl implements MerchantService {
 
         EmployeeWechatInfo employeeWechat = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
                 .where(predicate)
-                .fetchOne();
+                .fetchFirst();
 
         return employeeWechat;
     }
