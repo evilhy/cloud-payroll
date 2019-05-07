@@ -118,6 +118,7 @@ public class MerchantDTO {
                 .idNumber(this.idNumber)
                 .phone(phone)
                 .uid(uid)
+                .openId(uid)
                 .nickname(this.nickname)
                 .headimgurl(this.headimgurl)
                 .appPartner(this.appPartner)
