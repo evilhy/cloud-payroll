@@ -146,6 +146,7 @@ public class ProductInfoDTO {
         if (bankProductInfo.getProductStatus().equals(ProductStatusEnum.UP)
                 && bankProductInfo.getDelStatusEnum().equals(DelStatusEnum.normal))
             this.intentFlag = IsStatusEnum.YES.getCode();
+        this.nextImageUrl = bankProductInfo.getNextImageUrl();
     }
 
     /**
