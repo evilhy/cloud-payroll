@@ -73,7 +73,7 @@ public class MerchantServiceImpl implements MerchantService {
 
         EmployeeInfo employee = employeeInfoDao.selectFrom(qEmployeeInfo)
                 .where(predicate)
-                .fetchOne();
+                .fetchFirst();
 
         return employee;
     }

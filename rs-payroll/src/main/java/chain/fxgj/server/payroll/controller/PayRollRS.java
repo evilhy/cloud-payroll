@@ -192,7 +192,7 @@ public class PayRollRS {
             list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
 
             return list;
-        }).subscribeOn(Schedulers.elastic());
+            }).subscribeOn(Schedulers.elastic());
     }
 
     /**
