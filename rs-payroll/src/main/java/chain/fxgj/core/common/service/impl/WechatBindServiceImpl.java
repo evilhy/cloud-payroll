@@ -637,6 +637,16 @@ public class WechatBindServiceImpl implements WechatBindService {
     }
 
     @Override
+    public String getQueryPwdById(String id) {
+        QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
+        String queryPwd = employeeWechatInfoDao.select(qEmployeeWechatInfo.queryPwd)
+                .from(qEmployeeWechatInfo)
+                .where(qEmployeeWechatInfo.id.eq(id))
+                .orderBy(qEmployeeWechatInfo.crtDateTime.desc())
+                .fetchFirst();
+        return queryPwd;
+    }
+    @Override
     public List<EmployeeCardLog> getEmployeeCardLogs(String bankCardId) {
         //添加银行卡修改信息
         QEmployeeCardLog qEmployeeCardLog = QEmployeeCardLog.employeeCardLog;

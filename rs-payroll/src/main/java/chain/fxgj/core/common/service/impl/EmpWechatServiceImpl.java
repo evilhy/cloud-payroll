@@ -59,7 +59,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     }
 
     @Override
-    public UserPrincipal setWechatInfo(String jsessionId, String openId, String nickname, String headimgurl,String idNumber) throws Exception {
+    public UserPrincipal setWechatInfo(String jsessionId, String openId, String nickname, String headimgurl, String idNumber) throws Exception {
         UserPrincipal userPrincipal = UserPrincipal.builder()
                 .sessionId(jsessionId)
                 .openId(openId)
@@ -79,10 +79,13 @@ public class EmpWechatServiceImpl implements EmpWechatService {
             userPrincipal.setIdNumber(idNumber);
 
             String phone = employeeEncrytorService.decryptPhone(employeeWechatInfo.getPhone());
-            log.info("手机号phone:{}",phone);
+            log.info("手机号phone:{}", phone);
             userPrincipal.setPhone(phone);
             userPrincipal.setWechatId(employeeWechatInfo.getId());
             userPrincipal.setQueryPwd(employeeWechatInfo.getQueryPwd());
+            if (employeeWechatInfo.getAppPartner() != null) {
+                userPrincipal.setAppPartner(employeeWechatInfo.getAppPartner());
+            }
 
             //修改绑定信息
             WechatLoginDTO wechatLoginDTO = new WechatLoginDTO();
@@ -90,7 +93,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
             wechatLoginDTO.setJsessionId(jsessionId);
             wechatLoginDTO.setNickname(nickname);
             wechatLoginDTO.setHeadimgurl(headimgurl);
-            insideService.login(openId,jsessionId,nickname,headimgurl);
+            insideService.login(openId, jsessionId, nickname, headimgurl);
         }
 
         //用户机构
@@ -113,15 +116,15 @@ public class EmpWechatServiceImpl implements EmpWechatService {
 
         List<EntInfoDTO> entInfoDTOS = new ArrayList<>();
         try {
-            log.info("idNumber:[{}]",idNumber);
+            log.info("idNumber:[{}]", idNumber);
             entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
-            log.info("go on,entInfoDTOS.size()[{}]",entInfoDTOS.size());
+            log.info("go on,entInfoDTOS.size()[{}]", entInfoDTOS.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
-            log.error("e.printStackTrace()->[{}]",e.getMessage());
+            log.error("e.printStackTrace()->[{}]", e.getMessage());
         } catch (ExecutionException e) {
             e.printStackTrace();
-            log.error("e.printStackTrace()-->[{}]",e.getMessage());
+            log.error("e.printStackTrace()-->[{}]", e.getMessage());
         }
 
         List<EmployeeDTO> list = new ArrayList<>();
@@ -138,7 +141,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 list.add(employeeDTO);
             }
         }
-        log.info("list.size()[{}]",list.size());
+        log.info("list.size()[{}]", list.size());
         return list;
     }
 
@@ -148,13 +151,13 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         List<String> ids = new ArrayList<>();
         List<String> groupIds = updBankCardDTO.getBankCardGroups()
                 .stream()
-                .map(tuple ->{
+                .map(tuple -> {
                     ids.add(tuple.getId());
                     return tuple.getGroupId();
                 }).collect(Collectors.toList());
         List<EmployeeCardInfo> allById = employeeCardInfoDao.findAllById(ids);
         for (EmployeeCardInfo employeeCardInfo : allById) {
-            if(cardNo.equals(employeeCardInfo.getCardNo())){
+            if (cardNo.equals(employeeCardInfo.getCardNo())) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_012.getErrorMsg());
             }
         }
@@ -167,24 +170,24 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                         .and(qEmployeeCardLog.groupId.in(groupIds))
                         .and(qEmployeeCardLog.updStatus.eq(CardUpdStatusEnum.UNKOWN)))
                 .fetchCount();
-        if(count>0){
+        if (count > 0) {
             throw new ParamsIllegalException(ErrorConstant.WECHAR_011.getErrorMsg());
         }
 
         //验证是否已被使用
-        List<EmployeeCardInfo> list=employeeCardInfoDao.findAllByCardNo(cardNo);
+        List<EmployeeCardInfo> list = employeeCardInfoDao.findAllByCardNo(cardNo);
         for (EmployeeCardInfo employeeCardInfo : list) {
-            if(employeeCardInfo.getDelStatusEnum().equals(DelStatusEnum.normal)){
-                if(!employeeCardInfo.getEmployeeInfo().getIdNumber().equals(idNumber)||
-                        groupIds.contains(employeeCardInfo.getEmployeeInfo().getGroupId())){
+            if (employeeCardInfo.getDelStatusEnum().equals(DelStatusEnum.normal)) {
+                if (!employeeCardInfo.getEmployeeInfo().getIdNumber().equals(idNumber) ||
+                        groupIds.contains(employeeCardInfo.getEmployeeInfo().getGroupId())) {
                     throw new ParamsIllegalException(ErrorConstant.WECHAR_010.getErrorMsg());
                 }
             }
         }
         //查询卡bin信息
         List<CardbinInfo> cardbinInfos = cardbinInfoDao.findFirstByCardNo(cardNo);
-        if(cardbinInfos==null || cardbinInfos.size()<=0){
-            throw  new ParamsIllegalException(ErrorConstant.CARD_ERR.getErrorMsg());
+        if (cardbinInfos == null || cardbinInfos.size() <= 0) {
+            throw new ParamsIllegalException(ErrorConstant.CARD_ERR.getErrorMsg());
         }
 
         return cardbinInfos.get(0);
@@ -198,4 +201,5 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 .where(qEmployeeWechatInfo.openId.eq(openId))
                 .fetchFirst();
     }
+
 }

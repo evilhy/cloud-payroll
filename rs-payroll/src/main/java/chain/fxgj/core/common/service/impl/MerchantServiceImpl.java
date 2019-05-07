@@ -96,7 +96,6 @@ public class MerchantServiceImpl implements MerchantService {
             predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(employeeWechatInfo.getAppPartner()));
         }
 
-
         EmployeeWechatInfo employeeWechat = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
                 .where(predicate)
                 .fetchFirst();
@@ -133,7 +132,7 @@ public class MerchantServiceImpl implements MerchantService {
             userPrincipal.setPhone(phone);
             userPrincipal.setWechatId(employeeWechatInfo.getId());
             userPrincipal.setQueryPwd(employeeWechatInfo.getQueryPwd());
-
+            userPrincipal.setAppPartner(employeeWechat.getAppPartner());
             //修改绑定信息
             employeeWechat.setJsessionId(jsessionId);
 

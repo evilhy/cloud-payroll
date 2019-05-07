@@ -117,7 +117,7 @@ public class InsideServiceImpl implements InsideService {
                 .where(qEmployeeWechatInfo.idNumber.equalsIgnoreCase(idNumber).and(qEmployeeWechatInfo.openId.eq(openId)))
                 .fetchFirst();
         if (employeeWechatInfo == null) {
-            employeeWechatInfo = new EmployeeWechatInfo();
+            employeeWechatInfo = EmployeeWechatInfo.builder().build();
             employeeWechatInfo.setCrtDateTime(LocalDateTime.now());
         }
 

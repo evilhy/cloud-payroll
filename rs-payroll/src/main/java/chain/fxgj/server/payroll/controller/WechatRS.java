@@ -44,8 +44,8 @@ public class WechatRS {
 
     @Autowired
     PayrollProperties payrollProperties;
-    //    @Autowired
-//    IwechatFeignService iwechatFeignService;
+    //@Autowired
+    //IwechatFeignService iwechatFeignService;
     @Autowired
     CallInsideService callInsideService;
     @Autowired
@@ -76,7 +76,7 @@ public class WechatRS {
         return Mono.fromCallable(() -> {
             log.info("微信服务器发送的消: signature ={} , timestamp ={} ,nonce ={} ,echostr ={}", signature, timestamp, nonce, echostr);
             //接口调用
-//            String echostrRet = iwechatFeignService.signature(payrollProperties.getId(), signature, timestamp, nonce, echostr);
+            //String echostrRet = iwechatFeignService.signature(payrollProperties.getId(), signature, timestamp, nonce, echostr);
             WeixinSignatureDTO weixinSignatureDTO = new WeixinSignatureDTO(signature, timestamp, nonce, echostr);
             WeixinSignatureDTO weixinSignatureDTO1 = callInsideService.checkWechatSignature(weixinSignatureDTO);
             String echostrRet = weixinSignatureDTO1.getEchostr();
@@ -110,7 +110,7 @@ public class WechatRS {
         return Mono.fromCallable(() -> {
             String uuid32 = UUIDUtil.createUUID32();
             //验签
-//            String echostrRet = iwechatFeignService.signature(id, signature, timestamp, nonce, uuid32);
+            //String echostrRet = iwechatFeignService.signature(id, signature, timestamp, nonce, uuid32);
             WeixinSignatureDTO weixinSignatureDTO = new WeixinSignatureDTO(signature, timestamp, nonce, uuid32);
             WeixinSignatureDTO weixinSignatureDTO1 = callInsideService.checkWechatSignature(weixinSignatureDTO);
             String echostrRet = weixinSignatureDTO1.getEchostr();
@@ -195,8 +195,8 @@ public class WechatRS {
             if (!"authdeny".equals(code)) {
                 log.info("=========wageSheetId={},code={},routeName={}", StringUtils.trimToEmpty(wageSheetId), code, routeName);
                 log.info("一次性code:[{}]", code);
-//                //网页授权接口访问凭证
-//                WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = iwechatFeignService.oauth2Acces(payrollProperties.getId(), code);
+                //网页授权接口访问凭证
+                //WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = iwechatFeignService.oauth2Acces(payrollProperties.getId(), code);
                 WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = callInsideService.getOauth2AccessToken(code);
                 String openId = weixinOauthTokenResponeDTO.getOpenid();
                 String accessToken = weixinOauthTokenResponeDTO.getAccessToken();
@@ -209,7 +209,7 @@ public class WechatRS {
                 //获取用户信息
                 String nickName = "";
                 String headImg = "";
-//                WeixinUserInfoResponeDTO weixinUserInfoResponeDTO = iwechatFeignService.getUserInfo(accessToken,openId);
+                //WeixinUserInfoResponeDTO weixinUserInfoResponeDTO = iwechatFeignService.getUserInfo(accessToken,openId);
                 WeixinUserInfoResponeDTO weixinUserInfoResponeDTO = callInsideService.getUserInfo(accessToken, openId);
                 if (weixinUserInfoResponeDTO == null || StringUtils.isEmpty(weixinUserInfoResponeDTO.getNickname())) {
                     log.info("openId:{},获取用户信息失败");
@@ -247,10 +247,12 @@ public class WechatRS {
     @PermitAll
     public Mono<WeixinJsapiDTO> getJsapiSignature(@RequestParam("url") String url) throws BusiVerifyException {
         return Mono.fromCallable(() -> {
-//            WeixinJsapiDTO weixinJsapiDTO = iwechatFeignService.getJsapiSignature(payrollProperties.getId(),url);
+            //WeixinJsapiDTO weixinJsapiDTO = iwechatFeignService.getJsapiSignature(payrollProperties.getId(),url);
             WeixinJsapiDTO weixinJsapiDTO = callInsideService.getJsapiSignature(url);
             log.info("ret.weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
             return weixinJsapiDTO;
         }).subscribeOn(Schedulers.elastic());
     }
+
+
 }

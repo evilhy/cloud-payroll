@@ -192,7 +192,7 @@ public class PayRollRS {
             list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
 
             return list;
-            }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.elastic());
     }
 
     /**
@@ -240,7 +240,9 @@ public class PayRollRS {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
             String openId = principal.getOpenId();
-            String queryPwd = wechatBindService.getQueryPwd(openId);
+            String id = principal.getWechatId();
+            //String queryPwd = wechatBindService.getQueryPwd(openId);
+            String queryPwd = wechatBindService.getQueryPwdById(id);
             if (!queryPwd.equals(employeeEncrytorService.encryptPwd(pwd))) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }

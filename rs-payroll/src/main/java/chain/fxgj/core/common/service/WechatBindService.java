@@ -95,9 +95,18 @@ public interface WechatBindService {
     void checkPhone(String idNumber, String phone);
 
     Integer getCardUpdIsNew(String idNumber);
-
+    /**
+     * 根据openid 查询  查询密码
+     *
+     * @param openId
+     */
     String getQueryPwd(String openId);
-
+    /**
+     * 根据id 查询  查询密码
+     *
+     * @param id
+     */
+    String getQueryPwdById(String id);
     /**
      * 根据银行卡id获取银行卡修改信息
      *

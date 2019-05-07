@@ -15,6 +15,7 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -57,7 +59,11 @@ public class InsideRS {
     @TrackLog
     @PermitAll
     public Mono<Res100302> sendCode(@RequestBody Req100302 req100302) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
             dto.setSystemId(0);
             dto.setCheckType(1);
@@ -82,7 +88,11 @@ public class InsideRS {
     @TrackLog
     @PostMapping("/receipt")
     public Mono<Void> receipt(@RequestBody ResReceiptDTO resReceiptDTO) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             insideService.recepitConfirm(resReceiptDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
@@ -97,8 +107,12 @@ public class InsideRS {
     @PostMapping("/read")
     @TrackLog
     public Mono<Void> readWage(@RequestBody ReadWageDTO readWageDTO) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         String idNumber = WebContext.getCurrentUser().getIdNumberEncrytor();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             readWageDTO.setIdNumber(idNumber);
             insideService.readWage(readWageDTO);
             return null;
@@ -115,13 +129,17 @@ public class InsideRS {
     @PostMapping("/bindWX")
     @TrackLog
     public Mono<Void> bandWX(@RequestBody Req100702 req100702) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             String sessionId = userPrincipal.getSessionId();
             String openId = userPrincipal.getOpenId();
             String idNumber = req100702.getIdNumber();
             //验证短信码
-//            this.checkPhoneCode(req100702.getPhone(), req100702.getCode());
+            //this.checkPhoneCode(req100702.getPhone(), req100702.getCode());
             callInsideService.checkPhoneCode(req100702.getPhone(), req100702.getCode());
             //请求绑定
             insideService.bandWechat(openId, idNumber, req100702.getPhone());
@@ -142,8 +160,12 @@ public class InsideRS {
     @PostMapping("/rz")
     @TrackLog
     public Mono<Void> rz(@RequestBody Req100701 req100701) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             String sessionId = userPrincipal.getSessionId();
             String openId = userPrincipal.getOpenId();
             String idNumber = employeeEncrytorService.decryptIdNumber(req100701.getIdNumber());
@@ -152,7 +174,7 @@ public class InsideRS {
             wechatBindService.checkPhone(idNumber, req100701.getPhone());
 
             //验证短信码
-//            this.checkPhoneCode(req100701.getPhone(), req100701.getCode());
+            //this.checkPhoneCode(req100701.getPhone(), req100701.getCode());
             callInsideService.checkPhoneCode(req100701.getPhone(), req100701.getCode());
 
             //请求管家绑定
@@ -174,8 +196,12 @@ public class InsideRS {
     @PostMapping("/setPwd")
     @TrackLog
     public Mono<Void> setPwd(@RequestBody String pwd) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             log.info("userPrincipal:{}", userPrincipal);
             UserPrincipal wechatInfo = empWechatService.getWechatInfo(userPrincipal.getSessionId());
             log.info("wechatInfo:{}", wechatInfo);
@@ -207,8 +233,12 @@ public class InsideRS {
     @PostMapping("/updPwd")
     @TrackLog
     public Mono<Void> updPwd(@RequestBody UpdPwdDTO updPwdDTO) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         String queryPwd = WebContext.getCurrentUser().getQueryPwd();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             //判断原密码是否正确
             if (!queryPwd.equals(employeeEncrytorService.encryptPwd(updPwdDTO.getOldPwd()))) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_005.getErrorMsg());
@@ -228,7 +258,11 @@ public class InsideRS {
     @PostMapping("/checkPhoneCode")
     @TrackLog
     public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
 //            this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             callInsideService.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             return null;
@@ -245,8 +279,12 @@ public class InsideRS {
     @PostMapping("/updPhone")
     @TrackLog
     public Mono<Void> updPhone(@RequestBody ReqPhone reqPhone) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             if (StringUtils.isNotBlank(reqPhone.getCode())) {
 //                this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
                 callInsideService.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
@@ -272,8 +310,12 @@ public class InsideRS {
     @PostMapping("/updBankCard")
     @TrackLog
     public Mono<String> updBankCard(@RequestBody UpdBankCardDTO updBankCardDTO) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             String regex = "[0-9]{1,}";
             if (!updBankCardDTO.getCardNo().matches(regex)) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());
