@@ -1,10 +1,7 @@
 package chain.fxgj.core.common.service.impl;
 
 import chain.css.exception.ParamsIllegalException;
-import chain.fxgj.core.common.constant.DictEnums.CardUpdStatusEnum;
-import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
-import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
-import chain.fxgj.core.common.constant.DictEnums.ReceiptsStatusEnum;
+import chain.fxgj.core.common.constant.DictEnums.*;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.InsideService;
@@ -104,6 +101,7 @@ public class InsideServiceImpl implements InsideService {
         employeeWechatInfo.setDelStatusEnum(DelStatusEnum.normal);
         employeeWechatInfo.setUpdDateTime(LocalDateTime.now());
         employeeWechatInfo.setQueryPwd(null);
+        employeeWechatInfo.setAppPartner(AppPartnerEnum.FXGJ);
         log.info("开始插入！");
         employeeWechatInfoDao.save(employeeWechatInfo);
         log.info("插入完成");
