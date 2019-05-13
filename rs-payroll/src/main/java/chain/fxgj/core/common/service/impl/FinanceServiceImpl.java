@@ -279,7 +279,21 @@ public class FinanceServiceImpl implements FinanceService {
         BankProductInfo bankProductInfo = bankProductInfoDao.selectFrom(qBankProductInfo)
                 .where(qBankProductInfo.productStatus.eq(ProductStatusEnum.UP).and(qBankProductInfo.delStatusEnum.eq(DelStatusEnum.normal)).and(qBankProductInfo.productType.eq(ProductTypeEnum.TYPE0)))
                 .orderBy(qBankProductInfo.intentStartDate.desc()).fetchFirst();
-        String id = bankProductInfo.getId();
+        String id = "";
+        if (null != bankProductInfo) {
+            id = bankProductInfo.getId();
+        } else {
+            BankProductInfo bankProductInfo1 = bankProductInfoDao.selectFrom(qBankProductInfo)
+                    .where(qBankProductInfo.productStatus.eq(ProductStatusEnum.UNUP).and(qBankProductInfo.delStatusEnum.eq(DelStatusEnum.normal)).and(qBankProductInfo.productType.eq(ProductTypeEnum.TYPE0)))
+                    .orderBy(qBankProductInfo.intentStartDate.desc()).fetchFirst();
+            if (null != bankProductInfo1) {
+                id = bankProductInfo1.getId();
+            } else {
+                id = bankProductInfoDao.selectFrom(qBankProductInfo)
+                        .where(qBankProductInfo.productStatus.eq(ProductStatusEnum.DOWN).and(qBankProductInfo.delStatusEnum.eq(DelStatusEnum.normal)).and(qBankProductInfo.productType.eq(ProductTypeEnum.TYPE0)))
+                        .orderBy(qBankProductInfo.intentStartDate.desc()).fetchFirst().getId();
+            }
+        }
         return id;
     }
     @Override
