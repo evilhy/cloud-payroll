@@ -313,7 +313,7 @@ public class FinanceServiceImpl implements FinanceService {
         bankProductIntention.setCrtDateTime(LocalDateTime.now());
         bankProductIntention.setIntentAmount(intentRequestDTO.getIntentAmount());
         bankProductIntention.setProtocol(IsStatusEnum.values()[intentRequestDTO.getProtocol()]);
-
+        bankProductIntention.setSolveStatus(SolveStatusEnum.UNSOLVED);
         bankProductIntentionDao.save(bankProductIntention);
 
         //添加操作记录
