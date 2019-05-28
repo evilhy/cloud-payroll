@@ -45,12 +45,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         log.info("fetch.size():[{}]",fetch.size());
         List<AdvertisingRotationDTO> advertisingRotationDTOS = new ArrayList<>();
         for (AdvertisingInfo advertisingInfo : fetch) {
-            AdvertisingRotationDTO advertisingRotationDTO = new AdvertisingRotationDTO();
-            advertisingRotationDTO.setLink(advertisingInfo.getLink());
-            advertisingRotationDTO.setReleaseStatus(advertisingInfo.getReleaseStatus().getCode());
-            advertisingRotationDTO.setReleaseStatusDesc(advertisingInfo.getReleaseStatus().getDesc());
-            advertisingRotationDTO.setSortNo(advertisingInfo.getSortNo());
-            advertisingRotationDTO.setUrl(advertisingInfo.getUrl());
+            AdvertisingRotationDTO advertisingRotationDTO = AdvertisingRotationDTO.builder()
+                    .link(advertisingInfo.getLink())
+                    .releaseStatus(advertisingInfo.getReleaseStatus().getCode())
+                    .releaseStatusDesc(advertisingInfo.getReleaseStatus().getDesc())
+                    .sortNo(advertisingInfo.getSortNo())
+                    .url(advertisingInfo.getUrl())
+                    .build();
+
             advertisingRotationDTOS.add(advertisingRotationDTO);
         }
         log.info("advertisingRotationDTOS.size()[{}]",advertisingRotationDTOS.size());
