@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.ws.rs.client.Client;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -101,7 +102,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         userPrincipal.setEntInfoDTOS(entInfoDTOS);
         if (entInfoDTOS != null && entInfoDTOS.size() > 0
                 && entInfoDTOS.get(0).getGroupInfoList() != null && entInfoDTOS.get(0).getGroupInfoList().size() > 0) {
-            userPrincipal.setName(entInfoDTOS.get(0).getGroupInfoList().get(0).getEmployeeInfo().getEmployeeName());
+            userPrincipal.setName(entInfoDTOS.get(0).getGroupInfoList().get(0).getEmployeeInfoList().get(0).getEmployeeName());
             userPrincipal.setEntId(entInfoDTOS.get(0).getEntId());
             userPrincipal.setEntName(entInfoDTOS.get(0).getEntName());
         }
@@ -131,14 +132,20 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         log.info("entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {
-                EmployeeDTO employeeDTO = new EmployeeDTO(groupInfo.getEmployeeInfo());
-                employeeDTO.setGroupId(groupInfo.getGroupId());
-                employeeDTO.setGroupName(groupInfo.getGroupName());
-                employeeDTO.setGroupShortName(groupInfo.getGroupShortName());
-                employeeDTO.setEntId(entInfoDTO.getEntId());
-                employeeDTO.setEntName(entInfoDTO.getEntName());
-                employeeDTO.setIdNumberStar(TransUtil.idNumberStar(idNumber));
-                list.add(employeeDTO);
+                LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = groupInfo.getEmployeeInfoList();
+                for (int i = 0; i < empList.size(); i++) {
+                    EntInfoDTO.GroupInfo.EmployeeInfo emp = empList.get(i);
+                    if (emp.getDelStatus() == DelStatusEnum.normal.getCode()) {
+                        EmployeeDTO employeeDTO = new EmployeeDTO(emp);
+                        employeeDTO.setGroupId(groupInfo.getGroupId());
+                        employeeDTO.setGroupName(groupInfo.getGroupName());
+                        employeeDTO.setGroupShortName(groupInfo.getGroupShortName());
+                        employeeDTO.setEntId(entInfoDTO.getEntId());
+                        employeeDTO.setEntName(entInfoDTO.getEntName());
+                        employeeDTO.setIdNumberStar(TransUtil.idNumberStar(idNumber));
+                        list.add(employeeDTO);
+                    }
+                }
             }
         }
         log.info("list.size()[{}]", list.size());
