@@ -14,6 +14,7 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 工资条
@@ -79,9 +81,12 @@ public class PayRollRS {
     @GetMapping("/index")
     @TrackLog
     public Mono<IndexDTO> index() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             NewestWageLogDTO bean = wageWechatService.newGroupPushInfo(idNumber);
 
             IndexDTO indexDTO = new IndexDTO();
@@ -102,8 +107,12 @@ public class PayRollRS {
     @GetMapping("/groupList")
     @TrackLog
     public Mono<List<NewestWageLogDTO>> groupList() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             List<NewestWageLogDTO> list = wageWechatService.groupList(idNumber);
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -118,7 +127,11 @@ public class PayRollRS {
     @GetMapping("/entEmp")
     @TrackLog
     public Mono<Res100701> entEmp(@RequestParam("idNumber") String idNumber) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             Res100701 res100701 = wechatBindService.getEntList(idNumber);
             if (res100701.getBindStatus().equals("1")) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_002.getErrorMsg());
@@ -143,9 +156,12 @@ public class PayRollRS {
     public Mono<Res100703> wageList(@RequestParam("groupId") String groupId,
                                     @RequestParam("year") String year,
                                     @RequestParam("type") String type) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             Res100703 res100703 = null;
             if (LocalDate.now().getYear() == Integer.parseInt(year)) {
                 res100703 = wageWechatService.wageList(idNumber, groupId, year, type);
@@ -169,8 +185,12 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<WageDetailDTO>> wageDetail(@RequestParam("wageSheetId") String wageSheetId,
                                                 @RequestParam("groupId") String groupId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             List<WageDetailDTO> list = new ArrayList<>();
             //注释原因：读取redis中 WageDetailDTO 路径 与库中路径不一致
 //            try {
@@ -203,8 +223,12 @@ public class PayRollRS {
     @GetMapping("/empInfo")
     @TrackLog
     public Mono<List<Res100708>> empInfo() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             List<Res100708> res100708 = wechatBindService.empList(idNumber);
             return res100708;
         }).subscribeOn(Schedulers.elastic());
@@ -218,8 +242,12 @@ public class PayRollRS {
     @GetMapping("/invoice")
     @TrackLog
     public Mono<List<GroupInvoiceDTO>> invoice() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             List<GroupInvoiceDTO> list = wechatBindService.invoiceList(idNumber);
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -234,8 +262,12 @@ public class PayRollRS {
     @GetMapping("/checkPwd")
     @TrackLog
     public Mono<Void> checkPwd(@RequestParam("pwd") String pwd) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             if (StringUtils.isEmpty(pwd)) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
@@ -261,7 +293,11 @@ public class PayRollRS {
     @TrackLog
     public Mono<Void> checkCard(@RequestParam("idNumber") String idNumber,
                                 @RequestParam("cardNo") String cardNo) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             int is = wechatBindService.checkCardNo(idNumber, cardNo);
             if (is == IsStatusEnum.NO.getCode()) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
@@ -279,8 +315,12 @@ public class PayRollRS {
     @GetMapping("/emp")
     @TrackLog
     public Mono<EmpInfoDTO> emp() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             EmpInfoDTO empInfoDTO = new EmpInfoDTO();
             empInfoDTO.setHeadimgurl(userPrincipal.getHeadimgurl());
             empInfoDTO.setIdNumber(userPrincipal.getIdNumber());
@@ -305,8 +345,12 @@ public class PayRollRS {
     @GetMapping("/empEnt")
     @TrackLog
     public Mono<List<EmpEntDTO>> empEnt() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             List<EmpEntDTO> list = wechatBindService.empEntList(userPrincipal.getIdNumber());
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -320,8 +364,12 @@ public class PayRollRS {
     @GetMapping("/empCard")
     @TrackLog
     public Mono<List<EmpEntDTO>> empCard() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             List<EmpEntDTO> list = wechatBindService.empEntList(userPrincipal.getIdNumber());
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -336,7 +384,11 @@ public class PayRollRS {
     @GetMapping("/empCardLog")
     @TrackLog
     public Mono<List<EmpCardLogDTO>> empCardLog(@RequestParam("ids") String ids) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             //ids "|"分割
             List<EmpCardLogDTO> list = wechatBindService.empCardLog(ids.split("\\|"));
             return list;
@@ -351,8 +403,12 @@ public class PayRollRS {
     @GetMapping("/entPhone")
     @TrackLog
     public Mono<List<EmployeeListBean>> entPhone() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             List<EmployeeListBean> list = wechatBindService.getEntPhone(userPrincipal.getIdNumber());
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -367,7 +423,11 @@ public class PayRollRS {
     @GetMapping("/entUser")
     @TrackLog
     public Mono<List<EntUserDTO>> entUser(@RequestParam("entId") String entId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             List<EntUserDTO> list = wechatBindService.entUser(entId);
             return list;
         }).subscribeOn(Schedulers.elastic());
