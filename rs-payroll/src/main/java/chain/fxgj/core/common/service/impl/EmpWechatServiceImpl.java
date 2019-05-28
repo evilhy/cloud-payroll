@@ -15,6 +15,7 @@ import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
 import chain.fxgj.server.payroll.dto.request.WechatLoginDTO;
+import chain.fxgj.server.payroll.service.EmployeeService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,8 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     PayRollAsyncService payRollAsyncService;
     @Autowired
     EmployeeCardLogDao employeeCardLogDao;
+    @Autowired
+    EmployeeService employeeService;
 
     @Override
     public UserPrincipal getWechatInfo(String jsessionId) {
@@ -98,14 +101,21 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         }
 
         //用户机构
-        List<EntInfoDTO> entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
-        userPrincipal.setEntInfoDTOS(entInfoDTOS);
-        if (entInfoDTOS != null && entInfoDTOS.size() > 0
-                && entInfoDTOS.get(0).getGroupInfoList() != null && entInfoDTOS.get(0).getGroupInfoList().size() > 0) {
-            userPrincipal.setName(entInfoDTOS.get(0).getGroupInfoList().get(0).getEmployeeInfoList().get(0).getEmployeeName());
-            userPrincipal.setEntId(entInfoDTOS.get(0).getEntId());
-            userPrincipal.setEntName(entInfoDTOS.get(0).getEntName());
+        List<EmployeeInfo>  employeeInfos =  employeeService.getEmployeeInfos(idNumber,null).get();
+        if (employeeInfos != null && employeeInfos.size() > 0) {
+            userPrincipal.setName(employeeInfos.get(0).getEmployeeName());
+            userPrincipal.setEntId(employeeInfos.get(0).getEntId());
         }
+
+
+//        List<EntInfoDTO> entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
+//        userPrincipal.setEntInfoDTOS(entInfoDTOS);
+//        if (entInfoDTOS != null && entInfoDTOS.size() > 0
+//                && entInfoDTOS.get(0).getGroupInfoList() != null && entInfoDTOS.get(0).getGroupInfoList().size() > 0) {
+//            userPrincipal.setName(entInfoDTOS.get(0).getGroupInfoList().get(0).getEmployeeInfoList().get(0).getEmployeeName());
+//            userPrincipal.setEntId(entInfoDTOS.get(0).getEntId());
+//            userPrincipal.setEntName(entInfoDTOS.get(0).getEntName());
+//        }
         return userPrincipal;
     }
 

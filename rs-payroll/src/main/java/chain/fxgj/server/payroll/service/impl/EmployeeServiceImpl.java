@@ -1,0 +1,63 @@
+package chain.fxgj.server.payroll.service.impl;
+
+import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
+import chain.fxgj.core.jpa.dao.EmployeeInfoDao;
+import chain.fxgj.core.jpa.model.EmployeeInfo;
+import chain.fxgj.core.jpa.model.QEmployeeInfo;
+import chain.fxgj.server.payroll.service.EmployeeService;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.Future;
+
+@Service
+@Slf4j
+public class EmployeeServiceImpl implements EmployeeService {
+
+    @Autowired
+    EmployeeInfoDao employeeInfoDao;
+
+
+    /**
+     * 根据证件号码
+     *
+     * @param idNumber
+     * @param delStatusEnum
+     * @return
+     */
+    @Override
+    public Future<List<EmployeeInfo>> getEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum) {
+
+        //查询员工信息
+        QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
+        //查询条件
+        //[1] 身份证
+        Predicate predicate = qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber);
+
+        //[2] 用户 删除 状态
+        if (delStatusEnum != null && delStatusEnum.length > 0) {
+            if (delStatusEnum.length == 1) {
+                predicate = ExpressionUtils.and(predicate, qEmployeeInfo.delStatusEnum.eq(delStatusEnum[0]));
+            } else {
+                predicate = ExpressionUtils.and(predicate, qEmployeeInfo.delStatusEnum.in(delStatusEnum));
+            }
+        }
+        //删除状态
+        OrderSpecifier orderDel = qEmployeeInfo.delStatusEnum.asc();
+        //创建日期升序
+        OrderSpecifier orderCrtDateTime = qEmployeeInfo.crtDateTime.asc();
+
+        List<EmployeeInfo> employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo)
+                .where(predicate)
+                .orderBy(orderDel, orderCrtDateTime)
+                .fetch();
+        log.info("====>查询数据量={}", employeeInfoList.size());
+        return new AsyncResult<>(employeeInfoList);
+    }
+}
