@@ -254,6 +254,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         for (EmployeeInfo employeeInfo : employeeInfoList) {
             String entId = employeeInfo.getEntId();
             String groupId = employeeInfo.getGroupId();
+            log.info("====>entId={},groupId={},employeeInfo={}", entId, groupId, employeeInfo.getId());
 
             //【1】机构id
             if (convertGroupEmp.containsKey(groupId)) {
@@ -267,6 +268,10 @@ public class WechatBindServiceImpl implements WechatBindService {
             //【2】企业id
             if (convertEntGroup.containsKey(entId)) {
                 LinkedHashMap<String, List<EmployeeInfo>> groupMap = convertEntGroup.get(entId);
+                if (groupMap.get(groupId) == null) {
+                    log.info("====>groupId={},不存在", groupId);
+                    groupMap = new LinkedHashMap<>();
+                }
                 groupMap.get(groupId).add(employeeInfo);
                 convertEntGroup.put(entId, groupMap);
             } else {
