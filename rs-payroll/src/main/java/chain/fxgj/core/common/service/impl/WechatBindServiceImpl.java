@@ -268,12 +268,20 @@ public class WechatBindServiceImpl implements WechatBindService {
             //【2】企业id
             if (convertEntGroup.containsKey(entId)) {
                 LinkedHashMap<String, List<EmployeeInfo>> groupMap = convertEntGroup.get(entId);
+
                 if (groupMap.get(groupId) == null) {
                     log.info("====>groupId={},不存在", groupId);
-                    groupMap = new LinkedHashMap<>();
+                    //groupMap = new LinkedHashMap<>();
+                    List<EmployeeInfo> list = new  LinkedList<>();
+                    list.add(employeeInfo);
+                    groupMap.put(groupId,list);
+
+                }else{
+                    groupMap.get(groupId).add(employeeInfo);
                 }
-                groupMap.get(groupId).add(employeeInfo);
+
                 convertEntGroup.put(entId, groupMap);
+
             } else {
                 LinkedHashMap<String, List<EmployeeInfo>> firstGroupMap = new LinkedHashMap<>();
                 firstGroupMap.put(groupId, convertGroupEmp.get(groupId));
