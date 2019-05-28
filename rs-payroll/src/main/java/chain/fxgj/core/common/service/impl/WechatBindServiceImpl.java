@@ -6,15 +6,14 @@ import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.constant.PermissionConstant;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
+import chain.fxgj.core.common.service.WechatBindService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
-import chain.fxgj.core.common.service.WechatBindService;
 import chain.utils.commons.StringUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
@@ -293,12 +292,12 @@ public class WechatBindServiceImpl implements WechatBindService {
         log.info("根据身份证，查询 【机构】 数量：{}", convertGroupEmp.size());
 
 
-        try {
-            alldata_json = mapper.writeValueAsString(convertEntGroup);
-            log.info("convertEntGroup={}", alldata_json);
-        } catch (JsonProcessingException e) {
-            log.info(e.getMessage());
-        }
+//        try {
+//            alldata_json = mapper.writeValueAsString(convertEntGroup);
+//            log.info("convertEntGroup={}", alldata_json);
+//        } catch (JsonProcessingException e) {
+//            log.info(e.getMessage());
+//        }
 
 
         log.info("循环匹配");
@@ -369,12 +368,12 @@ public class WechatBindServiceImpl implements WechatBindService {
         }
 
 
-        try {
-            alldata_json = mapper.writeValueAsString(entInfoDTOList);
-            log.info("entInfoDTOList={}", alldata_json);
-        } catch (JsonProcessingException e) {
-            log.info(e.getMessage());
-        }
+//        try {
+//            alldata_json = mapper.writeValueAsString(entInfoDTOList);
+//            log.info("entInfoDTOList={}", alldata_json);
+//        } catch (JsonProcessingException e) {
+//            log.info(e.getMessage());
+//        }
 
 //        for (Map.Entry<String, LinkedHashMap<String, String>> entryEnt : convertEntGroup.entrySet()) {
 //            String entId = entryEnt.getKey();
