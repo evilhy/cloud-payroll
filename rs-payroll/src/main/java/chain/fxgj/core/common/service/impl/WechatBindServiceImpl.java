@@ -269,8 +269,6 @@ public class WechatBindServiceImpl implements WechatBindService {
                 LinkedHashMap<String, List<EmployeeInfo>> groupMap = convertEntGroup.get(entId);
 
                 if (groupMap.get(groupId) == null) {
-                    log.info("====>groupId={},不存在", groupId);
-                    //groupMap = new LinkedHashMap<>();
                     List<EmployeeInfo> list = new  LinkedList<>();
                     list.add(employeeInfo);
                     groupMap.put(groupId,list);
@@ -290,15 +288,6 @@ public class WechatBindServiceImpl implements WechatBindService {
 
         log.info("根据身份证，查询 【员工】 数量：{}", employeeInfoList.size());
         log.info("根据身份证，查询 【机构】 数量：{}", convertGroupEmp.size());
-
-
-//        try {
-//            alldata_json = mapper.writeValueAsString(convertEntGroup);
-//            log.info("convertEntGroup={}", alldata_json);
-//        } catch (JsonProcessingException e) {
-//            log.info(e.getMessage());
-//        }
-
 
         log.info("循环匹配");
 
@@ -366,122 +355,6 @@ public class WechatBindServiceImpl implements WechatBindService {
             entInfoDTO.setGroupInfoList(groupInfoList);
             entInfoDTOList.add(entInfoDTO);
         }
-
-
-//        try {
-//            alldata_json = mapper.writeValueAsString(entInfoDTOList);
-//            log.info("entInfoDTOList={}", alldata_json);
-//        } catch (JsonProcessingException e) {
-//            log.info(e.getMessage());
-//        }
-
-//        for (Map.Entry<String, LinkedHashMap<String, String>> entryEnt : convertEntGroup.entrySet()) {
-//            String entId = entryEnt.getKey();
-//            String entName = null;
-//            String shortEntName = null;
-//            LinkedHashMap<String, String> groupMap = entryEnt.getValue();
-//
-//            try {
-//                alldata_json = mapper.writeValueAsString(groupMap);
-//                log.info("entId={}", entId);
-//                log.info("convertEntGroup={}", alldata_json);
-//            } catch (JsonProcessingException e) {
-//                log.info(e.getMessage());
-//            }
-//
-//
-//            Boolean entStatus = true;
-//
-//            EntInfoDTO entInfoDTO = new EntInfoDTO();
-//
-//            HashMap<String, EntInfoDTO.GroupInfo> groupInfoMap = entInfoDTO.getGroupInfoMap();
-//
-//            LinkedList<EntInfoDTO.GroupInfo> groupInfoList = new LinkedList<>();
-//
-//            for (Map.Entry<String, String> groupEntry : groupMap.entrySet()) {
-//                String groupId = groupEntry.getValue();
-//
-//                EntGroupInfo entGroupInfo = entGroupInfoDao.findById(groupId).orElse(null);
-//
-//                if (entGroupInfo == null) {
-//                    break;
-//                }
-//
-//                DelStatusEnum groupDelStatusEnum = entGroupInfo.getDelStatusEnum();
-//                if (groupDelStatusEnum.getCode() != DelStatusEnum.normal.getCode()) {
-//                    log.info("机构信息不正={}", groupDelStatusEnum.getCode());
-//                    //entStatus = false;
-//                }
-//
-//                //懒加载失效，导致无法从机构中加载出企业信息，所以，需要重新查询
-//                //EntErpriseInfo entErpriseInfo = entGroupInfo.getEntErpriseInfo();
-//                String entIdTemp = entGroupInfo.getEntId();
-//                EntErpriseInfo entErpriseInfo = entErpriseInfoDao.findById(entIdTemp).get();
-//
-//                EnterpriseStatusEnum enterpriseStatusEnum = entErpriseInfo.getEntStatus();
-//                if (enterpriseStatusEnum.getCode() != EnterpriseStatusEnum.NORMAL.getCode()) {
-//                    log.info("企业信息不正={}", enterpriseStatusEnum.getCode());
-//                    //entStatus = false;
-//                }
-//
-//                if (groupInfoMap.containsKey(groupId)) {
-//                    break;
-//                }
-//
-//                if (entStatus) {
-//
-//                    EntInfoDTO.GroupInfo groupInfo = new EntInfoDTO.GroupInfo();
-//                    EntInfoDTO.GroupInfo.EmployeeInfo employeeInfo = new EntInfoDTO.GroupInfo.EmployeeInfo();
-//
-//                    EmployeeInfo groupEmp = (EmployeeInfo) convertGroupEmp.get(groupId);
-//                    employeeInfo.setEmployeeId(groupEmp.getId());
-//                    employeeInfo.setEmployeeName(groupEmp.getEmployeeName());
-//                    Integer code = groupEmp.getEmployeeStatusEnum().getCode();
-//                    employeeInfo.setEmployeeStatus(code);
-//                    employeeInfo.setEmployeeStatusDesc(groupEmp.getEmployeeStatusEnum().getDesc());
-//                    employeeInfo.setPhone(groupEmp.getPhone());
-//                    employeeInfo.setEmployeeNo(groupEmp.getEmployeeNo());
-//                    employeeInfo.setPosition(groupEmp.getPosition());
-//                    employeeInfo.setEntryDate(groupEmp.getEntryDate() == null ? null : groupEmp.getEntryDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-//                    groupInfo.setEmployeeInfo(employeeInfo);
-//                    groupInfo.setGroupId(entGroupInfo.getId());
-//                    groupInfo.setGroupName(entGroupInfo.getGroupName());
-//                    groupInfo.setGroupShortName(entGroupInfo.getShortGroupName());
-//                    groupInfo.setEmpGroupInservice(false);    //员工是否在职
-//                    if (code == EmployeeStatusEnum.INSERVICE.getCode()) {
-//                        groupInfo.setEmpGroupInservice(true); //员工是否在职
-//                    }
-//
-//                    groupInfoMap.put(groupId, groupInfo);
-//
-//                    groupInfoList.add(groupInfo);
-//
-//                    entName = entGroupInfo.getEntErpriseInfo().getEntName();
-//                    shortEntName = entGroupInfo.getEntErpriseInfo().getShortEntName();
-//                }
-//
-//            }
-//
-//            if (!groupInfoMap.isEmpty()) {
-//                //entInfoDTO.setGroupInfoMap(groupInfoMap);
-//                entInfoDTO.setGroupInfoMap(null);
-//                entInfoDTO.setGroupInfoList(groupInfoList);
-//                entInfoDTO.setEntId(entId);
-//                entInfoDTO.setEntName(entName);
-//                entInfoDTO.setShortEntName(shortEntName);
-//                entInfoDTOList.add(entInfoDTO);
-//            }
-//        }
-//
-//        log.info("根据身份证，查询【正常】企业 数量：{}", entInfoDTOList.size());
-//
-//        try {
-//            alldata_json = mapper.writeValueAsString(entInfoDTOList);
-//            log.info("信息={}", alldata_json);
-//        } catch (JsonProcessingException e) {
-//            log.info(e.getMessage());
-//        }
-
 
         return entInfoDTOList;
     }
