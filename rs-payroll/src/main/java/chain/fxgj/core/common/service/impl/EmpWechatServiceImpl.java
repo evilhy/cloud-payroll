@@ -145,7 +145,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = groupInfo.getEmployeeInfoList();
                 for (int i = 0; i < empList.size(); i++) {
                     EntInfoDTO.GroupInfo.EmployeeInfo emp = empList.get(i);
-                    if (emp.getDelStatus() == DelStatusEnum.normal.getCode()) {
+                    //if (emp.getDelStatus() == DelStatusEnum.normal.getCode()) {
                         EmployeeDTO employeeDTO = new EmployeeDTO(emp);
                         employeeDTO.setGroupId(groupInfo.getGroupId());
                         employeeDTO.setGroupName(groupInfo.getGroupName());
@@ -154,7 +154,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                         employeeDTO.setEntName(entInfoDTO.getEntName());
                         employeeDTO.setIdNumberStar(TransUtil.idNumberStar(idNumber));
                         list.add(employeeDTO);
-                    }
+                   // }
                 }
             }
         }
