@@ -314,43 +314,45 @@ public class WechatBindServiceImpl implements WechatBindService {
                 String groupId = groupEntry.getKey();
 
                 EntGroupInfo entGroupInfo = entGroupInfoDao.findById(groupId).orElse(null);
-                EntInfoDTO.GroupInfo groupInfo = EntInfoDTO.GroupInfo.builder()
-                        .groupId(entGroupInfo.getId())
-                        .groupName(entGroupInfo.getGroupName())
-                        .groupShortName(entGroupInfo.getShortGroupName())
-                        .build();
+                if (entGroupInfo != null) {
+                    EntInfoDTO.GroupInfo groupInfo = EntInfoDTO.GroupInfo.builder()
+                            .groupId(entGroupInfo.getId())
+                            .groupName(entGroupInfo.getGroupName())
+                            .groupShortName(entGroupInfo.getShortGroupName())
+                            .build();
 
-                LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = new LinkedList<>();
-                groupInfo.setEmployeeInfoList(empList);
-                List<EmployeeInfo> listEmp = groupEntry.getValue();
-                for (int i = 0; i < listEmp.size(); i++) {
-                    EmployeeInfo iemployeeInfo = listEmp.get(i);
-                    EntInfoDTO.GroupInfo.EmployeeInfo employeeInfo = new EntInfoDTO.GroupInfo.EmployeeInfo();
-                    //员工id
-                    employeeInfo.setEmployeeId(iemployeeInfo.getId());
-                    //姓名
-                    employeeInfo.setEmployeeName(iemployeeInfo.getEmployeeName());
-                    Integer code = iemployeeInfo.getEmployeeStatusEnum().getCode();
-                    //在职状态
-                    employeeInfo.setEmployeeStatus(code);
-                    //在职描述
-                    employeeInfo.setEmployeeStatusDesc(iemployeeInfo.getEmployeeStatusEnum().getDesc());
-                    //手机号
-                    employeeInfo.setPhone(iemployeeInfo.getPhone());
-                    //员工工号
-                    employeeInfo.setEmployeeNo(iemployeeInfo.getEmployeeNo());
-                    //职位
-                    employeeInfo.setPosition(iemployeeInfo.getPosition());
-                    //入职时间
-                    employeeInfo.setEntryDate(iemployeeInfo.getEntryDate() == null ? null : iemployeeInfo.getEntryDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                    Integer delCode = iemployeeInfo.getDelStatusEnum().getCode();
-                    //员工状态
-                    employeeInfo.setDelStatus(delCode);
-                    //员工状态描述
-                    employeeInfo.setDelStatusDesc(iemployeeInfo.getDelStatusEnum().getDesc());
-                    empList.add(employeeInfo);
+                    LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = new LinkedList<>();
+                    groupInfo.setEmployeeInfoList(empList);
+                    List<EmployeeInfo> listEmp = groupEntry.getValue();
+                    for (int i = 0; i < listEmp.size(); i++) {
+                        EmployeeInfo iemployeeInfo = listEmp.get(i);
+                        EntInfoDTO.GroupInfo.EmployeeInfo employeeInfo = new EntInfoDTO.GroupInfo.EmployeeInfo();
+                        //员工id
+                        employeeInfo.setEmployeeId(iemployeeInfo.getId());
+                        //姓名
+                        employeeInfo.setEmployeeName(iemployeeInfo.getEmployeeName());
+                        Integer code = iemployeeInfo.getEmployeeStatusEnum().getCode();
+                        //在职状态
+                        employeeInfo.setEmployeeStatus(code);
+                        //在职描述
+                        employeeInfo.setEmployeeStatusDesc(iemployeeInfo.getEmployeeStatusEnum().getDesc());
+                        //手机号
+                        employeeInfo.setPhone(iemployeeInfo.getPhone());
+                        //员工工号
+                        employeeInfo.setEmployeeNo(iemployeeInfo.getEmployeeNo());
+                        //职位
+                        employeeInfo.setPosition(iemployeeInfo.getPosition());
+                        //入职时间
+                        employeeInfo.setEntryDate(iemployeeInfo.getEntryDate() == null ? null : iemployeeInfo.getEntryDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                        Integer delCode = iemployeeInfo.getDelStatusEnum().getCode();
+                        //员工状态
+                        employeeInfo.setDelStatus(delCode);
+                        //员工状态描述
+                        employeeInfo.setDelStatusDesc(iemployeeInfo.getDelStatusEnum().getDesc());
+                        empList.add(employeeInfo);
+                    }
+                    groupInfoList.add(groupInfo);
                 }
-                groupInfoList.add(groupInfo);
             }
             entInfoDTO.setGroupInfoList(groupInfoList);
             entInfoDTOList.add(entInfoDTO);
