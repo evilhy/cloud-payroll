@@ -8,14 +8,25 @@ import java.util.concurrent.Future;
 
 public interface EmployeeService {
 
-
     /**
      * 根据证件号码
+     * 不区分 删除状态
+     *
+     * @param idNumber
+     * @return
+     */
+    Future<EmployeeInfo> getEmployeeInfoOne(String idNumber);
+
+
+    /**
+     * 根据证件号码  和  删除状态 查询
      *
      * @param idNumber
      * @param delStatusEnum
+     * @param offset        起始页
+     * @param limit         每页数量
      * @return
      */
-    Future<List<EmployeeInfo>> getEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum);
+    Future<List<EmployeeInfo>> getEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum, Long offset, Long limit);
 
 }

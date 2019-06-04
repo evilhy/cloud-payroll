@@ -26,14 +26,36 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 根据证件号码
+     * 不区分 删除状态
+     *
+     * @param idNumber
+     * @return
+     */
+    @Override
+    public Future<EmployeeInfo> getEmployeeInfoOne(String idNumber) {
+        List<EmployeeInfo> employeeInfoList = this.queryEmployeeInfos(idNumber, null, Long.valueOf(0), Long.valueOf(1));
+        if (employeeInfoList != null && employeeInfoList.size() > 0) {
+            return new AsyncResult<>(employeeInfoList.get(0));
+        }
+        return new AsyncResult<>(null);
+    }
+
+
+    /**
+     * 根据证件号码  和  删除状态 查询
      *
      * @param idNumber
      * @param delStatusEnum
      * @return
      */
     @Override
-    public Future<List<EmployeeInfo>> getEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum) {
+    public Future<List<EmployeeInfo>> getEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum, Long offset, Long limit) {
+        List<EmployeeInfo> employeeInfoList = this.queryEmployeeInfos(idNumber, delStatusEnum, offset, limit);
+        return new AsyncResult<>(employeeInfoList);
+    }
 
+
+    private List<EmployeeInfo> queryEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum, Long offset, Long limit) {
         //查询员工信息
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         //查询条件
@@ -52,12 +74,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         OrderSpecifier orderDel = qEmployeeInfo.delStatusEnum.asc();
         //创建日期升序
         OrderSpecifier orderCrtDateTime = qEmployeeInfo.crtDateTime.asc();
+        List<EmployeeInfo> employeeInfoList = null;
+        if (offset != null && limit != null) {
+            employeeInfoDao.selectFrom(qEmployeeInfo)
+                    .where(predicate)
+                    .orderBy(orderDel, orderCrtDateTime)
+                    .fetch();
+        } else {
+            log.info("====>分页查询，{}，{}", offset, limit);
+            employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo)
+                    .where(predicate)
+                    .offset(offset.longValue())
+                    .limit(limit.longValue())
+                    .orderBy(orderDel, orderCrtDateTime)
+                    .fetch();
+        }
 
-        List<EmployeeInfo> employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo)
-                .where(predicate)
-                .orderBy(orderDel, orderCrtDateTime)
-                .fetch();
-        log.info("====>查询数据量={}", employeeInfoList.size());
-        return new AsyncResult<>(employeeInfoList);
+        log.info("====>根据证件号码，查询存在员工数据量={}", employeeInfoList.size());
+        return employeeInfoList;
     }
 }

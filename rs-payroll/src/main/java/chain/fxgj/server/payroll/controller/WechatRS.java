@@ -198,24 +198,23 @@ public class WechatRS {
             MDC.setContextMap(mdcContext);
 
             String jsessionId = UUIDUtil.createUUID32();
-            Res100705 res100705 = new Res100705();
-            log.info("set之前打印jsessionId:[{}]", jsessionId);
-            res100705.setJsessionId(jsessionId);
-            res100705.setBindStatus("0");
+            Res100705 res100705 = Res100705.builder()
+                    .jsessionId(jsessionId)
+                    .build();
+            log.info("====>set之前打印jsessionId:[{}]", jsessionId);
 
             // 用户同意授权
             if (!"authdeny".equals(code)) {
-                log.info("=========wageSheetId={},code={},routeName={}", StringUtils.trimToEmpty(wageSheetId), code, routeName);
-                log.info("一次性code:[{}]", code);
+                log.info("=========>wageSheetId={},code={},routeName={}", StringUtils.trimToEmpty(wageSheetId), code, routeName);
+                log.info("====> 一次性code:[{}]", code);
                 //网页授权接口访问凭证
                 //WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = iwechatFeignService.oauth2Acces(payrollProperties.getId(), code);
                 WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = callInsideService.getOauth2AccessToken(code);
                 String openId = weixinOauthTokenResponeDTO.getOpenid();
                 String accessToken = weixinOauthTokenResponeDTO.getAccessToken();
-                log.info("============openId={}", openId);
-                log.info("============accessToken={}", accessToken);
+                log.info("============>openId={},accessToken={}", openId,accessToken);
                 if (StringUtils.isEmpty(openId)) {
-                    log.info("获取openId失败");
+                    log.info("====>获取openId失败");
                     throw new ParamsIllegalException(ErrorConstant.AUTH_ERR.getErrorMsg());
                 }
                 //获取用户信息
@@ -224,7 +223,7 @@ public class WechatRS {
                 //WeixinUserInfoResponeDTO weixinUserInfoResponeDTO = iwechatFeignService.getUserInfo(accessToken,openId);
                 WeixinUserInfoResponeDTO weixinUserInfoResponeDTO = callInsideService.getUserInfo(accessToken, openId);
                 if (weixinUserInfoResponeDTO == null || StringUtils.isEmpty(weixinUserInfoResponeDTO.getNickname())) {
-                    log.info("openId:{},获取用户信息失败");
+                    log.info("====>openId:{},获取用户信息失败");
                 } else {
                     try {
                         nickName = URLEncoder.encode(weixinUserInfoResponeDTO.getNickname(), "UTF-8");
@@ -243,10 +242,10 @@ public class WechatRS {
                     res100705.setPhone(userPrincipal.getPhone());
                 }
                 res100705.setHeadimgurl(headImg);
-                log.info("微信：{},{},{},{},{}", res100705.getJsessionId(), userPrincipal.getPhone(), res100705.getBindStatus(), userPrincipal.getIdNumber(), res100705.getIfPwd());
+                log.info("====>微信：{},{},{},{},{}", res100705.getJsessionId(), userPrincipal.getPhone(), res100705.getBindStatus(), userPrincipal.getIdNumber(), res100705.getIfPwd());
             }
             //todo 重定向地址
-            log.info("res100705返回的所有值:[{}]", res100705.toString());
+            log.info("====>res100705返回的所有值:[{}]", res100705.toString());
             return res100705;
         }).subscribeOn(Schedulers.elastic());
     }
