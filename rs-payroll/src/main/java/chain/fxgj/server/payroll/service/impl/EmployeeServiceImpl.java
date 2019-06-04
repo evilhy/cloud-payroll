@@ -76,16 +76,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         OrderSpecifier orderCrtDateTime = qEmployeeInfo.crtDateTime.asc();
         List<EmployeeInfo> employeeInfoList = null;
         if (offset != null && limit != null) {
-            employeeInfoDao.selectFrom(qEmployeeInfo)
-                    .where(predicate)
-                    .orderBy(orderDel, orderCrtDateTime)
-                    .fetch();
-        } else {
             log.info("====>分页查询，{}，{}", offset, limit);
             employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo)
                     .where(predicate)
                     .offset(offset.longValue())
                     .limit(limit.longValue())
+                    .orderBy(orderDel, orderCrtDateTime)
+                    .fetch();
+        } else {
+            employeeInfoDao.selectFrom(qEmployeeInfo)
+                    .where(predicate)
                     .orderBy(orderDel, orderCrtDateTime)
                     .fetch();
         }
