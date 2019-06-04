@@ -15,6 +15,7 @@ import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
 import chain.fxgj.server.payroll.dto.request.WechatLoginDTO;
+import chain.fxgj.server.payroll.service.EmployeeService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.ws.rs.client.Client;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -52,6 +54,8 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     PayRollAsyncService payRollAsyncService;
     @Autowired
     EmployeeCardLogDao employeeCardLogDao;
+    @Autowired
+    EmployeeService employeeService;
 
     @Override
     public UserPrincipal getWechatInfo(String jsessionId) {
@@ -72,14 +76,14 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         //判断openId是否绑定
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.findFirstByOpenIdAndAndDelStatusEnum(openId, DelStatusEnum.normal);
         if (employeeWechatInfo != null) {
-            log.info("员工信息不为空+++++++++++++++++++++");
+            log.info("=====>员工信息不为空,{}");
             String idNumberEncrypt = employeeWechatInfo.getIdNumber();
             userPrincipal.setIdNumberEncrytor(idNumberEncrypt);
             idNumber = employeeEncrytorService.decryptIdNumber(idNumberEncrypt);
             userPrincipal.setIdNumber(idNumber);
 
             String phone = employeeEncrytorService.decryptPhone(employeeWechatInfo.getPhone());
-            log.info("手机号phone:{}", phone);
+            log.info("====>手机号phone:{}", phone);
             userPrincipal.setPhone(phone);
             userPrincipal.setWechatId(employeeWechatInfo.getId());
             userPrincipal.setQueryPwd(employeeWechatInfo.getQueryPwd());
@@ -97,14 +101,12 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         }
 
         //用户机构
-        List<EntInfoDTO> entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
-        userPrincipal.setEntInfoDTOS(entInfoDTOS);
-        if (entInfoDTOS != null && entInfoDTOS.size() > 0
-                && entInfoDTOS.get(0).getGroupInfoList() != null && entInfoDTOS.get(0).getGroupInfoList().size() > 0) {
-            userPrincipal.setName(entInfoDTOS.get(0).getGroupInfoList().get(0).getEmployeeInfo().getEmployeeName());
-            userPrincipal.setEntId(entInfoDTOS.get(0).getEntId());
-            userPrincipal.setEntName(entInfoDTOS.get(0).getEntName());
+        EmployeeInfo employeeInfo = employeeService.getEmployeeInfoOne(idNumber).get();
+        if (employeeInfo != null) {
+            userPrincipal.setName(employeeInfo.getEmployeeName());
+            userPrincipal.setEntId(employeeInfo.getEntId());
         }
+
         return userPrincipal;
     }
 
@@ -116,9 +118,9 @@ public class EmpWechatServiceImpl implements EmpWechatService {
 
         List<EntInfoDTO> entInfoDTOS = new ArrayList<>();
         try {
-            log.info("idNumber:[{}]", idNumber);
+            log.info("====>idNumber:[{}]", idNumber);
             entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
-            log.info("go on,entInfoDTOS.size()[{}]", entInfoDTOS.size());
+            log.info("====>go on,entInfoDTOS.size()[{}]", entInfoDTOS.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
             log.error("e.printStackTrace()->[{}]", e.getMessage());
@@ -128,20 +130,26 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         }
 
         List<EmployeeDTO> list = new ArrayList<>();
-        log.info("entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
+        log.info("====>entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {
-                EmployeeDTO employeeDTO = new EmployeeDTO(groupInfo.getEmployeeInfo());
-                employeeDTO.setGroupId(groupInfo.getGroupId());
-                employeeDTO.setGroupName(groupInfo.getGroupName());
-                employeeDTO.setGroupShortName(groupInfo.getGroupShortName());
-                employeeDTO.setEntId(entInfoDTO.getEntId());
-                employeeDTO.setEntName(entInfoDTO.getEntName());
-                employeeDTO.setIdNumberStar(TransUtil.idNumberStar(idNumber));
-                list.add(employeeDTO);
+                LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = groupInfo.getEmployeeInfoList();
+                for (int i = 0; i < empList.size(); i++) {
+                    EntInfoDTO.GroupInfo.EmployeeInfo emp = empList.get(i);
+                    //if (emp.getDelStatus() == DelStatusEnum.normal.getCode()) {
+                    EmployeeDTO employeeDTO = new EmployeeDTO(emp);
+                    employeeDTO.setGroupId(groupInfo.getGroupId());
+                    employeeDTO.setGroupName(groupInfo.getGroupName());
+                    employeeDTO.setGroupShortName(groupInfo.getGroupShortName());
+                    employeeDTO.setEntId(entInfoDTO.getEntId());
+                    employeeDTO.setEntName(entInfoDTO.getEntName());
+                    employeeDTO.setIdNumberStar(TransUtil.idNumberStar(idNumber));
+                    list.add(employeeDTO);
+                    // }
+                }
             }
         }
-        log.info("list.size()[{}]", list.size());
+        log.info("====>list.size()[{}]", list.size());
         return list;
     }
 

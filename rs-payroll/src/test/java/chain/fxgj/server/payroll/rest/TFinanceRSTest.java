@@ -43,8 +43,8 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
-public class TFinanceRSTest{
-    public static String sessionId="5b4b10fb6a70467fa289f16896ae9113";
+public class TFinanceRSTest {
+    public static String sessionId = "5b4b10fb6a70467fa289f16896ae9113";
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
@@ -72,18 +72,20 @@ public class TFinanceRSTest{
                 .filter(documentationConfiguration(restDocumentation))
                 .build();
     }
+
     public void login() {
         sessionId = UUIDUtil.createUUID32();
-        String openId= "oFnSLv0w4nipfwH0hFBwBimXjleY";
+        String openId = "oFnSLv0w4nipfwH0hFBwBimXjleY";
         String nickName = "%E9%9F%A9%E5%BE%B7%E8%89%AF";
         String headImg = "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTK2TdCQXNqUrzY9u3SFgRLdI5kOs0yh3jHrwEzic8n5tB9RDHHMqNsOX8l06rVAibVHHsrA273wwwjw/132";
         String idNumber = "420704199304164673";
         try {
-            UserPrincipal userPrincipal = empWechatService.setWechatInfo(sessionId, openId, nickName, headImg,idNumber);
+            UserPrincipal userPrincipal = empWechatService.setWechatInfo(sessionId, openId, nickName, headImg, idNumber);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
+
     /**
      * Junit ok
      * 活动产品列表
@@ -105,8 +107,10 @@ public class TFinanceRSTest{
 
     }
 
-    /** Junit ok
+    /**
+     * Junit ok
      * 同事团理财产品
+     *
      * @throws Exception
      */
     @Test
@@ -114,7 +118,7 @@ public class TFinanceRSTest{
         login();
         webTestClient.get()
                 .uri("/tfinance/product?productId={productId}&entId={entId}&channel={channel}&fxId={fxId}",
-                        "ff808081671710a301671bc90aaf0005","123","0","234")
+                        "ff808081671710a301671bc90aaf0005", "123", "0", "234")
                 .header("jsession_id", sessionId)
                 .exchange()
                 .expectStatus()
@@ -128,12 +132,13 @@ public class TFinanceRSTest{
                                 parameterWithName("channel").description("渠道(0公众号菜单 1banner 2分享)"),
                                 parameterWithName("fxId").description("分享人id")),
                         relaxedResponseFields(JavaDocReader.javaDoc(ProductInfoDTO.class))
-                                .andWithPrefix("markList.[].",JavaDocReader.javaDoc(ProductInfoDTO.ProductMarkDTO.class))));//出参对象描述
+                                .andWithPrefix("markList.[].", JavaDocReader.javaDoc(ProductInfoDTO.ProductMarkDTO.class))));//出参对象描述
 
     }
 
     /**
      * 平台产品预约列表
+     *
      * @throws Exception
      */
     @Test
@@ -152,12 +157,13 @@ public class TFinanceRSTest{
                         relaxedRequestParameters(
                                 parameterWithName("productId").description("产品Id")),
                         relaxedResponseFields(JavaDocReader.javaDoc(IntentListDTO.class))
-                                .andWithPrefix("list.[].",JavaDocReader.javaDoc(IntentListDTO.IntentRealDTO.class))));//出参对象描述
+                                .andWithPrefix("list.[].", JavaDocReader.javaDoc(IntentListDTO.IntentRealDTO.class))));//出参对象描述
 
     }
 
     /**
      * 操作列表
+     *
      * @throws Exception
      */
     @Test
@@ -165,7 +171,7 @@ public class TFinanceRSTest{
         login();
         webTestClient.get()
                 .uri("/tfinance/operateList?productId={productId}&entId={entId}&operate={operate}",
-                        "ff8080816900035b016904d3b6e2003d","ff80808168a8503e0168da9830c9000a","0")
+                        "ff8080816900035b016904d3b6e2003d", "ff80808168a8503e0168da9830c9000a", "0")
                 .header("jsession_id", sessionId)
                 .header("page", "1")
                 .header("size", "10")
@@ -184,6 +190,7 @@ public class TFinanceRSTest{
 
     /**
      * 预约明细
+     *
      * @throws Exception
      */
     @Test
@@ -202,11 +209,12 @@ public class TFinanceRSTest{
                         relaxedRequestParameters(
                                 parameterWithName("productId").description("产品Id")),
                         relaxedResponseFields(JavaDocReader.javaDoc(IntentInfoDTO.class))
-                                .andWithPrefix("list.[].",JavaDocReader.javaDoc(IntentInfoDTO.WechatUser.class))));//出参对象描述
+                                .andWithPrefix("list.[].", JavaDocReader.javaDoc(IntentInfoDTO.WechatUser.class))));//出参对象描述
     }
 
     /**
      * 预约人信息
+     *
      * @throws Exception
      */
     @Test
@@ -229,6 +237,7 @@ public class TFinanceRSTest{
 
     /**
      * 预约产品
+     *
      * @throws Exception
      */
     @Test
@@ -255,6 +264,7 @@ public class TFinanceRSTest{
 
     /**
      * 获取Code的url
+     *
      * @throws Exception
      */
     @Test

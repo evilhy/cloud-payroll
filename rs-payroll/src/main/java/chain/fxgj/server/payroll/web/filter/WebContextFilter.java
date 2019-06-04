@@ -43,7 +43,7 @@ public class WebContextFilter implements WebFilter, Ordered {
 
         StringBuffer logBuffer = new StringBuffer();
         ServerHttpRequest request = exchange.getRequest();
-        logBuffer.append(String.format("%s %s Query:%s \n", request.getMethod().name(),request.getURI().getPath(),request.getQueryParams()));
+        logBuffer.append(String.format("%s %s Query:%s \n", request.getMethod().name(), request.getURI().getPath(), request.getQueryParams()));
         //getRemoteAddress 可能获取不到，所以判断
         if (null != exchange.getRequest().getRemoteAddress()) {
             logBuffer.append(exchange.getRequest().getRemoteAddress().getHostString());

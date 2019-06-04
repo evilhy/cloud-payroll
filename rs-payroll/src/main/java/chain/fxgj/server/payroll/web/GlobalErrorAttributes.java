@@ -7,6 +7,7 @@ import chain.css.exception.ServiceHandleException;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.base.ErrorDTO;
 import chain.fxgj.server.payroll.exception.ForbiddenServiceException;
+import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.core.annotation.Order;
@@ -45,7 +46,8 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
             log.error("IllegalArgumentException || HttpMessageNotReadableException :{}", error.getMessage(), error);
             errorDTO = new ErrorDTO(500, ErrorConstant.SYS_ERR.getErrorMsg(),
                     request.path(), request.methodName());
-        } else */if (error instanceof ParamsIllegalException) {
+        } else */
+        if (error instanceof ParamsIllegalException) {
             log.warn("ParamsIllegalException :{}", error.getMessage());
             errorDTO = new ErrorDTO(400, ((ParamsIllegalException) error).getErrorMsg(),
                     request.path().toString(), request.methodName());
@@ -111,6 +113,8 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
         errorAttributes.put("path", errorDTO.getPath());
         errorAttributes.put("method", errorDTO.getMethod());
         errorAttributes.put("timestamp", errorDTO.getTimestamp());
+
+        log.error("====>errorAttributes=[{}]", JacksonUtil.objectToJson(errorAttributes));
         return errorAttributes;
     }
 }

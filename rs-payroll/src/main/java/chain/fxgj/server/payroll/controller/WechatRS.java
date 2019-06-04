@@ -21,6 +21,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +32,7 @@ import reactor.core.scheduler.Schedulers;
 import javax.annotation.security.PermitAll;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 微信通讯
@@ -73,7 +75,11 @@ public class WechatRS {
                                      @RequestParam("timestamp") String timestamp,
                                      @RequestParam("nonce") String nonce,
                                      @RequestParam("echostr") String echostr) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             log.info("微信服务器发送的消: signature ={} , timestamp ={} ,nonce ={} ,echostr ={}", signature, timestamp, nonce, echostr);
             //接口调用
             //String echostrRet = iwechatFeignService.signature(payrollProperties.getId(), signature, timestamp, nonce, echostr);
@@ -106,8 +112,11 @@ public class WechatRS {
                                        @RequestParam("timestamp") String timestamp,
                                        @RequestParam("nonce") String nonce,
                                        @RequestBody String xml) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             String uuid32 = UUIDUtil.createUUID32();
             //验签
             //String echostrRet = iwechatFeignService.signature(id, signature, timestamp, nonce, uuid32);
@@ -183,27 +192,29 @@ public class WechatRS {
     public Mono<Res100705> wxCallback(@RequestParam("code") String code,
                                       @RequestParam(value = "wageSheetId", required = false) String wageSheetId,
                                       @RequestParam(value = "routeName", required = false) String routeName) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
 
             String jsessionId = UUIDUtil.createUUID32();
-            Res100705 res100705 = new Res100705();
-            log.info("set之前打印jsessionId:[{}]", jsessionId);
-            res100705.setJsessionId(jsessionId);
-            res100705.setBindStatus("0");
+            Res100705 res100705 = Res100705.builder()
+                    .jsessionId(jsessionId)
+                    .build();
+            log.info("====>set之前打印jsessionId:[{}]", jsessionId);
 
             // 用户同意授权
             if (!"authdeny".equals(code)) {
-                log.info("=========wageSheetId={},code={},routeName={}", StringUtils.trimToEmpty(wageSheetId), code, routeName);
-                log.info("一次性code:[{}]", code);
+                log.info("=========>wageSheetId={},code={},routeName={}", StringUtils.trimToEmpty(wageSheetId), code, routeName);
+                log.info("====> 一次性code:[{}]", code);
                 //网页授权接口访问凭证
                 //WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = iwechatFeignService.oauth2Acces(payrollProperties.getId(), code);
                 WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = callInsideService.getOauth2AccessToken(code);
                 String openId = weixinOauthTokenResponeDTO.getOpenid();
                 String accessToken = weixinOauthTokenResponeDTO.getAccessToken();
-                log.info("============openId={}", openId);
-                log.info("============accessToken={}", accessToken);
+                log.info("============>openId={},accessToken={}", openId,accessToken);
                 if (StringUtils.isEmpty(openId)) {
-                    log.info("获取openId失败");
+                    log.info("====>获取openId失败");
                     throw new ParamsIllegalException(ErrorConstant.AUTH_ERR.getErrorMsg());
                 }
                 //获取用户信息
@@ -212,7 +223,7 @@ public class WechatRS {
                 //WeixinUserInfoResponeDTO weixinUserInfoResponeDTO = iwechatFeignService.getUserInfo(accessToken,openId);
                 WeixinUserInfoResponeDTO weixinUserInfoResponeDTO = callInsideService.getUserInfo(accessToken, openId);
                 if (weixinUserInfoResponeDTO == null || StringUtils.isEmpty(weixinUserInfoResponeDTO.getNickname())) {
-                    log.info("openId:{},获取用户信息失败");
+                    log.info("====>openId:{},获取用户信息失败");
                 } else {
                     try {
                         nickName = URLEncoder.encode(weixinUserInfoResponeDTO.getNickname(), "UTF-8");
@@ -231,10 +242,10 @@ public class WechatRS {
                     res100705.setPhone(userPrincipal.getPhone());
                 }
                 res100705.setHeadimgurl(headImg);
-                log.info("微信：{},{},{},{},{}", res100705.getJsessionId(), userPrincipal.getPhone(), res100705.getBindStatus(), userPrincipal.getIdNumber(), res100705.getIfPwd());
+                log.info("====>微信：{},{},{},{},{}", res100705.getJsessionId(), userPrincipal.getPhone(), res100705.getBindStatus(), userPrincipal.getIdNumber(), res100705.getIfPwd());
             }
             //todo 重定向地址
-            log.info("res100705返回的所有值:[{}]", res100705.toString());
+            log.info("====>res100705返回的所有值:[{}]", res100705.toString());
             return res100705;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -246,7 +257,11 @@ public class WechatRS {
     @TrackLog
     @PermitAll
     public Mono<WeixinJsapiDTO> getJsapiSignature(@RequestParam("url") String url) throws BusiVerifyException {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             //WeixinJsapiDTO weixinJsapiDTO = iwechatFeignService.getJsapiSignature(payrollProperties.getId(),url);
             WeixinJsapiDTO weixinJsapiDTO = callInsideService.getJsapiSignature(url);
             log.info("ret.weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));

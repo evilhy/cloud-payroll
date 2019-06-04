@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +35,8 @@ public class AdvertisingRS {
     @TrackLog
     @PermitAll
     public Mono<List<AdvertisingRotationDTO>> rotation(@RequestParam("channelId") Integer channelId) {
-
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);

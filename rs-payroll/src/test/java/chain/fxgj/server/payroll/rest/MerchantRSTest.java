@@ -97,11 +97,11 @@ public class MerchantRSTest extends BaseRSTest {
 
         log.info("==>signature sha-1 ={}", signature);
         //使用公钥加密
-        signature =  RSAEncrypt.encrypt(signature, merchant.getRsaPublicKey());
+        signature = RSAEncrypt.encrypt(signature, merchant.getRsaPublicKey());
         log.info("==>signature 使用公钥加密 ={}", signature);
 
         Base64 base64 = new Base64();
-        signature= base64.encodeToString(signature.getBytes("UTF-8"));
+        signature = base64.encodeToString(signature.getBytes("UTF-8"));
         log.info("==>signature base64 ={}", signature);
 
         log.info("==>appid={}", appid);

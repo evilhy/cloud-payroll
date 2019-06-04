@@ -230,6 +230,4 @@ public class InsideServiceImpl implements InsideService {
     }
 
 
-
-
 }

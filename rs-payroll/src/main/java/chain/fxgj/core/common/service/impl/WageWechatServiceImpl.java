@@ -63,20 +63,24 @@ public class WageWechatServiceImpl implements WageWechatService {
     @Override
     public List<NewestWageLogDTO> groupList(String idNumber) {
         List<EmployeeDTO> employeeDTOS = empWechatService.getEmpList(idNumber);
-        log.info("employeeDTOS:[{}]",JacksonUtil.objectToJson(employeeDTOS));
-        QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
+        log.info("====>employeeDTOS 查询数据量:[{}]", employeeDTOS.size());
+        log.debug("====>employeeDTOS:[{}]", JacksonUtil.objectToJson(employeeDTOS));
+
         List<NewestWageLogDTO> list = new ArrayList<>();
+
+        QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
         for (EmployeeDTO employeeDTO : employeeDTOS) {
             String employeeId1 = employeeDTO.getEmployeeId();
-            log.info("employeeId1:[{}]", employeeId1);
-            String employeeId = employeeEncrytorService.encryptEmployeeId(employeeId1);
-            log.info("employeeId:[{}]", employeeId);
+            String employeeId = employeeEncrytorService.encryptEmployeeId(employeeId1);  //加密后
+            log.info("====>employeeId: 加密前【{}】，加密后【{}】", employeeId1,employeeId);
+
             //根据最新的代发记录
             WageDetailInfo wageDetailInfo = wageDetailInfoDao.selectFrom(qWageDetailInfo)
                     .where(qWageDetailInfo.employeeSid.eq(employeeId)
-                    //isContStatus字段没用，所以注释掉
+                            //isContStatus字段没用，所以注释掉
                             .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES)))
-                    .orderBy(qWageDetailInfo.cntDateTime.desc()).fetchFirst();
+                    .orderBy(qWageDetailInfo.cntDateTime.desc())
+                    .fetchFirst();
 
             if (wageDetailInfo != null) {
                 NewestWageLogDTO bean = new NewestWageLogDTO(employeeDTO);
@@ -94,7 +98,7 @@ public class WageWechatServiceImpl implements WageWechatService {
                 return o2.getCreateDate().compareTo(o1.getCreateDate());
             }
         });
-        log.info("list.size():[{}]",list.size());
+        log.info("====>list.size():[{}]", list.size());
         return list;
     }
 
@@ -103,10 +107,10 @@ public class WageWechatServiceImpl implements WageWechatService {
         //查询员工id
         EmployeeDTO employee = null;
         List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber);
-        log.info("employeeDTOList.size()[{}]",employeeDTOList.size());
+        log.info("employeeDTOList.size()[{}]", employeeDTOList.size());
         for (EmployeeDTO employeeDTO : employeeDTOList) {
-            log.info("employeeDTO[{}]",employeeDTO.toString());
-            log.info("employeeDTO.getGroupId()[{}],groupId[{}]",employeeDTO.getGroupId(),groupId);
+            log.info("employeeDTO[{}]", employeeDTO.toString());
+            log.info("employeeDTO.getGroupId()[{}],groupId[{}]", employeeDTO.getGroupId(), groupId);
             if (employeeDTO.getGroupId().equals(groupId)) {
                 employee = employeeDTO;
             }
@@ -205,7 +209,7 @@ public class WageWechatServiceImpl implements WageWechatService {
 
         //查询发放记录
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
-        String employeeSid=employeeEncrytorService.encryptEmployeeId(employee.getEmployeeId());
+        String employeeSid = employeeEncrytorService.encryptEmployeeId(employee.getEmployeeId());
         BooleanExpression booleanExpression = qWageDetailInfo.employeeSid.eq(employeeSid)
                 .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES));
         if (null != type && type.equals("0")) {
@@ -231,11 +235,9 @@ public class WageWechatServiceImpl implements WageWechatService {
             bean.setFundType(wageFundTypeInfo.getFundTypeVal());
             if (wageFundTypeInfo.getId() == 1 || wageFundTypeInfo.getId() == 2 || wageFundTypeInfo.getId() == 3 || wageFundTypeInfo.getId() == 15) {
                 bean.setSpTypeIcon(0);
-            }
-            else if (wageFundTypeInfo.getId() == 10 || wageFundTypeInfo.getId() == 11 || wageFundTypeInfo.getId() == 12 || wageFundTypeInfo.getId() == 13) {
+            } else if (wageFundTypeInfo.getId() == 10 || wageFundTypeInfo.getId() == 11 || wageFundTypeInfo.getId() == 12 || wageFundTypeInfo.getId() == 13) {
                 bean.setSpTypeIcon(2);
-            }
-            else{
+            } else {
                 bean.setSpTypeIcon(1);
             }
 
@@ -265,9 +267,9 @@ public class WageWechatServiceImpl implements WageWechatService {
 
             bean.setEmployeeId(employee.getEmployeeId());
             planList.add(bean);
-            shouldTotalAmt = shouldTotalAmt.add(tuple.get(qWageDetailInfo.shouldTotalAmt.sum())==null?BigDecimal.ZERO:tuple.get(qWageDetailInfo.shouldTotalAmt.sum()));
-            deductTotalAmt = deductTotalAmt.add(tuple.get(qWageDetailInfo.deductTotalAmt.sum())==null?BigDecimal.ZERO:tuple.get(qWageDetailInfo.deductTotalAmt.sum()));
-            realTotalAmt = realTotalAmt.add(tuple.get(qWageDetailInfo.realTotalAmt.sum())==null?BigDecimal.ZERO:tuple.get(qWageDetailInfo.realTotalAmt.sum()));
+            shouldTotalAmt = shouldTotalAmt.add(tuple.get(qWageDetailInfo.shouldTotalAmt.sum()) == null ? BigDecimal.ZERO : tuple.get(qWageDetailInfo.shouldTotalAmt.sum()));
+            deductTotalAmt = deductTotalAmt.add(tuple.get(qWageDetailInfo.deductTotalAmt.sum()) == null ? BigDecimal.ZERO : tuple.get(qWageDetailInfo.deductTotalAmt.sum()));
+            realTotalAmt = realTotalAmt.add(tuple.get(qWageDetailInfo.realTotalAmt.sum()) == null ? BigDecimal.ZERO : tuple.get(qWageDetailInfo.realTotalAmt.sum()));
         }
 
         Collections.sort(planList, new Comparator<PlanListBean>() {
@@ -276,7 +278,6 @@ public class WageWechatServiceImpl implements WageWechatService {
                 return o2.getCreateDateTime().compareTo(o1.getCreateDateTime());
             }
         });
-
 
 
         Res100703 res100703 = new Res100703();

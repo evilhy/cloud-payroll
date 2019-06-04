@@ -60,7 +60,7 @@ public class PayrollDataSourceConfig {
 
     private Map<String, String> getVendorProperties() {
         //return jpaProperties.getHibernateProperties(new HibernateSettings());
-        return  jpaProperties.getProperties();
+        return jpaProperties.getProperties();
     }
 
     /**

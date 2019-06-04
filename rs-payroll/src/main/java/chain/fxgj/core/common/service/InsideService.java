@@ -25,7 +25,7 @@ public interface InsideService {
     /**
      * 绑定微信,更新手机号
      */
-    void bandWechatAndPhone(String openId, String idNumber, String phone,String pwd);
+    void bandWechatAndPhone(String openId, String idNumber, String phone, String pwd);
 
     /**
      * 已读
@@ -34,7 +34,7 @@ public interface InsideService {
 
     void login(String openId, String jsessionId, String nickname, String headimgurl);
 
-    void setPwd(String wechatId,String pwd);
+    void setPwd(String wechatId, String pwd);
 
     /**
      * 修改手机号
@@ -48,6 +48,7 @@ public interface InsideService {
 
     /**
      * 修改银行卡已读
+     *
      * @param logIds
      */
     void bankCardIsNew(List<String> logIds);

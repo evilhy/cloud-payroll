@@ -19,6 +19,7 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +39,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 同事理财团
@@ -62,8 +64,12 @@ public class TFinanceRS {
     @GetMapping("/list")
     @TrackLog
     public Mono<List<ProductDTO>> list() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             ProductDTO productDTO = new ProductDTO();
             //查询正常、进行中、0同事团 产品id
             String productId = financeService.getBankProductInfo();
@@ -99,8 +105,12 @@ public class TFinanceRS {
                                             @RequestParam("entId") String entId,
                                             @RequestParam("channel") String channel,
                                             @RequestParam(value = "fxId", required = false) String fxId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             //查询理财产品基本信息
             ProductInfoDTO productInfoDTO = financeService.getProductInfo(productId, payrollProperties.getImgUrl());
             productInfoDTO.setNowDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
@@ -199,7 +209,11 @@ public class TFinanceRS {
     @TrackLog
     @PermitAll
     public Mono<IntentListDTO> intentionList(@RequestParam("productId") String productId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             IntentListDTO intentListDTO = financeService.getIntentList(productId);
             intentListDTO.setNowDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
             return intentListDTO;
@@ -225,8 +239,11 @@ public class TFinanceRS {
             @RequestParam("productId") String productId,
             @RequestParam("entId") String entId,
             @RequestParam("operate") Integer operate) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
 
             Page<OperateDTO> page = financeService.getOperate(productId, entId, operate, PageRequest.of(pageNum - 1, size), userPrincipal.getOpenId());
 
@@ -246,8 +263,12 @@ public class TFinanceRS {
     @GetMapping("/intentInfo")
     @TrackLog
     public Mono<IntentInfoDTO> intentInfo(@RequestParam("productId") String productId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             IntentInfoDTO intentInfoDTO = financeService.getIntetByIdNumber(productId, userPrincipal.getIdNumber());
             if (intentInfoDTO != null) {
                 //产品信息
@@ -303,8 +324,12 @@ public class TFinanceRS {
     @GetMapping("/userInfo")
     @TrackLog
     public Mono<UserInfoDTO> userInfo(@RequestParam("entId") String entId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             if (StringUtils.isEmpty(userPrincipal.getIdNumber())) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_003.getErrorMsg());
             }
@@ -334,8 +359,12 @@ public class TFinanceRS {
     @PostMapping("/intent")
     @TrackLog
     public Mono<Void> addIntent(@RequestBody IntentRequestDTO intentRequestDTO) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             if (StringUtils.isEmpty(userPrincipal.getIdNumber())) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_003.getErrorMsg());
             }
@@ -380,12 +409,16 @@ public class TFinanceRS {
     @TrackLog
     @PermitAll
     public Mono<String> getCodeUrl(@RequestParam("redirectUrl") String redirectUrl) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
             WeixinAuthorizeUrlDTO weixinAuthorizeUrlDTO = new WeixinAuthorizeUrlDTO();
             weixinAuthorizeUrlDTO.setUrl(redirectUrl);
             weixinAuthorizeUrlDTO.setState("STATE");
             log.info("req.redirectUrl:[{}]", redirectUrl);
-//            String url = iwechatFeignService.getOAuthUrl(payrollProperties.getId(), weixinAuthorizeUrlDTO).getAuthorizeurl();
+            //String url = iwechatFeignService.getOAuthUrl(payrollProperties.getId(), weixinAuthorizeUrlDTO).getAuthorizeurl();
             String url = callInsideService.getOAuthUrl(weixinAuthorizeUrlDTO).getAuthorizeurl();
             log.info("ret.url:[{}]", url);
             return url;

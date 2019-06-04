@@ -36,24 +36,26 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         BooleanExpression booleanExpression = qAdvertisingInfo.delStatus.eq(DelStatusEnum.normal)
                 .and(qAdvertisingInfo.releaseStatus.eq(ReleaseStatusEnum.PUBLISHED))
                 .and(qAdvertisingInfo.channelId.eq(ChannelIdEnum.values()[channelId]));
-        log.info("channelId:[{}]",channelId);
+        log.info("channelId:[{}]", channelId);
         List<AdvertisingInfo> fetch = advertisingInfoDao.select(qAdvertisingInfo)
                 .from(qAdvertisingInfo)
                 .where(booleanExpression)
                 .orderBy(qAdvertisingInfo.sortNo.asc())
                 .fetch();
-        log.info("fetch.size():[{}]",fetch.size());
+        log.info("fetch.size():[{}]", fetch.size());
         List<AdvertisingRotationDTO> advertisingRotationDTOS = new ArrayList<>();
         for (AdvertisingInfo advertisingInfo : fetch) {
-            AdvertisingRotationDTO advertisingRotationDTO = new AdvertisingRotationDTO();
-            advertisingRotationDTO.setLink(advertisingInfo.getLink());
-            advertisingRotationDTO.setReleaseStatus(advertisingInfo.getReleaseStatus().getCode());
-            advertisingRotationDTO.setReleaseStatusDesc(advertisingInfo.getReleaseStatus().getDesc());
-            advertisingRotationDTO.setSortNo(advertisingInfo.getSortNo());
-            advertisingRotationDTO.setUrl(advertisingInfo.getUrl());
+            AdvertisingRotationDTO advertisingRotationDTO = AdvertisingRotationDTO.builder()
+                    .link(advertisingInfo.getLink())
+                    .releaseStatus(advertisingInfo.getReleaseStatus().getCode())
+                    .releaseStatusDesc(advertisingInfo.getReleaseStatus().getDesc())
+                    .sortNo(advertisingInfo.getSortNo())
+                    .url(advertisingInfo.getUrl())
+                    .build();
+
             advertisingRotationDTOS.add(advertisingRotationDTO);
         }
-        log.info("advertisingRotationDTOS.size()[{}]",advertisingRotationDTOS.size());
+        log.info("advertisingRotationDTOS.size()[{}]", advertisingRotationDTOS.size());
         return advertisingRotationDTOS;
     }
 }
