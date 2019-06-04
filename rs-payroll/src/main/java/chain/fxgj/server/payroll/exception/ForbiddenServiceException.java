@@ -5,8 +5,9 @@ import chain.css.exception.ErrorMsg;
 /**
  * Created  by syd on 2019/1/24 0024.
  */
-public class ForbiddenServiceException extends RuntimeException{
+public class ForbiddenServiceException extends RuntimeException {
     private ErrorMsg errorMsg;
+
     public ForbiddenServiceException(Throwable cause, ErrorMsg errorMsg) {
         super(cause);
         this.errorMsg = errorMsg;

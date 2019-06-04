@@ -38,7 +38,7 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
 @Slf4j
 public class BaseRSTest {
 
-    public static String sessionId="5b4b10fb6a70467fa289f16896ae9113";
+    public static String sessionId = "5b4b10fb6a70467fa289f16896ae9113";
 
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
@@ -88,12 +88,12 @@ public class BaseRSTest {
 
     public void login() {
         sessionId = UUIDUtil.createUUID32();
-        String openId= "oFnSLv0w4nipfwH0hFBwBimXjleY";
+        String openId = "oFnSLv0w4nipfwH0hFBwBimXjleY";
         String nickName = "%E9%9F%A9%E5%BE%B7%E8%89%AF";
         String headImg = "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTK2TdCQXNqUrzY9u3SFgRLdI5kOs0yh3jHrwEzic8n5tB9RDHHMqNsOX8l06rVAibVHHsrA273wwwjw/132";
         String idNumber = "420704199304164673";
         try {
-            UserPrincipal userPrincipal = empWechatService.setWechatInfo(sessionId, openId, nickName, headImg,idNumber);
+            UserPrincipal userPrincipal = empWechatService.setWechatInfo(sessionId, openId, nickName, headImg, idNumber);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

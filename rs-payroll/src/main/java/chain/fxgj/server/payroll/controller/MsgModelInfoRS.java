@@ -32,17 +32,16 @@ public class MsgModelInfoRS {
     @GetMapping
     @TrackLog
     public Mono<MsgModelInfoDTO> get(@RequestParam(required = false) String id) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         MsgModelInfoDTO msgModelInfoDTO = new MsgModelInfoDTO();
         msgModelInfoDTO.setSystemId(0);
         msgModelInfoDTO.setCheckType(1);
         msgModelInfoDTO.setBusiType(9);
 
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         String finalId = id;
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            ;
             return msgModelInfoService.findByMsgModelInfo(msgModelInfoDTO);
         }).subscribeOn(Schedulers.elastic());
     }

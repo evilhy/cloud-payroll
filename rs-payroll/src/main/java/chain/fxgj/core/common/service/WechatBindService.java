@@ -4,6 +4,7 @@ import chain.fxgj.core.common.constant.DictEnums.EmployeeStatusEnum;
 import chain.fxgj.core.jpa.model.EmployeeCardLog;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -45,6 +46,7 @@ public interface WechatBindService {
      * @param idNumber
      * @return
      */
+    @Cacheable(cacheNames = "empInfos", key = "'getEntInfos:'.concat(#idNumber)")
     List<EntInfoDTO> getEntInfos(String idNumber);
 
 
@@ -95,18 +97,21 @@ public interface WechatBindService {
     void checkPhone(String idNumber, String phone);
 
     Integer getCardUpdIsNew(String idNumber);
+
     /**
      * 根据openid 查询  查询密码
      *
      * @param openId
      */
     String getQueryPwd(String openId);
+
     /**
      * 根据id 查询  查询密码
      *
      * @param id
      */
     String getQueryPwdById(String id);
+
     /**
      * 根据银行卡id获取银行卡修改信息
      *

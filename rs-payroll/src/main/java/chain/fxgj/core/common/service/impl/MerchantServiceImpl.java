@@ -145,7 +145,7 @@ public class MerchantServiceImpl implements MerchantService {
         userPrincipal.setEntInfoDTOS(entInfoDTOS);
         if (entInfoDTOS != null && entInfoDTOS.size() > 0
                 && entInfoDTOS.get(0).getGroupInfoList() != null && entInfoDTOS.get(0).getGroupInfoList().size() > 0) {
-            userPrincipal.setName(entInfoDTOS.get(0).getGroupInfoList().get(0).getEmployeeInfo().getEmployeeName());
+            userPrincipal.setName(entInfoDTOS.get(0).getGroupInfoList().get(0).getEmployeeInfoList().get(0).getEmployeeName());
             userPrincipal.setEntId(entInfoDTOS.get(0).getEntId());
             userPrincipal.setEntName(entInfoDTOS.get(0).getEntName());
         }

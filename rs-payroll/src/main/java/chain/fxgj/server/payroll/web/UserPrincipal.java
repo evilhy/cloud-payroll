@@ -60,7 +60,7 @@ public class UserPrincipal implements Principal {
      * 合作商平台标识
      */
     @Builder.Default
-    private AppPartnerEnum appPartner =AppPartnerEnum.FXGJ;
+    private AppPartnerEnum appPartner = AppPartnerEnum.FXGJ;
     /**
      * 用户身份证号码（明文）
      */

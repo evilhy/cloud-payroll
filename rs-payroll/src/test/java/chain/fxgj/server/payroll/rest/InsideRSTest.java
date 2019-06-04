@@ -54,7 +54,7 @@ public class InsideRSTest extends BaseRSTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .consumeWith(document("inside_receipt",
-                relaxedRequestFields(JavaDocReader.javaDoc(ResReceiptDTO.class))));
+                        relaxedRequestFields(JavaDocReader.javaDoc(ResReceiptDTO.class))));
     }
 
     @Test
@@ -116,8 +116,8 @@ public class InsideRSTest extends BaseRSTest {
     @Test
     public void setPwd() {
         login();
-        String pwd ="654321";
-        webTestClient.post().uri("/inside/setPwd?pwd={pwd}",pwd)
+        String pwd = "654321";
+        webTestClient.post().uri("/inside/setPwd?pwd={pwd}", pwd)
                 .header("jsession_id", sessionId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .exchange()
@@ -184,7 +184,7 @@ public class InsideRSTest extends BaseRSTest {
                 .expectBody()
                 .consumeWith(document("inside_updBankCard",
                         relaxedRequestFields(JavaDocReader.javaDoc(UpdBankCardDTO.class))
-                                .andWithPrefix("[]",JavaDocReader.javaDoc(BankCardGroup.class))));
+                                .andWithPrefix("[]", JavaDocReader.javaDoc(BankCardGroup.class))));
     }
 
     @Test

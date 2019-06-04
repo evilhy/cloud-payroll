@@ -67,7 +67,8 @@ public class EntInfoDTO {
         /**
          * 员工信息
          */
-        EmployeeInfo employeeInfo;
+        @Builder.Default
+        private LinkedList<EmployeeInfo> employeeInfoList = new LinkedList<EmployeeInfo>();
 
 
         @Getter
@@ -110,6 +111,14 @@ public class EntInfoDTO {
              * 员工工号
              */
             private String employeeNo;
+            /**
+             * 员工状态
+             */
+            private Integer delStatus;
+            /**
+             * 员工状态描述
+             */
+            private String delStatusDesc;
         }
     }
 }

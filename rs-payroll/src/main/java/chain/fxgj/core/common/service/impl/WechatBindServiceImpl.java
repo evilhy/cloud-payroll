@@ -6,15 +6,14 @@ import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.constant.PermissionConstant;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
+import chain.fxgj.core.common.service.WechatBindService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
-import chain.fxgj.core.common.service.WechatBindService;
 import chain.utils.commons.StringUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
@@ -70,14 +69,15 @@ public class WechatBindServiceImpl implements WechatBindService {
         Res100701 res100701 = Res100701.builder().build();
 
         String bindStatus = res100701.getBindStatus();
+
         //判断微信是否绑定
-        log.info("====>加密后的身份证：{}",employeeEncrytorService.encryptIdNumber(idNumber));
+        log.info("====>加密后的身份证：{}", employeeEncrytorService.encryptIdNumber(idNumber));
 
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
         Predicate predicate = qEmployeeWechatInfo.idNumber.eq(idNumber);
         predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal));
         predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(AppPartnerEnum.FXGJ));
-        EmployeeWechatInfo employeeWechatInfo =employeeWechatInfoDao.select(qEmployeeWechatInfo).from(qEmployeeWechatInfo).where(predicate).fetchFirst();
+        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo).from(qEmployeeWechatInfo).where(predicate).fetchFirst();
         if (employeeWechatInfo != null) {
             bindStatus = "1";
         } else if (bindStatus.equals("0")) {
@@ -212,7 +212,7 @@ public class WechatBindServiceImpl implements WechatBindService {
 
 
     /**
-     * 通过身份证 ，获取（正常）企业列表
+     * 通过身份证 ，获取企业列表
      *
      * @param idNumber
      * @param employeeStatusEnum
@@ -220,7 +220,7 @@ public class WechatBindServiceImpl implements WechatBindService {
      */
     @Override
     public List<EntInfoDTO> getEntInfos(String idNumber, EmployeeStatusEnum[] employeeStatusEnum) {
-        log.info("根据身份证，查询【正常】企业列表");
+        log.info("====>根据身份证{}，查询 企业列表", idNumber);
         String alldata_json = null; //map转json
 
         //查询员工信息
@@ -229,7 +229,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         //(1) 身份证
         Predicate predicate = qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber);
         //(2) 正常
-        predicate = ExpressionUtils.and(predicate, qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal));
+        //predicate = ExpressionUtils.and(predicate, qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal));
 
         //(3)根据用户状态信息取，用户信息
         if (employeeStatusEnum != null && employeeStatusEnum.length > 0) {
@@ -240,168 +240,124 @@ public class WechatBindServiceImpl implements WechatBindService {
             }
         }
 
-
+        //创建日期升序
         OrderSpecifier orderSpecifier = qEmployeeInfo.crtDateTime.asc();
-        log.info("员工信息查询start");
+        log.info("====>员工信息查询start");
         List<EmployeeInfo> employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo).where(predicate).orderBy(orderSpecifier).fetch();
-        log.info("员工信息查询end");
+        log.info("====>员工信息查询end");
 
         //员工信息 以 groupid 为key 存储 用户信息
-        HashMap<String, EmployeeInfo> convertGroupEmp = new HashMap<String, EmployeeInfo>();
+        HashMap<String, List<EmployeeInfo>> convertGroupEmp = new HashMap<>();
+        //相同entid,所有机构信息 放在一起
+        LinkedHashMap<String, LinkedHashMap<String, List<EmployeeInfo>>> convertEntGroup = new LinkedHashMap<>();
+
         for (EmployeeInfo employeeInfo : employeeInfoList) {
+            String entId = employeeInfo.getEntId();
             String groupId = employeeInfo.getGroupId();
-            //机构id,企业id
+            log.info("====>entId={},groupId={},employeeInfo={}", entId, groupId, employeeInfo.getId());
+
+            //【1】机构id
             if (convertGroupEmp.containsKey(groupId)) {
-                break;
+                convertGroupEmp.get(groupId).add(employeeInfo);
+            } else {
+                LinkedList<EmployeeInfo> list = new LinkedList<>();
+                list.add(employeeInfo);
+                convertGroupEmp.put(groupId, list);
             }
-            convertGroupEmp.put(groupId, employeeInfo);
+
+            //【2】企业id
+            if (convertEntGroup.containsKey(entId)) {
+                LinkedHashMap<String, List<EmployeeInfo>> groupMap = convertEntGroup.get(entId);
+
+                if (groupMap.get(groupId) == null) {
+                    List<EmployeeInfo> list = new LinkedList<>();
+                    list.add(employeeInfo);
+                    groupMap.put(groupId, list);
+
+                } else {
+                    groupMap.get(groupId).add(employeeInfo);
+                }
+
+                convertEntGroup.put(entId, groupMap);
+
+            } else {
+                LinkedHashMap<String, List<EmployeeInfo>> firstGroupMap = new LinkedHashMap<>();
+                firstGroupMap.put(groupId, convertGroupEmp.get(groupId));
+                convertEntGroup.put(entId, firstGroupMap);
+            }
         }
 
         log.info("根据身份证，查询 【员工】 数量：{}", employeeInfoList.size());
         log.info("根据身份证，查询 【机构】 数量：{}", convertGroupEmp.size());
 
-        //相同entid,所有机构信息 放在一起
-        LinkedHashMap<String, LinkedHashMap<String, String>> convertEntGroup = new LinkedHashMap<String, LinkedHashMap<String, String>>();
-        for (EmployeeInfo employeeInfo : employeeInfoList) {
-            String entId = employeeInfo.getEntId();
-            String groupId = employeeInfo.getGroupId();
-
-            //机构id,企业id
-            if (convertEntGroup.containsKey(entId)) {
-                LinkedHashMap<String, String> groupMap = convertEntGroup.get(entId);
-                if (groupMap == null) {
-                    groupMap = new LinkedHashMap<String, String>();
-                }
-                if (groupMap.containsKey(groupId)) {
-                    break;
-                }
-                groupMap.put(groupId, groupId);
-                convertEntGroup.put(entId, groupMap);
-
-            } else {
-                LinkedHashMap<String, String> firstGroupMap = new LinkedHashMap<String, String>();
-                firstGroupMap.put(groupId, groupId);
-                convertEntGroup.put(entId, firstGroupMap);
-            }
-        }
-        try {
-            alldata_json = mapper.writeValueAsString(convertEntGroup);
-            log.info("convertEntGroup={}", alldata_json);
-        } catch (JsonProcessingException e) {
-            log.info(e.getMessage());
-        }
-
-
         log.info("循环匹配");
 
-        List<EntInfoDTO> entInfoDTOList = new LinkedList<EntInfoDTO>();
-        for (Map.Entry<String, LinkedHashMap<String, String>> entryEnt : convertEntGroup.entrySet()) {
+        List<EntInfoDTO> entInfoDTOList = new LinkedList<>();
+
+        for (Map.Entry<String, LinkedHashMap<String, List<EmployeeInfo>>> entryEnt : convertEntGroup.entrySet()) {
+            //企业id
             String entId = entryEnt.getKey();
-            String entName = null;
-            String shortEntName = null;
-            LinkedHashMap<String, String> groupMap = entryEnt.getValue();
+            //机构 -- 员工列表数据
+            LinkedHashMap<String, List<EmployeeInfo>> groupMap = entryEnt.getValue();
 
-            try {
-                alldata_json = mapper.writeValueAsString(groupMap);
-                log.info("entId={}", entId);
-                log.info("convertEntGroup={}", alldata_json);
-            } catch (JsonProcessingException e) {
-                log.info(e.getMessage());
-            }
+            //查询企业信息
+            EntErpriseInfo entErpriseInfo = entErpriseInfoDao.findById(entId).get();
 
+            EntInfoDTO entInfoDTO = EntInfoDTO.builder()
+                    .entId(entId)
+                    .entName(entErpriseInfo.getEntName())
+                    .shortEntName(entErpriseInfo.getShortEntName())
+                    .build();
 
-            Boolean entStatus = true;
+            LinkedList<EntInfoDTO.GroupInfo> groupInfoList = entInfoDTO.getGroupInfoList();
 
-            EntInfoDTO entInfoDTO = new EntInfoDTO();
-
-            HashMap<String, EntInfoDTO.GroupInfo> groupInfoMap = entInfoDTO.getGroupInfoMap();
-
-            LinkedList<EntInfoDTO.GroupInfo> groupInfoList = new LinkedList<EntInfoDTO.GroupInfo>();
-
-            for (Map.Entry<String, String> groupEntry : groupMap.entrySet()) {
-                String groupId = groupEntry.getValue();
+            for (Map.Entry<String, List<EmployeeInfo>> groupEntry : groupMap.entrySet()) {
+                String groupId = groupEntry.getKey();
 
                 EntGroupInfo entGroupInfo = entGroupInfoDao.findById(groupId).orElse(null);
+                if (entGroupInfo != null) {
+                    EntInfoDTO.GroupInfo groupInfo = EntInfoDTO.GroupInfo.builder()
+                            .groupId(entGroupInfo.getId())
+                            .groupName(entGroupInfo.getGroupName())
+                            .groupShortName(entGroupInfo.getShortGroupName())
+                            .build();
 
-                if (entGroupInfo == null) {
-                    break;
-                }
-
-                DelStatusEnum groupDelStatusEnum = entGroupInfo.getDelStatusEnum();
-                if (groupDelStatusEnum.getCode() != DelStatusEnum.normal.getCode()) {
-                    log.info("机构信息不正={}", groupDelStatusEnum.getCode());
-                    //entStatus = false;
-                }
-
-                //懒加载失效，导致无法从机构中加载出企业信息，所以，需要重新查询
-//                EntErpriseInfo entErpriseInfo = entGroupInfo.getEntErpriseInfo();
-                String entIdTemp = entGroupInfo.getEntId();
-                EntErpriseInfo entErpriseInfo =entErpriseInfoDao.findById(entIdTemp).get();
-
-                EnterpriseStatusEnum enterpriseStatusEnum = entErpriseInfo.getEntStatus();
-                if (enterpriseStatusEnum.getCode() != EnterpriseStatusEnum.NORMAL.getCode()) {
-                    log.info("企业信息不正={}", enterpriseStatusEnum.getCode());
-                    //entStatus = false;
-                }
-
-                if (groupInfoMap.containsKey(groupId)) {
-                    break;
-                }
-
-                if (entStatus) {
-
-                    EntInfoDTO.GroupInfo groupInfo = new EntInfoDTO.GroupInfo();
-                    EntInfoDTO.GroupInfo.EmployeeInfo employeeInfo = new EntInfoDTO.GroupInfo.EmployeeInfo();
-
-                    EmployeeInfo groupEmp = (EmployeeInfo) convertGroupEmp.get(groupId);
-                    employeeInfo.setEmployeeId(groupEmp.getId());
-                    employeeInfo.setEmployeeName(groupEmp.getEmployeeName());
-                    Integer code = groupEmp.getEmployeeStatusEnum().getCode();
-                    employeeInfo.setEmployeeStatus(code);
-                    employeeInfo.setEmployeeStatusDesc(groupEmp.getEmployeeStatusEnum().getDesc());
-                    employeeInfo.setPhone(groupEmp.getPhone());
-                    employeeInfo.setEmployeeNo(groupEmp.getEmployeeNo());
-                    employeeInfo.setPosition(groupEmp.getPosition());
-                    employeeInfo.setEntryDate(groupEmp.getEntryDate() == null ? null : groupEmp.getEntryDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                    groupInfo.setEmployeeInfo(employeeInfo);
-                    groupInfo.setGroupId(entGroupInfo.getId());
-                    groupInfo.setGroupName(entGroupInfo.getGroupName());
-                    groupInfo.setGroupShortName(entGroupInfo.getShortGroupName());
-                    groupInfo.setEmpGroupInservice(false);    //员工是否在职
-                    if (code == EmployeeStatusEnum.INSERVICE.getCode()) {
-                        groupInfo.setEmpGroupInservice(true); //员工是否在职
+                    LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = new LinkedList<>();
+                    groupInfo.setEmployeeInfoList(empList);
+                    List<EmployeeInfo> listEmp = groupEntry.getValue();
+                    for (int i = 0; i < listEmp.size(); i++) {
+                        EmployeeInfo iemployeeInfo = listEmp.get(i);
+                        EntInfoDTO.GroupInfo.EmployeeInfo employeeInfo = new EntInfoDTO.GroupInfo.EmployeeInfo();
+                        //员工id
+                        employeeInfo.setEmployeeId(iemployeeInfo.getId());
+                        //姓名
+                        employeeInfo.setEmployeeName(iemployeeInfo.getEmployeeName());
+                        Integer code = iemployeeInfo.getEmployeeStatusEnum().getCode();
+                        //在职状态
+                        employeeInfo.setEmployeeStatus(code);
+                        //在职描述
+                        employeeInfo.setEmployeeStatusDesc(iemployeeInfo.getEmployeeStatusEnum().getDesc());
+                        //手机号
+                        employeeInfo.setPhone(iemployeeInfo.getPhone());
+                        //员工工号
+                        employeeInfo.setEmployeeNo(iemployeeInfo.getEmployeeNo());
+                        //职位
+                        employeeInfo.setPosition(iemployeeInfo.getPosition());
+                        //入职时间
+                        employeeInfo.setEntryDate(iemployeeInfo.getEntryDate() == null ? null : iemployeeInfo.getEntryDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                        Integer delCode = iemployeeInfo.getDelStatusEnum().getCode();
+                        //员工状态
+                        employeeInfo.setDelStatus(delCode);
+                        //员工状态描述
+                        employeeInfo.setDelStatusDesc(iemployeeInfo.getDelStatusEnum().getDesc());
+                        empList.add(employeeInfo);
                     }
-
-                    groupInfoMap.put(groupId, groupInfo);
-
                     groupInfoList.add(groupInfo);
-
-                    entName = entGroupInfo.getEntErpriseInfo().getEntName();
-                    shortEntName = entGroupInfo.getEntErpriseInfo().getShortEntName();
                 }
-
             }
-
-            if (!groupInfoMap.isEmpty()) {
-                //entInfoDTO.setGroupInfoMap(groupInfoMap);
-                entInfoDTO.setGroupInfoMap(null);
-                entInfoDTO.setGroupInfoList(groupInfoList);
-                entInfoDTO.setEntId(entId);
-                entInfoDTO.setEntName(entName);
-                entInfoDTO.setShortEntName(shortEntName);
-                entInfoDTOList.add(entInfoDTO);
-            }
+            entInfoDTO.setGroupInfoList(groupInfoList);
+            entInfoDTOList.add(entInfoDTO);
         }
-
-        log.info("根据身份证，查询【正常】企业 数量：{}", entInfoDTOList.size());
-
-        try {
-            alldata_json = mapper.writeValueAsString(entInfoDTOList);
-            log.info("信息={}", alldata_json);
-        } catch (JsonProcessingException e) {
-            log.info(e.getMessage());
-        }
-
 
         return entInfoDTOList;
     }
@@ -443,75 +399,86 @@ public class WechatBindServiceImpl implements WechatBindService {
             List<Res100708> items = new ArrayList<>();
             List<BankCard> bankCards = new ArrayList<>();
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {
-                EmployeeDTO employeeDTO = new EmployeeDTO(groupInfo.getEmployeeInfo());
-                employeeDTO.setGroupId(groupInfo.getGroupId());
-                employeeDTO.setGroupName(groupInfo.getGroupName());
-                employeeDTO.setGroupShortName(groupInfo.getGroupShortName());
-                employeeDTO.setEntId(entInfoDTO.getEntId());
-                employeeDTO.setEntName(entInfoDTO.getEntName());
-                employeeDTO.setIdNumberStar(idNumber);
 
-                Res100708 bean = new Res100708(employeeDTO);
-                //员工银行卡
-                QEmployeeCardInfo qEmployeeCardInfo = QEmployeeCardInfo.employeeCardInfo;
-                List<EmployeeCardInfo> employeeCardInfos = employeeCardInfoDao.selectFrom(qEmployeeCardInfo)
-                        .where(qEmployeeCardInfo.employeeInfo.id.eq(employeeDTO.getEmployeeId())
-                                .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = groupInfo.getEmployeeInfoList();
 
-                List<Res100708.BankCardListBean> bankCardList = new ArrayList<>();
-                for (EmployeeCardInfo employeeCardInfo : employeeCardInfos) {
-                    //添加银行卡修改信息
-                    EmployeeCardLog employeeCardLog = null;
-                    List<EmployeeCardLog> employeeCardLogs = getEmployeeCardLogs(employeeCardInfo.getId());
-                    if (employeeCardLogs.size() > 0) {
-                        employeeCardLog = employeeCardLogs.get(0);
-                    }
+                for (int i = 0; i < empList.size(); i++) {
+                    EntInfoDTO.GroupInfo.EmployeeInfo emp = empList.get(i);
 
-                    bankCardList.add(new Res100708.BankCardListBean(employeeCardInfo));
+                    if (emp.getDelStatus() == DelStatusEnum.normal.getCode()) {
+                        EmployeeDTO employeeDTO = new EmployeeDTO(emp);
+                        employeeDTO.setGroupId(groupInfo.getGroupId());
+                        employeeDTO.setGroupName(groupInfo.getGroupName());
+                        employeeDTO.setGroupShortName(groupInfo.getGroupShortName());
+                        employeeDTO.setEntId(entInfoDTO.getEntId());
+                        employeeDTO.setEntName(entInfoDTO.getEntName());
+                        employeeDTO.setIdNumberStar(idNumber);
 
-                    boolean hasCard = false;
-                    BankCard card = new BankCard();
-                    List<BankCardGroup> bankCardGroups = new ArrayList<>();
-                    for (BankCard bankCard : bankCards) {
-                        if (employeeCardInfo.getCardNo().equals(bankCard.getOldCardNo())) {
-                            hasCard = true;
-                            card = bankCard;
-                            bankCardGroups = bankCard.getBankCardGroups();
-                            break;
-                        }
-                    }
-                    if (!hasCard) {
-                        card.setOldCardNo(employeeCardInfo.getCardNo());
-                        card.setCardNo(employeeCardInfo.getCardNo());
-                        card.setIssuerName(employeeCardInfo.getIssuerName());
-                        if (employeeCardLog != null) {
-                            card.setCardUpdStatus(employeeCardLog.getUpdStatus().getCode());
-                            card.setCardUpdStatusVal(employeeCardLog.getUpdStatus().getDesc());
-                            card.setUpdDesc(employeeCardLog.getUpdDesc());
-                            card.setIsNew(employeeCardLog.getIsNew().getCode());
-                            if (CardUpdStatusEnum.UNKOWN.equals(employeeCardLog.getUpdStatus())) {
-                                card.setCardNo(employeeCardLog.getCardNo());
-                                card.setIssuerName(employeeCardLog.getIssuerName());
+                        Res100708 bean = new Res100708(employeeDTO);
+                        //员工银行卡
+                        QEmployeeCardInfo qEmployeeCardInfo = QEmployeeCardInfo.employeeCardInfo;
+                        List<EmployeeCardInfo> employeeCardInfos = employeeCardInfoDao.selectFrom(qEmployeeCardInfo)
+                                .where(qEmployeeCardInfo.employeeInfo.id.eq(employeeDTO.getEmployeeId())
+                                        .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+
+                        List<Res100708.BankCardListBean> bankCardList = new ArrayList<>();
+                        for (EmployeeCardInfo employeeCardInfo : employeeCardInfos) {
+                            //添加银行卡修改信息
+                            EmployeeCardLog employeeCardLog = null;
+                            List<EmployeeCardLog> employeeCardLogs = getEmployeeCardLogs(employeeCardInfo.getId());
+                            if (employeeCardLogs.size() > 0) {
+                                employeeCardLog = employeeCardLogs.get(0);
+                            }
+
+                            bankCardList.add(new Res100708.BankCardListBean(employeeCardInfo));
+
+                            boolean hasCard = false;
+                            BankCard card = new BankCard();
+                            List<BankCardGroup> bankCardGroups = new ArrayList<>();
+                            for (BankCard bankCard : bankCards) {
+                                if (employeeCardInfo.getCardNo().equals(bankCard.getOldCardNo())) {
+                                    hasCard = true;
+                                    card = bankCard;
+                                    bankCardGroups = bankCard.getBankCardGroups();
+                                    break;
+                                }
+                            }
+                            if (!hasCard) {
+                                card.setOldCardNo(employeeCardInfo.getCardNo());
+                                card.setCardNo(employeeCardInfo.getCardNo());
+                                card.setIssuerName(employeeCardInfo.getIssuerName());
+                                if (employeeCardLog != null) {
+                                    card.setCardUpdStatus(employeeCardLog.getUpdStatus().getCode());
+                                    card.setCardUpdStatusVal(employeeCardLog.getUpdStatus().getDesc());
+                                    card.setUpdDesc(employeeCardLog.getUpdDesc());
+                                    card.setIsNew(employeeCardLog.getIsNew().getCode());
+                                    if (CardUpdStatusEnum.UNKOWN.equals(employeeCardLog.getUpdStatus())) {
+                                        card.setCardNo(employeeCardLog.getCardNo());
+                                        card.setIssuerName(employeeCardLog.getIssuerName());
+                                    }
+                                }
+                            }
+
+                            BankCardGroup bankCardGroup = new BankCardGroup();
+                            bankCardGroup.setId(employeeCardInfo.getId());
+                            bankCardGroup.setGroupId(groupInfo.getGroupId());
+                            bankCardGroup.setShortGroupName(groupInfo.getGroupShortName());
+                            bankCardGroups.add(bankCardGroup);
+
+                            card.setBankCardGroups(bankCardGroups);
+
+                            if (!hasCard) {
+                                bankCards.add(card);
                             }
                         }
-                    }
 
-                    BankCardGroup bankCardGroup = new BankCardGroup();
-                    bankCardGroup.setId(employeeCardInfo.getId());
-                    bankCardGroup.setGroupId(groupInfo.getGroupId());
-                    bankCardGroup.setShortGroupName(groupInfo.getGroupShortName());
-                    bankCardGroups.add(bankCardGroup);
+                        bean.setBankCardList(bankCardList);
 
-                    card.setBankCardGroups(bankCardGroups);
-
-                    if (!hasCard) {
-                        bankCards.add(card);
+                        items.add(bean);
                     }
                 }
 
-                bean.setBankCardList(bankCardList);
 
-                items.add(bean);
             }
             empEntDTO.setItems(items);
             empEntDTO.setCards(bankCards);
@@ -652,6 +619,7 @@ public class WechatBindServiceImpl implements WechatBindService {
                 .fetchFirst();
         return queryPwd;
     }
+
     @Override
     public List<EmployeeCardLog> getEmployeeCardLogs(String bankCardId) {
         //添加银行卡修改信息

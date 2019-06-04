@@ -45,6 +45,6 @@ public class PageResponseDTO<T> {
         this.totalElements = totalElements;
         this.page = page;
         this.size = size;
-        this.now= LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        this.now = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 }

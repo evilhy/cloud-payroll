@@ -39,8 +39,8 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
-public class CustManagerRsTest extends BaseRSTest{
-    public static String sessionId="5b4b10fb6a70467fa289f16896ae9113";
+public class CustManagerRsTest extends BaseRSTest {
+    public static String sessionId = "5b4b10fb6a70467fa289f16896ae9113";
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
@@ -80,6 +80,7 @@ public class CustManagerRsTest extends BaseRSTest{
 //            log.error(e.getMessage());
 //        }
 //    }
+
     /**
      * Junit ok
      * 查询客户经理信息
@@ -102,6 +103,7 @@ public class CustManagerRsTest extends BaseRSTest{
 
     /**
      * 通知企业分配客户经理 入库
+     *
      * @throws Exception
      */
     @Test

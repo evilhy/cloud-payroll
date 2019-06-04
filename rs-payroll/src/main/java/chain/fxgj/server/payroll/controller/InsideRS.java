@@ -263,7 +263,7 @@ public class InsideRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-//            this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
+            //this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             callInsideService.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
@@ -286,7 +286,7 @@ public class InsideRS {
             MDC.setContextMap(mdcContext);
 
             if (StringUtils.isNotBlank(reqPhone.getCode())) {
-//                this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
+                //this.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
                 callInsideService.checkPhoneCode(reqPhone.getPhone(), reqPhone.getCode());
             }
             //验证手机号是否存在
