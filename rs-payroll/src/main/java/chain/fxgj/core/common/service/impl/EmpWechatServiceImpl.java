@@ -101,7 +101,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         }
 
         //用户机构
-        List<EmployeeInfo>  employeeInfos =  employeeService.getEmployeeInfos(idNumber,null).get();
+        List<EmployeeInfo> employeeInfos = employeeService.getEmployeeInfos(idNumber, null).get();
         if (employeeInfos != null && employeeInfos.size() > 0) {
             userPrincipal.setName(employeeInfos.get(0).getEmployeeName());
             userPrincipal.setEntId(employeeInfos.get(0).getEntId());
@@ -146,15 +146,15 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 for (int i = 0; i < empList.size(); i++) {
                     EntInfoDTO.GroupInfo.EmployeeInfo emp = empList.get(i);
                     //if (emp.getDelStatus() == DelStatusEnum.normal.getCode()) {
-                        EmployeeDTO employeeDTO = new EmployeeDTO(emp);
-                        employeeDTO.setGroupId(groupInfo.getGroupId());
-                        employeeDTO.setGroupName(groupInfo.getGroupName());
-                        employeeDTO.setGroupShortName(groupInfo.getGroupShortName());
-                        employeeDTO.setEntId(entInfoDTO.getEntId());
-                        employeeDTO.setEntName(entInfoDTO.getEntName());
-                        employeeDTO.setIdNumberStar(TransUtil.idNumberStar(idNumber));
-                        list.add(employeeDTO);
-                   // }
+                    EmployeeDTO employeeDTO = new EmployeeDTO(emp);
+                    employeeDTO.setGroupId(groupInfo.getGroupId());
+                    employeeDTO.setGroupName(groupInfo.getGroupName());
+                    employeeDTO.setGroupShortName(groupInfo.getGroupShortName());
+                    employeeDTO.setEntId(entInfoDTO.getEntId());
+                    employeeDTO.setEntName(entInfoDTO.getEntName());
+                    employeeDTO.setIdNumberStar(TransUtil.idNumberStar(idNumber));
+                    list.add(employeeDTO);
+                    // }
                 }
             }
         }

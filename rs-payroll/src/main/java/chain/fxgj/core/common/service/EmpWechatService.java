@@ -39,6 +39,7 @@ public interface EmpWechatService {
 
     /**
      * 验证银行卡
+     *
      * @param updBankCardDTO
      * @return
      */

@@ -88,15 +88,15 @@ public class WechatRsTest {
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("signatureGet_wechat",
                         relaxedRequestParameters(parameterWithName("signature").description("微信加密签名")
-                                ,parameterWithName("timestamp").description("时间戳")
-                                ,parameterWithName("nonce").description("随机数")
-                                ,parameterWithName("echostr").description("随机字符串")),
+                                , parameterWithName("timestamp").description("时间戳")
+                                , parameterWithName("nonce").description("随机数")
+                                , parameterWithName("echostr").description("随机字符串")),
                         relaxedResponseFields()));//出参对象描述
 
     }
 
     /**
-     *Junit ok
+     * Junit ok
      * 用户发送信息->微信接收信息后再调用->后台服务(后台验签，通过后返回对应消息)->微信->用户
      * </p>
      * 验证消息的确来自微信服务器 然后发送消息
@@ -114,7 +114,7 @@ public class WechatRsTest {
 
         webTestClient.post()
                 .uri("/weixin/signature?signature={signature}&timestamp={timestamp}&nonce={nonce}&echostr={echostr}&id={id}",
-                        "b1610e49e63a692c5543f9dc000058ec75b4aeb7", "1551701634", "631307959","2142728365402838963","zo")
+                        "b1610e49e63a692c5543f9dc000058ec75b4aeb7", "1551701634", "631307959", "2142728365402838963", "zo")
                 .contentType(MediaType.TEXT_XML)
                 .accept(MediaType.TEXT_XML)
                 .syncBody(xml)//入参
@@ -133,6 +133,7 @@ public class WechatRsTest {
     /**
      * Junit 获取code再待测试
      * 微信回调接口
+     *
      * @throws Exception
      */
     @Test
@@ -140,7 +141,7 @@ public class WechatRsTest {
 
         webTestClient.get()
                 .uri("/weixin/wxCallback?code={code}&wageSheetId={wageSheetId}&routeName={routeName}",
-                        "001xIfAi00Bffp1Ph7yi0Y9mAi0xIfAF","2","3")
+                        "001xIfAi00Bffp1Ph7yi0Y9mAi0xIfAF", "2", "3")
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -151,6 +152,7 @@ public class WechatRsTest {
                                 parameterWithName("routeName").description("routeName")),
                         relaxedResponseFields(JavaDocReader.javaDoc(Res100705.class))));//出参对象描述
     }
+
     /**
      * Junit ok
      * JS分享产生分享签名

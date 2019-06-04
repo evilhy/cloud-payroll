@@ -27,12 +27,12 @@ public class PayRollRSTest extends BaseRSTest {
                 .exchange().expectStatus().isOk().expectBody(Long.class)
                 .consumeWith(document("roll_sdt", relaxedResponseFields())).
                 consumeWith(body ->
-                    log.info("++++++++++{}", body.getResponseBody())
+                        log.info("++++++++++{}", body.getResponseBody())
                 );
     }
 
     @Test
-    public void index() throws Exception{
+    public void index() throws Exception {
         login();
         webTestClient.get().uri("roll/index")
                 .header("jsession_id", sessionId)
@@ -53,14 +53,14 @@ public class PayRollRSTest extends BaseRSTest {
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_groupList",
                         relaxedResponseFields(fieldWithPath("[]").description("机构列表"))
-                        .andWithPrefix("[]", JavaDocReader.javaDoc(NewestWageLogDTO.class))));
+                                .andWithPrefix("[]", JavaDocReader.javaDoc(NewestWageLogDTO.class))));
 
     }
 
     @Test
     public void entEmp() {
         String idNumber = "120105197801050320";
-        webTestClient.get().uri("roll/entEmp?idNumber={idNumber}",idNumber)
+        webTestClient.get().uri("roll/entEmp?idNumber={idNumber}", idNumber)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_entEmp", relaxedRequestParameters(parameterWithName("idNumber").description("员工身份证号")),
@@ -74,8 +74,8 @@ public class PayRollRSTest extends BaseRSTest {
         String groupId = "ff808081690a2b1c016913374f4a0006";
         String year = "2019";
         String type = "1";
-        webTestClient.get().uri("roll/wageList?groupId={groupId}&year={year}&type={type}",groupId,year,type)
-                .header("jsession_id",sessionId)
+        webTestClient.get().uri("roll/wageList?groupId={groupId}&year={year}&type={type}", groupId, year, type)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_wageList",
@@ -84,7 +84,7 @@ public class PayRollRSTest extends BaseRSTest {
                                 .and(parameterWithName("type").description("类型 0资金到账 1合计")),
                         relaxedResponseFields(JavaDocReader.javaDoc(Res100703.class))
                                 .andWithPrefix("planList.[]", JavaDocReader.javaDoc(PlanListBean.class))
-                                ));
+                ));
     }
 
     @Test
@@ -92,8 +92,8 @@ public class PayRollRSTest extends BaseRSTest {
         login();
         String wageSheetId = "3861bb29c33b424b966d7f1cb587e7d3";
         String groupId = "ff808081690a2b1c016913374f4a0006";
-        webTestClient.get().uri("roll/wageDetail?wageSheetId={wageSheetId}&groupId={groupId}",wageSheetId,groupId)
-                .header("jsession_id",sessionId)
+        webTestClient.get().uri("roll/wageDetail?wageSheetId={wageSheetId}&groupId={groupId}", wageSheetId, groupId)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_wageDetail",
@@ -109,7 +109,7 @@ public class PayRollRSTest extends BaseRSTest {
     public void empInfo() {
         login();
         webTestClient.get().uri("roll/empInfo")
-                .header("jsession_id",sessionId)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_empInfo",
@@ -122,7 +122,7 @@ public class PayRollRSTest extends BaseRSTest {
     public void invoice() {
         login();
         webTestClient.get().uri("roll/invoice")
-                .header("jsession_id",sessionId)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_invoice",
@@ -135,8 +135,8 @@ public class PayRollRSTest extends BaseRSTest {
     public void checkPwd() {
         login();
         String pwd = "123456";
-        webTestClient.get().uri("roll/checkPwd?pwd={pwd}",pwd)
-                .header("jsession_id",sessionId)
+        webTestClient.get().uri("roll/checkPwd?pwd={pwd}", pwd)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_checkPwd",
@@ -147,9 +147,9 @@ public class PayRollRSTest extends BaseRSTest {
     public void checkCard() {
         login();
         String cardNo = "153433";
-        String idNumber= "SZqiUsfAC7mztlvQ6kSxy5zddhXWf3UK";
-        webTestClient.get().uri("roll/checkCard?cardNo={cardNo}&idNumber={idNumber}",cardNo,idNumber)
-                .header("jsession_id",sessionId)
+        String idNumber = "SZqiUsfAC7mztlvQ6kSxy5zddhXWf3UK";
+        webTestClient.get().uri("roll/checkCard?cardNo={cardNo}&idNumber={idNumber}", cardNo, idNumber)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_checkCard",
@@ -161,7 +161,7 @@ public class PayRollRSTest extends BaseRSTest {
     public void emp() {
         login();
         webTestClient.get().uri("roll/emp")
-                .header("jsession_id",sessionId)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_emp",
@@ -172,40 +172,40 @@ public class PayRollRSTest extends BaseRSTest {
     public void empEnt() {
         login();
         webTestClient.get().uri("roll/empEnt")
-                .header("jsession_id",sessionId)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_empEnt",
                         relaxedResponseFields(fieldWithPath("[]").description("员工企业"))
                                 .andWithPrefix("[].", JavaDocReader
                                         .javaDoc(EmpEntDTO.class))
-                                .andWithPrefix("items[].",JavaDocReader.javaDoc(Res100708.class))
-                                .andWithPrefix("cards[].",JavaDocReader.javaDoc(BankCard.class))
-                                .andWithPrefix("cards.bankCardGroups[].",JavaDocReader.javaDoc(BankCardGroup.class))));
+                                .andWithPrefix("items[].", JavaDocReader.javaDoc(Res100708.class))
+                                .andWithPrefix("cards[].", JavaDocReader.javaDoc(BankCard.class))
+                                .andWithPrefix("cards.bankCardGroups[].", JavaDocReader.javaDoc(BankCardGroup.class))));
     }
 
     @Test
     public void empCard() {
         login();
         webTestClient.get().uri("roll/empCard")
-                .header("jsession_id",sessionId)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_empCard",
                         relaxedResponseFields(fieldWithPath("[]").description("员工银行卡"))
                                 .andWithPrefix("[].", JavaDocReader
                                         .javaDoc(EmpEntDTO.class))
-                                .andWithPrefix("items[].",JavaDocReader.javaDoc(Res100708.class))
-                                .andWithPrefix("cards[].",JavaDocReader.javaDoc(BankCard.class))
-                                .andWithPrefix("cards.bankCardGroups[].",JavaDocReader.javaDoc(BankCardGroup.class))));
+                                .andWithPrefix("items[].", JavaDocReader.javaDoc(Res100708.class))
+                                .andWithPrefix("cards[].", JavaDocReader.javaDoc(BankCard.class))
+                                .andWithPrefix("cards.bankCardGroups[].", JavaDocReader.javaDoc(BankCardGroup.class))));
     }
 
     @Test
     public void empCardLog() {
         login();
-        String ids ="ff808081692304f001692901d81600f8";
-        webTestClient.get().uri("roll/empCardLog?ids={ids}",ids)
-                .header("jsession_id",sessionId)
+        String ids = "ff808081692304f001692901d81600f8";
+        webTestClient.get().uri("roll/empCardLog?ids={ids}", ids)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_empCardLog",
@@ -219,7 +219,7 @@ public class PayRollRSTest extends BaseRSTest {
     public void entPhone() {
         login();
         webTestClient.get().uri("roll/entPhone")
-                .header("jsession_id",sessionId)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_entPhone",
@@ -231,9 +231,9 @@ public class PayRollRSTest extends BaseRSTest {
     @Test
     public void entUser() {
         login();
-        String entId="ff808081690f0e3201691330d0950024";
-        webTestClient.get().uri("roll/entUser?entId={entId}",entId)
-                .header("jsession_id",sessionId)
+        String entId = "ff808081690f0e3201691330d0950024";
+        webTestClient.get().uri("roll/entUser?entId={entId}", entId)
+                .header("jsession_id", sessionId)
                 .exchange().expectStatus().isOk().expectBody(String.class)
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("roll_entUser",

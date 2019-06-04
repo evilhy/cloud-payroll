@@ -1,7 +1,6 @@
 package chain.fxgj.server.payroll.rest;
 
-import chain.fxgj.server.payroll.JavaDocReader;
-import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
+import chain.fxgj.core.common.service.WechatBindService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -19,10 +18,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Duration;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParameters;
-import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
 
 /**
@@ -34,7 +29,7 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
  */
 @FixMethodOrder(MethodSorters.JVM)
 @Slf4j
-public class AdvertisementRSTest extends BaseRSTest{
+public class AdvertisementRSTest extends BaseRSTest {
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
@@ -43,6 +38,8 @@ public class AdvertisementRSTest extends BaseRSTest{
 
     public WebTestClient webTestClient;
 
+    @Autowired
+    public WechatBindService wechatBindService;
 
     @Autowired
     @Qualifier("jacksonCodecCustomizer")
@@ -61,13 +58,19 @@ public class AdvertisementRSTest extends BaseRSTest{
                 .filter(documentationConfiguration(restDocumentation))
                 .build();
     }
+
     @Test
     public void rotation() throws Exception {
-        webTestClient.get().uri("/advertising/rotation?channelId={channelId}", "0")
-                .exchange().expectStatus().isOk()
-                .expectBody()
-                .consumeWith(document("advertising_rotation",
-                        relaxedRequestParameters(parameterWithName("channelId").description("渠道id(0 放薪管家web,1 放薪经理 2 微信工资条 3 放薪虎符)")),
-                        relaxedResponseFields(JavaDocReader.javaDoc(AdvertisingRotationDTO.class))));
+//        webTestClient.get().uri("/advertising/rotation?channelId={channelId}", "0")
+//                .exchange().expectStatus().isOk()
+//                .expectBody()
+//                .consumeWith(document("advertising_rotation",
+//                        relaxedRequestParameters(parameterWithName("channelId").description("渠道id(0 放薪管家web,1 放薪经理 2 微信工资条 3 放薪虎符)")),
+//                        relaxedResponseFields(JavaDocReader.javaDoc(AdvertisingRotationDTO.class))));
+
+
+        wechatBindService.getEntInfos("420625198410100050");
     }
+
+
 }

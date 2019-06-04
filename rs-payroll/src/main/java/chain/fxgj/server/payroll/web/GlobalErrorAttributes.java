@@ -46,7 +46,8 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
             log.error("IllegalArgumentException || HttpMessageNotReadableException :{}", error.getMessage(), error);
             errorDTO = new ErrorDTO(500, ErrorConstant.SYS_ERR.getErrorMsg(),
                     request.path(), request.methodName());
-        } else */if (error instanceof ParamsIllegalException) {
+        } else */
+        if (error instanceof ParamsIllegalException) {
             log.warn("ParamsIllegalException :{}", error.getMessage());
             errorDTO = new ErrorDTO(400, ((ParamsIllegalException) error).getErrorMsg(),
                     request.path().toString(), request.methodName());
@@ -113,7 +114,7 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
         errorAttributes.put("method", errorDTO.getMethod());
         errorAttributes.put("timestamp", errorDTO.getTimestamp());
 
-        log.error("====>errorAttributes=[{}]",JacksonUtil.objectToJson(errorAttributes));
+        log.error("====>errorAttributes=[{}]", JacksonUtil.objectToJson(errorAttributes));
         return errorAttributes;
     }
 }

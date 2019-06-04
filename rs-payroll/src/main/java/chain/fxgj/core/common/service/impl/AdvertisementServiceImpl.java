@@ -36,13 +36,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         BooleanExpression booleanExpression = qAdvertisingInfo.delStatus.eq(DelStatusEnum.normal)
                 .and(qAdvertisingInfo.releaseStatus.eq(ReleaseStatusEnum.PUBLISHED))
                 .and(qAdvertisingInfo.channelId.eq(ChannelIdEnum.values()[channelId]));
-        log.info("channelId:[{}]",channelId);
+        log.info("channelId:[{}]", channelId);
         List<AdvertisingInfo> fetch = advertisingInfoDao.select(qAdvertisingInfo)
                 .from(qAdvertisingInfo)
                 .where(booleanExpression)
                 .orderBy(qAdvertisingInfo.sortNo.asc())
                 .fetch();
-        log.info("fetch.size():[{}]",fetch.size());
+        log.info("fetch.size():[{}]", fetch.size());
         List<AdvertisingRotationDTO> advertisingRotationDTOS = new ArrayList<>();
         for (AdvertisingInfo advertisingInfo : fetch) {
             AdvertisingRotationDTO advertisingRotationDTO = AdvertisingRotationDTO.builder()
@@ -55,7 +55,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
             advertisingRotationDTOS.add(advertisingRotationDTO);
         }
-        log.info("advertisingRotationDTOS.size()[{}]",advertisingRotationDTOS.size());
+        log.info("advertisingRotationDTOS.size()[{}]", advertisingRotationDTOS.size());
         return advertisingRotationDTOS;
     }
 }

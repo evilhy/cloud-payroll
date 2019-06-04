@@ -269,11 +269,11 @@ public class WechatBindServiceImpl implements WechatBindService {
                 LinkedHashMap<String, List<EmployeeInfo>> groupMap = convertEntGroup.get(entId);
 
                 if (groupMap.get(groupId) == null) {
-                    List<EmployeeInfo> list = new  LinkedList<>();
+                    List<EmployeeInfo> list = new LinkedList<>();
                     list.add(employeeInfo);
-                    groupMap.put(groupId,list);
+                    groupMap.put(groupId, list);
 
-                }else{
+                } else {
                     groupMap.get(groupId).add(employeeInfo);
                 }
 

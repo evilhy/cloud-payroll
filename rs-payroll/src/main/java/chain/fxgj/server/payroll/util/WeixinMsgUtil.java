@@ -25,7 +25,7 @@ public class WeixinMsgUtil {
     }
 
     public static String processRequest(WeixinTextMsgBaseDTO textMessage, String Content, String authorizeurl, String Event, String MsgType) throws Exception {
-        if (StringUtils.isNotEmpty(Content)&&Content.contains("豆")) {
+        if (StringUtils.isNotEmpty(Content) && Content.contains("豆")) {
             textMessage.setContent(processParams(authorizeurl, menuSelect(Integer.valueOf(6))));
             return MsgUtil.messageToXml(textMessage);
         } else if (StringUtils.isNumeric(Content)) {
