@@ -69,6 +69,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         Res100701 res100701 = Res100701.builder().build();
 
         String bindStatus = res100701.getBindStatus();
+
         //判断微信是否绑定
         log.info("====>加密后的身份证：{}", employeeEncrytorService.encryptIdNumber(idNumber));
 

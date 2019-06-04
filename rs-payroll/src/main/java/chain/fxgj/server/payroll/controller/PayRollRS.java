@@ -321,16 +321,17 @@ public class PayRollRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            EmpInfoDTO empInfoDTO = new EmpInfoDTO();
-            empInfoDTO.setHeadimgurl(userPrincipal.getHeadimgurl());
-            empInfoDTO.setIdNumber(userPrincipal.getIdNumber());
-            empInfoDTO.setName(userPrincipal.getName());
-            empInfoDTO.setPhone(userPrincipal.getPhone());
-            empInfoDTO.setPhoneStar(TransUtil.phoneStar(userPrincipal.getPhone()));
-            empInfoDTO.setIdNumberStar(TransUtil.idNumberStar(userPrincipal.getIdNumber()));
+            EmpInfoDTO empInfoDTO = EmpInfoDTO.builder()
+                    .headimgurl(userPrincipal.getHeadimgurl())
+                    .idNumber(userPrincipal.getIdNumber())
+                    .name(userPrincipal.getName())
+                    .phone(userPrincipal.getPhone())
+                    .phoneStar(TransUtil.phoneStar(userPrincipal.getPhone()))
+                    .idNumberStar(TransUtil.idNumberStar(userPrincipal.getIdNumber()))
+                    .build();
+
             //查询用户是否银行卡号变更有最新未读消息
             Integer isNew = wechatBindService.getCardUpdIsNew(userPrincipal.getIdNumber());
-            log.info("isNew:{}", isNew);
             empInfoDTO.setIsNew(isNew);
             return empInfoDTO;
         }).subscribeOn(Schedulers.elastic());

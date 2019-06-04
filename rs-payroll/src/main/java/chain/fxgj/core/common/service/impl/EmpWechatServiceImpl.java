@@ -118,9 +118,9 @@ public class EmpWechatServiceImpl implements EmpWechatService {
 
         List<EntInfoDTO> entInfoDTOS = new ArrayList<>();
         try {
-            log.info("idNumber:[{}]", idNumber);
+            log.info("====>idNumber:[{}]", idNumber);
             entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
-            log.info("go on,entInfoDTOS.size()[{}]", entInfoDTOS.size());
+            log.info("====>go on,entInfoDTOS.size()[{}]", entInfoDTOS.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
             log.error("e.printStackTrace()->[{}]", e.getMessage());
@@ -130,7 +130,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         }
 
         List<EmployeeDTO> list = new ArrayList<>();
-        log.info("entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
+        log.info("====>entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {
                 LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = groupInfo.getEmployeeInfoList();
@@ -149,7 +149,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 }
             }
         }
-        log.info("list.size()[{}]", list.size());
+        log.info("====>list.size()[{}]", list.size());
         return list;
     }
 
