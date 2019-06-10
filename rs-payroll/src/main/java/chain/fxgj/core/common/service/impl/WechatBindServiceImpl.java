@@ -225,7 +225,8 @@ public class WechatBindServiceImpl implements WechatBindService {
      */
     @Override
     public List<EntInfoDTO> getEntInfos(String idNumber, EmployeeStatusEnum[] employeeStatusEnum) {
-        log.info("====>根据身份证{}，查询 企业列表", idNumber);
+        long startTime =  System.currentTimeMillis();
+        log.info("====>根据身份证{}，查询 企业列表,开始时间=【{}】", idNumber,startTime);
         String alldata_json = null; //map转json
 
         //查询员工信息
@@ -363,6 +364,7 @@ public class WechatBindServiceImpl implements WechatBindService {
             entInfoDTO.setGroupInfoList(groupInfoList);
             entInfoDTOList.add(entInfoDTO);
         }
+        log.info("====>结束时间=【{}】",(System.currentTimeMillis() - startTime));
 
         return entInfoDTOList;
     }
