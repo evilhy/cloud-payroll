@@ -72,11 +72,11 @@ public class WechatBindServiceImpl implements WechatBindService {
 
         //判断微信是否绑定
         idNumber = idNumber.toUpperCase() ;  //证件号码 转成大写
-        log.info("====>加密后的身份证：{}", employeeEncrytorService.encryptIdNumber(idNumber));
-        log.info("====>idNumber：{}", idNumber);
+        String  idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
+        log.info("====>加密后的身份证：{}", idNumberEncrytor);
 
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
-        Predicate predicate = qEmployeeWechatInfo.idNumber.eq(idNumber);
+        Predicate predicate = qEmployeeWechatInfo.idNumber.eq(idNumberEncrytor);
         predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal));
         predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(AppPartnerEnum.FXGJ));
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo)
@@ -100,7 +100,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         List<Tuple> tuples = employeeInfoDao.select(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .from(qEmployeeInfo)
                 .leftJoin(qEntErpriseInfo).on(qEntErpriseInfo.id.eq(qEmployeeInfo.entId))
-                .where(qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .where(qEmployeeInfo.idNumber.eq(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
                 .groupBy(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .fetch();
 
