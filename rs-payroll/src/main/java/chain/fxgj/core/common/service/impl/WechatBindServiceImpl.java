@@ -71,13 +71,18 @@ public class WechatBindServiceImpl implements WechatBindService {
         String bindStatus = res100701.getBindStatus();
 
         //判断微信是否绑定
+        idNumber = idNumber.toUpperCase() ;  //证件号码 转成大写
         log.info("====>加密后的身份证：{}", employeeEncrytorService.encryptIdNumber(idNumber));
+        log.info("====>idNumber：{}", idNumber);
 
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
         Predicate predicate = qEmployeeWechatInfo.idNumber.eq(idNumber);
         predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal));
         predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(AppPartnerEnum.FXGJ));
-        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo).from(qEmployeeWechatInfo).where(predicate).fetchFirst();
+        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo)
+                .from(qEmployeeWechatInfo)
+                .where(predicate)
+                .fetchFirst();
         if (employeeWechatInfo != null) {
             bindStatus = "1";
         } else if (bindStatus.equals("0")) {
