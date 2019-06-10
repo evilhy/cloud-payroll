@@ -85,7 +85,7 @@ public class InsideServiceImpl implements InsideService {
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
 
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
-                .where(qEmployeeWechatInfo.idNumber.equalsIgnoreCase(idNumber)
+                .where(qEmployeeWechatInfo.idNumber.eq(idNumber)
                         .and(qEmployeeWechatInfo.openId.eq(openId))
                 )
                 .fetchFirst();
@@ -112,7 +112,7 @@ public class InsideServiceImpl implements InsideService {
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
         log.info("绑定信息openId:{},idNumber:{},phone:{}", openId, idNumber, phone);
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
-                .where(qEmployeeWechatInfo.idNumber.equalsIgnoreCase(idNumber).and(qEmployeeWechatInfo.openId.eq(openId)))
+                .where(qEmployeeWechatInfo.idNumber.eq(idNumber).and(qEmployeeWechatInfo.openId.eq(openId)))
                 .fetchFirst();
         if (employeeWechatInfo == null) {
             employeeWechatInfo = EmployeeWechatInfo.builder().build();

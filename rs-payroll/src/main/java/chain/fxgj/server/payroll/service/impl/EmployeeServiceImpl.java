@@ -60,7 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         //查询条件
         //[1] 身份证
-        Predicate predicate = qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber);
+        Predicate predicate = qEmployeeInfo.idNumber.eq(idNumber);
 
         //[2] 用户 删除 状态
         if (delStatusEnum != null && delStatusEnum.length > 0) {

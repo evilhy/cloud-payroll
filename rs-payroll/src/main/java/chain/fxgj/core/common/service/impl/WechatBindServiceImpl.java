@@ -169,7 +169,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         QEntGroupInfo qEntGroupInfo = QEntGroupInfo.entGroupInfo;
         List<String> tuples = employeeInfoDao.select(qEmployeeInfo.groupId).from(qEmployeeInfo)
                 .leftJoin(qEntGroupInfo).on(qEntGroupInfo.id.eq(qEmployeeInfo.groupId))
-                .where(qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber)
+                .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))
                         .and(qEntGroupInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
 
@@ -232,7 +232,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         //查询条件
         //(1) 身份证
-        Predicate predicate = qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber);
+        Predicate predicate = qEmployeeInfo.idNumber.eq(idNumber);
         //(2) 正常
         //predicate = ExpressionUtils.and(predicate, qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal));
 
@@ -586,7 +586,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
 
         List<EmployeeInfo> list = employeeInfoDao.selectFrom(qEmployeeInfo)
-                .where(qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber)
+                .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)
                                 .and(qEmployeeInfo.empCardList.any().delStatusEnum.eq(DelStatusEnum.normal)))).fetch();
         for (EmployeeInfo employeeInfo : list) {
