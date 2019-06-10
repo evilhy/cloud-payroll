@@ -163,7 +163,8 @@ public class InsideServiceImpl implements InsideService {
                 .set(qEmployeeWechatInfo.headimgurl, headimgurl)
                 .set(qEmployeeWechatInfo.jsessionId, jsessionId)
                 .set(qEmployeeWechatInfo.updDateTime, LocalDateTime.now())
-                .where(qEmployeeWechatInfo.openId.eq(openId)).execute();
+                .where(qEmployeeWechatInfo.openId.eq(openId).and(qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal))
+                ).execute();
     }
 
     @Override
