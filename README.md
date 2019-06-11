@@ -1,4 +1,15 @@
 
+#### 多银行支持
+- 微信公众号 
+   - URL 需要增加  ?id=[对接方]
+   ```
+   https://b530391e.ngrok.io/weixin/signature?id=fx
+   https://b530391e.ngrok.io/weixin/signature
+   ```  
+   
+
+
+
 #### 2019年04月08日版本
 ##### 上线说明
 - 后端框架升级 springboot 2.1.2.RELEASE + springcloud Greenwich.RC2 

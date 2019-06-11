@@ -73,7 +73,7 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
         String openId = eventDTO.getOpenId();
         QWechatFollowInfo qWechatFollowInfo = QWechatFollowInfo.wechatFollowInfo;
         WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.selectFrom(qWechatFollowInfo).where(qWechatFollowInfo.openId.eq(openId)).fetchFirst();
-//        WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.findFirstByOpenId(eventDTO.getOpenId());
+        //WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.findFirstByOpenId(eventDTO.getOpenId());
         if (wechatFollowInfo == null) {
             wechatFollowInfo = new WechatFollowInfo();
             wechatFollowInfo.setCrtDateTime(LocalDateTime.now());
