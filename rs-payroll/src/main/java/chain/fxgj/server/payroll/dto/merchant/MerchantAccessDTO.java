@@ -4,6 +4,7 @@ import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.util.Sha1;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.security.DigestException;
@@ -19,6 +20,7 @@ import java.util.LinkedHashMap;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class MerchantAccessDTO {
     /**
      * 接口调用凭证

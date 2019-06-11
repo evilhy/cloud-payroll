@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class WageHeadDTO {
     private Integer headIndex;
     private List<Cell> heads;

@@ -7,6 +7,7 @@ import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.util.Sha1;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,7 @@ import java.util.LinkedHashMap;
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class MerchantDTO {
     /**
      * 客户姓名

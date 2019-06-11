@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.dto.response;
 import chain.fxgj.core.jpa.model.WageDetailInfo;
 import chain.fxgj.core.jpa.model.WageShowInfo;
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class WageDetailDTO {
     /**
      * 工资条表头
