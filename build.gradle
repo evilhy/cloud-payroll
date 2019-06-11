@@ -108,7 +108,7 @@ subprojects {
 
     dependencies {
         //compile('chain:cloud-common:1.0.13')
-        compile("chain.fxgj:fxgj-common:1.0.2")
+        compile("chain.fxgj:fxgj-common:1.0.3")
         compile 'org.projectlombok:lombok:1.18.2'
         compile('chain:css-log:2.1.4')
         compile('chain:utils-commons:1.0.6')
