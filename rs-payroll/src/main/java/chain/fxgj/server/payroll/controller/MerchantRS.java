@@ -129,7 +129,7 @@ public class MerchantRS {
             //4、生成访问信息
             EmployeeWechatInfo employeeWechatInfo = merchantDecrypt.conver();
 
-            String idNumber = employeeEncrytorService.encryptIdNumber(employeeWechatInfo.getIdNumber());
+            String idNumber = employeeEncrytorService.encryptIdNumber(employeeWechatInfo.getIdNumber().toUpperCase());
 
             String phone = employeeEncrytorService.encryptPhone(employeeWechatInfo.getPhone());
             log.info("手机号phone:{}", phone);

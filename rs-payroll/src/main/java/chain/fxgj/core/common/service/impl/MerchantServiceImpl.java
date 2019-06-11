@@ -65,7 +65,7 @@ public class MerchantServiceImpl implements MerchantService {
 
         Predicate predicate = qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal);
         if (employeeInfo.getIdNumber() != null) {
-            predicate = ExpressionUtils.and(predicate, qEmployeeInfo.idNumber.equalsIgnoreCase(employeeInfo.getIdNumber()));
+            predicate = ExpressionUtils.and(predicate, qEmployeeInfo.idNumber.eq(employeeInfo.getIdNumber()));
         }
         if (employeeInfo.getEmployeeName() != null) {
             predicate = ExpressionUtils.and(predicate, qEmployeeInfo.employeeName.eq(employeeInfo.getEmployeeName()));
@@ -90,7 +90,7 @@ public class MerchantServiceImpl implements MerchantService {
 
         Predicate predicate = qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal);
         if (StringUtils.isNotBlank(employeeWechatInfo.getIdNumber())) {
-            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.idNumber.equalsIgnoreCase(employeeWechatInfo.getIdNumber()));
+            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.idNumber.eq(employeeWechatInfo.getIdNumber()));
         }
         if (employeeWechatInfo.getAppPartner() != null) {
             predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(employeeWechatInfo.getAppPartner()));
