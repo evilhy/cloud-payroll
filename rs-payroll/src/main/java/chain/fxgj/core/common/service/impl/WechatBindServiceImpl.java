@@ -71,13 +71,18 @@ public class WechatBindServiceImpl implements WechatBindService {
         String bindStatus = res100701.getBindStatus();
 
         //判断微信是否绑定
-        log.info("====>加密后的身份证：{}", employeeEncrytorService.encryptIdNumber(idNumber));
+        idNumber = idNumber.toUpperCase() ;  //证件号码 转成大写
+        String  idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
+        log.info("====>加密后的身份证：{}", idNumberEncrytor);
 
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
-        Predicate predicate = qEmployeeWechatInfo.idNumber.eq(idNumber);
+        Predicate predicate = qEmployeeWechatInfo.idNumber.eq(idNumberEncrytor);
         predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal));
         predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(AppPartnerEnum.FXGJ));
-        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo).from(qEmployeeWechatInfo).where(predicate).fetchFirst();
+        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo)
+                .from(qEmployeeWechatInfo)
+                .where(predicate)
+                .fetchFirst();
         if (employeeWechatInfo != null) {
             bindStatus = "1";
         } else if (bindStatus.equals("0")) {
@@ -95,7 +100,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         List<Tuple> tuples = employeeInfoDao.select(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .from(qEmployeeInfo)
                 .leftJoin(qEntErpriseInfo).on(qEntErpriseInfo.id.eq(qEmployeeInfo.entId))
-                .where(qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .where(qEmployeeInfo.idNumber.eq(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
                 .groupBy(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .fetch();
 
@@ -164,7 +169,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         QEntGroupInfo qEntGroupInfo = QEntGroupInfo.entGroupInfo;
         List<String> tuples = employeeInfoDao.select(qEmployeeInfo.groupId).from(qEmployeeInfo)
                 .leftJoin(qEntGroupInfo).on(qEntGroupInfo.id.eq(qEmployeeInfo.groupId))
-                .where(qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber)
+                .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))
                         .and(qEntGroupInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
 
@@ -220,14 +225,15 @@ public class WechatBindServiceImpl implements WechatBindService {
      */
     @Override
     public List<EntInfoDTO> getEntInfos(String idNumber, EmployeeStatusEnum[] employeeStatusEnum) {
-        log.info("====>根据身份证{}，查询 企业列表", idNumber);
+        long startTime =  System.currentTimeMillis();
+        log.info("====>开始时间=【{}】，根据身份证{}，查询 企业列表(正常、已删除)",startTime,idNumber);
         String alldata_json = null; //map转json
 
         //查询员工信息
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         //查询条件
         //(1) 身份证
-        Predicate predicate = qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber);
+        Predicate predicate = qEmployeeInfo.idNumber.eq(idNumber);
         //(2) 正常
         //predicate = ExpressionUtils.and(predicate, qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal));
 
@@ -358,6 +364,7 @@ public class WechatBindServiceImpl implements WechatBindService {
             entInfoDTO.setGroupInfoList(groupInfoList);
             entInfoDTOList.add(entInfoDTO);
         }
+        log.info("====>结束时间=【{}】,正常、已删除员工",(System.currentTimeMillis() - startTime));
 
         return entInfoDTOList;
     }
@@ -581,7 +588,7 @@ public class WechatBindServiceImpl implements WechatBindService {
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
 
         List<EmployeeInfo> list = employeeInfoDao.selectFrom(qEmployeeInfo)
-                .where(qEmployeeInfo.idNumber.equalsIgnoreCase(idNumber)
+                .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)
                                 .and(qEmployeeInfo.empCardList.any().delStatusEnum.eq(DelStatusEnum.normal)))).fetch();
         for (EmployeeInfo employeeInfo : list) {
