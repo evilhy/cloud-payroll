@@ -17,4 +17,13 @@ public interface AdvertisementService {
      */
     @Cacheable(value = "advertisement", key = "'payroll:'.concat(#channelId)")
     List<AdvertisingRotationDTO> rotation(int channelId);
+
+    /**
+     * 轮播图查询
+     *
+     * @param channelId
+     * @return
+     */
+    @Cacheable(value = "advertisement", key = "'payroll:'.concat(#channelId).concat(#entId)")
+    List<AdvertisingRotationDTO> rotation(int channelId, String entId);
 }
