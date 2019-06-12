@@ -1,6 +1,7 @@
 package chain.fxgj.core.common.service.impl;
 
 import chain.css.exception.ParamsIllegalException;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.PayStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
@@ -10,6 +11,7 @@ import chain.fxgj.core.common.service.WageWechatService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
+import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.utils.commons.JacksonUtil;
@@ -20,10 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @SuppressWarnings("unchecked")
@@ -47,6 +46,22 @@ public class WageWechatServiceImpl implements WageWechatService {
     @Autowired
     WageFundTypeInfoDao wageFundTypeInfoDao;
 
+    @Autowired
+    MerchantsProperties merchantProperties;
+
+    /**
+     * 根据appid 查询工资条接入合作方信息
+     *
+     * @param appPartner 合作方id
+     */
+    private MerchantsProperties.Merchant getMerchant(AppPartnerEnum appPartner) {
+        Optional<MerchantsProperties.Merchant> qWechat = merchantProperties.getMerchant().stream()
+                .filter(item -> item.getMerchantCode().equals(appPartner)).findFirst();
+        MerchantsProperties.Merchant merchant = qWechat.orElse(null);
+        return merchant;
+    }
+
+
 
     @Override
     public NewestWageLogDTO newGroupPushInfo(String idNumber) {
@@ -62,6 +77,7 @@ public class WageWechatServiceImpl implements WageWechatService {
 
     @Override
     public List<NewestWageLogDTO> groupList(String idNumber) {
+
         List<EmployeeDTO> employeeDTOS = empWechatService.getEmpList(idNumber);
         log.info("====>employeeDTOS 查询数据量:[{}]", employeeDTOS.size());
         log.debug("====>employeeDTOS:[{}]", JacksonUtil.objectToJson(employeeDTOS));

@@ -32,7 +32,7 @@ public interface InsideService {
      */
     void readWage(ReadWageDTO readWageDTO);
 
-    void login(String openId, String jsessionId, String nickname, String headimgurl);
+    void login(String openId, String jsessionId, String nickname, String headimgurl,String id);
 
     void setPwd(String wechatId, String pwd);
 

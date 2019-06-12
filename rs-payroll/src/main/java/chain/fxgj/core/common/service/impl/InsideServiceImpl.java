@@ -156,14 +156,14 @@ public class InsideServiceImpl implements InsideService {
     }
 
     @Override
-    public void login(String openId, String jsessionId, String nickname, String headimgurl) {
+    public void login(String openId, String jsessionId, String nickname, String headimgurl,String id) {
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
         employeeWechatInfoDao.update(qEmployeeWechatInfo)
                 .set(qEmployeeWechatInfo.nickname, nickname)
                 .set(qEmployeeWechatInfo.headimgurl, headimgurl)
                 .set(qEmployeeWechatInfo.jsessionId, jsessionId)
                 .set(qEmployeeWechatInfo.updDateTime, LocalDateTime.now())
-                .where(qEmployeeWechatInfo.openId.eq(openId).and(qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal))
+                .where(qEmployeeWechatInfo.id.eq(id)
                 ).execute();
     }
 

@@ -1,5 +1,8 @@
 package chain.fxgj.server.payroll.config.properties;
 
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MerchantsProperties {
     @Builder.Default
     private List<Merchant> merchant = new ArrayList<Merchant>();
@@ -30,6 +34,7 @@ public class MerchantsProperties {
     @AllArgsConstructor
     @NoArgsConstructor
     @Accessors(chain = true)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Merchant {
         /**
          * 分组id
@@ -50,7 +55,7 @@ public class MerchantsProperties {
         /**
          * 接入平台编号
          */
-        private String merchantCode;
+        private AppPartnerEnum merchantCode;
         /**
          * 请求地扯
          */
@@ -75,6 +80,11 @@ public class MerchantsProperties {
          * 备注说明
          */
         private String remarks;
+        /**
+         * 数据权限
+         */
+        private List<FundLiquidationEnum>  dataAuths;
+
     }
 
 

@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.rest;
 
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.UUIDUtil;
@@ -93,7 +94,7 @@ public class BaseRSTest {
         String headImg = "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTK2TdCQXNqUrzY9u3SFgRLdI5kOs0yh3jHrwEzic8n5tB9RDHHMqNsOX8l06rVAibVHHsrA273wwwjw/132";
         String idNumber = "420704199304164673";
         try {
-            UserPrincipal userPrincipal = empWechatService.setWechatInfo(sessionId, openId, nickName, headImg, idNumber);
+            UserPrincipal userPrincipal = empWechatService.setWechatInfo(sessionId, openId, nickName, headImg, idNumber,AppPartnerEnum.FXGJ);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

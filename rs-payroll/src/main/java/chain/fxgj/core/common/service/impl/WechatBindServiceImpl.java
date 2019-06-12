@@ -10,6 +10,7 @@ import chain.fxgj.core.common.service.WechatBindService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
+import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
@@ -54,6 +55,20 @@ public class WechatBindServiceImpl implements WechatBindService {
     EmployeeCardLogDao employeeCardLogDao;
     @Autowired
     WechatBindService wechatBindService;
+    @Autowired
+    MerchantsProperties merchantProperties;
+
+    /**
+     * 根据appid 查询工资条接入合作方信息
+     *
+     * @param appPartner 合作方id
+     */
+    private MerchantsProperties.Merchant getMerchant(AppPartnerEnum appPartner) {
+        Optional<MerchantsProperties.Merchant> qWechat = merchantProperties.getMerchant().stream()
+                .filter(item -> item.getMerchantCode().equals(appPartner)).findFirst();
+        MerchantsProperties.Merchant merchant = qWechat.orElse(null);
+        return merchant;
+    }
 
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -65,20 +80,22 @@ public class WechatBindServiceImpl implements WechatBindService {
      * @return
      */
     @Override
-    public Res100701 getEntList(String idNumber) {
+    public Res100701 getEntList(String idNumber, AppPartnerEnum appPartner) {
         Res100701 res100701 = Res100701.builder().build();
 
         String bindStatus = res100701.getBindStatus();
 
         //判断微信是否绑定
-        idNumber = idNumber.toUpperCase() ;  //证件号码 转成大写
-        String  idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
+        idNumber = idNumber.toUpperCase();  //证件号码 转成大写
+        String idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
         log.info("====>加密后的身份证：{}", idNumberEncrytor);
 
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
+
         Predicate predicate = qEmployeeWechatInfo.idNumber.eq(idNumberEncrytor);
         predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal));
-        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(AppPartnerEnum.FXGJ));
+        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(appPartner));
+
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo)
                 .from(qEmployeeWechatInfo)
                 .where(predicate)
@@ -86,21 +103,37 @@ public class WechatBindServiceImpl implements WechatBindService {
         if (employeeWechatInfo != null) {
             bindStatus = "1";
         } else if (bindStatus.equals("0")) {
-            res100701.setEmployeeList(this.getEntPhone(idNumber));
+            res100701.setEmployeeList(this.getEntPhone(idNumber, appPartner));
         }
         res100701.setBindStatus(bindStatus);
         return res100701;
     }
 
     @Override
-    public List<EmployeeListBean> getEntPhone(String idNumber) {
+    public List<EmployeeListBean> getEntPhone(String idNumber,AppPartnerEnum appPartner) {
+        List<FundLiquidationEnum>  list =  getMerchant(appPartner).getDataAuths();
+
+
         //查询员工信息
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         QEntErpriseInfo qEntErpriseInfo = QEntErpriseInfo.entErpriseInfo;
+
+
+        Predicate qEntpredicate = qEntErpriseInfo.id.eq(qEmployeeInfo.entId);
+        if(list!=null && list.size()>0){
+            if(list.size()==0){
+                qEntpredicate = ExpressionUtils.and(qEntpredicate, qEntErpriseInfo.liquidation.eq(list.get(0)));
+            }else{
+                qEntpredicate = ExpressionUtils.and(qEntpredicate, qEntErpriseInfo.liquidation.in(list));
+            }
+        }
+
         List<Tuple> tuples = employeeInfoDao.select(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .from(qEmployeeInfo)
-                .leftJoin(qEntErpriseInfo).on(qEntErpriseInfo.id.eq(qEmployeeInfo.entId))
-                .where(qEmployeeInfo.idNumber.eq(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .leftJoin(qEntErpriseInfo).on( qEntpredicate )
+                .where( qEmployeeInfo.idNumber.eq(idNumber)
+                        .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))
+                )
                 .groupBy(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .fetch();
 
@@ -225,8 +258,8 @@ public class WechatBindServiceImpl implements WechatBindService {
      */
     @Override
     public List<EntInfoDTO> getEntInfos(String idNumber, EmployeeStatusEnum[] employeeStatusEnum) {
-        long startTime =  System.currentTimeMillis();
-        log.info("====>开始时间=【{}】，根据身份证{}，查询 企业列表(正常、已删除)",startTime,idNumber);
+        long startTime = System.currentTimeMillis();
+        log.info("====>开始时间=【{}】，根据身份证{}，查询 企业列表(正常、已删除)", startTime, idNumber);
         String alldata_json = null; //map转json
 
         //查询员工信息
@@ -364,7 +397,7 @@ public class WechatBindServiceImpl implements WechatBindService {
             entInfoDTO.setGroupInfoList(groupInfoList);
             entInfoDTOList.add(entInfoDTO);
         }
-        log.info("====>结束时间=【{}】,正常、已删除员工",(System.currentTimeMillis() - startTime));
+        log.info("====>结束时间=【{}】,正常、已删除员工", (System.currentTimeMillis() - startTime));
 
         return entInfoDTOList;
     }

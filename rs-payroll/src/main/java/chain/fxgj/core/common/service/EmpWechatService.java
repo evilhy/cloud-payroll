@@ -1,5 +1,6 @@
 package chain.fxgj.core.common.service;
 
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.jpa.model.CardbinInfo;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
@@ -27,7 +28,7 @@ public interface EmpWechatService {
      * @return
      */
     @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
-    UserPrincipal setWechatInfo(String jsessionId, String openId, String nickname, String headimgurl, String idNumber) throws Exception;
+    UserPrincipal setWechatInfo(String jsessionId, String openId, String nickname, String headimgurl, String idNumber,AppPartnerEnum appPartner) throws Exception;
 
     /**
      * 获取员工信息

@@ -1,8 +1,10 @@
 package chain.fxgj.core.common.service.impl;
 
 import chain.css.exception.ParamsIllegalException;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.CardUpdStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
@@ -11,6 +13,7 @@ import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
+import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
@@ -18,6 +21,8 @@ import chain.fxgj.server.payroll.dto.request.WechatLoginDTO;
 import chain.fxgj.server.payroll.service.EmployeeService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -56,6 +62,21 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     EmployeeCardLogDao employeeCardLogDao;
     @Autowired
     EmployeeService employeeService;
+    @Autowired
+    MerchantsProperties merchantProperties;
+
+    /**
+     * 根据appid 查询工资条接入合作方信息
+     *
+     * @param appPartner 合作方id
+     */
+    private MerchantsProperties.Merchant getMerchant(AppPartnerEnum appPartner) {
+        Optional<MerchantsProperties.Merchant> qWechat = merchantProperties.getMerchant().stream()
+                .filter(item -> item.getMerchantCode().equals(appPartner)).findFirst();
+        MerchantsProperties.Merchant merchant = qWechat.orElse(null);
+        return merchant;
+    }
+
 
     @Override
     public UserPrincipal getWechatInfo(String jsessionId) {
@@ -63,7 +84,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     }
 
     @Override
-    public UserPrincipal setWechatInfo(String jsessionId, String openId, String nickname, String headimgurl, String idNumber) throws Exception {
+    public UserPrincipal setWechatInfo(String jsessionId, String openId, String nickname, String headimgurl, String idNumber, AppPartnerEnum appPartner) throws Exception {
         UserPrincipal userPrincipal = UserPrincipal.builder()
                 .sessionId(jsessionId)
                 .openId(openId)
@@ -71,10 +92,26 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 .nickname(nickname)
                 .headimgurl(headimgurl)
                 .idNumber(idNumber)
+                .appPartner(appPartner)
                 .build();
 
+        //取可以访问的数据权限
+        MerchantsProperties.Merchant merchant = this.getMerchant(appPartner);
+        List<FundLiquidationEnum> dataAuths = merchant.getDataAuths();
+        userPrincipal.setDataAuths(dataAuths);
+
+
+        //查询条件
+        QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
+        Predicate predicate = qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal);
+        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(appPartner));
+        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.openId.eq(openId));
+
         //判断openId是否绑定
-        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.findFirstByOpenIdAndAndDelStatusEnum(openId, DelStatusEnum.normal);
+        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
+                .where(predicate)
+                .fetchFirst();
+
         if (employeeWechatInfo != null) {
             log.info("=====>员工信息不为空,{}");
             String idNumberEncrypt = employeeWechatInfo.getIdNumber();
@@ -97,11 +134,11 @@ public class EmpWechatServiceImpl implements EmpWechatService {
             wechatLoginDTO.setJsessionId(jsessionId);
             wechatLoginDTO.setNickname(nickname);
             wechatLoginDTO.setHeadimgurl(headimgurl);
-            insideService.login(openId, jsessionId, nickname, headimgurl);
+            insideService.login(openId, jsessionId, nickname, headimgurl,employeeWechatInfo.getId());
         }
 
         //用户机构
-        EmployeeInfo employeeInfo = employeeService.getEmployeeInfoOne(idNumber).get();
+        EmployeeInfo employeeInfo = employeeService.getEmployeeInfoOne(idNumber,dataAuths).get();
         if (employeeInfo != null) {
             userPrincipal.setName(employeeInfo.getEmployeeName());
             userPrincipal.setEntId(employeeInfo.getEntId());

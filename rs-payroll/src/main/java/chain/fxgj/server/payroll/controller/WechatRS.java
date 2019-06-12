@@ -4,6 +4,7 @@ import chain.css.exception.BusiVerifyException;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.service.CallInsideService;
 import chain.fxgj.core.common.service.EmpWechatService;
@@ -76,7 +77,7 @@ public class WechatRS {
                                      @RequestParam("timestamp") String timestamp,
                                      @RequestParam("nonce") String nonce,
                                      @RequestParam("echostr") String echostr,
-                                     @RequestParam(value = "id", required = true, defaultValue = "fxgj") String id
+                                     @RequestParam(value = "id", required = true, defaultValue = "FXGJ") AppPartnerEnum id
     ) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
@@ -114,7 +115,7 @@ public class WechatRS {
     public Mono<String> signaturegPost(@RequestParam("signature") String signature,
                                        @RequestParam("timestamp") String timestamp,
                                        @RequestParam("nonce") String nonce,
-                                       @RequestParam(value = "id", required = true, defaultValue = "fxgj") String id,
+                                       @RequestParam(value = "id", required = true, defaultValue = "FXGJ") AppPartnerEnum id,
                                        @RequestBody String xml) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
@@ -196,6 +197,7 @@ public class WechatRS {
     @PermitAll
     public Mono<Res100705> wxCallback(@RequestParam("code") String code,
                                       @RequestParam(value = "wageSheetId", required = false) String wageSheetId,
+                                      @RequestParam(value = "appPartner", required = true, defaultValue = "FXGJ") AppPartnerEnum appPartner,
                                       @RequestParam(value = "routeName", required = false) String routeName) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
@@ -203,21 +205,19 @@ public class WechatRS {
             MDC.setContextMap(mdcContext);
 
             String jsessionId = UUIDUtil.createUUID32();
-            Res100705 res100705 = Res100705.builder()
-                    .jsessionId(jsessionId)
-                    .build();
-            log.info("====>set之前打印jsessionId:[{}]", jsessionId);
+            Res100705 res100705 = Res100705.builder().jsessionId(jsessionId).build();
 
             // 用户同意授权
             if (!"authdeny".equals(code)) {
                 log.info("=========>wageSheetId={},code={},routeName={}", StringUtils.trimToEmpty(wageSheetId), code, routeName);
-                log.info("====> 一次性code:[{}]", code);
+
                 //网页授权接口访问凭证
                 //WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = iwechatFeignService.oauth2Acces(payrollProperties.getId(), code);
                 WeixinOauthTokenResponeDTO weixinOauthTokenResponeDTO = callInsideService.getOauth2AccessToken(code);
                 String openId = weixinOauthTokenResponeDTO.getOpenid();
                 String accessToken = weixinOauthTokenResponeDTO.getAccessToken();
                 log.info("============>openId={},accessToken={}", openId, accessToken);
+
                 if (StringUtils.isEmpty(openId)) {
                     log.info("====>获取openId失败");
                     throw new ParamsIllegalException(ErrorConstant.AUTH_ERR.getErrorMsg());
@@ -237,8 +237,9 @@ public class WechatRS {
                     }
                     headImg = weixinUserInfoResponeDTO.getHeadimgurl();
                 }
+
                 //登录工资条
-                UserPrincipal userPrincipal = empWechatService.setWechatInfo(jsessionId, openId, nickName, headImg, "");
+                UserPrincipal userPrincipal = empWechatService.setWechatInfo(jsessionId, openId, nickName, headImg, "", appPartner);
                 if (StringUtils.isNotBlank(userPrincipal.getIdNumber())) {
                     res100705.setBindStatus("1");
                     res100705.setIdNumber(userPrincipal.getIdNumberEncrytor());
@@ -269,7 +270,7 @@ public class WechatRS {
 
             //WeixinJsapiDTO weixinJsapiDTO = iwechatFeignService.getJsapiSignature(payrollProperties.getId(),url);
             WeixinJsapiDTO weixinJsapiDTO = callInsideService.getJsapiSignature(url);
-            log.info("ret.weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
+            log.info("====>ret.weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
             return weixinJsapiDTO;
         }).subscribeOn(Schedulers.elastic());
     }

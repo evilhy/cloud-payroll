@@ -1,6 +1,9 @@
 package chain.fxgj.core.common.service;
 
-import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
+import chain.fxgj.server.payroll.dto.response.Res100703;
+import chain.fxgj.server.payroll.dto.response.Res100712;
+import chain.fxgj.server.payroll.dto.response.WageDetailDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
