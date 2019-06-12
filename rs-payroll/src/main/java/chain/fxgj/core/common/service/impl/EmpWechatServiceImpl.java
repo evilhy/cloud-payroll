@@ -77,6 +77,53 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         return merchant;
     }
 
+    /**
+     * 查询 用户绑定信息
+     *
+     * @param idNumber
+     * @param appPartner
+     * @return
+     */
+    @Override
+    public EmployeeWechatInfo getEmployeeWechatInfo(String idNumber, AppPartnerEnum appPartner) {
+        return this.getEmployeeWechatInfo(null, idNumber, appPartner);
+    }
+
+
+    /**
+     * 查询 用户绑定信息
+     *
+     * @param openId
+     * @param idNumber
+     * @param appPartner
+     * @return
+     */
+    @Override
+    public EmployeeWechatInfo getEmployeeWechatInfo(String openId, String idNumber, AppPartnerEnum appPartner) {
+
+        QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
+
+        Predicate predicate = qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal);
+        if (StringUtils.isNotEmpty(idNumber)) {
+            //判断微信是否绑定
+            idNumber = idNumber.toUpperCase();  //证件号码 转成大写
+            String idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
+            log.info("====>加密后的身份证：{}", idNumberEncrytor);
+            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.idNumber.eq(idNumberEncrytor));
+        }
+        if (StringUtils.isNotEmpty(openId)) {
+            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.openId.eq(openId));
+        }
+        if (appPartner != null) {
+            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(appPartner));
+        }
+
+        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo)
+                .from(qEmployeeWechatInfo)
+                .where(predicate)
+                .fetchFirst();
+        return employeeWechatInfo;
+    }
 
     @Override
     public UserPrincipal getWechatInfo(String jsessionId) {
@@ -100,18 +147,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         List<FundLiquidationEnum> dataAuths = merchant.getDataAuths();
         userPrincipal.setDataAuths(dataAuths);
 
-
-        //查询条件
-        QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
-        Predicate predicate = qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal);
-        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(appPartner));
-        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.openId.eq(openId));
-
-        //判断openId是否绑定
-        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
-                .where(predicate)
-                .fetchFirst();
-
+        EmployeeWechatInfo employeeWechatInfo = this.getEmployeeWechatInfo(openId, null, appPartner);
         if (employeeWechatInfo != null) {
             log.info("=====>员工信息不为空,{}");
             String idNumberEncrypt = employeeWechatInfo.getIdNumber();
@@ -134,11 +170,11 @@ public class EmpWechatServiceImpl implements EmpWechatService {
             wechatLoginDTO.setJsessionId(jsessionId);
             wechatLoginDTO.setNickname(nickname);
             wechatLoginDTO.setHeadimgurl(headimgurl);
-            insideService.login(openId, jsessionId, nickname, headimgurl,employeeWechatInfo.getId());
+            insideService.login(openId, jsessionId, nickname, headimgurl, employeeWechatInfo.getId());
         }
 
         //用户机构
-        EmployeeInfo employeeInfo = employeeService.getEmployeeInfoOne(idNumber,dataAuths).get();
+        EmployeeInfo employeeInfo = employeeService.getEmployeeInfoOne(idNumber, dataAuths).get();
         if (employeeInfo != null) {
             userPrincipal.setName(employeeInfo.getEmployeeName());
             userPrincipal.setEntId(employeeInfo.getEntId());

@@ -56,7 +56,6 @@ public class WechatBindServiceImpl implements WechatBindService {
     @Autowired
     WechatBindService wechatBindService;
 
-
     private static ObjectMapper mapper = new ObjectMapper();
 
     /**
@@ -66,60 +65,39 @@ public class WechatBindServiceImpl implements WechatBindService {
      * @return
      */
     @Override
-    public Res100701 getEntList(String idNumber,UserPrincipal principal) {
+    public Res100701 getEntList(String idNumber, UserPrincipal principal) {
         Res100701 res100701 = Res100701.builder().build();
 
-        String bindStatus = res100701.getBindStatus();
-
-        AppPartnerEnum appPartner  = principal.getAppPartner();
-
-        //判断微信是否绑定
-        idNumber = idNumber.toUpperCase();  //证件号码 转成大写
-        String idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
-        log.info("====>加密后的身份证：{}", idNumberEncrytor);
-
-        QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
-
-        Predicate predicate = qEmployeeWechatInfo.idNumber.eq(idNumberEncrytor);
-        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal));
-        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(appPartner));
-
-        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo)
-                .from(qEmployeeWechatInfo)
-                .where(predicate)
-                .fetchFirst();
+        EmployeeWechatInfo employeeWechatInfo = empWechatService.getEmployeeWechatInfo(idNumber, principal.getAppPartner());
         if (employeeWechatInfo != null) {
-            bindStatus = "1";
-        } else if (bindStatus.equals("0")) {
+            res100701.setBindStatus("1");
+        } else {   //是否绑定 1已绑定 0未绑定
             res100701.setEmployeeList(this.getEntPhone(idNumber, principal));
         }
-        res100701.setBindStatus(bindStatus);
         return res100701;
     }
 
     @Override
-    public List<EmployeeListBean> getEntPhone(String idNumber,UserPrincipal principal) {
-        List<FundLiquidationEnum>  list =  principal.getDataAuths();
-
+    public List<EmployeeListBean> getEntPhone(String idNumber, UserPrincipal principal) {
+        List<FundLiquidationEnum> list = principal.getDataAuths();
 
         //查询员工信息
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         QEntErpriseInfo qEntErpriseInfo = QEntErpriseInfo.entErpriseInfo;
 
-
         Predicate qEntpredicate = qEntErpriseInfo.id.eq(qEmployeeInfo.entId);
-        if(list!=null && list.size()>0){
-            if(list.size()==0){
+        if (list != null && list.size() > 0) {
+            if (list.size() == 0) {
                 qEntpredicate = ExpressionUtils.and(qEntpredicate, qEntErpriseInfo.liquidation.eq(list.get(0)));
-            }else{
+            } else {
                 qEntpredicate = ExpressionUtils.and(qEntpredicate, qEntErpriseInfo.liquidation.in(list));
             }
         }
 
         List<Tuple> tuples = employeeInfoDao.select(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .from(qEmployeeInfo)
-                .leftJoin(qEntErpriseInfo).on( qEntpredicate )
-                .where( qEmployeeInfo.idNumber.eq(idNumber)
+                .leftJoin(qEntErpriseInfo).on(qEntpredicate)
+                .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))
                 )
                 .groupBy(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
