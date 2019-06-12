@@ -3,7 +3,9 @@ package chain.fxgj.core.common.service.impl;
 import chain.fxgj.core.common.constant.DictEnums.*;
 import chain.fxgj.core.common.service.AdvertisementService;
 import chain.fxgj.core.jpa.dao.AdvertisingInfoDao;
+import chain.fxgj.core.jpa.dao.EntErpriseInfoDao;
 import chain.fxgj.core.jpa.model.AdvertisingInfo;
+import chain.fxgj.core.jpa.model.EntErpriseInfo;
 import chain.fxgj.core.jpa.model.QAdvertisingInfo;
 import chain.fxgj.core.jpa.model.QLiquidationVersionAdvertisingInfo;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
@@ -21,6 +23,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Autowired
     AdvertisingInfoDao advertisingInfoDao;
+
+    @Autowired
+    EntErpriseInfoDao entErpriseInfoDao;
 
     /**
      * 轮播图查询</p>
@@ -61,9 +66,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public List<AdvertisingRotationDTO> rotation(int channelId, String entId) {
         /** 根据企业ID获取渠道银行、版本（目前仅获取 华夏银行——普通版——普通版） **/
-        FundLiquidationEnum fundLiquidationEnum = FundLiquidationEnum.HXB;
-        VersionsTypeEnum versionsTypeEnum = VersionsTypeEnum.NORMAL;
-        VersionsEnum versionsEnum = VersionsEnum.NORMAL;
+        EntErpriseInfo entErpriseInfo = entErpriseInfoDao.findById(entId).get();
+        FundLiquidationEnum fundLiquidationEnum = entErpriseInfo.getLiquidation();
+        VersionsTypeEnum versionsTypeEnum = entErpriseInfo.getVersion();
+        VersionsEnum versionsEnum = entErpriseInfo.getSubVersion();
+//        FundLiquidationEnum fundLiquidationEnum = FundLiquidationEnum.HXB;
+//        VersionsTypeEnum versionsTypeEnum = VersionsTypeEnum.NORMAL;
+//        VersionsEnum versionsEnum = VersionsEnum.NORMAL;
 
         QLiquidationVersionAdvertisingInfo qLiquidationVersionAdvertisingInfo = QLiquidationVersionAdvertisingInfo.liquidationVersionAdvertisingInfo;
         QAdvertisingInfo qAdvertisingInfo = QAdvertisingInfo.advertisingInfo;
@@ -97,7 +106,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                     .sortNo(advertisingInfo.getSortNo())
                     .url(advertisingInfo.getUrl())
                     .build();
-
             advertisingRotationDTOS.add(advertisingRotationDTO);
         }
         log.info("advertisingRotationDTOS.size()[{}]", advertisingRotationDTOS.size());
