@@ -10,10 +10,10 @@ import chain.fxgj.core.common.service.WechatBindService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
-import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.Tuple;
@@ -55,20 +55,6 @@ public class WechatBindServiceImpl implements WechatBindService {
     EmployeeCardLogDao employeeCardLogDao;
     @Autowired
     WechatBindService wechatBindService;
-    @Autowired
-    MerchantsProperties merchantProperties;
-
-    /**
-     * 根据appid 查询工资条接入合作方信息
-     *
-     * @param appPartner 合作方id
-     */
-    private MerchantsProperties.Merchant getMerchant(AppPartnerEnum appPartner) {
-        Optional<MerchantsProperties.Merchant> qWechat = merchantProperties.getMerchant().stream()
-                .filter(item -> item.getMerchantCode().equals(appPartner)).findFirst();
-        MerchantsProperties.Merchant merchant = qWechat.orElse(null);
-        return merchant;
-    }
 
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -80,10 +66,12 @@ public class WechatBindServiceImpl implements WechatBindService {
      * @return
      */
     @Override
-    public Res100701 getEntList(String idNumber, AppPartnerEnum appPartner) {
+    public Res100701 getEntList(String idNumber,UserPrincipal principal) {
         Res100701 res100701 = Res100701.builder().build();
 
         String bindStatus = res100701.getBindStatus();
+
+        AppPartnerEnum appPartner  = principal.getAppPartner();
 
         //判断微信是否绑定
         idNumber = idNumber.toUpperCase();  //证件号码 转成大写
@@ -103,15 +91,15 @@ public class WechatBindServiceImpl implements WechatBindService {
         if (employeeWechatInfo != null) {
             bindStatus = "1";
         } else if (bindStatus.equals("0")) {
-            res100701.setEmployeeList(this.getEntPhone(idNumber, appPartner));
+            res100701.setEmployeeList(this.getEntPhone(idNumber, principal));
         }
         res100701.setBindStatus(bindStatus);
         return res100701;
     }
 
     @Override
-    public List<EmployeeListBean> getEntPhone(String idNumber,AppPartnerEnum appPartner) {
-        List<FundLiquidationEnum>  list =  getMerchant(appPartner).getDataAuths();
+    public List<EmployeeListBean> getEntPhone(String idNumber,UserPrincipal principal) {
+        List<FundLiquidationEnum>  list =  principal.getDataAuths();
 
 
         //查询员工信息

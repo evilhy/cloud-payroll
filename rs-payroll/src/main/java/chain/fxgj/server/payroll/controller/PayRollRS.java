@@ -133,7 +133,7 @@ public class PayRollRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            Res100701 res100701 = wechatBindService.getEntList(idNumber,principal.getAppPartner());
+            Res100701 res100701 = wechatBindService.getEntList(idNumber,principal);
             if (res100701.getBindStatus().equals("1")) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_002.getErrorMsg());
             }
@@ -411,7 +411,7 @@ public class PayRollRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            List<EmployeeListBean> list = wechatBindService.getEntPhone(userPrincipal.getIdNumber(),userPrincipal.getAppPartner());
+            List<EmployeeListBean> list = wechatBindService.getEntPhone(userPrincipal.getIdNumber(),userPrincipal);
             return list;
         }).subscribeOn(Schedulers.elastic());
     }

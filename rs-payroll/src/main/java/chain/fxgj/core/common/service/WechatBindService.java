@@ -1,10 +1,10 @@
 package chain.fxgj.core.common.service;
 
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.EmployeeStatusEnum;
 import chain.fxgj.core.jpa.model.EmployeeCardLog;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +17,12 @@ public interface WechatBindService {
      * 获取员工企业
      *
      * @param idNumber
+     * @param principal
      * @return
      */
-    Res100701 getEntList(String idNumber,AppPartnerEnum appPartner);
+    Res100701 getEntList(String idNumber,UserPrincipal principal);
 
-    List<EmployeeListBean> getEntPhone(String idNumber,AppPartnerEnum appPartner);
+    List<EmployeeListBean> getEntPhone(String idNumber,UserPrincipal principal);
 
 
     /**
