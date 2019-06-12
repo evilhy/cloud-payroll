@@ -2,7 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.dto.msg.MsgModelInfoDTO;
-import chain.fxgj.core.common.service.MsgModelInfoService;
+import chain.fxgj.server.payroll.service.MsgModelInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;

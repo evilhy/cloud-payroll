@@ -1,7 +1,7 @@
-package chain.fxgj.core.common.service.impl;
+package chain.fxgj.server.payroll.service.impl;
 
 import chain.fxgj.core.common.dto.msg.MsgModelInfoDTO;
-import chain.fxgj.core.common.service.MsgModelInfoService;
+import chain.fxgj.server.payroll.service.MsgModelInfoService;
 import chain.fxgj.core.jpa.dao.MsgModelInfoDao;
 import chain.fxgj.core.jpa.model.MsgModelInfo;
 import chain.fxgj.core.jpa.model.QMsgModelInfo;
