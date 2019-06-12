@@ -85,6 +85,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                 .leftJoin(qLiquidationVersionAdvertisingInfo)
                 .on(qAdvertisingInfo.id.eq(qLiquidationVersionAdvertisingInfo.advertisingId))
                 .where(booleanExpression)
+                .groupBy(qLiquidationVersionAdvertisingInfo.advertisingId)
                 .orderBy(qAdvertisingInfo.sortNo.asc())
                 .fetch();
         List<AdvertisingRotationDTO> advertisingRotationDTOS = new ArrayList<>();
