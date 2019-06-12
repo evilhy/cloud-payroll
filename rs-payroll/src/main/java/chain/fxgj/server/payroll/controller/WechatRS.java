@@ -6,7 +6,7 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
-import chain.fxgj.core.common.service.CallInsideService;
+import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;

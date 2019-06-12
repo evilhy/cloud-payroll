@@ -1,4 +1,4 @@
-package chain.fxgj.core.common.service.impl;
+package chain.fxgj.server.payroll.service.impl;
 
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
@@ -10,7 +10,7 @@ import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
 import chain.fxgj.server.payroll.dto.base.*;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
-import chain.fxgj.core.common.service.CallInsideService;
+import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.response.Res100302;
 import lombok.extern.slf4j.Slf4j;

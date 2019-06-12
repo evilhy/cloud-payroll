@@ -6,7 +6,7 @@ import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.IntentStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.fxgj.core.common.service.CallInsideService;
+import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.core.common.service.FinanceService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.model.EmployeeInfo;

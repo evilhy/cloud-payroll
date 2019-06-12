@@ -1,13 +1,11 @@
-package chain.fxgj.core.common.service;
+package chain.fxgj.server.payroll.service;
 
 import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
-import chain.fxgj.server.payroll.dto.base.*;
 import chain.fxgj.server.payroll.dto.EventDTO;
+import chain.fxgj.server.payroll.dto.base.*;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 public interface CallInsideService {
 
     public void subscribe(EventDTO eventDTO);
