@@ -144,7 +144,10 @@ public class EmpWechatServiceImpl implements EmpWechatService {
 
         //取可以访问的数据权限
         MerchantsProperties.Merchant merchant = this.getMerchant(appPartner);
-        List<FundLiquidationEnum> dataAuths = merchant.getDataAuths();
+        List<FundLiquidationEnum> dataAuths = null;
+        if (merchant != null) {
+            dataAuths = merchant.getDataAuths();
+        }
         userPrincipal.setDataAuths(dataAuths);
 
         EmployeeWechatInfo employeeWechatInfo = this.getEmployeeWechatInfo(openId, null, appPartner);
@@ -194,7 +197,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         List<EntInfoDTO> entInfoDTOS = new ArrayList<>();
         try {
             log.info("====>idNumber:[{}]", idNumber);
-            entInfoDTOS = payRollAsyncService.getGroups(idNumber,userPrincipal).get();
+            entInfoDTOS = payRollAsyncService.getGroups(idNumber, userPrincipal).get();
             log.info("====>go on,entInfoDTOS.size()[{}]", entInfoDTOS.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
