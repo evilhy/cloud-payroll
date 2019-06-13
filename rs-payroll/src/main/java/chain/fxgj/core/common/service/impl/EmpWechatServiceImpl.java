@@ -184,15 +184,17 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     }
 
     @Override
-    public List<EmployeeDTO> getEmpList(String idNumber) {
+    public List<EmployeeDTO> getEmpList(String idNumber, UserPrincipal userPrincipal) {
         if (StringUtils.isEmpty(idNumber)) {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
         }
 
+        //数据权限
+        List<FundLiquidationEnum> dataAuths = userPrincipal.getDataAuths();
         List<EntInfoDTO> entInfoDTOS = new ArrayList<>();
         try {
             log.info("====>idNumber:[{}]", idNumber);
-            entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
+            entInfoDTOS = payRollAsyncService.getGroups(idNumber,userPrincipal).get();
             log.info("====>go on,entInfoDTOS.size()[{}]", entInfoDTOS.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -205,6 +207,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         List<EmployeeDTO> list = new ArrayList<>();
         log.info("====>entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
+
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {
                 LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = groupInfo.getEmployeeInfoList();
                 for (int i = 0; i < empList.size(); i++) {
@@ -217,11 +220,26 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                     employeeDTO.setEntId(entInfoDTO.getEntId());
                     employeeDTO.setEntName(entInfoDTO.getEntName());
                     employeeDTO.setIdNumberStar(TransUtil.idNumberStar(idNumber));
-                    list.add(employeeDTO);
+                    employeeDTO.setLiquidation(entInfoDTO.getLiquidation());
+
+                    //
+                    if (dataAuths != null && dataAuths.size() > 0) {
+                        for (int j = 0; j < dataAuths.size(); j++) {
+                            FundLiquidationEnum fundLiquidationEnum = dataAuths.get(j);
+                            if (fundLiquidationEnum == employeeDTO.getLiquidation()) {
+                                list.add(employeeDTO);
+                            }
+                        }
+                    } else {
+                        list.add(employeeDTO);
+                    }
+
                     // }
                 }
             }
         }
+
+
         log.info("====>list.size()[{}]", list.size());
         return list;
     }

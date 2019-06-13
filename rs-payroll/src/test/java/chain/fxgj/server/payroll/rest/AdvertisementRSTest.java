@@ -69,7 +69,7 @@ public class AdvertisementRSTest extends BaseRSTest {
 //                        relaxedResponseFields(JavaDocReader.javaDoc(AdvertisingRotationDTO.class))));
 
 
-        wechatBindService.getEntInfos("420625198410100050");
+       // wechatBindService.getEntInfos("420625198410100050");
     }
 
 

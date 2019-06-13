@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.dto;
 
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -67,7 +68,10 @@ public class EmployeeDTO {
      * 企业
      */
     private String entName;
-
+    /**
+     * 清算渠道（银行）
+     */
+    private FundLiquidationEnum liquidation;
 
     public EmployeeDTO(EntInfoDTO.GroupInfo.EmployeeInfo employeeInfo) {
         this.employeeId = employeeInfo.getEmployeeId();

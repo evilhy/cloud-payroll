@@ -169,6 +169,7 @@ public class MerchantRS {
             String accessToken = UUIDUtil.createUUID8();
 
             String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + accessToken;
+            merchantDecrypt.setDataAuths(merchant.getDataAuths());
             String emp = JacksonUtil.objectToJson(merchantDecrypt);
             redisTemplate.opsForValue().set(redisKey, emp, PayrollConstants.MERCHANT_EXPIRESIN, TimeUnit.SECONDS);
 
@@ -238,7 +239,7 @@ public class MerchantRS {
             EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
             if (employeeWechat != null) {
                 log.info("用户信息存在！");
-                UserPrincipal userPrincipal = merchantService.setWechatInfo(jsessionId, employeeWechat);
+                UserPrincipal userPrincipal = merchantService.setWechatInfo(jsessionId, employeeWechat,merchantDecrypt.getDataAuths());
                 if (StringUtils.isNotBlank(userPrincipal.getIdNumber())) {
                     res100705.setBindStatus("1");
                     res100705.setIdNumber(userPrincipal.getIdNumberEncrytor());

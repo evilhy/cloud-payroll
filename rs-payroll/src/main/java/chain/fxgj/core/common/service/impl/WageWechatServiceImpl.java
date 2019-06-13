@@ -14,6 +14,7 @@ import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -64,10 +65,10 @@ public class WageWechatServiceImpl implements WageWechatService {
 
 
     @Override
-    public NewestWageLogDTO newGroupPushInfo(String idNumber) {
+    public NewestWageLogDTO newGroupPushInfo(String idNumber,UserPrincipal principal) {
         NewestWageLogDTO bean = new NewestWageLogDTO();
         //用户最新一条推送记录
-        List<NewestWageLogDTO> list = this.groupList(idNumber);
+        List<NewestWageLogDTO> list = this.groupList(idNumber,principal);
         if (list != null && list.size() > 0) {
             bean = list.get(0);
         }
@@ -76,9 +77,9 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
     @Override
-    public List<NewestWageLogDTO> groupList(String idNumber) {
+    public List<NewestWageLogDTO> groupList(String idNumber,UserPrincipal principal) {
 
-        List<EmployeeDTO> employeeDTOS = empWechatService.getEmpList(idNumber);
+        List<EmployeeDTO> employeeDTOS = empWechatService.getEmpList(idNumber,principal);
         log.info("====>employeeDTOS 查询数据量:[{}]", employeeDTOS.size());
         log.debug("====>employeeDTOS:[{}]", JacksonUtil.objectToJson(employeeDTOS));
 
@@ -119,10 +120,10 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
     @Override
-    public List<WageDetailDTO> getWageDetail(String idNumber, String groupId, String wageSheetId) {
+    public List<WageDetailDTO> getWageDetail(String idNumber, String groupId, String wageSheetId,UserPrincipal principal) {
         //查询员工id
         EmployeeDTO employee = null;
-        List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber);
+        List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber, principal);
         log.info("employeeDTOList.size()[{}]", employeeDTOList.size());
         for (EmployeeDTO employeeDTO : employeeDTOList) {
             log.info("employeeDTO[{}]", employeeDTO.toString());
@@ -210,10 +211,10 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
     @Override
-    public Res100703 wageList(String idNumber, String groupId, String year, String type) {
+    public Res100703 wageList(String idNumber, String groupId, String year, String type,UserPrincipal principal) {
         //查询员工id
         EmployeeDTO employee = null;
-        List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber);
+        List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber, principal);
         for (EmployeeDTO employeeDTO : employeeDTOList) {
             if (employeeDTO.getGroupId().equals(groupId)) {
                 employee = employeeDTO;
@@ -326,8 +327,8 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
     @Override
-    public Res100703 wageHistroyList(String idNumber, String groupId, String year, String type) {
-        return this.wageList(idNumber, groupId, year, type);
+    public Res100703 wageHistroyList(String idNumber, String groupId, String year, String type,UserPrincipal principal) {
+        return this.wageList(idNumber, groupId, year, type,principal);
     }
 
 }

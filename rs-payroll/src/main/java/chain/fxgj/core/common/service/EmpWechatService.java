@@ -58,7 +58,7 @@ public interface EmpWechatService {
      * @param idNumber
      * @return
      */
-    List<EmployeeDTO> getEmpList(String idNumber);
+    List<EmployeeDTO> getEmpList(String idNumber,UserPrincipal principal);
 
     /**
      * 验证银行卡

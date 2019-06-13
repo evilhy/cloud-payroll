@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.dto.merchant;
 import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.CertTypeEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
@@ -16,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.DigestException;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 工资条  对外输出接口
@@ -62,6 +64,12 @@ public class MerchantDTO {
      * 合作商平台标识
      */
     private AppPartnerEnum appPartner;
+    /**
+     * 数据权限
+     */
+    private List<FundLiquidationEnum> dataAuths;
+
+
 
     public static MerchantDTO decrypt(MerchantDTO merchantDTO, String decrypt) {
         MerchantDTO merchant = null;
