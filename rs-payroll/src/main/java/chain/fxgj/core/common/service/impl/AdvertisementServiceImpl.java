@@ -66,13 +66,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public List<AdvertisingRotationDTO> rotation(int channelId, String entId) {
         /** 根据企业ID获取渠道银行、版本（目前仅获取 华夏银行——普通版——普通版） **/
-//        EntErpriseInfo entErpriseInfo = entErpriseInfoDao.findById(entId).get();
-//        FundLiquidationEnum fundLiquidationEnum = entErpriseInfo.getLiquidation();
-//        VersionsTypeEnum versionsTypeEnum = entErpriseInfo.getVersion();
-//        VersionsEnum versionsEnum = entErpriseInfo.getSubVersion();
+        EntErpriseInfo entErpriseInfo = entErpriseInfoDao.findById(entId).get();
         FundLiquidationEnum fundLiquidationEnum = FundLiquidationEnum.HXB;
         VersionsTypeEnum versionsTypeEnum = VersionsTypeEnum.NORMAL;
         VersionsEnum versionsEnum = VersionsEnum.NORMAL;
+        if (null != entErpriseInfo){
+            fundLiquidationEnum = entErpriseInfo.getLiquidation();
+            versionsTypeEnum = entErpriseInfo.getVersion();
+            versionsEnum = entErpriseInfo.getSubVersion();
+        }
+
 
         QLiquidationVersionAdvertisingInfo qLiquidationVersionAdvertisingInfo = QLiquidationVersionAdvertisingInfo.liquidationVersionAdvertisingInfo;
         QAdvertisingInfo qAdvertisingInfo = QAdvertisingInfo.advertisingInfo;
