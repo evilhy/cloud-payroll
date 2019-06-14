@@ -44,11 +44,11 @@ public class WebContextFilter implements WebFilter, Ordered {
         MDC.put(FxgjDBConstant.LOG_TOKEN, reqId);
 
         String apppartner = exchange.getRequest().getHeaders().getFirst(PayrollConstants.APPPARTNER);
-
-        AppPartnerEnum appPartner =  AppPartnerEnum.valueOf(apppartner);
-        MDC.put(PayrollConstants.APPPARTNER, appPartner.getCode().toString());
-        MDC.put(PayrollConstants.APPPARTNER_DESC, appPartner.getDesc());
-
+        if (StringUtils.isNotBlank(apppartner)) {
+            AppPartnerEnum appPartner =  AppPartnerEnum.valueOf(apppartner);
+            MDC.put(PayrollConstants.APPPARTNER, appPartner.getCode().toString());
+            MDC.put(PayrollConstants.APPPARTNER_DESC, appPartner.getDesc());
+        }
 
         StringBuffer logBuffer = new StringBuffer();
         ServerHttpRequest request = exchange.getRequest();
