@@ -79,9 +79,9 @@ public class WechatRS {
                                      @RequestParam("echostr") String echostr,
                                      @RequestParam(value = "id", required = true, defaultValue = "FXGJ") AppPartnerEnum id
     ) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         MDC.put("apppartner_desc",id.getDesc());
         MDC.put("appPartner",id.getCode().toString());
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -120,9 +120,9 @@ public class WechatRS {
                                        @RequestParam("nonce") String nonce,
                                        @RequestParam(value = "id", required = true, defaultValue = "FXGJ") AppPartnerEnum id,
                                        @RequestBody String xml) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         MDC.put("apppartner_desc",id.getDesc());
         MDC.put("appPartner",id.getCode().toString());
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -204,9 +204,9 @@ public class WechatRS {
                                       @RequestParam(value = "wageSheetId", required = false) String wageSheetId,
                                       @RequestParam(value = "appPartner", required = true, defaultValue = "FXGJ") AppPartnerEnum appPartner,
                                       @RequestParam(value = "routeName", required = false) String routeName) throws Exception {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         MDC.put("apppartner_desc",appPartner.getDesc());
         MDC.put("appPartner",appPartner.getCode().toString());
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
