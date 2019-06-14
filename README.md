@@ -13,9 +13,14 @@
 - 微信公众号 
    - URL 需要增加  ?id=[对接方]
    ```
-   https://b530391e.ngrok.io/weixin/signature?id=fx
+   https://b530391e.ngrok.io/weixin/signature?id=FXGJ
    https://b530391e.ngrok.io/weixin/signature
-   ```  
+   ``` 
+- 前端修改
+  ```
+   【1】weixin/wxCallback/ RequestParam参数增加 appPartner ，后端提供给前端
+    
+  ```
 - 公共报文头上增加  接入方
 
 - 根据接入方 判断员工的数据权限

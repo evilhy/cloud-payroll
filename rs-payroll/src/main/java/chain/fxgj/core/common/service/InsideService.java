@@ -1,5 +1,6 @@
 package chain.fxgj.core.common.service;
 
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.server.payroll.dto.request.ReadWageDTO;
 import chain.fxgj.server.payroll.dto.request.ResReceiptDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
@@ -20,12 +21,12 @@ public interface InsideService {
     /**
      * 绑定微信
      */
-    void bandWechat(String openId, String idNumber, String phone);
+    void bandWechat(String openId, String idNumber, String phone,AppPartnerEnum appPartner);
 
     /**
      * 绑定微信,更新手机号
      */
-    void bandWechatAndPhone(String openId, String idNumber, String phone, String pwd);
+    void bandWechatAndPhone(String openId, String idNumber, String phone, String pwd,AppPartnerEnum appPartner);
 
     /**
      * 已读
