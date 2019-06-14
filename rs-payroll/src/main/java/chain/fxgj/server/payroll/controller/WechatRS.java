@@ -205,14 +205,18 @@ public class WechatRS {
                                       @RequestParam(value = "appPartner", required = true, defaultValue = "FXGJ") AppPartnerEnum appPartner,
                                       @RequestParam(value = "routeName", required = false) String routeName) throws Exception {
         MDC.put("apppartner_desc",appPartner.getDesc());
-        MDC.put("appPartner",appPartner.getCode().toString());
+        MDC.put("apppartner",appPartner.getCode().toString());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
             String jsessionId = UUIDUtil.createUUID32();
-            Res100705 res100705 = Res100705.builder().jsessionId(jsessionId).build();
+            Res100705 res100705 = Res100705.builder()
+                    .jsessionId(jsessionId)
+                    .apppartner(appPartner.getCode())
+                    .apppartnerDesc(appPartner.getDesc())
+                    .build();
 
             // 用户同意授权
             if (!"authdeny".equals(code)) {

@@ -46,6 +46,16 @@ public class Res100705 {
      * 手机号
      */
     private String phone;
+    /**
+     * 合作方编号
+     */
+    private Integer apppartner;
+    /**
+     * 合作方描述
+     */
+    private String apppartnerDesc;
+
+
 
 
     public Res100705(String jsessionId, String bindStatus) {

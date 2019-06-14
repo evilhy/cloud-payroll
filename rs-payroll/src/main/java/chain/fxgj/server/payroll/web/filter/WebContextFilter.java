@@ -1,7 +1,9 @@
 package chain.fxgj.server.payroll.web.filter;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
+import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,13 @@ public class WebContextFilter implements WebFilter, Ordered {
         }
         MDC.put(REQ, reqId);
         MDC.put(FxgjDBConstant.LOG_TOKEN, reqId);
+
+        String apppartner = exchange.getRequest().getHeaders().getFirst(PayrollConstants.APPPARTNER);
+
+        AppPartnerEnum appPartner =  AppPartnerEnum.valueOf(apppartner);
+        MDC.put(PayrollConstants.APPPARTNER, appPartner.getCode().toString());
+        MDC.put(PayrollConstants.APPPARTNER_DESC, appPartner.getDesc());
+
 
         StringBuffer logBuffer = new StringBuffer();
         ServerHttpRequest request = exchange.getRequest();
