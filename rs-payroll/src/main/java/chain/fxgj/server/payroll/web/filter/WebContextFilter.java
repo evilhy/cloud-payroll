@@ -44,7 +44,7 @@ public class WebContextFilter implements WebFilter, Ordered {
         MDC.put(FxgjDBConstant.LOG_TOKEN, reqId);
 
         String apppartner = exchange.getRequest().getHeaders().getFirst(PayrollConstants.APPPARTNER);
-        if (StringUtils.isNotBlank(apppartner)) {
+        if (StringUtils.isNotBlank(apppartner)&& !apppartner.equals("undefined")) {
             log.info("=====>apppartner=[{}]",apppartner);
             AppPartnerEnum appPartner  =  AppPartnerEnum.valueOf(AppPartnerEnum.class,apppartner.toUpperCase());
             MDC.put(PayrollConstants.APPPARTNER, appPartner.getCode().toString());
