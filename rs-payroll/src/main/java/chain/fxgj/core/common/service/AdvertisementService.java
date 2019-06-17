@@ -24,6 +24,6 @@ public interface AdvertisementService {
      * @param channelId
      * @return
      */
-    //@Cacheable(value = "advertisement", key = "'payroll:'.concat(#channelId).concat(#entId)")
+    @Cacheable(value = "advertisement", key = "'payroll:'.concat(#channelId).concat(#entId)")
     List<AdvertisingRotationDTO> rotation(int channelId, String entId);
 }
