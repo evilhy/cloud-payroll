@@ -59,7 +59,7 @@ public class AdvertisingRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
-            log.info("entId[{}]", principal.getEntId());
+            log.info("entId:[{}]", principal.getEntId());
             List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId, principal.getEntId());
             return advertisingRotationDTOS;
         }).subscribeOn(Schedulers.elastic());
