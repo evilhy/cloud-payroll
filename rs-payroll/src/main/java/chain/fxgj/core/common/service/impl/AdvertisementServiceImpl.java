@@ -4,10 +4,7 @@ import chain.fxgj.core.common.constant.DictEnums.*;
 import chain.fxgj.core.common.service.AdvertisementService;
 import chain.fxgj.core.jpa.dao.AdvertisingInfoDao;
 import chain.fxgj.core.jpa.dao.EntErpriseInfoDao;
-import chain.fxgj.core.jpa.model.AdvertisingInfo;
-import chain.fxgj.core.jpa.model.EntErpriseInfo;
-import chain.fxgj.core.jpa.model.QAdvertisingInfo;
-import chain.fxgj.core.jpa.model.QLiquidationVersionAdvertisingInfo;
+import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
@@ -66,19 +63,18 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public List<AdvertisingRotationDTO> rotation(int channelId, String entId) {
         /** 根据企业ID获取渠道银行、版本（目前仅获取 华夏银行——普通版——普通版） **/
-        EntErpriseInfo entErpriseInfo = entErpriseInfoDao.findById(entId).get();
+//        EntErpriseInfo entErpriseInfo = entErpriseInfoDao.findById(entId).get();
+//        if (null != entErpriseInfo){
+//            fundLiquidationEnum = entErpriseInfo.getLiquidation();
+//            versionsTypeEnum = entErpriseInfo.getVersion();
+//            versionsEnum = entErpriseInfo.getSubVersion();
+//        }
         FundLiquidationEnum fundLiquidationEnum = FundLiquidationEnum.HXB;
         VersionsTypeEnum versionsTypeEnum = VersionsTypeEnum.NORMAL;
         VersionsEnum versionsEnum = VersionsEnum.NORMAL;
-        if (null != entErpriseInfo){
-            fundLiquidationEnum = entErpriseInfo.getLiquidation();
-            versionsTypeEnum = entErpriseInfo.getVersion();
-            versionsEnum = entErpriseInfo.getSubVersion();
-        }
         log.info("fundLiquidationEnum:[{}]", fundLiquidationEnum.getDesc());
         log.info("versionsTypeEnum:[{}]", versionsTypeEnum.getDesc());
         log.info("versionsEnum:[{}]", versionsEnum.getDesc());
-
         QLiquidationVersionAdvertisingInfo qLiquidationVersionAdvertisingInfo = QLiquidationVersionAdvertisingInfo.liquidationVersionAdvertisingInfo;
         QAdvertisingInfo qAdvertisingInfo = QAdvertisingInfo.advertisingInfo;
         BooleanExpression booleanExpression = qAdvertisingInfo.delStatus.eq(DelStatusEnum.normal)
