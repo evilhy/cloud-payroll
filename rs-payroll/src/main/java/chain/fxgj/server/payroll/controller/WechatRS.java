@@ -120,13 +120,13 @@ public class WechatRS {
                                        @RequestParam("nonce") String nonce,
                                        @RequestParam(value = "id", required = true, defaultValue = "FXGJ") AppPartnerEnum id,
                                        @RequestBody String xml) {
-        MDC.put("apppartner_desc",id.getDesc());
-        MDC.put("appPartner",id.getCode().toString());
+        MDC.put("apppartnerdesc",id.getDesc());
+        MDC.put("apppartner",id.getCode().toString());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-
+            log.info("====>apppartnerdesc={},appPartner={}",MDC.get("apppartnerdesc"),MDC.get("apppartner"));
             String uuid32 = UUIDUtil.createUUID32();
             //验签
             //String echostrRet = iwechatFeignService.signature(id, signature, timestamp, nonce, uuid32);
