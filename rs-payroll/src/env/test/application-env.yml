@@ -61,7 +61,7 @@ management:
 
 # mongodb 日志记录
 logcss:
-  sysId: fxgj
+  sysId: rs-payroll
   activateMongodb: true
   pool-size: 2
   mongodb:
@@ -80,8 +80,8 @@ merchants:
       appsecret: 05f6b8b23b0decd0c6af48e9f59bfdb9
       #分组名称
       name: 中人联微信对接
-      #接入平台编号
-      merchantCode: 1
+      #接入平台编号  值是唯一 【取 AppPartnerEnum 枚举值】
+      merchantCode: ZRL
       #请求地扯
       url: http://www.baidu.com
       #重定向工资条地址
@@ -97,3 +97,6 @@ merchants:
       remarks:
          # 请求前端页面： https://wxp.cardpu.com/fx-payroll/#/token?accessToken=tww9WR8f
          # 请求后端接口获取token ：https://sitwx.cardpu.com/merchant/callback?accessToken=tww9WR8f
+      #查询 数据权限   【 取 FundLiquidationEnum  枚举值 】
+      dataAuths:
+        - HXB

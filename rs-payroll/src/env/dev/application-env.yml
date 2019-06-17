@@ -71,6 +71,7 @@ logcss:
   headerLogToken: logtoken
   headerSessionId: jsessionid
 
+
 merchants:
   merchant:
     # 分组id
@@ -94,6 +95,8 @@ merchants:
       paraRsaPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwofGjqSENb4lkQS3hkfAs95775WC9SrOnHZhTdjTJPn29G7y/Ex+9fluDnT1xuELcEtf1vbMSVQBFBdV8g2vqKCp25eeexxBZ8iBKGQ3PJPNCIh1SOD7tYV6iHKsjM3ZceS4r/yYPU07AD6EQC9hb1CmhpaEac3y6C0C5gXc0U9m5aSbWqt+ySSyYkhTajZSq5VhEgqvesgi50yx7Ks7iSktCe9kEte5xlWsF//RmPDIUlNYk5YdlnOx6cXQr0XOYEIlQ5GqUoNDAbLtABrKzyW+oNczG/WEEhBaI0YT3wZWhIfF/cRSV/NokvlQa3bZ8t3dkkBKxvIf+1Rzq2qNlQIDAQAB
       #备注说明
       remarks:
+         # 请求前端页面： https://wxp.cardpu.com/fx-payroll/#/token?accessToken=tww9WR8f
+         # 请求后端接口获取token ：https://sitwx.cardpu.com/merchant/callback?accessToken=tww9WR8f
       #查询 数据权限   【 取 FundLiquidationEnum  枚举值 】
       dataAuths:
         - HXB
