@@ -19,13 +19,15 @@
 - 前端修改
   ```
    【1】weixin/wxCallback/ RequestParam参数增加 appPartner ，后端提供给前端
-    
+   【2】weixin/wxCallback/ 此接口，增加  合作方编号 apppartner   合作方描述 apppartnerDesc
+   【3】前端 接收【2】返回的值，后续交易时，放入header中，
   ```
 - 公共报文头上增加  接入方
 
 - 根据接入方 判断员工的数据权限
 
 - logback.xml 增加 接入方打印
+
 - [todo] mogodb  增加 接入方打印
 
 
