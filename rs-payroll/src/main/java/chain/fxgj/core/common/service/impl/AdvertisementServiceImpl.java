@@ -75,7 +75,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             versionsTypeEnum = entErpriseInfo.getVersion();
             versionsEnum = entErpriseInfo.getSubVersion();
         }
-
+        log.info("fundLiquidationEnum:[{}]", fundLiquidationEnum);
 
         QLiquidationVersionAdvertisingInfo qLiquidationVersionAdvertisingInfo = QLiquidationVersionAdvertisingInfo.liquidationVersionAdvertisingInfo;
         QAdvertisingInfo qAdvertisingInfo = QAdvertisingInfo.advertisingInfo;
