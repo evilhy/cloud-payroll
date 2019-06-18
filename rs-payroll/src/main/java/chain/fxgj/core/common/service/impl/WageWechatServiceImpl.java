@@ -212,9 +212,12 @@ public class WageWechatServiceImpl implements WageWechatService {
         String employeeSid = employeeEncrytorService.encryptEmployeeId(employee.getEmployeeId());
         String idNumberEncry = employeeEncrytorService.encryptIdNumber(idNumber);  //身份证加密
 
-        BooleanExpression booleanExpression = qWageDetailInfo.idNumber.eq(idNumberEncry)
-                .and(qWageDetailInfo.groupId.eq(groupId))
+        BooleanExpression booleanExpression = qWageDetailInfo.employeeSid.eq(employeeSid)
                 .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES));
+
+//        BooleanExpression booleanExpression = qWageDetailInfo.idNumber.eq(idNumberEncry)
+//                .and(qWageDetailInfo.groupId.eq(groupId))
+//                .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES));
 
         if (null != type && type.equals("0")) {
             booleanExpression = booleanExpression.and(qWageDetailInfo.payStatus.eq(PayStatusEnum.SUCCESS));
