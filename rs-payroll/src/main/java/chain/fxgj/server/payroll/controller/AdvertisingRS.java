@@ -2,11 +2,10 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.service.AdvertisementService;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
-import chain.fxgj.server.payroll.web.UserPrincipal;
-import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,17 +56,17 @@ public class AdvertisingRS {
     @PermitAll
     public Mono<List<AdvertisingRotationDTO>> rotation(@RequestParam("channelId") Integer channelId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal principal = WebContext.getCurrentUser();
-        
-        String  apppartner = MDC.get(PayrollConstants.APPPARTNER);
-        AppPartnerEnum appPartner  =  AppPartnerEnum.values()[Integer.valueOf(apppartner)];
+        //根据合作方获取一行渠道
+        String apppartner = MDC.get(PayrollConstants.APPPARTNER);
+        AppPartnerEnum appPartner = AppPartnerEnum.values()[Integer.valueOf(apppartner)];
+        FundLiquidationEnum liquidation = appPartner.getLiquidation();
 
         return Mono.fromCallable(() -> {
-        MDC.setContextMap(mdcContext);
-        log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
-        log.info("entId:[{}]", principal.getEntId());
-        List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId, principal.getEntId());
-        return advertisingRotationDTOS;
-    }).subscribeOn(Schedulers.elastic());
-}
+            MDC.setContextMap(mdcContext);
+            log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
+            log.info("fundLiquidationEnum:[{}]", liquidation.toString());
+            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId, liquidation);
+            return advertisingRotationDTOS;
+        }).subscribeOn(Schedulers.elastic());
+    }
 }

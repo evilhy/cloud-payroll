@@ -1,5 +1,6 @@
 package chain.fxgj.core.common.service;
 
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,6 @@ public interface AdvertisementService {
      * @param channelId
      * @return
      */
-    @Cacheable(value = "advertisement", key = "'payroll:'.concat(#channelId).concat(#entId)")
-    List<AdvertisingRotationDTO> rotation(int channelId, String entId);
+    @Cacheable(value = "advertisement", key = "'payroll:'.concat(#channelId).concat(#fundLiquidationEnum)")
+    List<AdvertisingRotationDTO> rotation(int channelId, FundLiquidationEnum fundLiquidationEnum);
 }
