@@ -120,10 +120,13 @@ public class WageWechatServiceImpl implements WageWechatService {
             throw new ParamsIllegalException(ErrorConstant.Error0001.format("员工机构"));
         }
         String employeeSid = employeeEncrytorService.encryptEmployeeId(employee.getEmployeeId());
-        log.info("employeeSid={}", employeeSid);
+        String idNumberEncry = employeeEncrytorService.encryptIdNumber(idNumber);
+
+        log.info("employeeSid={},idNumber={}", employeeSid,idNumber);
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
-        BooleanExpression booleanExpression = qWageDetailInfo.employeeSid.eq(employeeSid)
+        BooleanExpression booleanExpression = qWageDetailInfo.idNumber.eq(idNumberEncry)
                 .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES));
+
         //员工方案对应的代发明细
         List<WageDetailInfo> wageDetailInfos = wageDetailInfoDao.selectFrom(qWageDetailInfo)
                 .where(booleanExpression.and(qWageDetailInfo.wageSheetId.eq(wageSheetId))).fetch();
