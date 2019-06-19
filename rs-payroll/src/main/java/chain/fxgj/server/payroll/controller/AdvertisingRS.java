@@ -1,7 +1,9 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.service.AdvertisementService;
+import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
@@ -56,6 +58,10 @@ public class AdvertisingRS {
     public Mono<List<AdvertisingRotationDTO>> rotation(@RequestParam("channelId") Integer channelId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
+        
+        String  apppartner = MDC.get(PayrollConstants.APPPARTNER);
+        AppPartnerEnum appPartner  =  AppPartnerEnum.values()[Integer.valueOf(apppartner)];
+
         return Mono.fromCallable(() -> {
         MDC.setContextMap(mdcContext);
         log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
