@@ -115,11 +115,16 @@ public class WageDetailDTO {
          * 默认回执时间(天)
          */
         Integer receiptDay;
+        /**
+         * 工资发放机构名
+         */
+        String grantName;
 
         public WageShowDTO(WageShowInfo wageShowInfo) {
             this.isShow0 = wageShowInfo.getIsShow0() == null ? null : wageShowInfo.getIsShow0().getCode();
             this.isReceipt = wageShowInfo.getIsReceipt() == null ? IsStatusEnum.YES.getCode() : wageShowInfo.getIsReceipt().getCode();
             this.receiptDay = wageShowInfo.getReceiptDay();
+            this.grantName=wageShowInfo.getGrantName();
         }
 
 

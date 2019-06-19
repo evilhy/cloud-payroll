@@ -15,7 +15,7 @@ public interface ManagerService {
     /**
      * 通知企业分配客户经理
      *
-     * @param distributeDTO
+     * @param entId
      */
-    void noticEnterprise(DistributeDTO distributeDTO);
+    void noticEnterprise(String entId);
 }

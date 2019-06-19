@@ -55,13 +55,14 @@ public class CustManagerRS {
      */
     @PostMapping("/distribute")
     @TrackLog
-    public Mono<Void> distribute(@RequestBody DistributeDTO distributeDTO) {
+    public Mono<Void> distribute() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String entId = currentUser.getEntId();
+        log.info("entId:[{}]",entId);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-
-            managerService.noticEnterprise(distributeDTO);
+            managerService.noticEnterprise(entId);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }

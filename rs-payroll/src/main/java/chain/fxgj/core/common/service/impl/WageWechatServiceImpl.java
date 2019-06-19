@@ -137,10 +137,13 @@ public class WageWechatServiceImpl implements WageWechatService {
             throw new ParamsIllegalException(ErrorConstant.Error0001.format("员工机构"));
         }
         String employeeSid = employeeEncrytorService.encryptEmployeeId(employee.getEmployeeId());
-        log.info("employeeSid={}", employeeSid);
+        String idNumberEncry = employeeEncrytorService.encryptIdNumber(idNumber);
+
+        log.info("employeeSid={},idNumber={}", employeeSid,idNumber);
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
-        BooleanExpression booleanExpression = qWageDetailInfo.employeeSid.eq(employeeSid)
+        BooleanExpression booleanExpression = qWageDetailInfo.idNumber.eq(idNumberEncry)
                 .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES));
+
         //员工方案对应的代发明细
         List<WageDetailInfo> wageDetailInfos = wageDetailInfoDao.selectFrom(qWageDetailInfo)
                 .where(booleanExpression.and(qWageDetailInfo.wageSheetId.eq(wageSheetId))).fetch();
@@ -227,8 +230,12 @@ public class WageWechatServiceImpl implements WageWechatService {
         //查询发放记录
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
         String employeeSid = employeeEncrytorService.encryptEmployeeId(employee.getEmployeeId());
-        BooleanExpression booleanExpression = qWageDetailInfo.employeeSid.eq(employeeSid)
+        String idNumberEncry = employeeEncrytorService.encryptIdNumber(idNumber);  //身份证加密
+
+        BooleanExpression booleanExpression = qWageDetailInfo.idNumber.eq(idNumberEncry)
+                .and(qWageDetailInfo.groupId.eq(groupId))
                 .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES));
+
         if (null != type && type.equals("0")) {
             booleanExpression = booleanExpression.and(qWageDetailInfo.payStatus.eq(PayStatusEnum.SUCCESS));
         }
