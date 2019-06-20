@@ -5,6 +5,7 @@ import chain.fxgj.core.common.constant.DictEnums.ProductStatusEnum;
 import chain.fxgj.core.jpa.model.BankProductInfo;
 import chain.fxgj.core.jpa.model.BankProductMark;
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ProductInfoDTO {
     /**
      * 用户id

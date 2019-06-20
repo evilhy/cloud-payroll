@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.dto.tfinance;
 
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class IntentRequestDTO {
     /**
      * 产品Id

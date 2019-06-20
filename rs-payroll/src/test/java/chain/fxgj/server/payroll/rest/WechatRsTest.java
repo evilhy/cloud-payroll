@@ -140,8 +140,8 @@ public class WechatRsTest {
     public void wxCallback() throws Exception {
 
         webTestClient.get()
-                .uri("/weixin/wxCallback?code={code}&wageSheetId={wageSheetId}&routeName={routeName}",
-                        "001xIfAi00Bffp1Ph7yi0Y9mAi0xIfAF", "2", "3")
+                .uri("/weixin/wxCallback?code={code}&wageSheetId={wageSheetId}&routeName={routeName}&=appPartner={appPartner}",
+                        "001xIfAi00Bffp1Ph7yi0Y9mAi0xIfAF", "2", "3","FXGJ")
                 .exchange()
                 .expectStatus()
                 .isOk()

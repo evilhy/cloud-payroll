@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.dto.request;
 
 import chain.fxgj.server.payroll.dto.response.BankCardGroup;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class UpdBankCardDTO {
     /**
      * 账号

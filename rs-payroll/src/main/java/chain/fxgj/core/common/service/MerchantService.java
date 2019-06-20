@@ -1,10 +1,13 @@
 package chain.fxgj.core.common.service;
 
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.jpa.model.EmployeeInfo;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public interface MerchantService {
 
@@ -41,7 +44,7 @@ public interface MerchantService {
      * @return
      */
     @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
-    UserPrincipal setWechatInfo(String jsessionId, EmployeeWechatInfo employeeWechatInfo) throws Exception;
+    UserPrincipal setWechatInfo(String jsessionId, EmployeeWechatInfo employeeWechatInfo, List<FundLiquidationEnum> dataAuths) throws Exception;
 
 
 }

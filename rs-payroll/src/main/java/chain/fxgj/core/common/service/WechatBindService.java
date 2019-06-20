@@ -4,6 +4,7 @@ import chain.fxgj.core.common.constant.DictEnums.EmployeeStatusEnum;
 import chain.fxgj.core.jpa.model.EmployeeCardLog;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +17,12 @@ public interface WechatBindService {
      * 获取员工企业
      *
      * @param idNumber
+     * @param principal
      * @return
      */
-    Res100701 getEntList(String idNumber);
+    Res100701 getEntList(String idNumber, UserPrincipal principal);
 
-    List<EmployeeListBean> getEntPhone(String idNumber);
+    List<EmployeeListBean> getEntPhone(String idNumber, UserPrincipal principal);
 
 
     /**
@@ -29,7 +31,7 @@ public interface WechatBindService {
      * @param idNumber
      * @return
      */
-    List<Res100708> empList(String idNumber);
+    List<Res100708> empList(String idNumber, UserPrincipal principal);
 
     /**
      * 机构发票
@@ -47,7 +49,7 @@ public interface WechatBindService {
      * @return
      */
     @Cacheable(cacheNames = "empInfos", key = "'getEntInfos:'.concat(#idNumber)")
-    List<EntInfoDTO> getEntInfos(String idNumber);
+    List<EntInfoDTO> getEntInfos(String idNumber, UserPrincipal userPrincipal);
 
 
     /**
@@ -57,7 +59,7 @@ public interface WechatBindService {
      * @param employeeStatusEnum
      * @return
      */
-    List<EntInfoDTO> getEntInfos(String idNumber, EmployeeStatusEnum[] employeeStatusEnum);
+    List<EntInfoDTO> getEntInfos(String idNumber, EmployeeStatusEnum[] employeeStatusEnum, UserPrincipal userPrincipal);
 
 
     /**
@@ -71,7 +73,7 @@ public interface WechatBindService {
      * @param idNumber
      * @return
      */
-    List<EmpEntDTO> empEntList(String idNumber);
+    List<EmpEntDTO> empEntList(String idNumber, UserPrincipal userPrincipal);
 
     /**
      * 银行卡操作记录

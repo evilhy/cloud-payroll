@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 /**
@@ -12,6 +13,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class EmployeeListBean {
     /**
      * 手机号码（发验证码用）

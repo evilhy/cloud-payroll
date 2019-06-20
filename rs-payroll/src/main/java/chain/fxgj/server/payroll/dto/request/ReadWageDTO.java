@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 /**
@@ -12,6 +13,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ReadWageDTO {
     /**
      * 工资方案id

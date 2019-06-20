@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.dto.response;
 
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 /**
@@ -13,6 +14,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Res100705 {
     /**
      * 是否绑定 1已绑定 0未绑定
@@ -44,6 +46,16 @@ public class Res100705 {
      * 手机号
      */
     private String phone;
+    /**
+     * 合作方编号
+     */
+    private Integer apppartner;
+    /**
+     * 合作方描述
+     */
+    private String apppartnerDesc;
+
+
 
 
     public Res100705(String jsessionId, String bindStatus) {

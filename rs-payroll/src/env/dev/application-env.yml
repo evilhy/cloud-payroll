@@ -44,7 +44,7 @@ fxgj:
 
 payroll:
   #调用inside地址
-  inside-url: http://127.0.0.1:7124/rest/
+  inside-url: http://127.0.0.1:8085/rest/
   #产品图片
   img-url: https://sitwxp.cardpu.com/
 
@@ -71,6 +71,7 @@ logcss:
   headerLogToken: logtoken
   headerSessionId: jsessionid
 
+
 merchants:
   merchant:
     # 分组id
@@ -79,8 +80,8 @@ merchants:
       appsecret: 05f6b8b23b0decd0c6af48e9f59bfdb9
       #分组名称
       name: 中人联微信对接
-      #接入平台编号
-      merchantCode: 1
+      #接入平台编号  值是唯一 【取 AppPartnerEnum 枚举值】
+      merchantCode: ZRL
       #请求地扯
       url: http://www.baidu.com
       #重定向工资条地址
@@ -94,4 +95,8 @@ merchants:
       paraRsaPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwofGjqSENb4lkQS3hkfAs95775WC9SrOnHZhTdjTJPn29G7y/Ex+9fluDnT1xuELcEtf1vbMSVQBFBdV8g2vqKCp25eeexxBZ8iBKGQ3PJPNCIh1SOD7tYV6iHKsjM3ZceS4r/yYPU07AD6EQC9hb1CmhpaEac3y6C0C5gXc0U9m5aSbWqt+ySSyYkhTajZSq5VhEgqvesgi50yx7Ks7iSktCe9kEte5xlWsF//RmPDIUlNYk5YdlnOx6cXQr0XOYEIlQ5GqUoNDAbLtABrKzyW+oNczG/WEEhBaI0YT3wZWhIfF/cRSV/NokvlQa3bZ8t3dkkBKxvIf+1Rzq2qNlQIDAQAB
       #备注说明
       remarks:
-
+         # 请求前端页面： https://wxp.cardpu.com/fx-payroll/#/token?accessToken=tww9WR8f
+         # 请求后端接口获取token ：https://sitwx.cardpu.com/merchant/callback?accessToken=tww9WR8f
+      #查询 数据权限   【 取 FundLiquidationEnum  枚举值 】
+      dataAuths:
+        - HXB

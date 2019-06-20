@@ -12,6 +12,7 @@ import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.EntInfoRes;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,7 +74,7 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
         String openId = eventDTO.getOpenId();
         QWechatFollowInfo qWechatFollowInfo = QWechatFollowInfo.wechatFollowInfo;
         WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.selectFrom(qWechatFollowInfo).where(qWechatFollowInfo.openId.eq(openId)).fetchFirst();
-//        WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.findFirstByOpenId(eventDTO.getOpenId());
+        //WechatFollowInfo wechatFollowInfo = wechatFollowInfoDao.findFirstByOpenId(eventDTO.getOpenId());
         if (wechatFollowInfo == null) {
             wechatFollowInfo = new WechatFollowInfo();
             wechatFollowInfo.setCrtDateTime(LocalDateTime.now());
@@ -94,7 +95,7 @@ public class PayRollAsyncServiceImpl implements PayRollAsyncService {
 
     @Override
     @Async
-    public Future<List<EntInfoDTO>> getGroups(String idNumber) {
-        return new AsyncResult<>(wechatBindService.getEntInfos(idNumber));
+    public Future<List<EntInfoDTO>> getGroups(String idNumber,UserPrincipal userPrincipal) {
+        return new AsyncResult<>(wechatBindService.getEntInfos(idNumber, userPrincipal));
     }
 }

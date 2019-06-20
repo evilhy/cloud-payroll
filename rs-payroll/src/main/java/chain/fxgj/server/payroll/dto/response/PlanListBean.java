@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class PlanListBean {
     /**
      * 方案ID

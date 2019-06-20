@@ -3,6 +3,7 @@ package chain.fxgj.core.common.service;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.EntInfoRes;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
@@ -28,5 +29,5 @@ public interface PayRollAsyncService {
     /**
      * 员工机构
      */
-    Future<List<EntInfoDTO>> getGroups(String idNumber);
+    Future<List<EntInfoDTO>> getGroups(String idNumber,UserPrincipal userPrincipal);
 }

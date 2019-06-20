@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.dto.base;
 
 import chain.css.exception.ErrorMsg;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -20,6 +21,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ErrorDTO {
     /**
      * http status

@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.service;
 
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.jpa.model.EmployeeInfo;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface EmployeeService {
      * @param idNumber
      * @return
      */
-    Future<EmployeeInfo> getEmployeeInfoOne(String idNumber);
+    Future<EmployeeInfo> getEmployeeInfoOne(String idNumber,List<FundLiquidationEnum> dataAuths);
 
 
     /**
@@ -27,6 +28,6 @@ public interface EmployeeService {
      * @param limit         每页数量
      * @return
      */
-    Future<List<EmployeeInfo>> getEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum, Long offset, Long limit);
+    Future<List<EmployeeInfo>> getEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum, Long offset, Long limit,List<FundLiquidationEnum> dataAuths);
 
 }

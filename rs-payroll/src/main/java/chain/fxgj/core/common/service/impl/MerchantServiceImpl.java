@@ -1,6 +1,7 @@
 package chain.fxgj.core.common.service.impl;
 
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.InsideService;
 import chain.fxgj.core.common.service.MerchantService;
@@ -105,7 +106,7 @@ public class MerchantServiceImpl implements MerchantService {
 
 
     @Override
-    public UserPrincipal setWechatInfo(String jsessionId, EmployeeWechatInfo employeeWechatInfo) throws Exception {
+    public UserPrincipal setWechatInfo(String jsessionId, EmployeeWechatInfo employeeWechatInfo, List<FundLiquidationEnum> dataAuths) throws Exception {
 
         String idNumber = employeeWechatInfo.getIdNumber();
 
@@ -115,8 +116,9 @@ public class MerchantServiceImpl implements MerchantService {
                 .nickname(employeeWechatInfo.getNickname())
                 .headimgurl(employeeWechatInfo.getHeadimgurl())
                 .idNumber(employeeWechatInfo.getIdNumber())
+                .appPartner(employeeWechatInfo.getAppPartner())
+                .dataAuths(dataAuths)
                 .build();
-
 
         EmployeeWechatInfo employeeWechat = this.findMerchant(employeeWechatInfo);
 
@@ -141,7 +143,7 @@ public class MerchantServiceImpl implements MerchantService {
         }
 
         //用户机构
-        List<EntInfoDTO> entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
+        List<EntInfoDTO> entInfoDTOS = payRollAsyncService.getGroups(idNumber, userPrincipal).get();
         userPrincipal.setEntInfoDTOS(entInfoDTOS);
         if (entInfoDTOS != null && entInfoDTOS.size() > 0
                 && entInfoDTOS.get(0).getGroupInfoList() != null && entInfoDTOS.get(0).getGroupInfoList().size() > 0) {
