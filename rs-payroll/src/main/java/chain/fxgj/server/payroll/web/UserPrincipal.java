@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.web;
 
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import lombok.*;
 
@@ -130,6 +131,10 @@ public class UserPrincipal implements Principal {
      * 用户所在企业列表
      */
     private List<EntInfoDTO> entInfoDTOS;
+    /**
+     * 数据权限
+     */
+    private List<FundLiquidationEnum>  dataAuths;
 
 
     public UserPrincipal(String name, String sessionId, LocalDateTime sessionTimeOut, String[] roles) {

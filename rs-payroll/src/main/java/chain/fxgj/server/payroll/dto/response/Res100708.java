@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.dto.response;
 
 import chain.fxgj.core.jpa.model.EmployeeCardInfo;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Res100708 {
     /**
      * 员工id

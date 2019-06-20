@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.dto.response;
 
 import chain.fxgj.core.jpa.model.EntGroupInvoiceInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 /**
@@ -13,6 +14,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class GroupInvoiceDTO {
     /**
      * 机构发票唯一标识

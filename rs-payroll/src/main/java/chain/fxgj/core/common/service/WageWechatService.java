@@ -1,6 +1,10 @@
 package chain.fxgj.core.common.service;
 
-import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
+import chain.fxgj.server.payroll.dto.response.Res100703;
+import chain.fxgj.server.payroll.dto.response.Res100712;
+import chain.fxgj.server.payroll.dto.response.WageDetailDTO;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,7 +21,7 @@ public interface WageWechatService {
      *
      * @return
      */
-    NewestWageLogDTO newGroupPushInfo(String idNumber);
+    NewestWageLogDTO newGroupPushInfo(String idNumber,UserPrincipal principal);
 
 
     /**
@@ -25,7 +29,7 @@ public interface WageWechatService {
      *
      * @return
      */
-    List<NewestWageLogDTO> groupList(String idNumber);
+    List<NewestWageLogDTO> groupList(String idNumber,UserPrincipal principal);
 
 
     /**
@@ -34,7 +38,7 @@ public interface WageWechatService {
      * @return
      */
     @Cacheable(cacheNames = "wechat", key = "'wageDetail:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
-    List<WageDetailDTO> getWageDetail(String idNumber, String groupId, String wageSheetId);
+    List<WageDetailDTO> getWageDetail(String idNumber, String groupId, String wageSheetId,UserPrincipal principal);
 
     /**
      * 走势
@@ -53,10 +57,10 @@ public interface WageWechatService {
      * @param year
      * @return
      */
-    Res100703 wageList(String idNumber, String groupId, String year, String type);
+    Res100703 wageList(String idNumber, String groupId, String year, String type,UserPrincipal principal);
 
     @Cacheable(cacheNames = "wechat", key = "'wageList:'.concat(#idNumber).concat(#groupId).concat(#year).concat(#type)")
-    Res100703 wageHistroyList(String idNumber, String groupId, String year, String type);
+    Res100703 wageHistroyList(String idNumber, String groupId, String year, String type,UserPrincipal principal);
 
     /**
      * 薪资年份

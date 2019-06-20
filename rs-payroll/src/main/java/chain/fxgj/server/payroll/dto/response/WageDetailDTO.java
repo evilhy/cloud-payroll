@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.dto.response;
 import chain.fxgj.core.jpa.model.WageDetailInfo;
 import chain.fxgj.core.jpa.model.WageShowInfo;
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class WageDetailDTO {
     /**
      * 工资条表头
@@ -113,11 +115,16 @@ public class WageDetailDTO {
          * 默认回执时间(天)
          */
         Integer receiptDay;
+        /**
+         * 工资发放机构名
+         */
+        String grantName;
 
         public WageShowDTO(WageShowInfo wageShowInfo) {
             this.isShow0 = wageShowInfo.getIsShow0() == null ? null : wageShowInfo.getIsShow0().getCode();
             this.isReceipt = wageShowInfo.getIsReceipt() == null ? IsStatusEnum.YES.getCode() : wageShowInfo.getIsReceipt().getCode();
             this.receiptDay = wageShowInfo.getReceiptDay();
+            this.grantName=wageShowInfo.getGrantName();
         }
 
 

@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.dto.ent;
 
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -31,6 +32,10 @@ public class EntInfoDTO {
      * 员工在职状态是否[在职]（ true[在职]   false ）
      */
     private Boolean empEntInservice;
+    /**
+     * 清算渠道（银行）
+     */
+    private FundLiquidationEnum liquidation;
     /**
      * 机构信息
      */

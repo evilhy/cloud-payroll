@@ -1,8 +1,10 @@
 package chain.fxgj.core.common.service.impl;
 
 import chain.css.exception.ParamsIllegalException;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.CardUpdStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
@@ -11,6 +13,7 @@ import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
+import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
@@ -18,6 +21,8 @@ import chain.fxgj.server.payroll.dto.request.WechatLoginDTO;
 import chain.fxgj.server.payroll.service.EmployeeService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -56,6 +62,68 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     EmployeeCardLogDao employeeCardLogDao;
     @Autowired
     EmployeeService employeeService;
+    @Autowired
+    MerchantsProperties merchantProperties;
+
+    /**
+     * 根据appid 查询工资条接入合作方信息
+     *
+     * @param appPartner 合作方id
+     */
+    private MerchantsProperties.Merchant getMerchant(AppPartnerEnum appPartner) {
+        Optional<MerchantsProperties.Merchant> qWechat = merchantProperties.getMerchant().stream()
+                .filter(item -> item.getMerchantCode().equals(appPartner)).findFirst();
+        MerchantsProperties.Merchant merchant = qWechat.orElse(null);
+        return merchant;
+    }
+
+    /**
+     * 查询 用户绑定信息
+     *
+     * @param idNumber
+     * @param appPartner
+     * @return
+     */
+    @Override
+    public EmployeeWechatInfo getEmployeeWechatInfo(String idNumber, AppPartnerEnum appPartner) {
+        return this.getEmployeeWechatInfo(null, idNumber, appPartner);
+    }
+
+
+    /**
+     * 查询 用户绑定信息
+     *
+     * @param openId
+     * @param idNumber
+     * @param appPartner
+     * @return
+     */
+    @Override
+    public EmployeeWechatInfo getEmployeeWechatInfo(String openId, String idNumber, AppPartnerEnum appPartner) {
+
+        QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
+
+        Predicate predicate = qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal);
+        if (StringUtils.isNotEmpty(idNumber)) {
+            //判断微信是否绑定
+            idNumber = idNumber.toUpperCase();  //证件号码 转成大写
+            String idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
+            log.info("====>加密后的身份证：{}", idNumberEncrytor);
+            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.idNumber.eq(idNumberEncrytor));
+        }
+        if (StringUtils.isNotEmpty(openId)) {
+            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.openId.eq(openId));
+        }
+        if (appPartner != null) {
+            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(appPartner));
+        }
+
+        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo)
+                .from(qEmployeeWechatInfo)
+                .where(predicate)
+                .fetchFirst();
+        return employeeWechatInfo;
+    }
 
     @Override
     public UserPrincipal getWechatInfo(String jsessionId) {
@@ -63,7 +131,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     }
 
     @Override
-    public UserPrincipal setWechatInfo(String jsessionId, String openId, String nickname, String headimgurl, String idNumber) throws Exception {
+    public UserPrincipal setWechatInfo(String jsessionId, String openId, String nickname, String headimgurl, String idNumber, AppPartnerEnum appPartner) throws Exception {
         UserPrincipal userPrincipal = UserPrincipal.builder()
                 .sessionId(jsessionId)
                 .openId(openId)
@@ -71,10 +139,18 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 .nickname(nickname)
                 .headimgurl(headimgurl)
                 .idNumber(idNumber)
+                .appPartner(appPartner)
                 .build();
 
-        //判断openId是否绑定
-        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.findFirstByOpenIdAndAndDelStatusEnum(openId, DelStatusEnum.normal);
+        //取可以访问的数据权限
+        MerchantsProperties.Merchant merchant = this.getMerchant(appPartner);
+        List<FundLiquidationEnum> dataAuths = null;
+        if (merchant != null) {
+            dataAuths = merchant.getDataAuths();
+        }
+        userPrincipal.setDataAuths(dataAuths);
+
+        EmployeeWechatInfo employeeWechatInfo = this.getEmployeeWechatInfo(openId, null, appPartner);
         if (employeeWechatInfo != null) {
             log.info("=====>员工信息不为空,{}");
             String idNumberEncrypt = employeeWechatInfo.getIdNumber();
@@ -97,11 +173,11 @@ public class EmpWechatServiceImpl implements EmpWechatService {
             wechatLoginDTO.setJsessionId(jsessionId);
             wechatLoginDTO.setNickname(nickname);
             wechatLoginDTO.setHeadimgurl(headimgurl);
-            insideService.login(openId, jsessionId, nickname, headimgurl);
+            insideService.login(openId, jsessionId, nickname, headimgurl, employeeWechatInfo.getId());
         }
 
         //用户机构
-        EmployeeInfo employeeInfo = employeeService.getEmployeeInfoOne(idNumber).get();
+        EmployeeInfo employeeInfo = employeeService.getEmployeeInfoOne(idNumber, dataAuths).get();
         if (employeeInfo != null) {
             userPrincipal.setName(employeeInfo.getEmployeeName());
             userPrincipal.setEntId(employeeInfo.getEntId());
@@ -111,15 +187,17 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     }
 
     @Override
-    public List<EmployeeDTO> getEmpList(String idNumber) {
+    public List<EmployeeDTO> getEmpList(String idNumber, UserPrincipal userPrincipal) {
         if (StringUtils.isEmpty(idNumber)) {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
         }
 
+        //数据权限
+        List<FundLiquidationEnum> dataAuths = userPrincipal.getDataAuths();
         List<EntInfoDTO> entInfoDTOS = new ArrayList<>();
         try {
             log.info("====>idNumber:[{}]", idNumber);
-            entInfoDTOS = payRollAsyncService.getGroups(idNumber).get();
+            entInfoDTOS = payRollAsyncService.getGroups(idNumber, userPrincipal).get();
             log.info("====>go on,entInfoDTOS.size()[{}]", entInfoDTOS.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -132,6 +210,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         List<EmployeeDTO> list = new ArrayList<>();
         log.info("====>entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
+
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {
                 LinkedList<EntInfoDTO.GroupInfo.EmployeeInfo> empList = groupInfo.getEmployeeInfoList();
                 for (int i = 0; i < empList.size(); i++) {
@@ -144,11 +223,26 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                     employeeDTO.setEntId(entInfoDTO.getEntId());
                     employeeDTO.setEntName(entInfoDTO.getEntName());
                     employeeDTO.setIdNumberStar(TransUtil.idNumberStar(idNumber));
-                    list.add(employeeDTO);
+                    employeeDTO.setLiquidation(entInfoDTO.getLiquidation());
+
+                    //
+                    if (dataAuths != null && dataAuths.size() > 0) {
+                        for (int j = 0; j < dataAuths.size(); j++) {
+                            FundLiquidationEnum fundLiquidationEnum = dataAuths.get(j);
+                            if (fundLiquidationEnum == employeeDTO.getLiquidation()) {
+                                list.add(employeeDTO);
+                            }
+                        }
+                    } else {
+                        list.add(employeeDTO);
+                    }
+
                     // }
                 }
             }
         }
+
+
         log.info("====>list.size()[{}]", list.size());
         return list;
     }

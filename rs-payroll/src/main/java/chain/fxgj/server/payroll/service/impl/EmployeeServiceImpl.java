@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.service.impl;
 
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.jpa.dao.EmployeeInfoDao;
 import chain.fxgj.core.jpa.model.EmployeeInfo;
 import chain.fxgj.core.jpa.model.QEmployeeInfo;
@@ -32,8 +33,8 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return
      */
     @Override
-    public Future<EmployeeInfo> getEmployeeInfoOne(String idNumber) {
-        List<EmployeeInfo> employeeInfoList = this.queryEmployeeInfos(idNumber, null, Long.valueOf(0), Long.valueOf(1));
+    public Future<EmployeeInfo> getEmployeeInfoOne(String idNumber,List<FundLiquidationEnum> dataAuths) {
+        List<EmployeeInfo> employeeInfoList = this.queryEmployeeInfos(idNumber, null, Long.valueOf(0), Long.valueOf(1),dataAuths);
         if (employeeInfoList != null && employeeInfoList.size() > 0) {
             return new AsyncResult<>(employeeInfoList.get(0));
         }
@@ -49,13 +50,13 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return
      */
     @Override
-    public Future<List<EmployeeInfo>> getEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum, Long offset, Long limit) {
-        List<EmployeeInfo> employeeInfoList = this.queryEmployeeInfos(idNumber, delStatusEnum, offset, limit);
+    public Future<List<EmployeeInfo>> getEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum, Long offset, Long limit,List<FundLiquidationEnum> dataAuths) {
+        List<EmployeeInfo> employeeInfoList = this.queryEmployeeInfos(idNumber, delStatusEnum, offset, limit,dataAuths);
         return new AsyncResult<>(employeeInfoList);
     }
 
 
-    private List<EmployeeInfo> queryEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum, Long offset, Long limit) {
+    private List<EmployeeInfo> queryEmployeeInfos(String idNumber, DelStatusEnum[] delStatusEnum, Long offset, Long limit,List<FundLiquidationEnum> dataAuths) {
         //查询员工信息
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         //查询条件
@@ -70,6 +71,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 predicate = ExpressionUtils.and(predicate, qEmployeeInfo.delStatusEnum.in(delStatusEnum));
             }
         }
+
+        //[3] 用户查询权限
+
         //删除状态
         OrderSpecifier orderDel = qEmployeeInfo.delStatusEnum.asc();
         //创建日期升序

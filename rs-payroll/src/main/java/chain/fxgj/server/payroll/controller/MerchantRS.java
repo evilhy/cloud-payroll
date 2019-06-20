@@ -2,7 +2,6 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
@@ -137,7 +136,8 @@ public class MerchantRS {
             employeeWechatInfo.setIdNumber(idNumber);
             employeeWechatInfo.setPhone(phone);
 
-            employeeWechatInfo.setAppPartner(AppPartnerEnum.values()[Integer.valueOf(merchant.getMerchantCode())]);
+            //employeeWechatInfo.setAppPartner(AppPartnerEnum.values()[Integer.valueOf(merchant.getMerchantCode())]);
+            employeeWechatInfo.setAppPartner(merchant.getMerchantCode());
 
             EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
             if (employeeWechat != null) {  //认证绑定信息表已经存在，则说明已经绑定成功
@@ -169,6 +169,7 @@ public class MerchantRS {
             String accessToken = UUIDUtil.createUUID8();
 
             String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + accessToken;
+            merchantDecrypt.setDataAuths(merchant.getDataAuths());
             String emp = JacksonUtil.objectToJson(merchantDecrypt);
             redisTemplate.opsForValue().set(redisKey, emp, PayrollConstants.MERCHANT_EXPIRESIN, TimeUnit.SECONDS);
 
@@ -238,7 +239,7 @@ public class MerchantRS {
             EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
             if (employeeWechat != null) {
                 log.info("用户信息存在！");
-                UserPrincipal userPrincipal = merchantService.setWechatInfo(jsessionId, employeeWechat);
+                UserPrincipal userPrincipal = merchantService.setWechatInfo(jsessionId, employeeWechat,merchantDecrypt.getDataAuths());
                 if (StringUtils.isNotBlank(userPrincipal.getIdNumber())) {
                     res100705.setBindStatus("1");
                     res100705.setIdNumber(userPrincipal.getIdNumberEncrytor());

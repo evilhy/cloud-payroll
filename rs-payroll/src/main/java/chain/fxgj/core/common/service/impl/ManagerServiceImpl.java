@@ -81,14 +81,8 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public void noticEnterprise(DistributeDTO distributeDTO) {
-        String groupId = distributeDTO.getGroupId();
-        EntGroupInfo entGroupInfo = entGroupInfoDao.findById(groupId).get();
-        if (entGroupInfo == null) {
-            throw new RuntimeException("机构信息不存在");
-        }
-        String entId = entGroupInfo.getEntId();
-        EntErpriseInfo entErpriseInfo = entErpriseInfoDao.findById(entId).get();
+    public void noticEnterprise(String entId) {
+        EntErpriseInfo entErpriseInfo = entErpriseInfoDao.findById(entId).orElse(null);
         if (entErpriseInfo == null) {
             throw new RuntimeException("企业信息不存在");
         }

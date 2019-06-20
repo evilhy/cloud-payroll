@@ -80,7 +80,7 @@ public class InsideServiceImpl implements InsideService {
     }
 
     @Override
-    public void bandWechat(String openId, String idNumber, String phone) {
+    public void bandWechat(String openId, String idNumber, String phone,AppPartnerEnum appPartner) {
         log.info("绑定信息openId:{},idNumber:{},phone:{}", openId, idNumber, phone);
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
 
@@ -101,14 +101,14 @@ public class InsideServiceImpl implements InsideService {
         employeeWechatInfo.setDelStatusEnum(DelStatusEnum.normal);
         employeeWechatInfo.setUpdDateTime(LocalDateTime.now());
         employeeWechatInfo.setQueryPwd(null);
-        employeeWechatInfo.setAppPartner(AppPartnerEnum.FXGJ);
+        employeeWechatInfo.setAppPartner(appPartner);
         log.info("开始插入！");
         employeeWechatInfoDao.save(employeeWechatInfo);
         log.info("插入完成");
     }
 
     @Override
-    public void bandWechatAndPhone(String openId, String idNumber, String phone, String pwd) {
+    public void bandWechatAndPhone(String openId, String idNumber, String phone, String pwd,AppPartnerEnum appPartner) {
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
         log.info("绑定信息openId:{},idNumber:{},phone:{}", openId, idNumber, phone);
         EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
@@ -126,6 +126,7 @@ public class InsideServiceImpl implements InsideService {
         employeeWechatInfo.setDelStatusEnum(DelStatusEnum.normal);
         employeeWechatInfo.setUpdDateTime(LocalDateTime.now());
         employeeWechatInfo.setQueryPwd(employeeEncrytorService.encryptPwd(pwd));
+        employeeWechatInfo.setAppPartner(appPartner);
         employeeWechatInfoDao.save(employeeWechatInfo);
 
         //更新手机号
@@ -156,14 +157,14 @@ public class InsideServiceImpl implements InsideService {
     }
 
     @Override
-    public void login(String openId, String jsessionId, String nickname, String headimgurl) {
+    public void login(String openId, String jsessionId, String nickname, String headimgurl,String id) {
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
         employeeWechatInfoDao.update(qEmployeeWechatInfo)
                 .set(qEmployeeWechatInfo.nickname, nickname)
                 .set(qEmployeeWechatInfo.headimgurl, headimgurl)
                 .set(qEmployeeWechatInfo.jsessionId, jsessionId)
                 .set(qEmployeeWechatInfo.updDateTime, LocalDateTime.now())
-                .where(qEmployeeWechatInfo.openId.eq(openId).and(qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal))
+                .where(qEmployeeWechatInfo.id.eq(id)
                 ).execute();
     }
 

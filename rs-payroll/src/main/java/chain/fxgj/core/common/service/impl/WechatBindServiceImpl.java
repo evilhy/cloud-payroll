@@ -13,6 +13,7 @@ import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.Tuple;
@@ -55,7 +56,6 @@ public class WechatBindServiceImpl implements WechatBindService {
     @Autowired
     WechatBindService wechatBindService;
 
-
     private static ObjectMapper mapper = new ObjectMapper();
 
     /**
@@ -65,42 +65,41 @@ public class WechatBindServiceImpl implements WechatBindService {
      * @return
      */
     @Override
-    public Res100701 getEntList(String idNumber) {
+    public Res100701 getEntList(String idNumber, UserPrincipal principal) {
         Res100701 res100701 = Res100701.builder().build();
 
-        String bindStatus = res100701.getBindStatus();
-
-        //判断微信是否绑定
-        idNumber = idNumber.toUpperCase() ;  //证件号码 转成大写
-        String  idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
-        log.info("====>加密后的身份证：{}", idNumberEncrytor);
-
-        QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
-        Predicate predicate = qEmployeeWechatInfo.idNumber.eq(idNumberEncrytor);
-        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.delStatusEnum.eq(DelStatusEnum.normal));
-        predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(AppPartnerEnum.FXGJ));
-        EmployeeWechatInfo employeeWechatInfo = employeeWechatInfoDao.select(qEmployeeWechatInfo)
-                .from(qEmployeeWechatInfo)
-                .where(predicate)
-                .fetchFirst();
+        EmployeeWechatInfo employeeWechatInfo = empWechatService.getEmployeeWechatInfo(idNumber, principal.getAppPartner());
         if (employeeWechatInfo != null) {
-            bindStatus = "1";
-        } else if (bindStatus.equals("0")) {
-            res100701.setEmployeeList(this.getEntPhone(idNumber));
+            res100701.setBindStatus("1");
+        } else {   //是否绑定 1已绑定 0未绑定
+            res100701.setEmployeeList(this.getEntPhone(idNumber, principal));
         }
-        res100701.setBindStatus(bindStatus);
         return res100701;
     }
 
     @Override
-    public List<EmployeeListBean> getEntPhone(String idNumber) {
+    public List<EmployeeListBean> getEntPhone(String idNumber, UserPrincipal userPrincipal) {
+        List<FundLiquidationEnum> list = userPrincipal.getDataAuths();
+
         //查询员工信息
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         QEntErpriseInfo qEntErpriseInfo = QEntErpriseInfo.entErpriseInfo;
+
+        Predicate qEntpredicate = qEntErpriseInfo.id.eq(qEmployeeInfo.entId);
+        if (list != null && list.size() > 0) {
+            if (list.size() == 0) {
+                qEntpredicate = ExpressionUtils.and(qEntpredicate, qEntErpriseInfo.liquidation.eq(list.get(0)));
+            } else {
+                qEntpredicate = ExpressionUtils.and(qEntpredicate, qEntErpriseInfo.liquidation.in(list));
+            }
+        }
+
         List<Tuple> tuples = employeeInfoDao.select(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .from(qEmployeeInfo)
-                .leftJoin(qEntErpriseInfo).on(qEntErpriseInfo.id.eq(qEmployeeInfo.entId))
-                .where(qEmployeeInfo.idNumber.eq(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .leftJoin(qEntErpriseInfo).on(qEntpredicate)
+                .where(qEmployeeInfo.idNumber.eq(idNumber)
+                        .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))
+                )
                 .groupBy(qEmployeeInfo.employeeName, qEmployeeInfo.idNumber, qEmployeeInfo.phone, qEntErpriseInfo.id, qEntErpriseInfo.entName)
                 .fetch();
 
@@ -129,9 +128,9 @@ public class WechatBindServiceImpl implements WechatBindService {
      * @return
      */
     @Override
-    public List<Res100708> empList(String idNumber) {
+    public List<Res100708> empList(String idNumber, UserPrincipal principal) {
 
-        List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber);
+        List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber, principal);
 
         List<Res100708> employeeList = new ArrayList<>();
         for (EmployeeDTO employeeDTO : employeeDTOList) {
@@ -211,8 +210,8 @@ public class WechatBindServiceImpl implements WechatBindService {
      * @return
      */
     @Override
-    public List<EntInfoDTO> getEntInfos(String idNumber) {
-        return this.getEntInfos(idNumber, null);
+    public List<EntInfoDTO> getEntInfos(String idNumber, UserPrincipal userPrincipal) {
+        return this.getEntInfos(idNumber, null, userPrincipal);
     }
 
 
@@ -224,10 +223,12 @@ public class WechatBindServiceImpl implements WechatBindService {
      * @return
      */
     @Override
-    public List<EntInfoDTO> getEntInfos(String idNumber, EmployeeStatusEnum[] employeeStatusEnum) {
-        long startTime =  System.currentTimeMillis();
-        log.info("====>开始时间=【{}】，根据身份证{}，查询 企业列表(正常、已删除)",startTime,idNumber);
+    public List<EntInfoDTO> getEntInfos(String idNumber, EmployeeStatusEnum[] employeeStatusEnum, UserPrincipal userPrincipal) {
+        long startTime = System.currentTimeMillis();
+        log.info("====>开始时间=【{}】，根据身份证{}，查询 企业列表(正常、已删除)", startTime, idNumber);
         String alldata_json = null; //map转json
+
+        List<FundLiquidationEnum> dataAuths = userPrincipal.getDataAuths();
 
         //查询员工信息
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
@@ -313,6 +314,7 @@ public class WechatBindServiceImpl implements WechatBindService {
                     .entId(entId)
                     .entName(entErpriseInfo.getEntName())
                     .shortEntName(entErpriseInfo.getShortEntName())
+                    .liquidation(entErpriseInfo.getLiquidation())
                     .build();
 
             LinkedList<EntInfoDTO.GroupInfo> groupInfoList = entInfoDTO.getGroupInfoList();
@@ -362,9 +364,19 @@ public class WechatBindServiceImpl implements WechatBindService {
                 }
             }
             entInfoDTO.setGroupInfoList(groupInfoList);
-            entInfoDTOList.add(entInfoDTO);
+
+            if (dataAuths != null && dataAuths.size() > 0) {
+                for (int j = 0; j < dataAuths.size(); j++) {
+                    FundLiquidationEnum fundLiquidationEnum = dataAuths.get(j);
+                    if (fundLiquidationEnum == entInfoDTO.getLiquidation()) {
+                        entInfoDTOList.add(entInfoDTO);
+                    }
+                }
+            } else {
+                entInfoDTOList.add(entInfoDTO);
+            }
         }
-        log.info("====>结束时间=【{}】,正常、已删除员工",(System.currentTimeMillis() - startTime));
+        log.info("====>结束时间=【{}】,正常、已删除员工", (System.currentTimeMillis() - startTime));
 
         return entInfoDTOList;
     }
@@ -395,9 +407,9 @@ public class WechatBindServiceImpl implements WechatBindService {
     }
 
     @Override
-    public List<EmpEntDTO> empEntList(String idNumber) {
+    public List<EmpEntDTO> empEntList(String idNumber, UserPrincipal userPrincipal) {
 
-        List<EntInfoDTO> entInfoDTOS = wechatBindService.getEntInfos(idNumber);
+        List<EntInfoDTO> entInfoDTOS = wechatBindService.getEntInfos(idNumber, userPrincipal);
         List<EmpEntDTO> list = new ArrayList<>();
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
             EmpEntDTO empEntDTO = new EmpEntDTO();
@@ -558,11 +570,11 @@ public class WechatBindServiceImpl implements WechatBindService {
                 }
             }
             if (has) {
-                EntUserDTO user = new EntUserDTO();
-                user.setName(userInfo.getUserName());
-                user.setPhone(userInfo.getPhone());
-                user.setPosition(userInfo.getPosition().getDesc());
-
+                EntUserDTO user = EntUserDTO.builder()
+                        .name(userInfo.getUserName())
+                        .phone(userInfo.getPhone())
+                        .position(userInfo.getPosition().getDesc())
+                        .build();
                 userInfos.add(user);
             }
         }

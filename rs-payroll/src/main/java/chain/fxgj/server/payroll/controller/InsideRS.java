@@ -11,6 +11,7 @@ import chain.fxgj.core.common.service.*;
 import chain.fxgj.core.jpa.model.CardbinInfo;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.response.Res100302;
+import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
@@ -142,10 +143,10 @@ public class InsideRS {
             //this.checkPhoneCode(req100702.getPhone(), req100702.getCode());
             callInsideService.checkPhoneCode(req100702.getPhone(), req100702.getCode());
             //请求绑定
-            insideService.bandWechat(openId, idNumber, req100702.getPhone());
+            insideService.bandWechat(openId, idNumber, req100702.getPhone(),userPrincipal.getAppPartner());
             //绑定成功后确认登录
             idNumber = employeeEncrytorService.decryptIdNumber(req100702.getIdNumber());
-            empWechatService.setWechatInfo(sessionId, openId, userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), idNumber);
+            empWechatService.setWechatInfo(sessionId, openId, userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), idNumber,userPrincipal.getAppPartner());
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -178,9 +179,9 @@ public class InsideRS {
             callInsideService.checkPhoneCode(req100701.getPhone(), req100701.getCode());
 
             //请求管家绑定
-            insideService.bandWechatAndPhone(openId, idNumber, req100701.getPhone(), req100701.getPwd());
+            insideService.bandWechatAndPhone(openId, idNumber, req100701.getPhone(), req100701.getPwd(),userPrincipal.getAppPartner());
             //绑定成功后确认登录
-            empWechatService.setWechatInfo(sessionId, openId, userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), idNumber);
+            empWechatService.setWechatInfo(sessionId, openId, userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), idNumber, userPrincipal.getAppPartner());
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -217,7 +218,7 @@ public class InsideRS {
 
             insideService.setPwd(setPwdDTO.getWechatId(), pwd);
 
-            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(), userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), userPrincipal.getIdNumber());
+            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(), userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), userPrincipal.getIdNumber(),userPrincipal.getAppPartner());
 
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
@@ -293,7 +294,7 @@ public class InsideRS {
             wechatBindService.checkPhone(userPrincipal.getIdNumber(), reqPhone.getPhone());
 
             insideService.updPhone(userPrincipal.getWechatId(), userPrincipal.getIdNumber(), reqPhone.getPhone());
-            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(), userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), userPrincipal.getIdNumber());
+            empWechatService.setWechatInfo(userPrincipal.getSessionId(), userPrincipal.getOpenId(), userPrincipal.getNickname(), userPrincipal.getHeadimgurl(), userPrincipal.getIdNumber(),userPrincipal.getAppPartner());
 
             return null;
         }).subscribeOn(Schedulers.elastic()).then();

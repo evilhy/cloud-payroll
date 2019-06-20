@@ -3,10 +3,12 @@ package chain.fxgj.server.payroll.dto.merchant;
 import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.CertTypeEnum;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.util.Sha1;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.DigestException;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * 工资条  对外输出接口
@@ -27,6 +30,7 @@ import java.util.LinkedHashMap;
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class MerchantDTO {
     /**
      * 客户姓名
@@ -60,6 +64,12 @@ public class MerchantDTO {
      * 合作商平台标识
      */
     private AppPartnerEnum appPartner;
+    /**
+     * 数据权限
+     */
+    private List<FundLiquidationEnum> dataAuths;
+
+
 
     public static MerchantDTO decrypt(MerchantDTO merchantDTO, String decrypt) {
         MerchantDTO merchant = null;

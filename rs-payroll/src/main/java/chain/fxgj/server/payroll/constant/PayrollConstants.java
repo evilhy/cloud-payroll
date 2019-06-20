@@ -18,6 +18,8 @@ public class PayrollConstants {
     public final static String SORT_FIELD = "sort-field";    //排序字段名
     public final static String DIRECTION = "direction";    //排序方向：DESC-倒序，ASC-正序。默认为ASC
     public final static String PLAT_ID = "plat-id";    //平台id(EnumPlatform)
+    public final static String APPPARTNER = "apppartner";
+    public final static String APPPARTNER_DESC = "apppartnerdesc";
 
     /**
      * 凭证超时时间   默认值：600

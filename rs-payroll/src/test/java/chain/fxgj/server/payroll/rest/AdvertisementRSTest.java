@@ -1,6 +1,8 @@
 package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.core.common.service.WechatBindService;
+import chain.fxgj.server.payroll.JavaDocReader;
+import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -18,6 +20,10 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Duration;
 
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParameters;
+import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
 
 /**
@@ -60,16 +66,13 @@ public class AdvertisementRSTest extends BaseRSTest {
     }
 
     @Test
-    public void rotation() throws Exception {
-//        webTestClient.get().uri("/advertising/rotation?channelId={channelId}", "0")
-//                .exchange().expectStatus().isOk()
-//                .expectBody()
-//                .consumeWith(document("advertising_rotation",
-//                        relaxedRequestParameters(parameterWithName("channelId").description("渠道id(0 放薪管家web,1 放薪经理 2 微信工资条 3 放薪虎符)")),
-//                        relaxedResponseFields(JavaDocReader.javaDoc(AdvertisingRotationDTO.class))));
-
-
-        wechatBindService.getEntInfos("420625198410100050");
+    public void advertisingRotation() throws Exception {
+        webTestClient.get().uri("/advertising/rotation?channelId={channelId}", "2")
+                .exchange().expectStatus().isOk()
+                .expectBody()
+                .consumeWith(document("advertising_rotation",
+                        relaxedRequestParameters(parameterWithName("channelId").description("发布渠道(0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)")),
+                        relaxedResponseFields(JavaDocReader.javaDoc(AdvertisingRotationDTO.class))));//出参对象描述
     }
 
 
