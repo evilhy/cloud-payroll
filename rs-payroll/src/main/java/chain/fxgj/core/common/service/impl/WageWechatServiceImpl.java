@@ -89,12 +89,15 @@ public class WageWechatServiceImpl implements WageWechatService {
         for (EmployeeDTO employeeDTO : employeeDTOS) {
             String employeeId1 = employeeDTO.getEmployeeId();
             String employeeId = employeeEncrytorService.encryptEmployeeId(employeeId1);  //加密后
+            String idNumberEncry = employeeEncrytorService.encryptIdNumber(idNumber);  //加密后
+
             log.info("====>employeeId: 加密前【{}】，加密后【{}】", employeeId1,employeeId);
 
             //根据最新的代发记录
             WageDetailInfo wageDetailInfo = wageDetailInfoDao.selectFrom(qWageDetailInfo)
-                    .where(qWageDetailInfo.employeeSid.eq(employeeId)
+                    .where(//qWageDetailInfo.employeeSid.eq(employeeId)
                             //isContStatus字段没用，所以注释掉
+                            qWageDetailInfo.idNumber.eq(idNumberEncry)
                             .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES)))
                     .orderBy(qWageDetailInfo.cntDateTime.desc())
                     .fetchFirst();
