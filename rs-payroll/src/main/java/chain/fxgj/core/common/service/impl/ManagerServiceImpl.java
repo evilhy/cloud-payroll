@@ -46,22 +46,17 @@ public class ManagerServiceImpl implements ManagerService {
         if (entErpriseInfo == null) {
             throw new RuntimeException("未获取到该员工所在的企业信息");
         }
-        String officer = entErpriseInfo.getOfficer();
-        String branch = entErpriseInfo.getBranch();
-        if (StringUtils.isBlank(officer) || StringUtils.isBlank(branch)) {
-            logger.info("==>企业没有关联客户经理");
+        String custManagerId = entErpriseInfo.getCustManagerId();
+        if (StringUtils.isBlank(custManagerId)) {
+            logger.info("==>企业没有关联客户经理，企业的客户经理id为空");
             return managerInfoDTO;
         }
-        ManagerInfo managerInfo = new ManagerInfo();
-        managerInfo.setOfficer(officer);
-        managerInfo.setSubBranchNo(branch);
-        managerInfo.setCustStatus(CustStatusEnum.NORMAL);
-        List<ManagerInfo> managerInfoList = managerInfoDao.findAll(Example.of(managerInfo));
-        if (managerInfoList == null || managerInfoList.size() == 0) {
-            logger.info("==>企业没有关联客户经理");
+        ManagerInfo info = managerInfoDao.findById(custManagerId).get();
+        CustStatusEnum custStatus = info.getCustStatus();
+        if (!custStatus.equals(CustStatusEnum.NORMAL)) {
+            logger.info("==>客户经理状态不正常");
             return managerInfoDTO;
         }
-        ManagerInfo info = managerInfoList.get(0);
         managerInfoDTO.setOfficer(info.getOfficer());
         managerInfoDTO.setAvatarUrl(info.getAvatarUrl());
         managerInfoDTO.setBranchOrgName(info.getBranchName());
