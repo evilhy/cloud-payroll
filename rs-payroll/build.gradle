@@ -1,5 +1,7 @@
 apply plugin: 'org.asciidoctor.convert'
 apply plugin: "com.ewerk.gradle.plugins.querydsl"
+apply plugin: 'eclipse'
+apply plugin: 'idea'
 
 querydsl {
     springDataMongo = true
@@ -24,8 +26,11 @@ applicationDefaultJvmArgs = [
 ]
 sourceSets {
     main {
+        java {
+            srcDirs += file(querydsl.querydslSourcesDir)
+        }
         resources {
-            srcDirs = ["src/main/resources", "src/env/$env", "$buildDir/generated/source/apt/main"]
+            srcDirs = ["src/main/resources", "src/env/$env"]
         }
     }
 }
@@ -104,6 +109,10 @@ dependencies {
 //    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
     //引入微信包
 //    compile('cloud.outside:wechat-client:1.0.8')
+    
+    compile("com.querydsl:querydsl-core:4.1.4")
+    compile("com.querydsl:querydsl-jpa:4.1.4")
+    compile("com.querydsl:querydsl-apt:4.1.4")
 }
 
 test {
