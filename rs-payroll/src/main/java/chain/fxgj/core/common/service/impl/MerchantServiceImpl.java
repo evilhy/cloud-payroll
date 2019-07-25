@@ -3,7 +3,6 @@ package chain.fxgj.core.common.service.impl;
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
-import chain.fxgj.core.common.service.InsideService;
 import chain.fxgj.core.common.service.MerchantService;
 import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.jpa.dao.EmployeeInfoDao;
@@ -36,8 +35,6 @@ public class MerchantServiceImpl implements MerchantService {
     EmployeeEncrytorService employeeEncrytorService;
     @Autowired
     PayRollAsyncService payRollAsyncService;
-    @Autowired
-    InsideService insideService;
 
 
     /**

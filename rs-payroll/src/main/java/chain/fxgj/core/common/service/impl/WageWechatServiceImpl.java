@@ -33,12 +33,6 @@ public class WageWechatServiceImpl implements WageWechatService {
     WageDetailInfoDao wageDetailInfoDao;
     @Autowired
     WageSheetInfoDao wageSheetInfoDao;
-    @Autowired
-    EntErpriseInfoDao entErpriseInfoDao;
-    @Autowired
-    EntGroupInfoDao entGroupInfoDao;
-    @Autowired
-    EmployeeInfoDao employeeInfoDao;
 
     @Autowired
     EmployeeEncrytorService employeeEncrytorService;

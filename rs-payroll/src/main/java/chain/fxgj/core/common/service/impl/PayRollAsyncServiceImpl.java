@@ -1,12 +1,10 @@
 package chain.fxgj.core.common.service.impl;
 
-import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.EnterpriseStatusEnum;
 import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.common.service.WechatBindService;
 import chain.fxgj.core.jpa.dao.EmployeeInfoDao;
-import chain.fxgj.core.jpa.dao.MsgModelInfoDao;
 import chain.fxgj.core.jpa.dao.WechatFollowInfoDao;
 import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.dto.EventDTO;
@@ -15,12 +13,10 @@ import chain.fxgj.server.payroll.dto.response.EntInfoRes;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,22 +31,11 @@ import java.util.concurrent.Future;
 public class PayRollAsyncServiceImpl implements PayRollAsyncService {
 
     @Autowired
-    @Qualifier("wechatClient")
-    Client wechatClient;
-    @Autowired
-    @Qualifier("insideClient")
-    Client insideClient;
-
-    @Autowired
-    private PayrollProperties payrollProperties;
-    @Autowired
     EmployeeInfoDao employeeInfoDao;
     @Autowired
     WechatBindService wechatBindService;
     @Autowired
     WechatFollowInfoDao wechatFollowInfoDao;
-    @Autowired
-    MsgModelInfoDao msgModelInfoDao;
 
     @Override
     @Async

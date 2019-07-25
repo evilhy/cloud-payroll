@@ -27,8 +27,6 @@ public class ManagerServiceImpl implements ManagerService {
     @Autowired
     private EntErpriseInfoDao entErpriseInfoDao;
     @Autowired
-    private EntGroupInfoDao entGroupInfoDao;
-    @Autowired
     private EntNoneManagerDao entNoneManagerDao;
 
     @Override

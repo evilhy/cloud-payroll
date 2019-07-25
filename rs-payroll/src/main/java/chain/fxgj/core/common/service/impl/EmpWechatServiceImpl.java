@@ -11,7 +11,10 @@ import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.InsideService;
 import chain.fxgj.core.common.service.PayRollAsyncService;
 import chain.fxgj.core.common.util.TransUtil;
-import chain.fxgj.core.jpa.dao.*;
+import chain.fxgj.core.jpa.dao.CardbinInfoDao;
+import chain.fxgj.core.jpa.dao.EmployeeCardInfoDao;
+import chain.fxgj.core.jpa.dao.EmployeeCardLogDao;
+import chain.fxgj.core.jpa.dao.EmployeeWechatInfoDao;
 import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
@@ -28,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.client.Client;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -45,17 +47,11 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     @Autowired
     EmployeeEncrytorService employeeEncrytorService;
     @Autowired
-    EmployeeInfoDao employeeInfoDao;
-    @Autowired
-    EntErpriseInfoDao entErpriseInfoDao;
-    @Autowired
     CardbinInfoDao cardbinInfoDao;
     @Autowired
     EmployeeCardInfoDao employeeCardInfoDao;
     @Autowired
     InsideService insideService;
-    @Autowired
-    Client wechatClient;
     @Autowired
     PayRollAsyncService payRollAsyncService;
     @Autowired
