@@ -2,7 +2,6 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.service.ManagerService;
-import chain.fxgj.server.payroll.dto.request.DistributeDTO;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;

@@ -1,6 +1,5 @@
 package chain.fxgj.core.common.service;
 
-import chain.fxgj.server.payroll.dto.request.DistributeDTO;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
 
 public interface ManagerService {
