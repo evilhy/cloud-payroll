@@ -37,11 +37,15 @@ public class WebContextFilter implements WebFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
         String reqId = exchange.getRequest().getId();
-        if (StringUtils.isBlank(reqId)) {
-            reqId = UUIDUtil.createUUID24();
+        String logToken = exchange.getRequest().getHeaders().getFirst("log-token");
+        if (StringUtils.isBlank(logToken)) {
+            log.info("====>logToken={}",logToken);
+            reqId = UUIDUtil.createUUID8();
+            logToken = UUIDUtil.createUUID8();
+
         }
         MDC.put(REQ, reqId);
-        MDC.put(FxgjDBConstant.LOG_TOKEN, reqId);
+        MDC.put(FxgjDBConstant.LOG_TOKEN, logToken);
 
         String apppartner = exchange.getRequest().getHeaders().getFirst(PayrollConstants.APPPARTNER);
         if (StringUtils.isNotBlank(apppartner)&& !apppartner.equals("undefined")) {
