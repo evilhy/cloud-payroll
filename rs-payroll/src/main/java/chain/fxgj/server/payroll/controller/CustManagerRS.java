@@ -18,7 +18,6 @@ import java.util.Map;
 /**
  * 客户经理
  */
-//@CrossOrigin
 @RestController
 @Validated
 @RequestMapping("/manager")

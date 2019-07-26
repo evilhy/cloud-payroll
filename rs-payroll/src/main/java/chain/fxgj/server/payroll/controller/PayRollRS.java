@@ -35,7 +35,6 @@ import java.util.Map;
 /**
  * 工资条
  */
-//@CrossOrigin
 @RestController
 @Validated
 @RequestMapping(value = "/roll")

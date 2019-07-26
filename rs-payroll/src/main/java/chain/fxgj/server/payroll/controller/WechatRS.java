@@ -38,7 +38,6 @@ import java.util.Map;
 /**
  * 微信通讯
  */
-//@CrossOrigin
 @RestController
 @Validated
 @RequestMapping("/weixin")

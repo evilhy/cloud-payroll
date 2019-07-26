@@ -13,7 +13,6 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.Map;
 
-//@CrossOrigin
 @RestController
 @Validated
 @RequestMapping(value = "/msgmode")

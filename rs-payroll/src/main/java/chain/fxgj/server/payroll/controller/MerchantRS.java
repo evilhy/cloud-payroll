@@ -39,7 +39,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * 工资条  对外输出接口
  */
-//@CrossOrigin
 @RestController
 @Validated
 @RequestMapping(value = "/merchant")
