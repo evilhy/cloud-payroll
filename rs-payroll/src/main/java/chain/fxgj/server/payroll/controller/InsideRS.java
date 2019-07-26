@@ -26,7 +26,7 @@ import reactor.core.scheduler.Schedulers;
 import javax.annotation.security.PermitAll;
 import java.util.Map;
 
-@CrossOrigin
+//@CrossOrigin
 @RestController
 @Validated
 @RequestMapping("/inside")

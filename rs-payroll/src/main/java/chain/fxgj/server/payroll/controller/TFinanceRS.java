@@ -44,7 +44,7 @@ import java.util.Map;
 /**
  * 同事理财团
  */
-@CrossOrigin
+//@CrossOrigin
 @RestController
 @Validated
 @RequestMapping("/tfinance")
