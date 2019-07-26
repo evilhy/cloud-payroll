@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.reactive.CorsUtils;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -16,7 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Slf4j
-//@Component
+@Component
 public class CorsFilter implements WebFilter, Ordered {
     private static final String MAX_AGE = "18000L";
 

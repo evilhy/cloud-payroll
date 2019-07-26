@@ -31,6 +31,26 @@
 - [todo] mogodb  增加 接入方打印
 
 
+修改前：
+- https://sitwx.cardpu.com/weixin/signature   1234567890
+
+- sitwxp.cardpu.com
+
+- sitwxp.cardpu.com
+
+修改后：
+ 
+ 接口配置信息
+ 
+ - https://sitgateway.cardpu.com/payroll/weixin/signature   1234567890
+ 
+ JS接口安全域名
+ 
+ - sitgateway.cardpu.com
+ 
+ OAuth2.0网页授权
+
+ - sitgateway.cardpu.com
 
 #### 2019年06月20日版本
 ##### 上线说明
