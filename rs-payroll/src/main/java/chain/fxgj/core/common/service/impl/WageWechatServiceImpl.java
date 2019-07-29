@@ -65,7 +65,7 @@ public class WageWechatServiceImpl implements WageWechatService {
         if (list != null && list.size() > 0) {
             bean = list.get(0);
         }
-
+        
         return bean;
     }
 
@@ -94,8 +94,9 @@ public class WageWechatServiceImpl implements WageWechatService {
 //                                qWageDetailInfo.employeeSid.eq(employeeId)
                                 //isContStatus字段没用，所以注释掉
                                 //qWageDetailInfo.idNumber.eq(idNumberEncry)
-                                qWageDetailInfo.groupId.eq(employeeDTO.getGroupId())
-                                        .and(qWageDetailInfo.idNumber.eq(idNumberEncry))
+                                qWageDetailInfo.idNumber.eq(idNumberEncry)
+                                        .and(qWageDetailInfo.groupId.eq(employeeDTO.getGroupId()))
+                                        .and(qWageDetailInfo.entId.eq(employeeDTO.getEntId()))
                                         .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES))
                         )
                         .orderBy(qWageDetailInfo.cntDateTime.desc())
