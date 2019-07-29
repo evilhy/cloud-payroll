@@ -87,15 +87,15 @@ public class WageWechatServiceImpl implements WageWechatService {
 
             log.info("====>employeeId: 加密前【{}】，加密后【{}】", employeeId1, employeeId);
 
-//            if (!groupMap.contains(employeeDTO.getGroupId())) {
+            if (!groupMap.contains(employeeDTO.getGroupId())) {
                 //根据最新的代发记录
                 WageDetailInfo wageDetailInfo = wageDetailInfoDao.selectFrom(qWageDetailInfo)
                         .where(
-                                qWageDetailInfo.employeeSid.eq(employeeId)
+//                                qWageDetailInfo.employeeSid.eq(employeeId)
                                 //isContStatus字段没用，所以注释掉
                                 //qWageDetailInfo.idNumber.eq(idNumberEncry)
-//                                qWageDetailInfo.groupId.eq(employeeDTO.getGroupId())
-//                                        .and(qWageDetailInfo.idNumber.eq(idNumberEncry))
+                                qWageDetailInfo.groupId.eq(employeeDTO.getGroupId())
+                                        .and(qWageDetailInfo.idNumber.eq(idNumberEncry))
                                         .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES))
                         )
                         .orderBy(qWageDetailInfo.cntDateTime.desc())
@@ -111,8 +111,8 @@ public class WageWechatServiceImpl implements WageWechatService {
 
                     list.add(bean);
                 }
-//                groupMap.add(employeeDTO.getGroupId());
-//            }
+                groupMap.add(employeeDTO.getGroupId());
+            }
 
 
         }
