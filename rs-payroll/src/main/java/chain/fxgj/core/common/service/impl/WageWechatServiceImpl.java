@@ -102,6 +102,8 @@ public class WageWechatServiceImpl implements WageWechatService {
                 bean.setCreateDate(wageDetailInfo.getCntDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
                 bean.setIsRead(wageDetailInfo.getIsRead().getCode() + "");
 
+                log.info("====>bean:[{}]", JacksonUtil.objectToJson(bean));
+
                 list.add(bean);
             }
         }
