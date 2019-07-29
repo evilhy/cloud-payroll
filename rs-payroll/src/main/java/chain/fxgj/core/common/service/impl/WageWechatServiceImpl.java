@@ -57,12 +57,11 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
 
-
     @Override
-    public NewestWageLogDTO newGroupPushInfo(String idNumber,UserPrincipal principal) {
+    public NewestWageLogDTO newGroupPushInfo(String idNumber, UserPrincipal principal) {
         NewestWageLogDTO bean = new NewestWageLogDTO();
         //用户最新一条推送记录
-        List<NewestWageLogDTO> list = this.groupList(idNumber,principal);
+        List<NewestWageLogDTO> list = this.groupList(idNumber, principal);
         if (list != null && list.size() > 0) {
             bean = list.get(0);
         }
@@ -71,13 +70,14 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
     @Override
-    public List<NewestWageLogDTO> groupList(String idNumber,UserPrincipal principal) {
+    public List<NewestWageLogDTO> groupList(String idNumber, UserPrincipal principal) {
 
-        List<EmployeeDTO> employeeDTOS = empWechatService.getEmpList(idNumber,principal);
+        List<EmployeeDTO> employeeDTOS = empWechatService.getEmpList(idNumber, principal);
         log.info("====>employeeDTOS 查询数据量:[{}]", employeeDTOS.size());
         log.debug("====>employeeDTOS:[{}]", JacksonUtil.objectToJson(employeeDTOS));
 
         List<NewestWageLogDTO> list = new ArrayList<>();
+        LinkedList<String> groupMap = new LinkedList<>();
 
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
         for (EmployeeDTO employeeDTO : employeeDTOS) {
@@ -85,27 +85,36 @@ public class WageWechatServiceImpl implements WageWechatService {
             String employeeId = employeeEncrytorService.encryptEmployeeId(employeeId1);  //加密后
             String idNumberEncry = employeeEncrytorService.encryptIdNumber(idNumber);  //加密后
 
-            log.info("====>employeeId: 加密前【{}】，加密后【{}】", employeeId1,employeeId);
+            log.info("====>employeeId: 加密前【{}】，加密后【{}】", employeeId1, employeeId);
 
-            //根据最新的代发记录
-            WageDetailInfo wageDetailInfo = wageDetailInfoDao.selectFrom(qWageDetailInfo)
-                    .where(qWageDetailInfo.employeeSid.eq(employeeId)
-                            //isContStatus字段没用，所以注释掉
-                            //qWageDetailInfo.idNumber.eq(idNumberEncry)
-                            .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES)))
-                    .orderBy(qWageDetailInfo.cntDateTime.desc())
-                    .fetchFirst();
+            if (groupMap.contains(employeeDTO.getGroupId())) {
+                //根据最新的代发记录
+                WageDetailInfo wageDetailInfo = wageDetailInfoDao.selectFrom(qWageDetailInfo)
+                        .where(
+                                //qWageDetailInfo.employeeSid.eq(employeeId)
+                                //isContStatus字段没用，所以注释掉
+                                //qWageDetailInfo.idNumber.eq(idNumberEncry)
+                                qWageDetailInfo.groupId.eq(employeeDTO.getGroupId())
+                                        .and(qWageDetailInfo.idNumber.eq(idNumberEncry))
+                                        .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES))
+                        )
+                        .orderBy(qWageDetailInfo.cntDateTime.desc())
+                        .fetchFirst();
 
-            if (wageDetailInfo != null) {
-                NewestWageLogDTO bean = new NewestWageLogDTO(employeeDTO);
-                //wageDetailInfo.getCntDateTime() 工资统计时间为空，这里不取值，所以注释
-                bean.setCreateDate(wageDetailInfo.getCntDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-                bean.setIsRead(wageDetailInfo.getIsRead().getCode() + "");
+                if (wageDetailInfo != null) {
+                    NewestWageLogDTO bean = new NewestWageLogDTO(employeeDTO);
+                    //wageDetailInfo.getCntDateTime() 工资统计时间为空，这里不取值，所以注释
+                    bean.setCreateDate(wageDetailInfo.getCntDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                    bean.setIsRead(wageDetailInfo.getIsRead().getCode() + "");
 
-                log.info("====>bean:[{}]", JacksonUtil.objectToJson(bean));
+                    log.info("====>bean:[{}]", JacksonUtil.objectToJson(bean));
 
-                list.add(bean);
+                    list.add(bean);
+                }
+                groupMap.add(employeeDTO.getGroupId());
             }
+
+
         }
 
         Collections.sort(list, new Comparator<NewestWageLogDTO>() {
@@ -119,7 +128,7 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
     @Override
-    public List<WageDetailDTO> getWageDetail(String idNumber, String groupId, String wageSheetId,UserPrincipal principal) {
+    public List<WageDetailDTO> getWageDetail(String idNumber, String groupId, String wageSheetId, UserPrincipal principal) {
         //查询员工id
         EmployeeDTO employee = null;
         List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber, principal);
@@ -138,7 +147,7 @@ public class WageWechatServiceImpl implements WageWechatService {
         String employeeSid = employeeEncrytorService.encryptEmployeeId(employee.getEmployeeId());
         String idNumberEncry = employeeEncrytorService.encryptIdNumber(idNumber);
 
-        log.info("employeeSid={},idNumber={}", employeeSid,idNumber);
+        log.info("employeeSid={},idNumber={}", employeeSid, idNumber);
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
         BooleanExpression booleanExpression = qWageDetailInfo.idNumber.eq(idNumberEncry)
                 .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES));
@@ -213,7 +222,7 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
     @Override
-    public Res100703 wageList(String idNumber, String groupId, String year, String type,UserPrincipal principal) {
+    public Res100703 wageList(String idNumber, String groupId, String year, String type, UserPrincipal principal) {
         //查询员工id
         EmployeeDTO employee = null;
         List<EmployeeDTO> employeeDTOList = empWechatService.getEmpList(idNumber, principal);
@@ -333,8 +342,8 @@ public class WageWechatServiceImpl implements WageWechatService {
     }
 
     @Override
-    public Res100703 wageHistroyList(String idNumber, String groupId, String year, String type,UserPrincipal principal) {
-        return this.wageList(idNumber, groupId, year, type,principal);
+    public Res100703 wageHistroyList(String idNumber, String groupId, String year, String type, UserPrincipal principal) {
+        return this.wageList(idNumber, groupId, year, type, principal);
     }
 
 }
