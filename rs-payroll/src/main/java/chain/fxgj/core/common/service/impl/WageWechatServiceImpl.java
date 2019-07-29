@@ -87,7 +87,7 @@ public class WageWechatServiceImpl implements WageWechatService {
 
             log.info("====>employeeId: 加密前【{}】，加密后【{}】", employeeId1, employeeId);
 
-            if (groupMap.contains(employeeDTO.getGroupId())) {
+            if (!groupMap.contains(employeeDTO.getGroupId())) {
                 //根据最新的代发记录
                 WageDetailInfo wageDetailInfo = wageDetailInfoDao.selectFrom(qWageDetailInfo)
                         .where(
