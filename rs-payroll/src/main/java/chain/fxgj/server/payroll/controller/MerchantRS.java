@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
+import chain.fxgj.core.common.constant.DictEnums.RegisterTypeEnum;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.MerchantService;
@@ -134,6 +135,7 @@ public class MerchantRS {
 
             employeeWechatInfo.setIdNumber(idNumber);
             employeeWechatInfo.setPhone(phone);
+            employeeWechatInfo.setRegisterType(RegisterTypeEnum.UUID);
 
             //employeeWechatInfo.setAppPartner(AppPartnerEnum.values()[Integer.valueOf(merchant.getMerchantCode())]);
             employeeWechatInfo.setAppPartner(merchant.getMerchantCode());
@@ -145,6 +147,7 @@ public class MerchantRS {
                 employeeWechat.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
                 employeeWechat.setUid(employeeWechatInfo.getUid());
                 employeeWechat.setOpenId(employeeWechatInfo.getUid());
+                employeeWechat.setRegisterType(RegisterTypeEnum.UUID);
                 merchantService.saveMerchant(employeeWechat);
             } else {
                 log.info("认证绑定信息表【不存在】！");

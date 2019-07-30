@@ -93,6 +93,9 @@ public class MerchantServiceImpl implements MerchantService {
         if (employeeWechatInfo.getAppPartner() != null) {
             predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.appPartner.eq(employeeWechatInfo.getAppPartner()));
         }
+        if (employeeWechatInfo.getRegisterType() != null) {
+            predicate = ExpressionUtils.and(predicate, qEmployeeWechatInfo.registerType.eq(employeeWechatInfo.getRegisterType()));
+        }
 
         EmployeeWechatInfo employeeWechat = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
                 .where(predicate)
