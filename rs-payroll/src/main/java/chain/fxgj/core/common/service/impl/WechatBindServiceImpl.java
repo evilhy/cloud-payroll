@@ -67,7 +67,11 @@ public class WechatBindServiceImpl implements WechatBindService {
     @Override
     public Res100701 getEntList(String idNumber, UserPrincipal principal) {
         Res100701 res100701 = Res100701.builder().build();
+        log.info("======>idNumber={},{}",idNumber);
 
+        log.info("======>principal={}",principal);
+
+        log.info("======>{},{}",idNumber,principal.getAppPartner());
         EmployeeWechatInfo employeeWechatInfo = empWechatService.getEmployeeWechatInfo(idNumber, principal.getAppPartner());
         if (employeeWechatInfo != null) {
             res100701.setBindStatus("1");
