@@ -144,7 +144,8 @@ public class WechatBindServiceImpl implements WechatBindService {
             QEmployeeCardInfo qEmployeeCardInfo = QEmployeeCardInfo.employeeCardInfo;
             List<EmployeeCardInfo> employeeCardInfos = employeeCardInfoDao.selectFrom(qEmployeeCardInfo)
                     .where(qEmployeeCardInfo.employeeInfo.id.eq(employeeDTO.getEmployeeId())
-                            .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                            .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                    .fetch();
 
             List<Res100708.BankCardListBean> bankCardList = new ArrayList<>();
             for (EmployeeCardInfo employeeCardInfo : employeeCardInfos) {
@@ -174,12 +175,14 @@ public class WechatBindServiceImpl implements WechatBindService {
                 .leftJoin(qEntGroupInfo).on(qEntGroupInfo.id.eq(qEmployeeInfo.groupId))
                 .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))
-                        .and(qEntGroupInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                        .and(qEntGroupInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .fetch();
 
         //查询机构发票
         QEntGroupInvoiceInfo qEntGroupInvoiceInfo = QEntGroupInvoiceInfo.entGroupInvoiceInfo;
         List<EntGroupInvoiceInfo> entGroupInvoiceInfos = entGroupInvoiceInfoDao.selectFrom(qEntGroupInvoiceInfo)
-                .where(qEntGroupInvoiceInfo.groupId.in(tuples)).fetch();
+                .where(qEntGroupInvoiceInfo.groupId.in(tuples))
+                .fetch();
 
         List<GroupInvoiceDTO> list = new ArrayList<>();
         for (EntGroupInvoiceInfo entGroupInvoiceInfo : entGroupInvoiceInfos) {
@@ -442,7 +445,8 @@ public class WechatBindServiceImpl implements WechatBindService {
                         QEmployeeCardInfo qEmployeeCardInfo = QEmployeeCardInfo.employeeCardInfo;
                         List<EmployeeCardInfo> employeeCardInfos = employeeCardInfoDao.selectFrom(qEmployeeCardInfo)
                                 .where(qEmployeeCardInfo.employeeInfo.id.eq(employeeDTO.getEmployeeId())
-                                        .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                                        .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                                .fetch();
 
                         List<Res100708.BankCardListBean> bankCardList = new ArrayList<>();
                         for (EmployeeCardInfo employeeCardInfo : employeeCardInfos) {
@@ -563,7 +567,8 @@ public class WechatBindServiceImpl implements WechatBindService {
         List<EntUserDTO> userInfos = new ArrayList<>();
         QUserInfo qUserInfo = QUserInfo.userInfo;
         List<UserInfo> userInfoList = userInfoDao.selectFrom(qUserInfo)
-                .where(qUserInfo.entId.eq(entId).and(qUserInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                .where(qUserInfo.entId.eq(entId).and(qUserInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .fetch();
         for (UserInfo userInfo : userInfoList) {
             boolean has = false;
             Collection<SystemAuthorityInfo> userAuthority = userInfo.getUserAuthority();
@@ -591,7 +596,8 @@ public class WechatBindServiceImpl implements WechatBindService {
 
         List<EmployeeInfo> list = employeeInfoDao.selectFrom(qEmployeeInfo)
                 .where(qEmployeeInfo.phone.eq(phone).and(qEmployeeInfo.idNumber.notEqualsIgnoreCase(idNumber))
-                        .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                        .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .fetch();
 
         if (list.size() > 0) {
             throw new ParamsIllegalException(ErrorConstant.WECHAR_009.getErrorMsg());
@@ -606,7 +612,8 @@ public class WechatBindServiceImpl implements WechatBindService {
         List<EmployeeInfo> list = employeeInfoDao.selectFrom(qEmployeeInfo)
                 .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)
-                                .and(qEmployeeInfo.empCardList.any().delStatusEnum.eq(DelStatusEnum.normal)))).fetch();
+                                .and(qEmployeeInfo.empCardList.any().delStatusEnum.eq(DelStatusEnum.normal))))
+                .fetch();
         for (EmployeeInfo employeeInfo : list) {
             for (EmployeeCardInfo employeeCardInfo : employeeInfo.getNormalEmpCardList()) {
                 List<EmployeeCardLog> employeeCardLogs = getEmployeeCardLogs(employeeCardInfo.getId());

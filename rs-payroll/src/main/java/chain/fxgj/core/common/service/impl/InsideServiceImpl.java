@@ -56,8 +56,10 @@ public class InsideServiceImpl implements InsideService {
 
         //修改回执状态
         QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
-        wageDetailInfoDao.update(qWageDetailInfo).set(qWageDetailInfo.receiptsStatus, ReceiptsStatusEnum.values()[resReceiptDTO.getReceiptsStatus()])
-                .where(qWageDetailInfo.id.eq(resReceiptDTO.getWageDetailId())).execute();
+        wageDetailInfoDao.update(qWageDetailInfo)
+                .set(qWageDetailInfo.receiptsStatus, ReceiptsStatusEnum.values()[resReceiptDTO.getReceiptsStatus()])
+                .where(qWageDetailInfo.id.eq(resReceiptDTO.getWageDetailId()))
+                .execute();
 
         //确认无误
         if (resReceiptDTO.getReceiptsStatus().equals(ReceiptsStatusEnum.CONFIRMED.getCode())) {
@@ -171,20 +173,25 @@ public class InsideServiceImpl implements InsideService {
     @Override
     public void setPwd(String wechatId, String pwd) {
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
-        employeeWechatInfoDao.update(qEmployeeWechatInfo).set(qEmployeeWechatInfo.queryPwd, employeeEncrytorService.encryptPwd(pwd))
-                .where(qEmployeeWechatInfo.id.eq(wechatId)).execute();
+        employeeWechatInfoDao.update(qEmployeeWechatInfo)
+                .set(qEmployeeWechatInfo.queryPwd, employeeEncrytorService.encryptPwd(pwd))
+                .where(qEmployeeWechatInfo.id.eq(wechatId))
+                .execute();
     }
 
     @Override
     public void updPhone(String wechatId, String idNumber, String phone) {
         //更新手机号
         QEmployeeWechatInfo qEmployeeWechatInfo = QEmployeeWechatInfo.employeeWechatInfo;
-        employeeWechatInfoDao.update(qEmployeeWechatInfo).set(qEmployeeWechatInfo.phone, employeeEncrytorService.encryptPhone(phone))
-                .where(qEmployeeWechatInfo.id.eq(wechatId)).execute();
+        employeeWechatInfoDao.update(qEmployeeWechatInfo)
+                .set(qEmployeeWechatInfo.phone, employeeEncrytorService.encryptPhone(phone))
+                .where(qEmployeeWechatInfo.id.eq(wechatId))
+                .execute();
 
         QEmployeeInfo qEmployeeInfo = QEmployeeInfo.employeeInfo;
         employeeInfoDao.update(qEmployeeInfo).set(qEmployeeInfo.phone, phone)
-                .where(qEmployeeInfo.idNumber.eq(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))).execute();
+                .where(qEmployeeInfo.idNumber.eq(idNumber).and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .execute();
     }
 
     @Override

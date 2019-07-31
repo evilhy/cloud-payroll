@@ -166,14 +166,19 @@ public class WageWechatServiceImpl implements WageWechatService {
             String entName = employee.getEntName();
 
             //查询上次方案
-            String last_sheet_id = wageDetailInfoDao.select(qWageDetailInfo.wageSheetId).from(qWageDetailInfo)
+            String last_sheet_id = wageDetailInfoDao.select(qWageDetailInfo.wageSheetId)
+                    .from(qWageDetailInfo)
                     .where(booleanExpression.and(qWageDetailInfo.cntDateTime.before(wageDetailInfos.get(0).getCntDateTime()))
-                            .and(qWageDetailInfo.wageSheetId.ne(wageSheetId))).orderBy(qWageDetailInfo.crtDateTime.desc()).fetchFirst();
+                            .and(qWageDetailInfo.wageSheetId.ne(wageSheetId)))
+                    .orderBy(qWageDetailInfo.crtDateTime.desc())
+                    .fetchFirst();
             //查询上次方案金额
             BigDecimal lastAmt = new BigDecimal(0);
             if (last_sheet_id != null && !last_sheet_id.equals("")) {
-                lastAmt = wageDetailInfoDao.select(qWageDetailInfo.realTotalAmt.sum()).from(qWageDetailInfo)
-                        .where(booleanExpression.and(qWageDetailInfo.wageSheetId.eq(last_sheet_id))).fetchFirst();
+                lastAmt = wageDetailInfoDao.select(qWageDetailInfo.realTotalAmt.sum())
+                        .from(qWageDetailInfo)
+                        .where(booleanExpression.and(qWageDetailInfo.wageSheetId.eq(last_sheet_id)))
+                        .fetchFirst();
             }
             //当前方案金额
             BigDecimal amt = BigDecimal.ZERO;
@@ -249,7 +254,8 @@ public class WageWechatServiceImpl implements WageWechatService {
         }
 
         List<Tuple> tuples = wageDetailInfoDao.select(qWageDetailInfo.wageSheetId,
-                qWageDetailInfo.realTotalAmt.sum(), qWageDetailInfo.deductTotalAmt.sum(), qWageDetailInfo.shouldTotalAmt.sum()).from(qWageDetailInfo)
+                qWageDetailInfo.realTotalAmt.sum(), qWageDetailInfo.deductTotalAmt.sum(), qWageDetailInfo.shouldTotalAmt.sum())
+                .from(qWageDetailInfo)
                 .where(booleanExpression.and(qWageDetailInfo.cntDateTime.year().eq(Integer.parseInt(year))))
                 .groupBy(qWageDetailInfo.wageSheetId).fetch();
 
