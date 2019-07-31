@@ -67,11 +67,6 @@ public class WechatBindServiceImpl implements WechatBindService {
     @Override
     public Res100701 getEntList(String idNumber, UserPrincipal principal) {
         Res100701 res100701 = Res100701.builder().build();
-        log.info("======>idNumber={},{}",idNumber);
-
-        log.info("======>principal={}",principal);
-
-        log.info("======>{},{}",idNumber,principal.getAppPartner());
         EmployeeWechatInfo employeeWechatInfo = empWechatService.getEmployeeWechatInfo(idNumber, principal.getAppPartner());
         if (employeeWechatInfo != null) {
             res100701.setBindStatus("1");
@@ -109,16 +104,16 @@ public class WechatBindServiceImpl implements WechatBindService {
 
         List<EmployeeListBean> employeeList = new ArrayList<>();
         for (Tuple tuple : tuples) {
-            EmployeeListBean bean = new EmployeeListBean();
-            bean.setEmployeeName(tuple.get(qEmployeeInfo.employeeName));
-            bean.setIdNumber(employeeEncrytorService.encryptIdNumber(tuple.get(qEmployeeInfo.idNumber)));
-            String phone = tuple.get(qEmployeeInfo.phone);
-            bean.setPhone(phone);
-            bean.setPhoneStar(TransUtil.phoneStar(phone));
-            bean.setSex(tuple.get(qEmployeeInfo.idNumber).length() != 18 ? "3" : tuple.get(qEmployeeInfo.idNumber).substring(17, 18));
-            bean.setEntName(tuple.get(qEntErpriseInfo.entName));
-            bean.setEntId(tuple.get(qEntErpriseInfo.id));
 
+            EmployeeListBean bean = EmployeeListBean.builder()
+                    .employeeName(tuple.get(qEmployeeInfo.employeeName))
+                    .idNumber(employeeEncrytorService.encryptIdNumber(tuple.get(qEmployeeInfo.idNumber)))
+                    .phone(tuple.get(qEmployeeInfo.phone))
+                    .phoneStar(TransUtil.phoneStar(tuple.get(qEmployeeInfo.phone)))
+                    .sex(tuple.get(qEmployeeInfo.idNumber).length() != 18 ? "3" : tuple.get(qEmployeeInfo.idNumber).substring(17, 18))
+                    .entName(tuple.get(qEntErpriseInfo.entName))
+                    .entId(tuple.get(qEntErpriseInfo.id))
+                    .build();
             employeeList.add(bean);
         }
 
@@ -257,7 +252,10 @@ public class WechatBindServiceImpl implements WechatBindService {
         //创建日期升序
         OrderSpecifier orderSpecifier = qEmployeeInfo.crtDateTime.asc();
         log.info("====>员工信息查询start");
-        List<EmployeeInfo> employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo).where(predicate).orderBy(orderSpecifier).fetch();
+        List<EmployeeInfo> employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo)
+                .where(predicate)
+                .orderBy(orderSpecifier)
+                .fetch();
         log.info("====>员工信息查询end");
 
         //员工信息 以 groupid 为key 存储 用户信息

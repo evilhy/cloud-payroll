@@ -202,9 +202,10 @@ public class InsideRS {
             log.info("userPrincipal:{}", userPrincipal);
             UserPrincipal wechatInfo = empWechatService.getWechatInfo(userPrincipal.getSessionId());
             log.info("wechatInfo:{}", wechatInfo);
-            SetPwdDTO setPwdDTO = new SetPwdDTO();
-            setPwdDTO.setPwd(pwd);
-            setPwdDTO.setWechatId(userPrincipal.getWechatId());
+            SetPwdDTO setPwdDTO =  SetPwdDTO.builder()
+                    .pwd(pwd)
+                    .wechatId(userPrincipal.getWechatId())
+                    .build();
             log.info("设置密码请求参数前:{}", setPwdDTO);
             if (StringUtils.isBlank(userPrincipal.getWechatId())) {
                 String wechatId = empWechatService.getWechatId(wechatInfo.getOpenId());
