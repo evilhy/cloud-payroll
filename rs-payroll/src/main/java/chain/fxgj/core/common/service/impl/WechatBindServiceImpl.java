@@ -67,7 +67,6 @@ public class WechatBindServiceImpl implements WechatBindService {
     @Override
     public Res100701 getEntList(String idNumber, UserPrincipal principal) {
         Res100701 res100701 = Res100701.builder().build();
-
         EmployeeWechatInfo employeeWechatInfo = empWechatService.getEmployeeWechatInfo(idNumber, principal.getAppPartner());
         if (employeeWechatInfo != null) {
             res100701.setBindStatus("1");
@@ -105,16 +104,16 @@ public class WechatBindServiceImpl implements WechatBindService {
 
         List<EmployeeListBean> employeeList = new ArrayList<>();
         for (Tuple tuple : tuples) {
-            EmployeeListBean bean = new EmployeeListBean();
-            bean.setEmployeeName(tuple.get(qEmployeeInfo.employeeName));
-            bean.setIdNumber(employeeEncrytorService.encryptIdNumber(tuple.get(qEmployeeInfo.idNumber)));
-            String phone = tuple.get(qEmployeeInfo.phone);
-            bean.setPhone(phone);
-            bean.setPhoneStar(TransUtil.phoneStar(phone));
-            bean.setSex(tuple.get(qEmployeeInfo.idNumber).length() != 18 ? "3" : tuple.get(qEmployeeInfo.idNumber).substring(17, 18));
-            bean.setEntName(tuple.get(qEntErpriseInfo.entName));
-            bean.setEntId(tuple.get(qEntErpriseInfo.id));
 
+            EmployeeListBean bean = EmployeeListBean.builder()
+                    .employeeName(tuple.get(qEmployeeInfo.employeeName))
+                    .idNumber(employeeEncrytorService.encryptIdNumber(tuple.get(qEmployeeInfo.idNumber)))
+                    .phone(tuple.get(qEmployeeInfo.phone))
+                    .phoneStar(TransUtil.phoneStar(tuple.get(qEmployeeInfo.phone)))
+                    .sex(tuple.get(qEmployeeInfo.idNumber).length() != 18 ? "3" : tuple.get(qEmployeeInfo.idNumber).substring(17, 18))
+                    .entName(tuple.get(qEntErpriseInfo.entName))
+                    .entId(tuple.get(qEntErpriseInfo.id))
+                    .build();
             employeeList.add(bean);
         }
 
@@ -140,7 +139,8 @@ public class WechatBindServiceImpl implements WechatBindService {
             QEmployeeCardInfo qEmployeeCardInfo = QEmployeeCardInfo.employeeCardInfo;
             List<EmployeeCardInfo> employeeCardInfos = employeeCardInfoDao.selectFrom(qEmployeeCardInfo)
                     .where(qEmployeeCardInfo.employeeInfo.id.eq(employeeDTO.getEmployeeId())
-                            .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                            .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                    .fetch();
 
             List<Res100708.BankCardListBean> bankCardList = new ArrayList<>();
             for (EmployeeCardInfo employeeCardInfo : employeeCardInfos) {
@@ -170,12 +170,14 @@ public class WechatBindServiceImpl implements WechatBindService {
                 .leftJoin(qEntGroupInfo).on(qEntGroupInfo.id.eq(qEmployeeInfo.groupId))
                 .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))
-                        .and(qEntGroupInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                        .and(qEntGroupInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .fetch();
 
         //查询机构发票
         QEntGroupInvoiceInfo qEntGroupInvoiceInfo = QEntGroupInvoiceInfo.entGroupInvoiceInfo;
         List<EntGroupInvoiceInfo> entGroupInvoiceInfos = entGroupInvoiceInfoDao.selectFrom(qEntGroupInvoiceInfo)
-                .where(qEntGroupInvoiceInfo.groupId.in(tuples)).fetch();
+                .where(qEntGroupInvoiceInfo.groupId.in(tuples))
+                .fetch();
 
         List<GroupInvoiceDTO> list = new ArrayList<>();
         for (EntGroupInvoiceInfo entGroupInvoiceInfo : entGroupInvoiceInfos) {
@@ -250,7 +252,10 @@ public class WechatBindServiceImpl implements WechatBindService {
         //创建日期升序
         OrderSpecifier orderSpecifier = qEmployeeInfo.crtDateTime.asc();
         log.info("====>员工信息查询start");
-        List<EmployeeInfo> employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo).where(predicate).orderBy(orderSpecifier).fetch();
+        List<EmployeeInfo> employeeInfoList = employeeInfoDao.selectFrom(qEmployeeInfo)
+                .where(predicate)
+                .orderBy(orderSpecifier)
+                .fetch();
         log.info("====>员工信息查询end");
 
         //员工信息 以 groupid 为key 存储 用户信息
@@ -438,7 +443,8 @@ public class WechatBindServiceImpl implements WechatBindService {
                         QEmployeeCardInfo qEmployeeCardInfo = QEmployeeCardInfo.employeeCardInfo;
                         List<EmployeeCardInfo> employeeCardInfos = employeeCardInfoDao.selectFrom(qEmployeeCardInfo)
                                 .where(qEmployeeCardInfo.employeeInfo.id.eq(employeeDTO.getEmployeeId())
-                                        .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                                        .and(qEmployeeCardInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                                .fetch();
 
                         List<Res100708.BankCardListBean> bankCardList = new ArrayList<>();
                         for (EmployeeCardInfo employeeCardInfo : employeeCardInfos) {
@@ -559,7 +565,8 @@ public class WechatBindServiceImpl implements WechatBindService {
         List<EntUserDTO> userInfos = new ArrayList<>();
         QUserInfo qUserInfo = QUserInfo.userInfo;
         List<UserInfo> userInfoList = userInfoDao.selectFrom(qUserInfo)
-                .where(qUserInfo.entId.eq(entId).and(qUserInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                .where(qUserInfo.entId.eq(entId).and(qUserInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .fetch();
         for (UserInfo userInfo : userInfoList) {
             boolean has = false;
             Collection<SystemAuthorityInfo> userAuthority = userInfo.getUserAuthority();
@@ -587,7 +594,8 @@ public class WechatBindServiceImpl implements WechatBindService {
 
         List<EmployeeInfo> list = employeeInfoDao.selectFrom(qEmployeeInfo)
                 .where(qEmployeeInfo.phone.eq(phone).and(qEmployeeInfo.idNumber.notEqualsIgnoreCase(idNumber))
-                        .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal))).fetch();
+                        .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)))
+                .fetch();
 
         if (list.size() > 0) {
             throw new ParamsIllegalException(ErrorConstant.WECHAR_009.getErrorMsg());
@@ -602,7 +610,8 @@ public class WechatBindServiceImpl implements WechatBindService {
         List<EmployeeInfo> list = employeeInfoDao.selectFrom(qEmployeeInfo)
                 .where(qEmployeeInfo.idNumber.eq(idNumber)
                         .and(qEmployeeInfo.delStatusEnum.eq(DelStatusEnum.normal)
-                                .and(qEmployeeInfo.empCardList.any().delStatusEnum.eq(DelStatusEnum.normal)))).fetch();
+                                .and(qEmployeeInfo.empCardList.any().delStatusEnum.eq(DelStatusEnum.normal))))
+                .fetch();
         for (EmployeeInfo employeeInfo : list) {
             for (EmployeeCardInfo employeeCardInfo : employeeInfo.getNormalEmpCardList()) {
                 List<EmployeeCardLog> employeeCardLogs = getEmployeeCardLogs(employeeCardInfo.getId());

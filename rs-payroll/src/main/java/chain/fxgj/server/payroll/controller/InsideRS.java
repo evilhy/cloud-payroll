@@ -2,7 +2,6 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
@@ -19,14 +18,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
 import java.util.Map;
 
-@CrossOrigin
 @RestController
 @Validated
 @RequestMapping("/inside")
@@ -34,14 +35,9 @@ import java.util.Map;
 public class InsideRS {
 
     @Autowired
-    PayrollProperties payrollProperties;
-
-    @Autowired
     EmployeeEncrytorService employeeEncrytorService;
     @Autowired
     EmpWechatService empWechatService;
-    @Autowired
-    PayRollAsyncService payRollAsyncService;
     @Autowired
     WechatBindService wechatBindService;
     @Autowired
@@ -206,9 +202,10 @@ public class InsideRS {
             log.info("userPrincipal:{}", userPrincipal);
             UserPrincipal wechatInfo = empWechatService.getWechatInfo(userPrincipal.getSessionId());
             log.info("wechatInfo:{}", wechatInfo);
-            SetPwdDTO setPwdDTO = new SetPwdDTO();
-            setPwdDTO.setPwd(pwd);
-            setPwdDTO.setWechatId(userPrincipal.getWechatId());
+            SetPwdDTO setPwdDTO =  SetPwdDTO.builder()
+                    .pwd(pwd)
+                    .wechatId(userPrincipal.getWechatId())
+                    .build();
             log.info("设置密码请求参数前:{}", setPwdDTO);
             if (StringUtils.isBlank(userPrincipal.getWechatId())) {
                 String wechatId = empWechatService.getWechatId(wechatInfo.getOpenId());

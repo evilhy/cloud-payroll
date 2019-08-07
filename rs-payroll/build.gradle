@@ -1,7 +1,5 @@
 apply plugin: 'org.asciidoctor.convert'
 apply plugin: "com.ewerk.gradle.plugins.querydsl"
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 
 querydsl {
     springDataMongo = true
@@ -16,7 +14,7 @@ jar {
 }
 
 applicationDefaultJvmArgs = [
-        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5002",
+        //"-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5002",
         "-Dfile.encoding=utf-8",
         "-Xms512m",
         "-Xmx2048m",
@@ -26,11 +24,8 @@ applicationDefaultJvmArgs = [
 ]
 sourceSets {
     main {
-        java {
-            srcDirs += file(querydsl.querydslSourcesDir)
-        }
         resources {
-            srcDirs = ["src/main/resources", "src/env/$env"]
+            srcDirs = ["src/main/resources", "src/env/$env", "$buildDir/generated/source/apt/main"]
         }
     }
 }
@@ -92,7 +87,6 @@ dependencies {
     compile group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.0.6'
     compile group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
     compile 'org.springframework.cloud:spring-cloud-starter-consul-all'
-//    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     compile('mysql:mysql-connector-java:5.1.38')
 
@@ -100,19 +94,12 @@ dependencies {
     //compile('org.aspectj:aspectjweaver:1.8.8')
 
     //zhucj添加
-    //compile('io.swagger:swagger-jersey2-jaxrs:1.5.20')
     compile group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.27'
     compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.27'
     compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.8'
     //application/json
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.26'
-//    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
-    //引入微信包
-//    compile('cloud.outside:wechat-client:1.0.8')
-    
-    compile("com.querydsl:querydsl-core:4.1.4")
-    compile("com.querydsl:querydsl-jpa:4.1.4")
-    compile("com.querydsl:querydsl-apt:4.1.4")
+    //compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
 }
 
 test {

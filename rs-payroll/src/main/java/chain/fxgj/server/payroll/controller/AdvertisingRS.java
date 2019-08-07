@@ -31,23 +31,6 @@ public class AdvertisingRS {
     @Autowired
     AdvertisementService advertisementService;
 
-//    /**
-//     * 轮播图查询
-//     */
-//    @GetMapping("/rotation")
-//    @TrackLog
-//    @PermitAll
-//    public Mono<List<AdvertisingRotationDTO>> rotation(@RequestParam("channelId") Integer channelId) {
-//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//
-//        return Mono.fromCallable(() -> {
-//            MDC.setContextMap(mdcContext);
-//            log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
-//            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId);
-//            return advertisingRotationDTOS;
-//        }).subscribeOn(Schedulers.elastic());
-//    }
-
     /**
      * 轮播图查询
      */

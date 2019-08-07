@@ -1,0 +1,16 @@
+系统全历程追踪代码，修改添加步骤
+
+1.修改配置文件 application.yml
+添加：
+spring:
+  zipkin:
+    base-url: http://localhost:7178
+	
+2.修改logback.xml配置文件
+    <property name="pattern"
+              value="%d{HHmmss.SSS}-%-5level-[%thread].[%X{log_token}%X{msg_trans_code}]-[%X{X-B3-TraceId:-}]-%lo{5}: %msg %n"/>
+3.修改build.gradle
+
+    compile 'org.springframework.cloud:spring-cloud-starter-zipkin'
+
+

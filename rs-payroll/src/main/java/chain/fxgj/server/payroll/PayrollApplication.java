@@ -8,11 +8,11 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @EnableCaching
+@EnableDiscoveryClient
+//@EnableFeignClients({"chain"})
 @EnableMongoRepositories(basePackages = "chain.fxgj.server.payroll.mongodb")
 @EnableMongoAuditing
 @SpringBootApplication(scanBasePackages = {"chain"})
-//@EnableFeignClients({"chain"})
-@EnableDiscoveryClient
 public class PayrollApplication {
 
     public static void main(String[] args) {

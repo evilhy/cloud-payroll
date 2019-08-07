@@ -7,9 +7,11 @@ import chain.fxgj.core.jpa.model.MsgModelInfo;
 import chain.fxgj.core.jpa.model.QMsgModelInfo;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class MsgModelInfoServiceImpl implements MsgModelInfoService {
 

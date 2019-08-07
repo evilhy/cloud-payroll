@@ -4,29 +4,28 @@ import chain.fxgj.core.common.constant.DictEnums.CustStatusEnum;
 import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
 import chain.fxgj.core.common.service.ManagerService;
 import chain.fxgj.core.jpa.dao.*;
-import chain.fxgj.core.jpa.model.*;
-import chain.fxgj.server.payroll.dto.request.DistributeDTO;
+import chain.fxgj.core.jpa.model.EmployeeInfo;
+import chain.fxgj.core.jpa.model.EntErpriseInfo;
+import chain.fxgj.core.jpa.model.EntNoneManager;
+import chain.fxgj.core.jpa.model.ManagerInfo;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
 import chain.utils.commons.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class ManagerServiceImpl implements ManagerService {
-    private static final Logger logger = LoggerFactory.getLogger(ManagerServiceImpl.class);
     @Autowired
     private ManagerInfoDao managerInfoDao;
     @Autowired
     private EmployeeInfoDao employeeInfoDao;
     @Autowired
     private EntErpriseInfoDao entErpriseInfoDao;
-    @Autowired
-    private EntGroupInfoDao entGroupInfoDao;
     @Autowired
     private EntNoneManagerDao entNoneManagerDao;
 
@@ -48,13 +47,13 @@ public class ManagerServiceImpl implements ManagerService {
         }
         String custManagerId = entErpriseInfo.getCustManagerId();
         if (StringUtils.isBlank(custManagerId)) {
-            logger.info("==>企业没有关联客户经理，企业的客户经理id为空");
+            log.info("==>企业没有关联客户经理，企业的客户经理id为空");
             return managerInfoDTO;
         }
         ManagerInfo info = managerInfoDao.findById(custManagerId).get();
         CustStatusEnum custStatus = info.getCustStatus();
         if (!custStatus.equals(CustStatusEnum.NORMAL)) {
-            logger.info("==>客户经理状态不正常");
+            log.info("==>客户经理状态不正常");
             return managerInfoDTO;
         }
         managerInfoDTO.setOfficer(info.getOfficer());
