@@ -7,7 +7,7 @@ spring:
       port: 8500
       discovery:
         # consul 健康检测频率
-        health-check-interval: 150s
+        health-check-interval: 15s
         # 配置注册到consul 服务的id
         enabled: true
         service-name: ${spring.application.name}
