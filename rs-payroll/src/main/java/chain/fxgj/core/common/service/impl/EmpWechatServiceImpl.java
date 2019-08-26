@@ -204,7 +204,7 @@ public class EmpWechatServiceImpl implements EmpWechatService {
         }
 
         List<EmployeeDTO> list = new ArrayList<>();
-        log.info("====>entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
+//        log.info("====>entInfoDTOS[{}]", JacksonUtil.objectToJson(entInfoDTOS));
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
 
             for (EntInfoDTO.GroupInfo groupInfo : entInfoDTO.getGroupInfoList()) {

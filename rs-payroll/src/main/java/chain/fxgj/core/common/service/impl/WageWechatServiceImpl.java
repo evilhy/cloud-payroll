@@ -74,7 +74,7 @@ public class WageWechatServiceImpl implements WageWechatService {
 
         List<EmployeeDTO> employeeDTOS = empWechatService.getEmpList(idNumber, principal);
         log.info("====>employeeDTOS 查询数据量:[{}]", employeeDTOS.size());
-        log.debug("====>employeeDTOS:[{}]", JacksonUtil.objectToJson(employeeDTOS));
+//        log.debug("====>employeeDTOS:[{}]", JacksonUtil.objectToJson(employeeDTOS));
 
         List<NewestWageLogDTO> list = new ArrayList<>();
         LinkedList<String> groupMap = new LinkedList<>();
@@ -85,7 +85,7 @@ public class WageWechatServiceImpl implements WageWechatService {
             String employeeId = employeeEncrytorService.encryptEmployeeId(employeeId1);  //加密后
             String idNumberEncry = employeeEncrytorService.encryptIdNumber(idNumber);  //加密后
 
-            log.info("====>employeeId: 加密前【{}】，加密后【{}】", employeeId1, employeeId);
+//            log.info("====>employeeId: 加密前【{}】，加密后【{}】", employeeId1, employeeId);
 
             if (!groupMap.contains(employeeDTO.getGroupId())) {
                 //根据最新的代发记录
