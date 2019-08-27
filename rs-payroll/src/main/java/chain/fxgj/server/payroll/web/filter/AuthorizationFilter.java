@@ -20,7 +20,8 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 
 @Slf4j
-@Component
+//todo 上线记得放开
+//@Component
 public class AuthorizationFilter implements WebFilter, Ordered {
 
     /**

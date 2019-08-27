@@ -21,7 +21,8 @@ import reactor.core.publisher.Mono;
  * create by chain on 2019-01-26 11:10
  **/
 @Slf4j
-@Component
+//todo 上线记得放开
+//@Component
 public class WebContextFilter implements WebFilter, Ordered {
 
     private static final String START_TIME = "start-time";
