@@ -63,7 +63,7 @@ dependencyManagement {
     }
 }
 dependencies {
-    compile('chain:wage-client:1.0.5-SNAPSHOT')
+    compile('chain:wage-client:1.0.6-SNAPSHOT')
     compile('chain:utils-jpa:1.0.4')
     compile('chain:utils-poi:2.0.2')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
