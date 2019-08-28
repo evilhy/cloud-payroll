@@ -4,9 +4,9 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.service.AdvertisementService;
+import chain.fxgj.feign.AdvertisingFeignService;
+import chain.fxgj.feign.dto.advertising.AdvertisingRotationDTO;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
-import chain.payroll.client.feign.AdvertisingFeignController;
-import chain.payroll.dto.advertising.AdvertisingRotationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class AdvertisingRS {
     @Autowired
     AdvertisementService advertisementService;
     @Autowired
-    AdvertisingFeignController advertisingFeignController;
+    AdvertisingFeignService advertisingFeignService;
 
     /**
      * 轮播图查询
@@ -42,11 +42,11 @@ public class AdvertisingRS {
     @TrackLog
     @PermitAll
     public Mono<List<AdvertisingRotationDTO>> rotation(@RequestParam("channelId") Integer channelId) {
-//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//        //根据合作方获取一行渠道
-//        String apppartner = MDC.get(PayrollConstants.APPPARTNER);
-//        AppPartnerEnum appPartner = AppPartnerEnum.values()[Integer.valueOf(apppartner)];
-//        FundLiquidationEnum liquidation = appPartner.getLiquidation();
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        //根据合作方获取一行渠道
+        String apppartner = MDC.get(PayrollConstants.APPPARTNER);
+        AppPartnerEnum appPartner = AppPartnerEnum.values()[Integer.valueOf(apppartner)];
+        FundLiquidationEnum liquidation = appPartner.getLiquidation();
 
         return Mono.fromCallable(() -> {
 //            MDC.setContextMap(mdcContext);
@@ -55,7 +55,7 @@ public class AdvertisingRS {
 //            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId, liquidation);
 //            return advertisingRotationDTOS;
 //            Mono<List<AdvertisingRotationDTO>> rotation = advertisingFeignController.rotation(2);
-            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisingFeignController.rotation1(2);
+            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisingFeignService.rotationList(channelId, liquidation);
             if (null != advertisingRotationDTOS) {
                 String url = advertisingRotationDTOS.get(0).getUrl();
                 log.info("success url:[{}]",url);
