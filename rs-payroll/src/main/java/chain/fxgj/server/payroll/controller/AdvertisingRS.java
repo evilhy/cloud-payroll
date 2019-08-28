@@ -4,10 +4,9 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.service.AdvertisementService;
-//import chain.fxgj.feign.AdvertisingFeignService;
-//import chain.fxgj.feign.dto.advertising.AdvertisingRotationDTO;
+import chain.fxgj.feign.AdvertisingFeignService;
+import chain.fxgj.feign.dto.advertising.AdvertisingRotationDTO;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
-import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +32,8 @@ public class AdvertisingRS {
 
     @Autowired
     AdvertisementService advertisementService;
-//    @Autowired
-//    AdvertisingFeignService advertisingFeignService;
+    @Autowired
+    AdvertisingFeignService advertisingFeignService;
 
     /**
      * 轮播图查询
@@ -56,7 +55,7 @@ public class AdvertisingRS {
 //            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId, liquidation);
 //            return advertisingRotationDTOS;
 //            Mono<List<AdvertisingRotationDTO>> rotation = advertisingFeignController.rotation(2);
-            List<AdvertisingRotationDTO> advertisingRotationDTOS = null;//advertisingFeignService.rotationList(channelId, liquidation);
+            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisingFeignService.rotationList(channelId, liquidation);
             if (null != advertisingRotationDTOS) {
                 String url = advertisingRotationDTOS.get(0).getUrl();
                 log.info("success url:[{}]",url);
