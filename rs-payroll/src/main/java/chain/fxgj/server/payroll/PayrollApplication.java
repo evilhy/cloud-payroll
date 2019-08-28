@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @EnableCaching
 @EnableDiscoveryClient
-@EnableFeignClients({"chain"})
+//@EnableFeignClients({"chain"})
 @EnableMongoRepositories(basePackages = "chain.fxgj.server.payroll.mongodb")
 @EnableMongoAuditing
 @SpringBootApplication(scanBasePackages = {"chain"})
