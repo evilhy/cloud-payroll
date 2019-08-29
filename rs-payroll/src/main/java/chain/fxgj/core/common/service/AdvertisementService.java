@@ -1,7 +1,7 @@
 package chain.fxgj.core.common.service;
 
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
-import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
+import chain.fxgj.core.common.dto.advertising.AdvertisingRotationDTO;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;

@@ -41,9 +41,8 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/tfinance/codeUrl",
             "/advertising/rotation",
             "/merchant/getAccess",
-            "/merchant/callback"
-
-
+            "/merchant/callback",
+            "/sync"
     };
 
     @Autowired

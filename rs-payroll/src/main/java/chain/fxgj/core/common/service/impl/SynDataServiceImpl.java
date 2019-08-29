@@ -73,10 +73,12 @@ public class SynDataServiceImpl implements SynDataService {
                     }
                     //调用远程服务进行保存
                     log.info("newDtoList--->",newDtoList.size());
-                    synDataFeignController.syncWageDetail("2019",newDtoList);
+
                 }
             }
         }
+        List<WageDetailInfoDTO>  newDtoList = new ArrayList<>();
+        boolean b = synDataFeignController.syncWageDetail("2019", newDtoList);
         return null;
     }
 

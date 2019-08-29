@@ -1,12 +1,12 @@
 package chain.fxgj.core.common.service.impl;
 
 import chain.fxgj.core.common.constant.DictEnums.*;
+import chain.fxgj.core.common.dto.advertising.AdvertisingRotationDTO;
 import chain.fxgj.core.common.service.AdvertisementService;
 import chain.fxgj.core.jpa.dao.AdvertisingInfoDao;
 import chain.fxgj.core.jpa.model.AdvertisingInfo;
 import chain.fxgj.core.jpa.model.QAdvertisingInfo;
 import chain.fxgj.core.jpa.model.QLiquidationVersionAdvertisingInfo;
-import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

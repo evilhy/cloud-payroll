@@ -3,9 +3,8 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
+import chain.fxgj.core.common.dto.advertising.AdvertisingRotationDTO;
 import chain.fxgj.core.common.service.AdvertisementService;
-import chain.fxgj.feign.AdvertisingFeignService;
-import chain.fxgj.feign.dto.advertising.AdvertisingRotationDTO;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -32,8 +31,8 @@ public class AdvertisingRS {
 
     @Autowired
     AdvertisementService advertisementService;
-    @Autowired
-    AdvertisingFeignService advertisingFeignService;
+//    @Autowired
+//    AdvertisingFeignService advertisingFeignService;
 
     /**
      * 轮播图查询
@@ -49,13 +48,11 @@ public class AdvertisingRS {
         FundLiquidationEnum liquidation = appPartner.getLiquidation();
 
         return Mono.fromCallable(() -> {
-//            MDC.setContextMap(mdcContext);
-//            log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
-//            log.info("fundLiquidationEnum:[{}]", liquidation.toString());
-//            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId, liquidation);
-//            return advertisingRotationDTOS;
-//            Mono<List<AdvertisingRotationDTO>> rotation = advertisingFeignController.rotation(2);
-            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisingFeignService.rotationList(channelId, liquidation);
+            MDC.setContextMap(mdcContext);
+            log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
+            log.info("fundLiquidationEnum:[{}]", liquidation.toString());
+            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId, liquidation);
+//            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisingFeignService.rotationList(channelId, liquidation);
             if (null != advertisingRotationDTOS) {
                 String url = advertisingRotationDTOS.get(0).getUrl();
                 log.info("success url:[{}]",url);
