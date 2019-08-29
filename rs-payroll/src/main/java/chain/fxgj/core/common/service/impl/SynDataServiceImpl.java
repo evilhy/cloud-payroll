@@ -10,12 +10,14 @@ import chain.payroll.client.feign.SynDataFeignController;
 import chain.payroll.dto.sync.EmployeeCardInfoDTO;
 import chain.payroll.dto.sync.EmployeeInfoDTO;
 import chain.payroll.dto.sync.WageDetailInfoDTO;
+import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,9 +46,10 @@ public class SynDataServiceImpl implements SynDataService {
      */
     @Override
     public Integer wagedetail(String date) {
-        QWageDetailInfo detailInfo=QWageDetailInfo.wageDetailInfo;
-        List<WageDetailInfo> wageDetailList = wageDetailInfoDao.select(detailInfo).fetch();
-        SimpleDateFormat sdfYear=new SimpleDateFormat("yyyyy");
+        List<WageDetailInfo> wageDetailList = wageDetailInfoDao.findAll();
+        SimpleDateFormat sdfYear=new SimpleDateFormat("YYYY");
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("MM");
         SimpleDateFormat sdfMonth=new SimpleDateFormat("MM");
         log.info("wagedetail--->{}",wageDetailList.size());
         if (wageDetailList!=null){
@@ -62,10 +65,11 @@ public class SynDataServiceImpl implements SynDataService {
                     newDtoList=new ArrayList<>();
                     for (WageDetailInfo detail:newList){
                         WageDetailInfoDTO dto=new WageDetailInfoDTO();
-                        dto.setCrtYear(sdfYear.format(detail.getCrtDateTime()));
-                        dto.setCrtMonth(sdfMonth.format(detail.getCrtDateTime()));
+                        dto.setCrtYear(formatter1.format(detail.getCrtDateTime()));
+                        dto.setCrtMonth(formatter2.format(detail.getCrtDateTime()));
                         BeanUtils.copyProperties(detail,dto);
                         newDtoList.add(dto);
+                        log.info("wagedetail--->{}", dto);
                     }
                     //调用远程服务进行保存
                     log.info("newDtoList--->",newDtoList.size());
