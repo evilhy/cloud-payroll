@@ -1,18 +1,20 @@
 package chain.fxgj.core.common.service.impl;
 
-import chain.fxgj.core.common.dto.employee.EmployeeCardDTO;
 import chain.fxgj.core.common.service.SynDataService;
 import chain.fxgj.core.jpa.dao.*;
 import chain.fxgj.core.jpa.model.*;
 import chain.payroll.client.feign.SynDataFeignController;
 import chain.payroll.dto.sync.*;
-import com.google.gson.JsonObject;
+import com.querydsl.core.QueryResults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +93,8 @@ public class SynDataServiceImpl implements SynDataService {
      */
     @Override
     public Integer empinfo() {
-        List<EmployeeInfo> employeeInfoListList = employeeInfoDao.findAll();
+        QEmployeeInfo qEmployeeInfo=QEmployeeInfo.employeeInfo;
+        List<EmployeeInfo> employeeInfoListList = employeeInfoDao.selectFrom(qEmployeeInfo).fetch();
         log.info("empinfo--->{}",employeeInfoListList.size());
         if (employeeInfoListList!=null){
             int listSize = employeeInfoListList.size();
@@ -110,7 +113,7 @@ public class SynDataServiceImpl implements SynDataService {
                         BeanUtils.copyProperties(detail,dto);
                         QEmployeeCardInfo cardInfo=QEmployeeCardInfo.employeeCardInfo;
                         //读取用户的卡信息
-                        List<EmployeeCardInfo> cardList=employeeCardInfoDao.select(cardInfo).
+                        List<EmployeeCardInfo> cardList=employeeCardInfoDao.selectFrom(cardInfo).
                                 where(cardInfo.employeeInfo.id.eq(detail.getId())).fetch();
                         log.info("cardList--->{}",cardList.size());
                         //构建卡的信息
@@ -200,7 +203,8 @@ public class SynDataServiceImpl implements SynDataService {
     @Override
     public Integer entgroup() {
         Integer result=0;
-        List<EntGroupInfo> entGroupInfoList = entGroupInfoDao.findAll();
+        QEntGroupInfo qEntGroupInfo=QEntGroupInfo.entGroupInfo;
+        List<EntGroupInfo> entGroupInfoList = entGroupInfoDao.selectFrom(qEntGroupInfo).fetch();
         if (entGroupInfoList!=null){
             int listSize = entGroupInfoList.size();
             int toIndex = 100;
@@ -230,32 +234,66 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Override
     public Integer manager() {
+        int pageSize=100;
+        int page=1;
         Integer result=0;
-        List<ManagerInfo> managerInfoList = managerInfoDao.findAll();
-        if (managerInfoList!=null){
-            int listSize = managerInfoList.size();
-            int toIndex = 100;
-            for (int i = 0; i<managerInfoList.size(); i+=100) {
-                if (i+100 > listSize){
-                    toIndex = listSize - i;
+        //分页查询
+        log.info("开始同步数据.....");
+        while (true){
+            int currentData=(page-1)*pageSize;
+            QManagerInfo managerInfoQ=QManagerInfo.managerInfo;
+            QueryResults<ManagerInfo> managerInfoPage = managerInfoDao.selectFrom(managerInfoQ)
+                    .orderBy(managerInfoQ.crtDateTime.desc())
+                    .offset(currentData)
+                    .limit(pageSize)
+                    .fetchResults();
+            List<ManagerInfoDTO> managerInfoDTOS=null;
+            log.info("managerInfoDTOS--->size:{}",managerInfoPage.getResults().size());
+            if (managerInfoPage.getResults()!=null){
+                managerInfoDTOS=new ArrayList<>();
+                for (ManagerInfo managerInfo:managerInfoPage.getResults()){
+                    ManagerInfoDTO dto=new ManagerInfoDTO();
+                    BeanUtils.copyProperties(managerInfo,dto);
+                    managerInfoDTOS.add(dto);
                 }
-                List<ManagerInfo> newList = managerInfoList.subList(i, i+toIndex);
-                List<ManagerInfoDTO> managerInfoDTOS=null;
-                if (newList!=null){
-                    managerInfoDTOS=new ArrayList<>();
-                    for (ManagerInfo managerInfo:newList){
-                        ManagerInfoDTO dto=new ManagerInfoDTO();
-                        BeanUtils.copyProperties(managerInfo,dto);
-                        managerInfoDTOS.add(dto);
-                    }
-                    log.info("managerInfoDTOS--->size:{}",managerInfoDTOS.size());
-                    boolean b = synDataFeignController.synManagerInfo(managerInfoDTOS);
-                    if (b){
-                        result+=managerInfoDTOS.size();
-                    }
+                log.info("managerInfoDTOS--->size:{}",managerInfoDTOS.size());
+                boolean b = synDataFeignController.synManagerInfo(managerInfoDTOS);
+                if (b){
+                    result+=managerInfoDTOS.size();
                 }
             }
+            if (managerInfoPage.getResults().size()<pageSize){
+                break;
+            }
+            page=page+1;
+            log.info("当前同步数据第{}页，同步数量:{}",page,pageSize);
         }
+//        QManagerInfo managerInfoQ=QManagerInfo.managerInfo;
+//        List<ManagerInfo> managerInfoList = managerInfoDao.selectFrom(managerInfoQ).fetch();
+//        if (managerInfoList!=null){
+//            int listSize = managerInfoList.size();
+//            int toIndex = 100;
+//            for (int i = 0; i<managerInfoList.size(); i+=100) {
+//                if (i+100 > listSize){
+//                    toIndex = listSize - i;
+//                }
+//                List<ManagerInfo> newList = managerInfoList.subList(i, i+toIndex);
+//                List<ManagerInfoDTO> managerInfoDTOS=null;
+//                if (newList!=null){
+//                    managerInfoDTOS=new ArrayList<>();
+//                    for (ManagerInfo managerInfo:newList){
+//                        ManagerInfoDTO dto=new ManagerInfoDTO();
+//                        BeanUtils.copyProperties(managerInfo,dto);
+//                        managerInfoDTOS.add(dto);
+//                    }
+//                    log.info("managerInfoDTOS--->size:{}",managerInfoDTOS.size());
+//                    boolean b = synDataFeignController.synManagerInfo(managerInfoDTOS);
+//                    if (b){
+//                        result+=managerInfoDTOS.size();
+//                    }
+//                }
+//            }
+//        }
         return result;
     }
 
