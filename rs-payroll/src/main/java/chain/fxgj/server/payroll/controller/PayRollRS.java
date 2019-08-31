@@ -5,20 +5,15 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
-import chain.fxgj.core.common.service.SynDataService;
 import chain.fxgj.core.common.service.WageWechatService;
 import chain.fxgj.core.common.service.WechatBindService;
 import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
-import chain.payroll.client.feign.PayrollFeignController;
-import chain.payroll.dto.response.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,8 +49,7 @@ public class PayRollRS {
     WechatBindService wechatBindService;
     @Inject
     EmployeeEncrytorService employeeEncrytorService;
-    @Autowired
-    PayrollFeignController payrollFeignController;
+
     @Resource
     RedisTemplate redisTemplate;
 
@@ -84,25 +78,17 @@ public class PayRollRS {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal principal = WebContext.getCurrentUser();
-        principal = new UserPrincipal();
-        principal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         String idNumber = principal.getIdNumber();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            PayrollIndexDTO index = payrollFeignController.index(idNumber, payrollUserPrincipalDTO);
-            PayrollNewestWageLogDTO sourceBean = index.getBean();
-            NewestWageLogDTO bean = new NewestWageLogDTO();
-            BeanUtils.copyProperties(sourceBean, bean);
-//            NewestWageLogDTO bean = wageWechatService.newGroupPushInfo(idNumber, principal);
+            NewestWageLogDTO bean = wageWechatService.newGroupPushInfo(idNumber, principal);
+
             IndexDTO indexDTO = new IndexDTO();
             indexDTO.setBean(bean);
             //查询用户是否银行卡号变更有最新未读消息
-//            Integer isNew = wechatBindService.getCardUpdIsNew(idNumber);
-            Integer isNew = index.getIsNew();
+            Integer isNew = wechatBindService.getCardUpdIsNew(idNumber);
             log.info("isNew:{}", isNew);
             indexDTO.setIsNew(isNew);
             return indexDTO;
@@ -118,19 +104,13 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<NewestWageLogDTO>> groupList() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal principal = WebContext.getCurrentUser();
-        principal = new UserPrincipal();
-        principal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-//            List<NewestWageLogDTO> list = wageWechatService.groupList(idNumber, principal);
-            List<PayrollNewestWageLogDTO> source = payrollFeignController.groupList(idNumber, payrollUserPrincipalDTO);
-            List<NewestWageLogDTO> list = new ArrayList<>();
-            BeanUtils.copyProperties(source, list);
+            List<NewestWageLogDTO> list = wageWechatService.groupList(idNumber, principal);
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -146,17 +126,11 @@ public class PayRollRS {
     public Mono<Res100701> entEmp(@RequestParam("idNumber") String idNumber) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
-        principal = new UserPrincipal();
-        principal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
+
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-//            Res100701 res100701 = wechatBindService.getEntList(idNumber, principal);
-            Res100701 res100701 = new Res100701();
-            PayrollRes100701DTO source = payrollFeignController.entEmp(idNumber, payrollUserPrincipalDTO);
-            BeanUtils.copyProperties(source, res100701);
+            Res100701 res100701 = wechatBindService.getEntList(idNumber, principal);
             if (res100701.getBindStatus().equals("1")) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_002.getErrorMsg());
             }
@@ -181,23 +155,21 @@ public class PayRollRS {
                                     @RequestParam("year") String year,
                                     @RequestParam("type") String type) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
+
         UserPrincipal principal = WebContext.getCurrentUser();
-        principal = new UserPrincipal();
-        principal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+
             Res100703 res100703 = null;
-//            if (LocalDate.now().getYear() == Integer.parseInt(year)) {
-//                res100703 = wageWechatService.wageList(idNumber, groupId, year, type,principal);
-//            } else {
-//                res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
-//            }
-//            res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
-            PayrollRes100703DTO source = payrollFeignController.wageList(groupId, year, type, idNumber, payrollUserPrincipalDTO);
-            BeanUtils.copyProperties(source, res100703);
+            if (LocalDate.now().getYear() == Integer.parseInt(year)) {
+                res100703 = wageWechatService.wageList(idNumber, groupId, year, type,principal);
+            } else {
+                res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
+            }
+            res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
+
             return res100703;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -214,19 +186,32 @@ public class PayRollRS {
     public Mono<List<WageDetailDTO>> wageDetail(@RequestParam("wageSheetId") String wageSheetId,
                                                 @RequestParam("groupId") String groupId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal principal = WebContext.getCurrentUser();
-        principal = new UserPrincipal();
-        principal.setIdNumber("123321");
         String idNumber = principal.getIdNumber();
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
             List<WageDetailDTO> list = new ArrayList<>();
-//            list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
-            List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(idNumber, groupId, wageSheetId, payrollUserPrincipalDTO);
-            BeanUtils.copyProperties(source, list);
+            //注释原因：读取redis中 WageDetailDTO 路径 与库中路径不一致
+//            try {
+//                String redisKey = FxgjDBConstant.PREFIX + ":payroll:" + principal.getIdNumberEncrytor() + ":" + wageSheetId + ":wechatpush";
+//                Object value = redisTemplate.opsForValue().get(redisKey);
+//                if (value != null && StringUtils.isNotBlank(value.toString())) {
+//                    ObjectMapper mapper = new ObjectMapper();
+//                    JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, WageDetailDTO.class);
+//                    list = (List<WageDetailDTO>) mapper.readValue(value.toString(), javaType);
+//                    log.info("{}:读取redis工资,{}", principal.getOpenId(), list.size());
+//                } else {
+//                    list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
+//                }
+//            } catch (Exception e) {
+//                log.debug("redis读取失败", e);
+//                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
+//            }
+
+            list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
+
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -240,19 +225,13 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<Res100708>> empInfo() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal principal = WebContext.getCurrentUser();
-        principal = new UserPrincipal();
-        principal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-//            List<Res100708> res100708 = wechatBindService.empList(idNumber,principal);
-            List<Res100708> res100708 = new ArrayList<>();
-            List<PayrollRes100708DTO> source = payrollFeignController.empInfo(idNumber, payrollUserPrincipalDTO);
-            BeanUtils.copyProperties(source, res100708);
+            List<Res100708> res100708 = wechatBindService.empList(idNumber,principal);
             return res100708;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -266,18 +245,12 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<GroupInvoiceDTO>> invoice() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal principal = WebContext.getCurrentUser();
-        principal = new UserPrincipal();
-        principal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
-        String idNumber = principal.getIdNumber();
+
+        String idNumber = WebContext.getCurrentUser().getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            List<GroupInvoiceDTO> list = wechatBindService.invoiceList(idNumber);
-            List<GroupInvoiceDTO> list = new ArrayList<>();
-            List<PayrollGroupInvoiceDTO> source = payrollFeignController.invoice(idNumber);
-            BeanUtils.copyProperties(source, list);
+
+            List<GroupInvoiceDTO> list = wechatBindService.invoiceList(idNumber);
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -292,26 +265,19 @@ public class PayRollRS {
     @TrackLog
     public Mono<Void> checkPwd(@RequestParam("pwd") String pwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal principal = WebContext.getCurrentUser();
-        principal = new UserPrincipal();
-        principal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
             if (StringUtils.isEmpty(pwd)) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
-//            String openId = principal.getOpenId();
-//            String id = principal.getWechatId();
-//            //String queryPwd = wechatBindService.getQueryPwd(openId);
-//            String queryPwd = wechatBindService.getQueryPwdById(id);
-//            if (!queryPwd.equals(employeeEncrytorService.encryptPwd(pwd))) {
-//                throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
-//            }
-            boolean passwordBoolean = payrollFeignController.checkPwd(pwd,payrollUserPrincipalDTO);
-            if (!passwordBoolean) {
+            String openId = principal.getOpenId();
+            String id = principal.getWechatId();
+            //String queryPwd = wechatBindService.getQueryPwd(openId);
+            String queryPwd = wechatBindService.getQueryPwdById(id);
+            if (!queryPwd.equals(employeeEncrytorService.encryptPwd(pwd))) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
             return null;
@@ -334,12 +300,8 @@ public class PayRollRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-//            int is = wechatBindService.checkCardNo(idNumber, cardNo);
-//            if (is == IsStatusEnum.NO.getCode()) {
-//                throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
-//            }
-            boolean isBool = payrollFeignController.checkCard(idNumber, cardNo);
-            if (!isBool) {
+            int is = wechatBindService.checkCardNo(idNumber, cardNo);
+            if (is == IsStatusEnum.NO.getCode()) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
             }
             return null;
@@ -358,28 +320,21 @@ public class PayRollRS {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        userPrincipal = new UserPrincipal();
-        userPrincipal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(userPrincipal, payrollUserPrincipalDTO);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-//            EmpInfoDTO empInfoDTO = EmpInfoDTO.builder()
-//                    .headimgurl(userPrincipal.getHeadimgurl())
-//                    .idNumber(userPrincipal.getIdNumber())
-//                    .name(userPrincipal.getName())
-//                    .phone(userPrincipal.getPhone())
-//                    .phoneStar(TransUtil.phoneStar(userPrincipal.getPhone()))
-//                    .idNumberStar(TransUtil.idNumberStar(userPrincipal.getIdNumber()))
-//                    .build();
-//            //查询用户是否银行卡号变更有最新未读消息
-//            Integer isNew = wechatBindService.getCardUpdIsNew(userPrincipal.getIdNumber());
-//            empInfoDTO.setIsNew(isNew);
+            EmpInfoDTO empInfoDTO = EmpInfoDTO.builder()
+                    .headimgurl(userPrincipal.getHeadimgurl())
+                    .idNumber(userPrincipal.getIdNumber())
+                    .name(userPrincipal.getName())
+                    .phone(userPrincipal.getPhone())
+                    .phoneStar(TransUtil.phoneStar(userPrincipal.getPhone()))
+                    .idNumberStar(TransUtil.idNumberStar(userPrincipal.getIdNumber()))
+                    .build();
 
-            EmpInfoDTO empInfoDTO = new EmpInfoDTO();
-            PayrollEmpInfoDTO source = payrollFeignController.emp(payrollUserPrincipalDTO);
-            BeanUtils.copyProperties(source, empInfoDTO);
+            //查询用户是否银行卡号变更有最新未读消息
+            Integer isNew = wechatBindService.getCardUpdIsNew(userPrincipal.getIdNumber());
+            empInfoDTO.setIsNew(isNew);
             return empInfoDTO;
         }).subscribeOn(Schedulers.elastic());
 
@@ -394,17 +349,12 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<EmpEntDTO>> empEnt() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        userPrincipal = new UserPrincipal();
-        userPrincipal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(userPrincipal, payrollUserPrincipalDTO);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            List<EmpEntDTO> list = wechatBindService.empEntList(userPrincipal.getIdNumber(),userPrincipal);
-            List<EmpEntDTO> list = new ArrayList<>();
-            List<PayrollEmpEntDTO> source = payrollFeignController.empEnt(payrollUserPrincipalDTO);
-            BeanUtils.copyProperties(source, list);
+
+            List<EmpEntDTO> list = wechatBindService.empEntList(userPrincipal.getIdNumber(),userPrincipal);
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -420,16 +370,10 @@ public class PayRollRS {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        userPrincipal = new UserPrincipal();
-        userPrincipal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(userPrincipal, payrollUserPrincipalDTO);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            List<EmpEntDTO> list = wechatBindService.empEntList(userPrincipal.getIdNumber(), userPrincipal);
-            List<EmpEntDTO> list = new ArrayList<>();
-            List<PayrollEmpEntDTO> source = payrollFeignController.empCard(payrollUserPrincipalDTO);
-            BeanUtils.copyProperties(source, list);
+
+            List<EmpEntDTO> list = wechatBindService.empEntList(userPrincipal.getIdNumber(), userPrincipal);
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -444,14 +388,12 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<EmpCardLogDTO>> empCardLog(@RequestParam("ids") String ids) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
             //ids "|"分割
-//            List<EmpCardLogDTO> list = wechatBindService.empCardLog(ids.split("\\|"));
-            List<EmpCardLogDTO> list = new ArrayList<>();
-            List<PayrollEmpCardLogDTO> source = payrollFeignController.empCardLog(ids);
-            BeanUtils.copyProperties(source, list);
+            List<EmpCardLogDTO> list = wechatBindService.empCardLog(ids.split("\\|"));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -465,17 +407,12 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<EmployeeListBean>> entPhone() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        userPrincipal = new UserPrincipal();
-        userPrincipal.setIdNumber("123321");
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(userPrincipal, payrollUserPrincipalDTO);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            List<EmployeeListBean> list = wechatBindService.getEntPhone(userPrincipal.getIdNumber(), userPrincipal);
-            List<EmployeeListBean> list = new ArrayList<>();
-            List<PayrollEmployeeListDTO> source = payrollFeignController.entPhone(payrollUserPrincipalDTO);
-            BeanUtils.copyProperties(source, list);
+
+            List<EmployeeListBean> list = wechatBindService.getEntPhone(userPrincipal.getIdNumber(), userPrincipal);
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -490,13 +427,13 @@ public class PayRollRS {
     @TrackLog
     public Mono<List<EntUserDTO>> entUser(@RequestParam("entId") String entId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            List<EntUserDTO> list = wechatBindService.entUser(entId);
-            List<EntUserDTO> list = new ArrayList<>();
-            List<PayrollEntUserDTO> source = payrollFeignController.entUser(entId);
-            BeanUtils.copyProperties(source, list);
+
+            List<EntUserDTO> list = wechatBindService.entUser(entId);
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
+
 }
