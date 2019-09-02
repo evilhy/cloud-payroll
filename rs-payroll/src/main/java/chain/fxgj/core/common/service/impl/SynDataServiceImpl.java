@@ -7,6 +7,7 @@ import chain.payroll.client.feign.SynDataFeignController;
 import chain.payroll.dto.sync.*;
 import com.querydsl.core.QueryResults;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -291,7 +295,10 @@ public class SynDataServiceImpl implements SynDataService {
     public Integer manager() {
         int pageSize=100;
         int page=1;
-        Integer result=0;
+        Integer result=syncManger();
+        if (result>0){
+            return  result;
+        }
         //分页查询
         log.info("银行经理人信息开始同步数据.....");
         while (true){
@@ -493,5 +500,74 @@ public class SynDataServiceImpl implements SynDataService {
         return result;
     }
 
+
+    private Integer syncManger(){
+        int pageSize=100;
+        int page=1;
+        Integer result=0;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        while (true){
+            int currentData=(page-1)*pageSize;
+            String sql="SELECT id,avatar_url,branch_org_name," +
+                    "branch_org_no,crt_date_time,is_confirmed,manager_name,mobile,officer,score," +
+                    "STATUS,sub_branch_org_name,sub_branch_org_no,upd_date_time,wechat_id," +
+                    "wechat_qr_imgae,wechat_qr_url,branch_name,branch_no,phone,sub_branch_name," +
+                    "sub_branch_no,cust_status,headquarters_bank from manager_info limit ?,? ";
+            log.info("sql-->{}",sql);
+            List<ManagerInfoDTO> resultList=jdbcTemplate.query(sql,new Object[]{currentData,pageSize} , new RowMapper<ManagerInfoDTO>() {
+                ManagerInfoDTO dto=null;
+                @Override
+                public ManagerInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    dto=new ManagerInfoDTO();
+                    dto.setId(rs.getString("id"));
+                    dto.setAvatarUrl(rs.getString("avatar_url"));
+                    dto.setBranchName(rs.getString("branch_name"));
+                    dto.setBranchNo(rs.getString("branch_no"));
+                    dto.setIsConfirmed(rs.getString("is_confirmed"));
+                    dto.setManagerName(rs.getString("manager_name"));
+                    dto.setPhone(rs.getString("phone"));
+                    dto.setOfficer(rs.getString("officer"));
+                    dto.setScore(rs.getInt("score"));
+                    dto.setCustStatus(rs.getInt("cust_status"));
+                    dto.setSubBranchName(rs.getString("sub_branch_name"));
+                    dto.setSubBranchNo(rs.getString("sub_branch_no"));
+                    dto.setWechatId(rs.getString("wechat_id"));
+                    dto.setWechatQrImgae(rs.getString("wechat_qr_imgae"));
+                    dto.setWechatQrUrl(rs.getString("wechat_qr_url"));
+                    dto.setHeadquartersBank(rs.getInt("headquarters_bank"));
+                    String crtDate=rs.getString("crt_date_time");
+                    if (StringUtils.isNotEmpty(crtDate)){
+                        long crtLong=rs.getDate("crt_date_time").getTime();
+                        Instant instant = Instant.ofEpochMilli(crtLong);
+                        ZoneId zone = ZoneId.systemDefault();
+                        dto.setCrtDateTime(LocalDateTime.ofInstant(instant, zone));
+                    }
+                    String updDate=rs.getString("upd_date_time");
+                    if (StringUtils.isNotEmpty(updDate)){
+                        long updDateLong=rs.getDate("upd_date_time").getTime();
+                        Instant instant = Instant.ofEpochMilli(updDateLong);
+                        ZoneId zone = ZoneId.systemDefault();
+                        dto.setUpdDateTime(LocalDateTime.ofInstant(instant, zone));
+                    }
+                    return dto;
+                }
+            });
+            log.info("WageShow_size:{}",resultList.size());
+            //开始进行同步
+            boolean b = synDataFeignController.synManagerInfo(resultList);
+            if (b){
+                result+=resultList.size();
+            }
+            log.info("WageShow当前同步数据第{}页，同步数量:{}",page,resultList.size());
+            if (resultList.size()<pageSize){
+                break;
+            }
+            page=page+1;
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+    }
 
 }
