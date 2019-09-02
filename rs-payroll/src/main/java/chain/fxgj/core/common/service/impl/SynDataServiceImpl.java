@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,6 +51,11 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Resource
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private WageSheetInfoDao wageSheetInfoDaohee;
+    @Autowired
+    private WageShowInfoDao wageShowInfoDao;
 
 
     /**
@@ -97,7 +101,7 @@ public class SynDataServiceImpl implements SynDataService {
                 break;
             }
             page=page+1;
-            log.info("企业信息当前同步数据第{}页，同步数量:{}",page,pageSize);
+            log.info("企业信息当前同步数据第{}页，同步数量:{}",page,wageDetailInfoDTOList.size());
         }
         return result;
     }
@@ -157,7 +161,7 @@ public class SynDataServiceImpl implements SynDataService {
                 break;
             }
             page=page+1;
-            log.info("用户信息当前同步数据第{}页，同步数量:{}",page,pageSize);
+            log.info("用户信息当前同步数据第{}页，同步数量:{}",page,employeeInfoDTOList.size());
         }
         return result;
     }
@@ -196,7 +200,7 @@ public class SynDataServiceImpl implements SynDataService {
                 break;
             }
             page=page+1;
-            log.info("企业信息当前同步数据第{}页，同步数量:{}",page,pageSize);
+            log.info("企业信息当前同步数据第{}页，同步数量:{}",page,employeeWechatInfoDTOS.size());
         }
         return result;
     }
@@ -235,7 +239,7 @@ public class SynDataServiceImpl implements SynDataService {
                 break;
             }
             page=page+1;
-            log.info("企业信息当前同步数据第{}页，同步数量:{}",page,pageSize);
+            log.info("企业信息当前同步数据第{}页，同步数量:{}",page,erpriseInfoDTOS.size());
         }
         return result;
     }
@@ -278,7 +282,7 @@ public class SynDataServiceImpl implements SynDataService {
                 break;
             }
             page=page+1;
-            log.info("机构信息当前同步数据第{}页，同步数量:{}",page,pageSize);
+            log.info("机构信息当前同步数据第{}页，同步数量:{}",page,entGroupInfoDTOS.size());
         }
         return result;
     }
@@ -317,7 +321,7 @@ public class SynDataServiceImpl implements SynDataService {
                 break;
             }
             page=page+1;
-            log.info("银行经理人当前同步数据第{}页，同步数量:{}",page,pageSize);
+            log.info("银行经理人当前同步数据第{}页，同步数量:{}",page,managerInfoDTOS.size());
         }
 //        QManagerInfo managerInfoQ=QManagerInfo.managerInfo;
 //        List<ManagerInfo> managerInfoList = managerInfoDao.selectFrom(managerInfoQ).fetch();
@@ -345,6 +349,84 @@ public class SynDataServiceImpl implements SynDataService {
 //                }
 //            }
 //        }
+        return result;
+    }
+
+    @Override
+    public Integer wageSheet() {
+        int pageSize=100;
+        int page=1;
+        Integer result=0;
+        //分页查询
+        log.info("WageSheet信息开始同步数据.....");
+        while (true){
+            int currentData=(page-1)*pageSize;
+            QWageSheetInfo qSheetInfo=QWageSheetInfo.wageSheetInfo;
+            QueryResults<WageSheetInfo> wageSheetInfoQueryResults = wageSheetInfoDaohee.selectFrom(qSheetInfo)
+                    .orderBy(qSheetInfo.crtDateTime.desc())
+                    .offset(currentData)
+                    .limit(pageSize)
+                    .fetchResults();
+            List<WageSheetInfoDTO> wageSheetInfoDTOList=null;
+            log.info("wageSheetInfoDTOList--->size:{}",wageSheetInfoQueryResults.getResults().size());
+            if (wageSheetInfoQueryResults.getResults()!=null){
+                wageSheetInfoDTOList=new ArrayList<>();
+                for (WageSheetInfo sheetInfo:wageSheetInfoQueryResults.getResults()){
+                    WageSheetInfoDTO wageSheetInfoDTO=new WageSheetInfoDTO();
+                    BeanUtils.copyProperties(sheetInfo,wageSheetInfoDTO);
+                    wageSheetInfoDTOList.add(wageSheetInfoDTO);
+                }
+                log.info("wageSheetInfoDTOList--->size:{}",wageSheetInfoDTOList.size());
+                boolean b = synDataFeignController.synWageSheet(wageSheetInfoDTOList);
+                if (b){
+                    result+=wageSheetInfoDTOList.size();
+                }
+            }
+            if (wageSheetInfoQueryResults.getResults().size()<pageSize){
+                break;
+            }
+            page=page+1;
+            log.info("WageSheet当前同步数据第{}页，同步数量:{}",page,wageSheetInfoDTOList.size());
+        }
+        return result;
+    }
+
+    @Override
+    public Integer wageShow() {
+        int pageSize=100;
+        int page=1;
+        Integer result=0;
+        //分页查询
+        log.info("WageShow信息开始同步数据.....");
+        while (true){
+            int currentData=(page-1)*pageSize;
+            QWageShowInfo qwechatSheet=QWageShowInfo.wageShowInfo;
+            QueryResults<WageShowInfo> wageShowInfoQueryResults = wageShowInfoDao.selectFrom(qwechatSheet)
+                    .orderBy(qwechatSheet.crtDateTime.desc())
+                    .offset(currentData)
+                    .limit(pageSize)
+                    .fetchResults();
+            List<WageShowInfoDTO> wageShowInfoDTOS=null;
+            log.info("wageShowInfoDTOS--->size:{}",wageShowInfoQueryResults.getResults().size());
+            if (wageShowInfoQueryResults.getResults()!=null){
+                wageShowInfoDTOS=new ArrayList<>();
+                for (WageShowInfo wageShowInfo:wageShowInfoQueryResults.getResults()){
+                    WageShowInfoDTO dto=new WageShowInfoDTO();
+                    BeanUtils.copyProperties(wageShowInfo,dto);
+                    wageShowInfoDTOS.add(dto);
+                }
+                log.info("wageShowInfoDTOS--->size:{}",wageShowInfoDTOS.size());
+                boolean b = synDataFeignController.synWageShowSheet(wageShowInfoDTOS);
+                if (b){
+                    result+=wageShowInfoDTOS.size();
+                }
+            }
+            if (wageShowInfoQueryResults.getResults().size()<pageSize){
+                break;
+            }
+            page=page+1;
+            log.info("WageShow当前同步数据第{}页，同步数量:{}",page,wageShowInfoDTOS.size());
+        }
         return result;
     }
 
@@ -398,14 +480,12 @@ public class SynDataServiceImpl implements SynDataService {
                     return dto;
                 }
             });
-            for (EntGroupInfoDTO dto:resultList){
-                log.info("dto===>{}",dto);
-            }
             //开始进行同步
             boolean b = synDataFeignController.syncEntGroup(resultList);
             if (b){
                 result+=resultList.size();
             }
+            log.info("WageShow当前同步数据第{}页，同步数量:{}",page,resultList.size());
             if (resultList.size()<pageSize){
                 break;
             }

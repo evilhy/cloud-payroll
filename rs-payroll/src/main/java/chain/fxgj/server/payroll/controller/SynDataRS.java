@@ -85,6 +85,24 @@ public class SynDataRS {
         }).subscribeOn(Schedulers.elastic());
     }
 
+    @GetMapping("/wagesheet")
+    @TrackLog
+    public Mono<Integer> sheet() {
+        return Mono.fromCallable(() -> {
+            Integer count = synDataService.wageSheet();
+            return count;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/wageshow")
+    @TrackLog
+    public Mono<Integer> wageShow() {
+        return Mono.fromCallable(() -> {
+            Integer count = synDataService.wageShow();
+            return count;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
 
 
 

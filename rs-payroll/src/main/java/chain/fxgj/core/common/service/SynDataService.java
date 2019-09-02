@@ -13,4 +13,8 @@ public interface SynDataService {
     Integer entgroup();
 
     Integer manager();
+
+    Integer wageSheet();
+
+    Integer wageShow();
 }
