@@ -9,10 +9,17 @@ import com.querydsl.core.QueryResults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -42,6 +49,9 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Autowired
     private SynDataFeignController synDataFeignController;
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
 
 
     /**
@@ -232,9 +242,13 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Override
     public Integer entgroup() {
+        queryGroupInfoByJDBC();
         int pageSize=100;
         int page=1;
-        Integer result=0;
+        Integer result=queryGroupInfoByJDBCs();
+        if (result>0){
+            return result;
+        }
         //分页查询
         log.info("机构信息开始同步数据.....");
         while (true){
@@ -331,6 +345,71 @@ public class SynDataServiceImpl implements SynDataService {
 //                }
 //            }
 //        }
+        return result;
+    }
+
+    private List<EntGroupInfoDTO> queryGroupInfoByJDBC(){
+        List<EntGroupInfoDTO> resultList=null;
+        String sql="select * from ent_group_info";
+        resultList=jdbcTemplate.query(sql, new RowMapper<EntGroupInfoDTO>() {
+            EntGroupInfoDTO dto=null;
+            @Override
+            public EntGroupInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+                dto=new EntGroupInfoDTO();
+                return dto;
+            }
+        });
+        log.info("queryGroupInfoByJDBC_size:{}",resultList.size());
+        return resultList;
+    }
+
+    private Integer queryGroupInfoByJDBCs(){
+        int pageSize=100;
+        int page=1;
+        Integer result=0;
+        while (true){
+            int currentData=(page-1)*pageSize;
+            String sql="select id,crt_date_time,del_status,ent_id,group_name,group_status,short_group_name,upd_date_time," +
+                    "upload_emp_lock,group_invoice_id,is_open_sms,is_open_wechat,ascription_type,enable_multi_account," +
+                    "ascription_channel,check_type,is_order,project_code FROM ent_group_info limit ?,? ";
+           log.info("sql-->{}",sql);
+            List<EntGroupInfoDTO> resultList=jdbcTemplate.query(sql,new Object[]{currentData,pageSize} , new RowMapper<EntGroupInfoDTO>() {
+                EntGroupInfoDTO dto=null;
+                @Override
+                public EntGroupInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    dto=new EntGroupInfoDTO();
+                    dto.setId(rs.getString("id"));
+                    dto.setDelStatus(rs.getInt("del_status"));
+                    dto.setEntId(rs.getString("ent_id"));
+                    dto.setGroupName(rs.getString("group_name"));
+                    dto.setGroupStatus(rs.getInt("group_status"));
+                    dto.setShortGroupName(rs.getString("short_group_name"));
+                    dto.setUploadEmpLock(rs.getInt("upload_emp_lock"));
+                    dto.setGroupInvoiceId(rs.getString("group_invoice_id"));
+                    dto.setIsOpenSms(rs.getString("is_open_sms"));
+                    dto.setIsOpenWechat(rs.getString("is_open_wechat"));
+                    dto.setAscriptionType(rs.getInt("ascription_type"));
+                    dto.setEnableMultiAccount(rs.getInt("enable_multi_account"));
+                    dto.setAscriptionChannel(rs.getInt("ascription_channel"));
+                    dto.setCheckType(rs.getInt("check_type"));
+                    dto.setIsOrder(rs.getString("is_order"));
+                    dto.setProjectCode(rs.getString("project_code"));
+                    Date crtDate=rs.getDate("crt_date_time");
+                    return dto;
+                }
+            });
+            for (EntGroupInfoDTO dto:resultList){
+                log.info("dto===>{}",dto);
+            }
+            //开始进行同步
+            boolean b = synDataFeignController.syncEntGroup(resultList);
+            if (b){
+                result+=resultList.size();
+            }
+            if (resultList.size()<pageSize){
+                break;
+            }
+        }
         return result;
     }
 
