@@ -2,11 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.service.SynDataService;
-import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
-import chain.fxgj.server.payroll.dto.response.IndexDTO;
-import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
