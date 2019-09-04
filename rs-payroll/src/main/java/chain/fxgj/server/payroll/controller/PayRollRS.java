@@ -11,9 +11,16 @@ import chain.fxgj.core.common.util.TransUtil;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.payroll.client.feign.PayrollFeignController;
+import chain.payroll.dto.response.PayrollUserPrincipalDTO;
+import chain.payroll.dto.response.PayrollWageDetailDTO;
+import chain.payroll.dto.response.PayrollWageDetailReqDTO;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +59,8 @@ public class PayRollRS {
 
     @Resource
     RedisTemplate redisTemplate;
-
+    @Autowired
+    PayrollFeignController payrollFeignController;
 
     /**
      * 服务当前时间
@@ -189,30 +197,29 @@ public class PayRollRS {
 
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNumber = principal.getIdNumber();
+        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
+        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-
+            boolean qryMySql = false;
             List<WageDetailDTO> list = new ArrayList<>();
-            //注释原因：读取redis中 WageDetailDTO 路径 与库中路径不一致
 //            try {
-//                String redisKey = FxgjDBConstant.PREFIX + ":payroll:" + principal.getIdNumberEncrytor() + ":" + wageSheetId + ":wechatpush";
-//                Object value = redisTemplate.opsForValue().get(redisKey);
-//                if (value != null && StringUtils.isNotBlank(value.toString())) {
-//                    ObjectMapper mapper = new ObjectMapper();
-//                    JavaType javaType = mapper.getTypeFactory().constructParametricType(ArrayList.class, WageDetailDTO.class);
-//                    list = (List<WageDetailDTO>) mapper.readValue(value.toString(), javaType);
-//                    log.info("{}:读取redis工资,{}", principal.getOpenId(), list.size());
-//                } else {
-//                    list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
-//                }
+//                PayrollWageDetailReqDTO payrollWageDetailReqDTO = new PayrollWageDetailReqDTO();
+//                payrollWageDetailReqDTO.setIdNumber(idNumber);
+//                payrollWageDetailReqDTO.setGroupId(groupId);
+//                payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
+//                payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
+//                List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+//                BeanUtils.copyProperties(source, list);
 //            } catch (Exception e) {
-//                log.debug("redis读取失败", e);
-//                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId);
+//                log.info("查询mongo异常，转查mysql,idNumber:[{}]",idNumber);
+//                qryMySql = true;
 //            }
-
-            list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
-
-            return list;
+            //查询mongo异常，转查mysql
+            if (qryMySql) {
+                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
+            }
+                return list;
         }).subscribeOn(Schedulers.elastic());
     }
 

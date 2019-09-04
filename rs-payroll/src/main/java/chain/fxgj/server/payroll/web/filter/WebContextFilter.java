@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
  **/
 @Slf4j
 //todo 上线记得放开
-//@Component
+@Component
 public class WebContextFilter implements WebFilter, Ordered {
 
     private static final String START_TIME = "start-time";
