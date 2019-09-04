@@ -70,10 +70,13 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
     public Integer synWageDataInfo(String date) {
         log.info("start sync synWageDataInfo......");
         long startTime = System.currentTimeMillis();
+        String wageDetailredisKey = DataConstant.concat("WageDetail");
+        String wageSheetRedisKey = DataConstant.concat("WageSheet");
+        String wageShowRedisKey = DataConstant.concat("WageShow");
         try{
             LocalDateTime startDate =startDate(date);
             LocalDateTime endDate =endDate(date);
-            String wageDetailredisKey = DataConstant.concat("WageDetail");
+            //同步WageDetail信息
             if (!redisTemplate.hasKey(wageDetailredisKey)){
                 redisTemplate.opsForValue().set(wageDetailredisKey, "running", SCHEDULE_TIME_OUT, TimeUnit.MINUTES);
                 Runnable wageDetail = new Runnable() {
@@ -91,7 +94,7 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
             }else{
                 log.info("WageDetail正在同步中....");
             }
-            String wageSheetRedisKey = DataConstant.concat("WageSheet");
+            //同步WageSheet信息
             if (!redisTemplate.hasKey(wageSheetRedisKey)){
                 redisTemplate.opsForValue().set(wageSheetRedisKey, "running", SCHEDULE_TIME_OUT, TimeUnit.MINUTES);
                 //开始同步WageSheet
@@ -110,7 +113,7 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
             }else{
                 log.info("WageSheet正在同步中....");
             }
-            String wageShowRedisKey = DataConstant.concat("WageShow");
+            //同步WageShow信息
             if (!redisTemplate.hasKey(wageSheetRedisKey)){
                 redisTemplate.opsForValue().set(wageShowRedisKey, "running", SCHEDULE_TIME_OUT, TimeUnit.MINUTES);
                 Runnable wageShow = new Runnable() {
@@ -131,6 +134,10 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
 
         }catch (Exception e){
             log.error("synWageDataInfo异常", e);
+        }finally {
+            redisTemplate.delete(wageDetailredisKey);
+            redisTemplate.delete(wageSheetRedisKey);
+            redisTemplate.delete(wageShowRedisKey);
         }
         log.info("synWageDataInfo 同步共耗时:{}",System.currentTimeMillis()-startTime);
         return null;
@@ -287,11 +294,13 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
     public Integer synEmpInfoDataInfo(String date) {
         log.info("start sync synEmpInfoDataInfo......");
         long startTime = System.currentTimeMillis();
+        String empRedisKey = DataConstant.concat("Employee");
+        String empWechatRedisKey = DataConstant.concat("EmployeeWechat");
         Integer result=0;
         try {
             LocalDateTime startDate = startDate(date);
             LocalDateTime endDate = endDate(date);
-            String empRedisKey = DataConstant.concat("Employee");
+            //开始同步Employee数据
             if (!redisTemplate.hasKey(empRedisKey)) {
                 redisTemplate.opsForValue().set(empRedisKey, "running", SCHEDULE_TIME_OUT, TimeUnit.MINUTES);
                 Runnable emp = new Runnable() {
@@ -309,8 +318,7 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
             } else {
                 log.info("Employee 正在同步中....");
             }
-
-            String empWechatRedisKey = DataConstant.concat("EmployeeWechat");
+            //开始同步EmployeeWechat数据
             if (!redisTemplate.hasKey(empWechatRedisKey)) {
                 redisTemplate.opsForValue().set(empWechatRedisKey, "running", SCHEDULE_TIME_OUT, TimeUnit.MINUTES);
                 Runnable empWetchat = new Runnable() {
@@ -330,6 +338,9 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
             }
         }catch (Exception e){
             log.info("synEmpInfoDataInfo exception:{}",e);
+        }finally {
+            redisTemplate.delete(empRedisKey);
+            redisTemplate.delete(empWechatRedisKey);
         }
         log.info("synEmpInfoDataInfo同步共耗时:{}",System.currentTimeMillis()-startTime);
         return result;
@@ -442,7 +453,7 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                     break;
                 }
                 page=page+1;
-                log.info("企业信息当前同步数据第{}页，同步数量:{}",page,employeeWechatInfoDTOS.size());
+                log.info("EmployeeWetchat当前同步数据第{}页，同步数量:{}",page,employeeWechatInfoDTOS.size());
             }
         }catch (Exception e){
             log.info("EmployeeWetchat出现异常:{}",e);
@@ -456,48 +467,51 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
         log.info("start sync synEntGroupDataInfo......");
         long startTime = System.currentTimeMillis();
         Integer result=0;
+        String entGroupRedisKey = DataConstant.concat("EntpriseGroup");
+        String entRedisKey = DataConstant.concat("Entprise");
         try {
             LocalDateTime startDate = startDate(date);
             LocalDateTime endDate = endDate(date);
-            String entRedisKey = DataConstant.concat("Entprise");
+
             if (!redisTemplate.hasKey(entRedisKey)) {
                 redisTemplate.opsForValue().set(entRedisKey, "running", SCHEDULE_TIME_OUT, TimeUnit.MINUTES);
                 Runnable emp = new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            log.info("开始处理同步Employee信息。。。。");
+                            log.info("开始处理同步Entprise信息。。。。");
                             syncEntpriseInfo(startDate, endDate);
                         } catch (Exception e) {
-                            log.error("Employee 同步异常", e);
+                            log.error("Entprise 同步异常", e);
                         }
                     }
                 };
                 executor.execute(emp);
             } else {
-                log.info("Employee 正在同步中....");
+                log.info("Entprise 正在同步中....");
             }
-
-            String entGroupRedisKey = DataConstant.concat("EntpriseGroup");
             if (!redisTemplate.hasKey(entGroupRedisKey)) {
                 redisTemplate.opsForValue().set(entGroupRedisKey, "running", SCHEDULE_TIME_OUT, TimeUnit.MINUTES);
                 Runnable empWetchat = new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            log.info("开始处理同步EmployeeWechat信息。。。。");
+                            log.info("开始处理同步EntpriseGroup信息。。。。");
                             syncEntpriseGroupInfo(startDate, endDate);
                         } catch (Exception e) {
-                            log.error("EmployeeWechat 同步异常", e);
+                            log.error("EntpriseGroup 同步异常", e);
                         }
                     }
                 };
                 executor.execute(empWetchat);
             } else {
-                log.info("EmployeeWechat正在同步中....");
+                log.info("EntpriseGroup正在同步中....");
             }
         }catch (Exception e){
             log.info("synEntGroupDataInfo exception:{}",e);
+        }finally {
+            redisTemplate.delete(entGroupRedisKey);
+            redisTemplate.delete(entRedisKey);
         }
         log.info("synEntGroupDataInfo同步共耗时:{}",System.currentTimeMillis()-startTime);
         return result;
