@@ -26,9 +26,9 @@ public class SynTimerRS {
      * @param date
      * @return
      */
-    @GetMapping("/wagedata/{date}")
+    @GetMapping(value = {"/wagedata/{date}","/wagedata"})
     @TrackLog
-    public Mono<Integer> synWageDataInfo(@PathVariable("date") String date) {
+    public Mono<Integer> synWageDataInfo(@PathVariable(value = "date",required = false) String date) {
         return Mono.fromCallable(() -> {
             Integer count = synDataTimerService.synWageDataInfo(date);
             return count;
@@ -40,9 +40,9 @@ public class SynTimerRS {
      * @param date
      * @return
      */
-    @GetMapping("/empdata/{date}")
+    @GetMapping(value = {"/empdata/{date}","/empdata"})
     @TrackLog
-    public Mono<Integer> synEmpInfoDataInfo(@PathVariable("date") String date) {
+    public Mono<Integer> synEmpInfoDataInfo(@PathVariable(value = "date",required = false) String date) {
         return Mono.fromCallable(() -> {
             Integer count = synDataTimerService.synEmpInfoDataInfo(date);
             return count;
@@ -54,9 +54,9 @@ public class SynTimerRS {
      * @param date
      * @return
      */
-    @GetMapping("/entgroupdata/{date}")
+    @GetMapping(value = {"/entgroupdata/{date}","/entgroupdata"})
     @TrackLog
-    public Mono<Integer> synEntGroupDataInfo(@PathVariable("date") String date) {
+    public Mono<Integer> synEntGroupDataInfo(@PathVariable(value = "date",required = false) String date) {
         return Mono.fromCallable(() -> {
             Integer count = synDataTimerService.synEntGroupDataInfo(date);
             return count;

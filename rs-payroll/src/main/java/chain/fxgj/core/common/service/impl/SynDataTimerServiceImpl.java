@@ -617,6 +617,7 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
         }else{
             startDate = LocalDate.now().plusDays(-1).atTime(0, 0, 0);
         }
+        log.info("startDate----{}",startDate);
         return startDate;
     }
 
@@ -629,6 +630,7 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
         }else{
             endDate = LocalDate.now().plusDays(-1).atTime(23, 59, 59);
         }
+        log.info("endDate----{}",endDate);
         return endDate;
     }
 
