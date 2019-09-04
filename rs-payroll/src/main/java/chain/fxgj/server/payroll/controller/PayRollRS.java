@@ -203,22 +203,22 @@ public class PayRollRS {
             MDC.setContextMap(mdcContext);
             boolean qryMySql = false;
             List<WageDetailDTO> list = new ArrayList<>();
-//            try {
-//                PayrollWageDetailReqDTO payrollWageDetailReqDTO = new PayrollWageDetailReqDTO();
-//                payrollWageDetailReqDTO.setIdNumber(idNumber);
-//                payrollWageDetailReqDTO.setGroupId(groupId);
-//                payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
-//                payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
-//                List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
-//                BeanUtils.copyProperties(source, list);
-//            } catch (Exception e) {
-//                log.info("查询mongo异常，转查mysql,idNumber:[{}]",idNumber);
-//                qryMySql = true;
-//            }
+            try {
+                PayrollWageDetailReqDTO payrollWageDetailReqDTO = new PayrollWageDetailReqDTO();
+                payrollWageDetailReqDTO.setIdNumber(idNumber);
+                payrollWageDetailReqDTO.setGroupId(groupId);
+                payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
+                payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
+                List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+                BeanUtils.copyProperties(source, list);
+            } catch (Exception e) {
+                log.info("查询mongo异常，转查mysql,idNumber:[{}]",idNumber);
+                qryMySql = true;
+            }
             //查询mongo异常，转查mysql
             if (qryMySql) {
-            }
                 list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
+            }
                 return list;
         }).subscribeOn(Schedulers.elastic());
     }
