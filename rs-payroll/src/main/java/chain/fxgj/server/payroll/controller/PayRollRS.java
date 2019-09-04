@@ -217,8 +217,8 @@ public class PayRollRS {
 //            }
             //查询mongo异常，转查mysql
             if (qryMySql) {
-                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
             }
+                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
                 return list;
         }).subscribeOn(Schedulers.elastic());
     }
