@@ -195,7 +195,7 @@ public class PayRollRS {
                                                 @RequestParam("groupId") String groupId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
-        UserPrincipal principal = new UserPrincipal();WebContext.getCurrentUser();
+        UserPrincipal principal = WebContext.getCurrentUser();
         String idNumber = principal.getIdNumber();
         PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
         BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
