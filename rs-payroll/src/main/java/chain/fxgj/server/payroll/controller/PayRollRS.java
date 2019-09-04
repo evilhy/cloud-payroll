@@ -195,7 +195,7 @@ public class PayRollRS {
                                                 @RequestParam("groupId") String groupId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
-        UserPrincipal principal = WebContext.getCurrentUser();
+        UserPrincipal principal = new UserPrincipal();WebContext.getCurrentUser();
         String idNumber = principal.getIdNumber();
         PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
         BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
@@ -209,8 +209,13 @@ public class PayRollRS {
                 payrollWageDetailReqDTO.setGroupId(groupId);
                 payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
                 payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
+                log.info("groupId:[{}]",groupId);
+                log.info("idNumber:[{}]",idNumber);
+                log.info("wageSheetId:[{}]",wageSheetId);
                 List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+                log.info("source.size():[{}]",source.size());
                 BeanUtils.copyProperties(source, list);
+                log.info("wageDetail success");
             } catch (Exception e) {
                 log.info("查询mongo异常，转查mysql,idNumber:[{}]",idNumber);
                 qryMySql = true;
