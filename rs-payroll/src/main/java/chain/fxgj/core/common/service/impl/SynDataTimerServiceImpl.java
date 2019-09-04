@@ -22,8 +22,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,6 +75,7 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
         String wageDetailredisKey = DataConstant.concat("WageDetail");
         String wageSheetRedisKey = DataConstant.concat("WageSheet");
         String wageShowRedisKey = DataConstant.concat("WageShow");
+        String wageManagerRedisKey = DataConstant.concat("Manager");
         try{
             LocalDateTime startDate =startDate(date);
             LocalDateTime endDate =endDate(date);
@@ -132,12 +135,32 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                 log.info("WageShow正在同步中....");
             }
 
+            //同步Manager信息
+            if (!redisTemplate.hasKey(wageManagerRedisKey)){
+                redisTemplate.opsForValue().set(wageManagerRedisKey, "running", SCHEDULE_TIME_OUT, TimeUnit.MINUTES);
+                Runnable wageShow = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            log.info("开始处理同步Manager信息。。。。");
+                            syncManagerInfo(startDate, endDate);
+                        } catch (Exception e) {
+                            log.error("WageShow同步异常", e);
+                        }
+                    }
+                };
+                executor.execute(wageShow);
+            }else{
+                log.info("WageShow正在同步中....");
+            }
+
         }catch (Exception e){
             log.error("synWageDataInfo异常", e);
         }finally {
             redisTemplate.delete(wageDetailredisKey);
             redisTemplate.delete(wageSheetRedisKey);
             redisTemplate.delete(wageShowRedisKey);
+            redisTemplate.delete(wageManagerRedisKey);
         }
         log.info("synWageDataInfo 同步共耗时:{}",System.currentTimeMillis()-startTime);
         return null;
@@ -175,6 +198,33 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                         dto.setCrtYear(formatter1.format(detail.getCrtDateTime()));
                         dto.setCrtMonth(formatter2.format(detail.getCrtDateTime()));
                         BeanUtils.copyProperties(detail,dto);
+                        if (detail.getIsCountStatus()!=null){
+                            dto.setIsCountStatus(detail.getIsCountStatus().getCode());
+                        }
+                        if (detail.getPayStatus()!=null){
+                            dto.setPayStatus(detail.getPayStatus().getCode());
+                        }
+                        if(detail.getReportStatus()!=null){
+                            dto.setReportStatus(detail.getReportStatus().getCode());
+                        }
+                        if(detail.getReceiptsStatus()!=null){
+                            dto.setReceiptsStatus(detail.getReceiptsStatus().getCode());
+                        }
+                        if (detail.getPushStatus()!=null){
+                            dto.setPushStatus(detail.getPushStatus().getCode());
+                        }
+                        if (detail.getPushStyle()!=null){
+                            dto.setPushStyle(detail.getPushStyle().getCode());
+                        }
+                        if (detail.getPushType()!=null){
+                            dto.setPushType(detail.getPushType().getCode());
+                        }
+                        if (detail.getIsRead()!=null){
+                            dto.setIsRead(detail.getIsRead().getCode());
+                        }
+                        if (detail.getIsSplit()!=null){
+                            dto.setIsSplit(detail.getIsSplit().getCode());
+                        }
                         wageDetailInfoDTOList.add(dto);
                     }
                     log.info("wageDetailInfoQueryResults--->size:{}",wageDetailInfoDTOList.size());
@@ -222,6 +272,24 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                     for (WageSheetInfo sheetInfo:wageSheetInfoQueryResults.getResults()){
                         WageSheetInfoDTO wageSheetInfoDTO=new WageSheetInfoDTO();
                         BeanUtils.copyProperties(sheetInfo,wageSheetInfoDTO);
+                        if (sheetInfo.getFundDate()!=null){
+                            wageSheetInfoDTO.setFundDate(sheetInfo.getFundDate().getCode());
+                        }
+                        if (sheetInfo.getWageStatus()!=null){
+                            wageSheetInfoDTO.setWageStatus(sheetInfo.getWageStatus().getCode());
+                        }
+                        if (sheetInfo.getCheckType()!=null){
+                            wageSheetInfoDTO.setCheckType(sheetInfo.getCheckType().getCode());
+                        }
+                        if (sheetInfo.getDelStatusEnum()!=null){
+                            wageSheetInfoDTO.setDelStatusEnum(sheetInfo.getDelStatusEnum().getCode());
+                        }
+                        if (sheetInfo.getAscriptionType()!=null){
+                            wageSheetInfoDTO.setAscriptionType(sheetInfo.getAscriptionType().getCode());
+                        }
+                        if (sheetInfo.getFtpStatus()!=null){
+                            wageSheetInfoDTO.setFtpStatus(sheetInfo.getFtpStatus().getCode());
+                        }
                         wageSheetInfoDTOList.add(wageSheetInfoDTO);
                     }
                     log.info("wageSheetInfoDTOList--->size:{}",wageSheetInfoDTOList.size());
@@ -270,6 +338,12 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                     for (WageShowInfo wageShowInfo:wageShowInfoQueryResults.getResults()){
                         WageShowInfoDTO dto=new WageShowInfoDTO();
                         BeanUtils.copyProperties(wageShowInfo,dto);
+                        if (wageShowInfo.getIsShow0()!=null){
+                            dto.setIsShow0(wageShowInfo.getIsShow0().getCode());
+                        }
+                        if (wageShowInfo.getIsReceipt()!=null){
+                            dto.setIsReceipt(wageShowInfo.getIsReceipt().getCode());
+                        }
                         wageShowInfoDTOS.add(dto);
                     }
                     log.info("wageShowInfoDTOS--->size:{}",wageShowInfoDTOS.size());
@@ -375,6 +449,18 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                     for (EmployeeInfo employeeInfo:employeeInfoQueryResults.getResults()){
                         EmployeeInfoDTO dto=new EmployeeInfoDTO();
                         BeanUtils.copyProperties(employeeInfo,dto);
+                        if (employeeInfo.getIdType()!=null){
+                            dto.setIdType(employeeInfo.getIdType().getCode());
+                        }
+                        if (employeeInfo.getEmployeeStatusEnum()!=null){
+                            dto.setEmployeeStatus(employeeInfo.getEmployeeStatusEnum().getCode());
+                        }
+                        if (employeeInfo.getIsBindWechat()!=null){
+                            dto.setIsBindWechat(employeeInfo.getIsBindWechat().getCode());
+                        }
+                        if (employeeInfo.getDelStatusEnum()!=null){
+                            dto.setDelStatusEnum(employeeInfo.getDelStatusEnum().getCode());
+                        }
                         //查询用户卡信息
                         QEmployeeCardInfo cardInfo=QEmployeeCardInfo.employeeCardInfo;
                         //读取用户的卡信息
@@ -388,6 +474,12 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                             for (EmployeeCardInfo card:cardList){
                                 EmployeeCardInfoDTO dto1=new EmployeeCardInfoDTO();
                                 BeanUtils.copyProperties(card,dto1);
+                                if (card.getDelStatusEnum()!=null){
+                                    dto1.setDelStatusEnum(card.getDelStatusEnum().getCode());
+                                }
+                                if (card.getCardVerifyStatusEnum()!=null){
+                                    dto1.setCardVerifyStatus(card.getCardVerifyStatusEnum().getCode());
+                                }
                                 cardDTOList.add(dto1);
                             }
                         }
@@ -441,6 +533,18 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                     for (EmployeeWechatInfo wechatInfo:wechatInfoQueryResults.getResults()){
                         EmployeeWechatInfoDTO dto=new EmployeeWechatInfoDTO();
                         BeanUtils.copyProperties(wechatInfo,dto);
+                        if (wechatInfo.getIdType()!=null){
+                            dto.setIdType(wechatInfo.getIdType().getCode());
+                        }
+                        if (wechatInfo.getDelStatusEnum()!=null){
+                            dto.setDelStatusEnum(wechatInfo.getDelStatusEnum().getCode());
+                        }
+                        if (wechatInfo.getAppPartner()!=null){
+                            dto.setAppPartner(wechatInfo.getAppPartner().getCode());
+                        }
+                        if (wechatInfo.getRegisterType()!=null){
+                            dto.setRegisterType(wechatInfo.getRegisterType().getCode());
+                        }
                         employeeWechatInfoDTOS.add(dto);
                     }
                     log.info("wechatInfoDTOS--->size:{}",employeeWechatInfoDTOS.size());
@@ -545,6 +649,27 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                     for (EntErpriseInfo entErpriseInfo:entGroupInfoQueryResults.getResults()){
                         EntErpriseInfoDTO dto=new EntErpriseInfoDTO();
                         BeanUtils.copyProperties(entErpriseInfo,dto);
+                        if (entErpriseInfo.getAscriptionChannel()!=null){
+                            dto.setAscriptionChannel(entErpriseInfo.getAscriptionChannel().getCode());
+                        }
+                        if (entErpriseInfo.getAscriptionType()!=null){
+                            dto.setAscriptionType(entErpriseInfo.getAscriptionType().getCode());
+                        }
+                        if (entErpriseInfo.getLiquidation()!=null){
+                            dto.setLiquidation(entErpriseInfo.getLiquidation().getNum());
+                        }
+                        if (entErpriseInfo.getVersion()!=null){
+                            dto.setVersion(entErpriseInfo.getVersion().getCode());
+                        }
+                        if (entErpriseInfo.getSubVersion()!=null){
+                            dto.setSubVersion(entErpriseInfo.getSubVersion().getCode());
+                        }
+                        if (entErpriseInfo.getIsFtpUpload()!=null){
+                            dto.setIsFtpUpload(entErpriseInfo.getIsFtpUpload().getCode());
+                        }
+                        if (entErpriseInfo.getEntStatus()!=null){
+                            dto.setEntStatus(entErpriseInfo.getEntStatus().getCode());
+                        }
                         erpriseInfoDTOS.add(dto);
                     }
                     log.info("entGroupInfoQueryResults--->size:{}",erpriseInfoDTOS.size());
@@ -616,6 +741,77 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
 
         }catch (Exception e){
             log.info("EntpriseInfo出现异常:{}",e);
+        }
+        return result;
+    }
+
+    private Integer syncManagerInfo(LocalDateTime startDate, LocalDateTime endDate){
+        Integer result=0;
+        try {
+            int page=1;
+            log.info("Manager开始同步数据.....");
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            while (true){
+                int currentData=(page-1)*PAGE_SIZE;
+                String sql="SELECT id,avatar_url,branch_org_name," +
+                        "branch_org_no,crt_date_time,is_confirmed,manager_name,mobile,officer,score," +
+                        "STATUS,sub_branch_org_name,sub_branch_org_no,upd_date_time,wechat_id," +
+                        "wechat_qr_imgae,wechat_qr_url,branch_name,branch_no,phone,sub_branch_name," +
+                        "sub_branch_no,cust_status,headquarters_bank from manager_info limit ?,? ";
+                log.info("sql-->{}",sql);
+                List<ManagerInfoDTO> resultList=jdbcTemplate.query(sql,new Object[]{currentData,PAGE_SIZE} , new RowMapper<ManagerInfoDTO>() {
+                    ManagerInfoDTO dto=null;
+                    @Override
+                    public ManagerInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        dto=new ManagerInfoDTO();
+                        dto.setId(rs.getString("id"));
+                        dto.setAvatarUrl(rs.getString("avatar_url"));
+                        dto.setBranchName(rs.getString("branch_name"));
+                        dto.setBranchNo(rs.getString("branch_no"));
+                        dto.setIsConfirmed(rs.getString("is_confirmed"));
+                        dto.setManagerName(rs.getString("manager_name"));
+                        dto.setPhone(rs.getString("phone"));
+                        dto.setOfficer(rs.getString("officer"));
+                        dto.setScore(rs.getInt("score"));
+                        dto.setCustStatus(rs.getInt("cust_status"));
+                        dto.setSubBranchName(rs.getString("sub_branch_name"));
+                        dto.setSubBranchNo(rs.getString("sub_branch_no"));
+                        dto.setWechatId(rs.getString("wechat_id"));
+                        dto.setWechatQrImgae(rs.getString("wechat_qr_imgae"));
+                        dto.setWechatQrUrl(rs.getString("wechat_qr_url"));
+                        dto.setHeadquartersBank(rs.getInt("headquarters_bank"));
+                        String crtDate=rs.getString("crt_date_time");
+                        if (StringUtils.isNotEmpty(crtDate)){
+                            long crtLong=rs.getDate("crt_date_time").getTime();
+                            Instant instant = Instant.ofEpochMilli(crtLong);
+                            ZoneId zone = ZoneId.systemDefault();
+                            dto.setCrtDateTime(LocalDateTime.ofInstant(instant, zone));
+                        }
+                        String updDate=rs.getString("upd_date_time");
+                        if (StringUtils.isNotEmpty(updDate)){
+                            long updDateLong=rs.getDate("upd_date_time").getTime();
+                            Instant instant = Instant.ofEpochMilli(updDateLong);
+                            ZoneId zone = ZoneId.systemDefault();
+                            dto.setUpdDateTime(LocalDateTime.ofInstant(instant, zone));
+                        }
+                        return dto;
+                    }
+                });
+                log.info("Manager_size:{}",resultList.size());
+                //开始进行同步
+                boolean b = synDataFeignController.synManagerInfo(resultList);
+                if (b){
+                    result+=resultList.size();
+                }
+                log.info("Manager当前同步数据第{}页，同步数量:{}",page,resultList.size());
+                if (resultList.size()<PAGE_SIZE){
+                    break;
+                }
+                page=page+1;
+            }
+
+        }catch (Exception e){
+            log.info("Manager出现异常:{}",e);
         }
         return result;
     }

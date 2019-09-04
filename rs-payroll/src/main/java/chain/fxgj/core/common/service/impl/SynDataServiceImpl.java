@@ -93,6 +93,33 @@ public class SynDataServiceImpl implements SynDataService {
                     dto.setCrtYear(formatter1.format(detail.getCrtDateTime()));
                     dto.setCrtMonth(formatter2.format(detail.getCrtDateTime()));
                     BeanUtils.copyProperties(detail,dto);
+                    if (detail.getIsCountStatus()!=null){
+                        dto.setIsCountStatus(detail.getIsCountStatus().getCode());
+                    }
+                    if (detail.getPayStatus()!=null){
+                        dto.setPayStatus(detail.getPayStatus().getCode());
+                    }
+                    if(detail.getReportStatus()!=null){
+                        dto.setReportStatus(detail.getReportStatus().getCode());
+                    }
+                    if(detail.getReceiptsStatus()!=null){
+                        dto.setReceiptsStatus(detail.getReceiptsStatus().getCode());
+                    }
+                    if (detail.getPushStatus()!=null){
+                        dto.setPushStatus(detail.getPushStatus().getCode());
+                    }
+                    if (detail.getPushStyle()!=null){
+                        dto.setPushStyle(detail.getPushStyle().getCode());
+                    }
+                    if (detail.getPushType()!=null){
+                        dto.setPushType(detail.getPushType().getCode());
+                    }
+                    if (detail.getIsRead()!=null){
+                        dto.setIsRead(detail.getIsRead().getCode());
+                    }
+                    if (detail.getIsSplit()!=null){
+                        dto.setIsSplit(detail.getIsSplit().getCode());
+                    }
                     wageDetailInfoDTOList.add(dto);
                 }
                 log.info("wageDetailInfoQueryResults--->size:{}",wageDetailInfoDTOList.size());
@@ -136,6 +163,18 @@ public class SynDataServiceImpl implements SynDataService {
                 for (EmployeeInfo employeeInfo:employeeInfoQueryResults.getResults()){
                     EmployeeInfoDTO dto=new EmployeeInfoDTO();
                     BeanUtils.copyProperties(employeeInfo,dto);
+                    if (employeeInfo.getIdType()!=null){
+                        dto.setIdType(employeeInfo.getIdType().getCode());
+                    }
+                    if (employeeInfo.getEmployeeStatusEnum()!=null){
+                        dto.setEmployeeStatus(employeeInfo.getEmployeeStatusEnum().getCode());
+                    }
+                    if (employeeInfo.getIsBindWechat()!=null){
+                        dto.setIsBindWechat(employeeInfo.getIsBindWechat().getCode());
+                    }
+                    if (employeeInfo.getDelStatusEnum()!=null){
+                        dto.setDelStatusEnum(employeeInfo.getDelStatusEnum().getCode());
+                    }
                     //查询用户卡信息
                     QEmployeeCardInfo cardInfo=QEmployeeCardInfo.employeeCardInfo;
                     //读取用户的卡信息
@@ -149,6 +188,12 @@ public class SynDataServiceImpl implements SynDataService {
                         for (EmployeeCardInfo card:cardList){
                             EmployeeCardInfoDTO dto1=new EmployeeCardInfoDTO();
                             BeanUtils.copyProperties(card,dto1);
+                            if (card.getDelStatusEnum()!=null){
+                                dto1.setDelStatusEnum(card.getDelStatusEnum().getCode());
+                            }
+                            if (card.getCardVerifyStatusEnum()!=null){
+                                dto1.setCardVerifyStatus(card.getCardVerifyStatusEnum().getCode());
+                            }
                             cardDTOList.add(dto1);
                         }
                     }
@@ -192,6 +237,18 @@ public class SynDataServiceImpl implements SynDataService {
                 for (EmployeeWechatInfo wechatInfo:wechatInfoQueryResults.getResults()){
                     EmployeeWechatInfoDTO dto=new EmployeeWechatInfoDTO();
                     BeanUtils.copyProperties(wechatInfo,dto);
+                    if (wechatInfo.getIdType()!=null){
+                        dto.setIdType(wechatInfo.getIdType().getCode());
+                    }
+                    if (wechatInfo.getDelStatusEnum()!=null){
+                        dto.setDelStatusEnum(wechatInfo.getDelStatusEnum().getCode());
+                    }
+                    if (wechatInfo.getAppPartner()!=null){
+                        dto.setAppPartner(wechatInfo.getAppPartner().getCode());
+                    }
+                    if (wechatInfo.getRegisterType()!=null){
+                        dto.setRegisterType(wechatInfo.getRegisterType().getCode());
+                    }
                     employeeWechatInfoDTOS.add(dto);
                 }
                 log.info("wechatInfoDTOS--->size:{}",employeeWechatInfoDTOS.size());
@@ -231,6 +288,27 @@ public class SynDataServiceImpl implements SynDataService {
                 for (EntErpriseInfo entErpriseInfo:entGroupInfoQueryResults.getResults()){
                     EntErpriseInfoDTO dto=new EntErpriseInfoDTO();
                     BeanUtils.copyProperties(entErpriseInfo,dto);
+                    if (entErpriseInfo.getAscriptionChannel()!=null){
+                        dto.setAscriptionChannel(entErpriseInfo.getAscriptionChannel().getCode());
+                    }
+                    if (entErpriseInfo.getAscriptionType()!=null){
+                        dto.setAscriptionType(entErpriseInfo.getAscriptionType().getCode());
+                    }
+                    if (entErpriseInfo.getLiquidation()!=null){
+                        dto.setLiquidation(entErpriseInfo.getLiquidation().getNum());
+                    }
+                    if (entErpriseInfo.getVersion()!=null){
+                        dto.setVersion(entErpriseInfo.getVersion().getCode());
+                    }
+                    if (entErpriseInfo.getSubVersion()!=null){
+                        dto.setSubVersion(entErpriseInfo.getSubVersion().getCode());
+                    }
+                    if (entErpriseInfo.getIsFtpUpload()!=null){
+                        dto.setIsFtpUpload(entErpriseInfo.getIsFtpUpload().getCode());
+                    }
+                    if (entErpriseInfo.getEntStatus()!=null){
+                        dto.setEntStatus(entErpriseInfo.getEntStatus().getCode());
+                    }
                     erpriseInfoDTOS.add(dto);
                 }
                 log.info("entGroupInfoQueryResults--->size:{}",erpriseInfoDTOS.size());
@@ -250,7 +328,6 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Override
     public Integer entgroup() {
-        queryGroupInfoByJDBC();
         int pageSize=100;
         int page=1;
         Integer result=queryGroupInfoByJDBCs();
@@ -274,6 +351,27 @@ public class SynDataServiceImpl implements SynDataService {
                 for (EntGroupInfo entGroupInfo:entGroupInfoQueryResults.getResults()){
                     EntGroupInfoDTO dto=new EntGroupInfoDTO();
                     BeanUtils.copyProperties(entGroupInfo,dto);
+                    if (entGroupInfo.getUploadEmpLock()!=null){
+                        dto.setUploadEmpLock(entGroupInfo.getUploadEmpLock().getCode());
+                    }
+                    if (entGroupInfo.getGroupStatusEnum()!=null){
+                        dto.setGroupStatus(entGroupInfo.getGroupStatusEnum().getCode());
+                    }
+                    if (entGroupInfo.getDelStatusEnum()!=null){
+                        dto.setDelStatus(entGroupInfo.getDelStatusEnum().getCode());
+                    }
+                    if (entGroupInfo.getCheckType()!=null){
+                        dto.setCheckType(entGroupInfo.getCheckType().getCode());
+                    }
+                    if (entGroupInfo.getAscriptionType()!=null){
+                        dto.setAscriptionType(entGroupInfo.getAscriptionType().getCode());
+                    }
+                    if (entGroupInfo.getAscriptionChannel()!=null){
+                        dto.setAscriptionChannel(entGroupInfo.getAscriptionChannel().getCode());
+                    }
+                    if (entGroupInfo.getEnableMultiAccountEnum()!=null){
+                        dto.setEnableMultiAccount(entGroupInfo.getEnableMultiAccountEnum().getCode());
+                    }
                     entGroupInfoDTOS.add(dto);
                 }
                 log.info("groupInfoDTOS--->size:{}",entGroupInfoDTOS.size());
@@ -316,6 +414,12 @@ public class SynDataServiceImpl implements SynDataService {
                 for (ManagerInfo managerInfo:managerInfoPage.getResults()){
                     ManagerInfoDTO dto=new ManagerInfoDTO();
                     BeanUtils.copyProperties(managerInfo,dto);
+                    if (managerInfo.getCustStatus()!=null){
+                        dto.setCustStatus(managerInfo.getCustStatus().getCode());
+                    }
+                    if (managerInfo.getHeadquartersBank()!=null){
+                        dto.setHeadquartersBank(managerInfo.getHeadquartersBank().getNum());
+                    }
                     managerInfoDTOS.add(dto);
                 }
                 log.info("managerInfoDTOS--->size:{}",managerInfoDTOS.size());
@@ -381,6 +485,24 @@ public class SynDataServiceImpl implements SynDataService {
                 for (WageSheetInfo sheetInfo:wageSheetInfoQueryResults.getResults()){
                     WageSheetInfoDTO wageSheetInfoDTO=new WageSheetInfoDTO();
                     BeanUtils.copyProperties(sheetInfo,wageSheetInfoDTO);
+                    if (sheetInfo.getFundDate()!=null){
+                        wageSheetInfoDTO.setFundDate(sheetInfo.getFundDate().getCode());
+                    }
+                    if (sheetInfo.getWageStatus()!=null){
+                        wageSheetInfoDTO.setWageStatus(sheetInfo.getWageStatus().getCode());
+                    }
+                    if (sheetInfo.getCheckType()!=null){
+                        wageSheetInfoDTO.setCheckType(sheetInfo.getCheckType().getCode());
+                    }
+                    if (sheetInfo.getDelStatusEnum()!=null){
+                        wageSheetInfoDTO.setDelStatusEnum(sheetInfo.getDelStatusEnum().getCode());
+                    }
+                    if (sheetInfo.getAscriptionType()!=null){
+                        wageSheetInfoDTO.setAscriptionType(sheetInfo.getAscriptionType().getCode());
+                    }
+                    if (sheetInfo.getFtpStatus()!=null){
+                        wageSheetInfoDTO.setFtpStatus(sheetInfo.getFtpStatus().getCode());
+                    }
                     wageSheetInfoDTOList.add(wageSheetInfoDTO);
                 }
                 log.info("wageSheetInfoDTOList--->size:{}",wageSheetInfoDTOList.size());
@@ -420,6 +542,12 @@ public class SynDataServiceImpl implements SynDataService {
                 for (WageShowInfo wageShowInfo:wageShowInfoQueryResults.getResults()){
                     WageShowInfoDTO dto=new WageShowInfoDTO();
                     BeanUtils.copyProperties(wageShowInfo,dto);
+                    if (wageShowInfo.getIsShow0()!=null){
+                        dto.setIsShow0(wageShowInfo.getIsShow0().getCode());
+                    }
+                    if (wageShowInfo.getIsReceipt()!=null){
+                        dto.setIsReceipt(wageShowInfo.getIsReceipt().getCode());
+                    }
                     wageShowInfoDTOS.add(dto);
                 }
                 log.info("wageShowInfoDTOS--->size:{}",wageShowInfoDTOS.size());
@@ -435,21 +563,6 @@ public class SynDataServiceImpl implements SynDataService {
             log.info("WageShow当前同步数据第{}页，同步数量:{}",page,wageShowInfoDTOS.size());
         }
         return result;
-    }
-
-    private List<EntGroupInfoDTO> queryGroupInfoByJDBC(){
-        List<EntGroupInfoDTO> resultList=null;
-        String sql="select * from ent_group_info";
-        resultList=jdbcTemplate.query(sql, new RowMapper<EntGroupInfoDTO>() {
-            EntGroupInfoDTO dto=null;
-            @Override
-            public EntGroupInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-                dto=new EntGroupInfoDTO();
-                return dto;
-            }
-        });
-        log.info("queryGroupInfoByJDBC_size:{}",resultList.size());
-        return resultList;
     }
 
     private Integer queryGroupInfoByJDBCs(){
@@ -483,7 +596,20 @@ public class SynDataServiceImpl implements SynDataService {
                     dto.setCheckType(rs.getInt("check_type"));
                     dto.setIsOrder(rs.getString("is_order"));
                     dto.setProjectCode(rs.getString("project_code"));
-                    Date crtDate=rs.getDate("crt_date_time");
+                    String crtDate=rs.getString("crt_date_time");
+                    if (StringUtils.isNotEmpty(crtDate)){
+                        long crtLong=rs.getDate("crt_date_time").getTime();
+                        Instant instant = Instant.ofEpochMilli(crtLong);
+                        ZoneId zone = ZoneId.systemDefault();
+                        dto.setCrtDateTime(LocalDateTime.ofInstant(instant, zone));
+                    }
+                    String updDate=rs.getString("upd_date_time");
+                    if (StringUtils.isNotEmpty(updDate)){
+                        long updDateLong=rs.getDate("upd_date_time").getTime();
+                        Instant instant = Instant.ofEpochMilli(updDateLong);
+                        ZoneId zone = ZoneId.systemDefault();
+                        dto.setUpdDateTime(LocalDateTime.ofInstant(instant, zone));
+                    }
                     return dto;
                 }
             });
