@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -487,9 +488,11 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                         employeeInfoDTOList.add(dto);
                     }
                     log.info("employeeInfoQueryResults--->size:{}",employeeInfoDTOList.size());
-                    boolean b = synDataFeignController.syncEmpinfo(employeeInfoDTOList);
-                    if (b){
-                        result+=employeeInfoDTOList.size();
+                    if (employeeInfoDTOList!=null && employeeInfoDTOList.size()>0){
+                        boolean b = synDataFeignController.syncEmpinfo(employeeInfoDTOList);
+                        if (b){
+                            result+=employeeInfoDTOList.size();
+                        }
                     }
                 }
                 if (employeeInfoQueryResults.getResults().size()<PAGE_SIZE){
@@ -548,9 +551,11 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                         employeeWechatInfoDTOS.add(dto);
                     }
                     log.info("wechatInfoDTOS--->size:{}",employeeWechatInfoDTOS.size());
-                    boolean b = synDataFeignController.syncEmpWetchat(employeeWechatInfoDTOS);
-                    if (b){
-                        result+=employeeWechatInfoDTOS.size();
+                    if (employeeWechatInfoDTOS!=null && employeeWechatInfoDTOS.size()>0){
+                        boolean b = synDataFeignController.syncEmpWetchat(employeeWechatInfoDTOS);
+                        if (b){
+                            result+=employeeWechatInfoDTOS.size();
+                        }
                     }
                 }
                 if (wechatInfoQueryResults.getResults().size()<PAGE_SIZE){
@@ -673,9 +678,11 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                         erpriseInfoDTOS.add(dto);
                     }
                     log.info("entGroupInfoQueryResults--->size:{}",erpriseInfoDTOS.size());
-                    boolean b = synDataFeignController.syncEnterprise(erpriseInfoDTOS);
-                    if (b){
-                        result+=erpriseInfoDTOS.size();
+                    if (erpriseInfoDTOS.size()>0){
+                        boolean b = synDataFeignController.syncEnterprise(erpriseInfoDTOS);
+                        if (b){
+                            result+=erpriseInfoDTOS.size();
+                        }
                     }
                 }
                 if (entGroupInfoQueryResults.getResults().size()<PAGE_SIZE){
@@ -729,9 +736,11 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                     }
                 });
                 //开始进行同步
-                boolean b = synDataFeignController.syncEntGroup(resultList);
-                if (b){
-                    result+=resultList.size();
+                if (resultList!=null && resultList.size()>0){
+                    boolean b = synDataFeignController.syncEntGroup(resultList);
+                    if (b){
+                        result+=resultList.size();
+                    }
                 }
                 log.info("WageShow当前同步数据第{}页，同步数量:{}",page,resultList.size());
                 if (resultList.size()<PAGE_SIZE){
@@ -757,9 +766,9 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                         "branch_org_no,crt_date_time,is_confirmed,manager_name,mobile,officer,score," +
                         "STATUS,sub_branch_org_name,sub_branch_org_no,upd_date_time,wechat_id," +
                         "wechat_qr_imgae,wechat_qr_url,branch_name,branch_no,phone,sub_branch_name," +
-                        "sub_branch_no,cust_status,headquarters_bank from manager_info limit ?,? ";
+                        "sub_branch_no,cust_status,headquarters_bank from manager_info where DATE_FORMAT(upd_date_time,'%Y-%m-%d')=? ORDER BY upd_date_time asc  limit ?,? ";
                 log.info("sql-->{}",sql);
-                List<ManagerInfoDTO> resultList=jdbcTemplate.query(sql,new Object[]{currentData,PAGE_SIZE} , new RowMapper<ManagerInfoDTO>() {
+                List<ManagerInfoDTO> resultList=jdbcTemplate.query(sql,new Object[]{df.format(startDate),currentData,PAGE_SIZE} , new RowMapper<ManagerInfoDTO>() {
                     ManagerInfoDTO dto=null;
                     @Override
                     public ManagerInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -799,9 +808,11 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                 });
                 log.info("Manager_size:{}",resultList.size());
                 //开始进行同步
-                boolean b = synDataFeignController.synManagerInfo(resultList);
-                if (b){
-                    result+=resultList.size();
+                if (resultList!=null && resultList.size()>0){
+                    boolean b = synDataFeignController.synManagerInfo(resultList);
+                    if (b){
+                        result+=resultList.size();
+                    }
                 }
                 log.info("Manager当前同步数据第{}页，同步数量:{}",page,resultList.size());
                 if (resultList.size()<PAGE_SIZE){

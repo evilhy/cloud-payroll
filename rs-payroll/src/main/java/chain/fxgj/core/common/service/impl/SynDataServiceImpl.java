@@ -61,6 +61,7 @@ public class SynDataServiceImpl implements SynDataService {
     @Autowired
     private WageShowInfoDao wageShowInfoDao;
 
+    public static final Integer PAGE_SIZE = 500;
 
     /**
      * 同步过年工资信息
@@ -69,7 +70,6 @@ public class SynDataServiceImpl implements SynDataService {
      */
     @Override
     public Integer wagedetail(String date) {
-        int pageSize=100;
         int page=1;
         Integer result=0;
         DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy");
@@ -77,12 +77,12 @@ public class SynDataServiceImpl implements SynDataService {
         //分页查询
         log.info("工资详情开始同步数据.....");
         while (true){
-            int currentData=(page-1)*pageSize;
+            int currentData=(page-1)*PAGE_SIZE;
             QWageDetailInfo qWageDetailInfo=QWageDetailInfo.wageDetailInfo;
             QueryResults<WageDetailInfo> wageDetailInfoQueryResults = wageDetailInfoDao.selectFrom(qWageDetailInfo)
                     .orderBy(qWageDetailInfo.crtDateTime.desc())
                     .offset(currentData)
-                    .limit(pageSize)
+                    .limit(PAGE_SIZE)
                     .fetchResults();
             List<WageDetailInfoDTO> wageDetailInfoDTOList=null;
             log.info("wageDetailInfoQueryResults--->size:{}",wageDetailInfoQueryResults.getResults().size());
@@ -128,7 +128,7 @@ public class SynDataServiceImpl implements SynDataService {
                     result+=wageDetailInfoDTOList.size();
                 }
             }
-            if (wageDetailInfoQueryResults.getResults().size()<pageSize){
+            if (wageDetailInfoQueryResults.getResults().size()<PAGE_SIZE){
                 break;
             }
             page=page+1;
@@ -143,18 +143,17 @@ public class SynDataServiceImpl implements SynDataService {
      */
     @Override
     public Integer empinfo() {
-        int pageSize=100;
         int page=1;
         Integer result=0;
         //分页查询
         log.info("用户信息开始同步数据.....");
         while (true){
-            int currentData=(page-1)*pageSize;
+            int currentData=(page-1)*PAGE_SIZE;
             QEmployeeInfo qEmployeeInfo=QEmployeeInfo.employeeInfo;
             QueryResults<EmployeeInfo> employeeInfoQueryResults = employeeInfoDao.selectFrom(qEmployeeInfo)
                     .orderBy(qEmployeeInfo.crtDateTime.desc())
                     .offset(currentData)
-                    .limit(pageSize)
+                    .limit(PAGE_SIZE)
                     .fetchResults();
             List<EmployeeInfoDTO> employeeInfoDTOList=null;
             log.info("employeeInfoQueryResults--->size:{}",employeeInfoQueryResults.getResults().size());
@@ -206,7 +205,7 @@ public class SynDataServiceImpl implements SynDataService {
                     result+=employeeInfoDTOList.size();
                 }
             }
-            if (employeeInfoQueryResults.getResults().size()<pageSize){
+            if (employeeInfoQueryResults.getResults().size()<PAGE_SIZE){
                 break;
             }
             page=page+1;
@@ -217,18 +216,17 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Override
     public Integer empwetchat() {
-        int pageSize=100;
         int page=1;
         Integer result=0;
         //分页查询
         log.info("用户微信信息开始同步数据.....");
         while (true){
-            int currentData=(page-1)*pageSize;
+            int currentData=(page-1)*PAGE_SIZE;
             QEmployeeWechatInfo qEmployeeWechatInfo=QEmployeeWechatInfo.employeeWechatInfo;
             QueryResults<EmployeeWechatInfo> wechatInfoQueryResults = employeeWechatInfoDao.selectFrom(qEmployeeWechatInfo)
                     .orderBy(qEmployeeWechatInfo.crtDateTime.desc())
                     .offset(currentData)
-                    .limit(pageSize)
+                    .limit(PAGE_SIZE)
                     .fetchResults();
             List<EmployeeWechatInfoDTO> employeeWechatInfoDTOS=null;
             log.info("wechatInfoDTOS--->size:{}",wechatInfoQueryResults.getResults().size());
@@ -257,7 +255,7 @@ public class SynDataServiceImpl implements SynDataService {
                     result+=employeeWechatInfoDTOS.size();
                 }
             }
-            if (wechatInfoQueryResults.getResults().size()<pageSize){
+            if (wechatInfoQueryResults.getResults().size()<PAGE_SIZE){
                 break;
             }
             page=page+1;
@@ -268,18 +266,17 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Override
     public Integer enterprise() {
-        int pageSize=100;
         int page=1;
         Integer result=0;
         //分页查询
         log.info("企业信息开始同步数据.....");
         while (true){
-            int currentData=(page-1)*pageSize;
+            int currentData=(page-1)*PAGE_SIZE;
             QEntErpriseInfo qEntErpriseInfo=QEntErpriseInfo.entErpriseInfo;
             QueryResults<EntErpriseInfo> entGroupInfoQueryResults = entErpriseInfoDao.selectFrom(qEntErpriseInfo)
                     .orderBy(qEntErpriseInfo.crtDateTime.desc())
                     .offset(currentData)
-                    .limit(pageSize)
+                    .limit(PAGE_SIZE)
                     .fetchResults();
             List<EntErpriseInfoDTO> erpriseInfoDTOS=null;
             log.info("entGroupInfoQueryResults--->size:{}",entGroupInfoQueryResults.getResults().size());
@@ -317,7 +314,7 @@ public class SynDataServiceImpl implements SynDataService {
                     result+=erpriseInfoDTOS.size();
                 }
             }
-            if (entGroupInfoQueryResults.getResults().size()<pageSize){
+            if (entGroupInfoQueryResults.getResults().size()<PAGE_SIZE){
                 break;
             }
             page=page+1;
@@ -328,7 +325,6 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Override
     public Integer entgroup() {
-        int pageSize=100;
         int page=1;
         Integer result=queryGroupInfoByJDBCs();
         if (result>0){
@@ -337,12 +333,12 @@ public class SynDataServiceImpl implements SynDataService {
         //分页查询
         log.info("机构信息开始同步数据.....");
         while (true){
-            int currentData=(page-1)*pageSize;
+            int currentData=(page-1)*PAGE_SIZE;
             QEntGroupInfo qEntGroupInfo=QEntGroupInfo.entGroupInfo;
             QueryResults<EntGroupInfo> entGroupInfoQueryResults = entGroupInfoDao.selectFrom(qEntGroupInfo)
                     .orderBy(qEntGroupInfo.crtDateTime.desc())
                     .offset(currentData)
-                    .limit(pageSize)
+                    .limit(PAGE_SIZE)
                     .fetchResults();
             List<EntGroupInfoDTO> entGroupInfoDTOS=null;
             log.info("groupInfoDTOS--->size:{}",entGroupInfoQueryResults.getResults().size());
@@ -380,7 +376,7 @@ public class SynDataServiceImpl implements SynDataService {
                     result+=entGroupInfoDTOS.size();
                 }
             }
-            if (entGroupInfoQueryResults.getResults().size()<pageSize){
+            if (entGroupInfoQueryResults.getResults().size()<PAGE_SIZE){
                 break;
             }
             page=page+1;
@@ -391,7 +387,6 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Override
     public Integer manager() {
-        int pageSize=100;
         int page=1;
         Integer result=syncManger();
         if (result>0){
@@ -400,12 +395,12 @@ public class SynDataServiceImpl implements SynDataService {
         //分页查询
         log.info("银行经理人信息开始同步数据.....");
         while (true){
-            int currentData=(page-1)*pageSize;
+            int currentData=(page-1)*PAGE_SIZE;
             QManagerInfo managerInfoQ=QManagerInfo.managerInfo;
             QueryResults<ManagerInfo> managerInfoPage = managerInfoDao.selectFrom(managerInfoQ)
                     .orderBy(managerInfoQ.crtDateTime.desc())
                     .offset(currentData)
-                    .limit(pageSize)
+                    .limit(PAGE_SIZE)
                     .fetchResults();
             List<ManagerInfoDTO> managerInfoDTOS=null;
             log.info("managerInfoDTOS--->size:{}",managerInfoPage.getResults().size());
@@ -428,7 +423,7 @@ public class SynDataServiceImpl implements SynDataService {
                     result+=managerInfoDTOS.size();
                 }
             }
-            if (managerInfoPage.getResults().size()<pageSize){
+            if (managerInfoPage.getResults().size()<PAGE_SIZE){
                 break;
             }
             page=page+1;
@@ -465,18 +460,17 @@ public class SynDataServiceImpl implements SynDataService {
 
     @Override
     public Integer wageSheet() {
-        int pageSize=100;
         int page=1;
         Integer result=0;
         //分页查询
         log.info("WageSheet信息开始同步数据.....");
         while (true){
-            int currentData=(page-1)*pageSize;
+            int currentData=(page-1)*PAGE_SIZE;
             QWageSheetInfo qSheetInfo=QWageSheetInfo.wageSheetInfo;
             QueryResults<WageSheetInfo> wageSheetInfoQueryResults = wageSheetInfoDaohee.selectFrom(qSheetInfo)
                     .orderBy(qSheetInfo.crtDateTime.desc())
                     .offset(currentData)
-                    .limit(pageSize)
+                    .limit(PAGE_SIZE)
                     .fetchResults();
             List<WageSheetInfoDTO> wageSheetInfoDTOList=null;
             log.info("wageSheetInfoDTOList--->size:{}",wageSheetInfoQueryResults.getResults().size());
@@ -511,7 +505,7 @@ public class SynDataServiceImpl implements SynDataService {
                     result+=wageSheetInfoDTOList.size();
                 }
             }
-            if (wageSheetInfoQueryResults.getResults().size()<pageSize){
+            if (wageSheetInfoQueryResults.getResults().size()<PAGE_SIZE){
                 break;
             }
             page=page+1;
@@ -628,19 +622,18 @@ public class SynDataServiceImpl implements SynDataService {
 
 
     private Integer syncManger(){
-        int pageSize=100;
         int page=1;
         Integer result=0;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         while (true){
-            int currentData=(page-1)*pageSize;
+            int currentData=(page-1)*PAGE_SIZE;
             String sql="SELECT id,avatar_url,branch_org_name," +
                     "branch_org_no,crt_date_time,is_confirmed,manager_name,mobile,officer,score," +
                     "STATUS,sub_branch_org_name,sub_branch_org_no,upd_date_time,wechat_id," +
                     "wechat_qr_imgae,wechat_qr_url,branch_name,branch_no,phone,sub_branch_name," +
                     "sub_branch_no,cust_status,headquarters_bank from manager_info limit ?,? ";
             log.info("sql-->{}",sql);
-            List<ManagerInfoDTO> resultList=jdbcTemplate.query(sql,new Object[]{currentData,pageSize} , new RowMapper<ManagerInfoDTO>() {
+            List<ManagerInfoDTO> resultList=jdbcTemplate.query(sql,new Object[]{currentData,PAGE_SIZE} , new RowMapper<ManagerInfoDTO>() {
                 ManagerInfoDTO dto=null;
                 @Override
                 public ManagerInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -685,7 +678,7 @@ public class SynDataServiceImpl implements SynDataService {
                 result+=resultList.size();
             }
             log.info("WageShow当前同步数据第{}页，同步数量:{}",page,resultList.size());
-            if (resultList.size()<pageSize){
+            if (resultList.size()<PAGE_SIZE){
                 break;
             }
             page=page+1;
