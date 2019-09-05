@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 //todo 上线记得放开
-//@Component
+@Component
 public class AuthorizationFilter implements WebFilter, Ordered {
 
     /**
