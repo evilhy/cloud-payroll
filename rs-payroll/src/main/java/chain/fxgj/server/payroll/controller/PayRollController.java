@@ -226,8 +226,8 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         //todo 以下两行测试使用，上线必须删除
-        principal = new UserPrincipal();
-        principal.setIdNumber("123321");
+//        principal = new UserPrincipal();
+//        principal.setIdNumber("123321");
         String idNumber = principal.getIdNumber();
         PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
         BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
