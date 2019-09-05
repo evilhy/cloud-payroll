@@ -560,16 +560,14 @@ public class SynDataServiceImpl implements SynDataService {
     }
 
     private Integer queryGroupInfoByJDBCs(){
-        int pageSize=100;
         int page=1;
         Integer result=0;
         while (true){
-            int currentData=(page-1)*pageSize;
+            int currentData=(page-1)*PAGE_SIZE;
             String sql="select id,crt_date_time,del_status,ent_id,group_name,group_status,short_group_name,upd_date_time," +
                     "upload_emp_lock,group_invoice_id,is_open_sms,is_open_wechat,ascription_type,enable_multi_account," +
                     "ascription_channel,check_type,is_order,project_code FROM ent_group_info limit ?,? ";
-           log.info("sql-->{}",sql);
-            List<EntGroupInfoDTO> resultList=jdbcTemplate.query(sql,new Object[]{currentData,pageSize} , new RowMapper<EntGroupInfoDTO>() {
+            List<EntGroupInfoDTO> resultList=jdbcTemplate.query(sql,new Object[]{currentData,PAGE_SIZE} , new RowMapper<EntGroupInfoDTO>() {
                 EntGroupInfoDTO dto=null;
                 @Override
                 public EntGroupInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -612,10 +610,11 @@ public class SynDataServiceImpl implements SynDataService {
             if (b){
                 result+=resultList.size();
             }
-            log.info("WageShow当前同步数据第{}页，同步数量:{}",page,resultList.size());
-            if (resultList.size()<pageSize){
+            log.info("EntGroup当前同步数据第{}页，同步数量:{}",page,resultList.size());
+            if (resultList.size()<PAGE_SIZE){
                 break;
             }
+            page=page+1;
         }
         return result;
     }
@@ -671,13 +670,13 @@ public class SynDataServiceImpl implements SynDataService {
                     return dto;
                 }
             });
-            log.info("WageShow_size:{}",resultList.size());
+            log.info("Manager_size:{}",resultList.size());
             //开始进行同步
             boolean b = synDataFeignController.synManagerInfo(resultList);
             if (b){
                 result+=resultList.size();
             }
-            log.info("WageShow当前同步数据第{}页，同步数量:{}",page,resultList.size());
+            log.info("Manager当前同步数据第{}页，同步数量:{}",page,resultList.size());
             if (resultList.size()<PAGE_SIZE){
                 break;
             }
