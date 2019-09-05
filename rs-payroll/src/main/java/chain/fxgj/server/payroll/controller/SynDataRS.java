@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.service.SynDataService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,9 @@ public class SynDataRS {
     @GetMapping("/wagedetail")
     @TrackLog
     public Mono<Integer> wagedetail(String date) {
+        if (StringUtils.isEmpty(date)){
+            throw new RuntimeException("同步年份不能为空");
+        }
         return Mono.fromCallable(() -> {
             //MDC.setContextMap(mdcContext);
             Integer count = synDataService.wagedetail(date);
