@@ -40,6 +40,8 @@ import java.util.Map;
 
 /**
  * 工资条
+ * 此类，主要是为连通性调试使用，调用PayrollFeignController接口，并无实质性作用，若微服务改造完成，可删除
+ * 时候，需要把本类中的方法 copy 到 对应 PayRollRS 的方法中进行改造
  */
 @RestController
 @Validated

@@ -209,13 +209,18 @@ public class PayRollRS {
                 payrollWageDetailReqDTO.setGroupId(groupId);
                 payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
                 payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
-                log.info("groupId:[{}]",groupId);
-                log.info("idNumber:[{}]",idNumber);
-                log.info("wageSheetId:[{}]",wageSheetId);
-                List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+                log.info("groupId:[{}]，idNumber:[{}]，wageSheetId:[{}]",groupId, idNumber,wageSheetId);
+                List<PayrollWageDetailDTO> source = null;
+                try {
+                    source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+                    BeanUtils.copyProperties(source, list);
+                } catch (Exception e) {
+                    log.info("payrollFeignController.wageDetail(payrollWageDetailReqDTO) Exception: [{}]", e);
+                }
+                if (null == list || list.size() == 0) {
+                    qryMySql = true;
+                }
                 log.info("source.size():[{}]",source.size());
-                BeanUtils.copyProperties(source, list);
-                log.info("wageDetail success");
             } catch (Exception e) {
                 log.info("查询mongo异常，转查mysql,idNumber:[{}]",idNumber);
                 qryMySql = true;
