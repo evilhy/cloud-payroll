@@ -213,19 +213,21 @@ public class PayRollRS {
                 List<PayrollWageDetailDTO> source = null;
                 try {
                     source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+                    log.info("source.size():[{}]",source.size());
                     BeanUtils.copyProperties(source, list);
                 } catch (Exception e) {
                     log.info("payrollFeignController.wageDetail(payrollWageDetailReqDTO) Exception: [{}]", e);
                 }
                 if (null == list || list.size() == 0) {
+                    log.info("查询mongo数据为空，转查mysql,idNumber:[{}]",idNumber);
                     qryMySql = true;
                 }
-                log.info("source.size():[{}]",source.size());
             } catch (Exception e) {
                 log.info("查询mongo异常，转查mysql,idNumber:[{}]",idNumber);
                 qryMySql = true;
             }
             //查询mongo异常，转查mysql
+            log.info("qryMySql:[{}]",qryMySql);
             if (qryMySql) {
                 list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
             }
