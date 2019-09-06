@@ -10,9 +10,11 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -64,7 +66,11 @@ public class SynDataServiceImpl implements SynDataService {
     @Autowired
     private WageSheetInfoDao wageSheetInfoDaohee;
     @Autowired
+    private WageFundTypeInfoDao fundTypeInfoDao;
+    @Autowired
     private WageShowInfoDao wageShowInfoDao;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public static final Integer PAGE_SIZE = 500;
 
@@ -511,11 +517,25 @@ public class SynDataServiceImpl implements SynDataService {
     public Integer wageSheet() {
         int page=1;
         Integer result=0;
+        //查询所有的薪资发放类型，放入缓存
+        String key="WageFundType_";
+        QWageFundTypeInfo qWageFundTypeInfo=QWageFundTypeInfo.wageFundTypeInfo;
+        QueryResults<WageFundTypeInfo> wfti=fundTypeInfoDao.selectFrom(qWageFundTypeInfo).fetchResults();
+        log.info("wfti--size:{}",wfti.getResults().size());
+        if (wfti.getResults()!=null){
+            for (WageFundTypeInfo fundTypeInfo:wfti.getResults()){
+                redisTemplate.opsForValue().set(key+fundTypeInfo.getId(),fundTypeInfo.getFundTypeVal());
+            }
+        }
+
+
+
         //分页查询
         log.info("WageSheet信息开始同步数据.....");
         while (true){
             int currentData=(page-1)*PAGE_SIZE;
             QWageSheetInfo qSheetInfo=QWageSheetInfo.wageSheetInfo;
+
             QueryResults<WageSheetInfo> wageSheetInfoQueryResults = wageSheetInfoDaohee.selectFrom(qSheetInfo)
                     .orderBy(qSheetInfo.crtDateTime.desc())
                     .offset(currentData)
@@ -545,6 +565,10 @@ public class SynDataServiceImpl implements SynDataService {
                     }
                     if (sheetInfo.getFtpStatus()!=null){
                         wageSheetInfoDTO.setFtpStatus(sheetInfo.getFtpStatus().getCode());
+                    }
+                    Object fundTypeName=redisTemplate.opsForValue().get(key+sheetInfo.getFundType());
+                    if (fundTypeName!=null){
+                        wageSheetInfoDTO.setFundTypeName(fundTypeName+"");
                     }
                     wageSheetInfoDTOList.add(wageSheetInfoDTO);
                 }
