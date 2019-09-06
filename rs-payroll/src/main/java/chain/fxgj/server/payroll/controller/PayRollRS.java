@@ -210,20 +210,21 @@ public class PayRollRS {
                 payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
                 payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
                 log.info("groupId:[{}]，idNumber:[{}]，wageSheetId:[{}]",groupId, idNumber,wageSheetId);
-                List<PayrollWageDetailDTO> source = null;
-                try {
-                    source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
-                    log.info("source.size():[{}]",source.size());
-                    BeanUtils.copyProperties(source, list);
-                } catch (Exception e) {
-                    log.info("payrollFeignController.wageDetail(payrollWageDetailReqDTO) Exception: [{}]", e);
+                List<PayrollWageDetailDTO> source = new ArrayList<>();
+                source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+                log.info("source.size():[{}]",source.size());
+                for (PayrollWageDetailDTO payrollWageDetailDTO : source) {
+                    WageDetailDTO wageDetailDTO = new WageDetailDTO();
+                    BeanUtils.copyProperties(payrollWageDetailDTO, wageDetailDTO);
+                    list.add(wageDetailDTO);
                 }
                 if (null == list || list.size() == 0) {
-                    log.info("查询mongo数据为空，转查mysql,idNumber:[{}]",idNumber);
+                    log.info("查询mongo数据为空，转查mysql,idNumber:[{}]", idNumber);
                     qryMySql = true;
                 }
             } catch (Exception e) {
                 log.info("查询mongo异常，转查mysql,idNumber:[{}]",idNumber);
+                log.info("查询mongo异常:[{}]",e);
                 qryMySql = true;
             }
             //查询mongo异常，转查mysql
@@ -231,7 +232,7 @@ public class PayRollRS {
             if (qryMySql) {
                 list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
             }
-                return list;
+            return list;
         }).subscribeOn(Schedulers.elastic());
     }
 
