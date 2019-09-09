@@ -67,4 +67,13 @@ public interface WageWechatService {
      */
     List<Integer> years(String employeeSid, String type);
 
+    /**
+     *
+     * @param groupId
+     * @param mongoNewestWageSheetId mongo库中最新wageSheetId
+     * @return
+     * true sheetId 相等
+     * false sheetId 不相等
+     */
+    boolean compareSheetCrtDataTime(String groupId, String mongoNewestWageSheetId);
 }

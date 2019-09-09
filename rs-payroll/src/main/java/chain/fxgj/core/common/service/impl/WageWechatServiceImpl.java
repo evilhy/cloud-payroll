@@ -9,13 +9,16 @@ import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.WageWechatService;
 import chain.fxgj.core.common.util.TransUtil;
-import chain.fxgj.core.jpa.dao.*;
+import chain.fxgj.core.jpa.dao.WageDetailInfoDao;
+import chain.fxgj.core.jpa.dao.WageFundTypeInfoDao;
+import chain.fxgj.core.jpa.dao.WageSheetInfoDao;
 import chain.fxgj.core.jpa.model.*;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
+import chain.utils.commons.StringUtils;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -352,4 +355,28 @@ public class WageWechatServiceImpl implements WageWechatService {
         return this.wageList(idNumber, groupId, year, type, principal);
     }
 
+    /**
+     *
+     * @param groupId
+     * @param mongoNewestWageSheetId mongo库中最新wageSheetId
+     * @return
+     * true sheetId 相等
+     * false sheetId 不相等
+     */
+    @Override
+    public boolean compareSheetCrtDataTime(String groupId, String mongoNewestWageSheetId) {
+        QWageSheetInfo qWageSheetInfo = QWageSheetInfo.wageSheetInfo;
+        BooleanExpression ex = qWageSheetInfo.groupId.eq(groupId);
+        List<WageSheetInfo> fetch = wageSheetInfoDao.selectFrom(qWageSheetInfo).where(ex)
+                .orderBy(qWageSheetInfo.crtDateTime.desc()).fetch();
+        if (null != fetch && fetch.size() > 0) {
+            String wageSheetId = fetch.get(0).getId();
+            if (StringUtils.equals(mongoNewestWageSheetId, wageSheetId)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
 }

@@ -15,7 +15,6 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.PayrollFeignController;
 import chain.payroll.dto.response.*;
 import chain.utils.commons.JacksonUtil;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -196,6 +195,15 @@ public class PayRollRS {
                 res100703.setYears(years);
 
                 List<PayrollPlanListDTO> planListSource = source.getPlanList();
+                if (null != planListSource && planListSource.size() > 0) {
+                    PayrollPlanListDTO payrollPlanListDTO = planListSource.get(0);
+                    String mongoNewestWageSheetId = payrollPlanListDTO.getWageSheetId();
+                    boolean retBoolean = wageWechatService.compareSheetCrtDataTime(groupId, mongoNewestWageSheetId);
+                    if (retBoolean) {
+                        //mongo库中，wageSheetInfo最新sheetId 与 Mysql中 最新sheetId 不相等，则需要同步数据(以Mysq为基准)
+                        mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
+                    }
+                }
                 List<PlanListBean> planListBeans = new ArrayList<>();
                 for (PayrollPlanListDTO payrollPlanListDTO : planListSource) {
                     PlanListBean planListBean = new PlanListBean();
@@ -219,18 +227,9 @@ public class PayRollRS {
                     res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
                 }
                 res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
-                Runnable syncData = new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            log.info("开始处理同步相应数据信息。。。。");
-                            pushSyncDataService.pushSyncDataToCache(idNumber,groupId,year,type,principal);
-                        } catch (Exception e) {
-                            log.error("WageList同步相应数据信息", e);
-                        }
-                    }
-                };
-                executor.execute(syncData);
+                //同步数据
+                mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
+
             }
             return res100703;
         }).subscribeOn(Schedulers.elastic());
@@ -510,4 +509,18 @@ public class PayRollRS {
         }).subscribeOn(Schedulers.elastic());
     }
 
+    public void mysqlDataSynToMongo(String idNumber, String groupId, String year, String type, UserPrincipal principal){
+        Runnable syncData = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    log.info("开始处理同步相应数据信息。。。。");
+                    pushSyncDataService.pushSyncDataToCache(idNumber,groupId,year,type,principal);
+                } catch (Exception e) {
+                    log.error("WageList同步相应数据信息", e);
+                }
+            }
+        };
+        executor.execute(syncData);
+    }
 }
