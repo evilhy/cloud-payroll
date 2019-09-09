@@ -13,6 +13,7 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.PayrollFeignController;
 import chain.payroll.dto.response.*;
+import chain.utils.commons.JacksonUtil;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -178,7 +179,9 @@ public class PayRollRS {
                 payrollRes100703ReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
                 log.info("groupId:[{}]，year:[{}]，type:[{}]，idNumber:[{}]",groupId, year, type, idNumber);
                 PayrollRes100703DTO source = payrollFeignController.wageList(payrollRes100703ReqDTO);
+                log.info("source:[{}]", JacksonUtil.objectToJson(source));
                 BeanUtils.copyProperties(source, res100703);
+                log.info("res100703:[{}]", JacksonUtil.objectToJson(res100703));
                 if (null == res100703) {
                     log.info("wageList查询mongo数据为空，转查mysql,idNumber:[{}]", idNumber);
                     qryMySql = true;
