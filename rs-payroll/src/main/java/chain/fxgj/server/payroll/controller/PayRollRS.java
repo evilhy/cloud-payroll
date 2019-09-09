@@ -188,10 +188,12 @@ public class PayRollRS {
 
                 List<PayrollPlanListDTO> planListSource = source.getPlanList();
                 List<PlanListBean> planListBeans = new ArrayList<>();
-                BeanUtils.copyProperties(planListSource, planListBeans);
+                for (PayrollPlanListDTO payrollPlanListDTO : planListSource) {
+                    PlanListBean planListBean = new PlanListBean();
+                    BeanUtils.copyProperties(payrollPlanListDTO, planListBean);
+                    planListBeans.add(planListBean);
+                }
                 res100703.setPlanList(planListBeans);
-//                log.info("source:[{}]", JacksonUtil.objectToJson(source));
-//                BeanUtils.copyProperties(source, res100703);
                 log.info("res100703:[{}]", JacksonUtil.objectToJson(res100703));
                 if (null == res100703) {
                     log.info("wageList查询mongo数据为空，转查mysql,idNumber:[{}]", idNumber);
