@@ -198,7 +198,7 @@ public class PayRollRS {
                 if (null != planListSource && planListSource.size() > 0) {
                     PayrollPlanListDTO payrollPlanListDTO = planListSource.get(0);
                     String mongoNewestWageSheetId = payrollPlanListDTO.getWageSheetId();
-                    boolean retBoolean = wageWechatService.compareSheetCrtDataTime(groupId, mongoNewestWageSheetId);
+                    boolean retBoolean = wageWechatService.compareSheetCrtDataTime(idNumber, groupId, mongoNewestWageSheetId);
                     if (retBoolean) {
                         log.info("mongo库中，wageSheetInfo最新sheetId 与 Mysql中 最新sheetId 不相等，则需要同步数据");
                         mysqlDataSynToMongo(idNumber,groupId,year,type,principal);

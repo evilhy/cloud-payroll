@@ -364,14 +364,15 @@ public class WageWechatServiceImpl implements WageWechatService {
      * false sheetId 不相等
      */
     @Override
-    public boolean compareSheetCrtDataTime(String groupId, String mongoNewestWageSheetId) {
+    public boolean compareSheetCrtDataTime(String idNumber, String groupId, String mongoNewestWageSheetId) {
         log.info("mongoNewestWageSheetId:[{}]",mongoNewestWageSheetId);
-        QWageSheetInfo qWageSheetInfo = QWageSheetInfo.wageSheetInfo;
-        BooleanExpression ex = qWageSheetInfo.groupId.eq(groupId);
-        List<WageSheetInfo> fetch = wageSheetInfoDao.selectFrom(qWageSheetInfo).where(ex)
-                .orderBy(qWageSheetInfo.crtDateTime.desc()).fetch();
-        if (null != fetch && fetch.size() > 0) {
-            String wageSheetId = fetch.get(0).getId();
+        String encryptIdNumber = employeeEncrytorService.encryptIdNumber(idNumber);
+        QWageDetailInfo qWageDetailInfo = QWageDetailInfo.wageDetailInfo;
+        BooleanExpression wageDetailEx = qWageDetailInfo.idNumber.eq(encryptIdNumber)
+                .and(qWageDetailInfo.isCountStatus.eq(IsStatusEnum.YES));
+        List<WageDetailInfo> wageDetailInfoList = wageDetailInfoDao.selectFrom(qWageDetailInfo).where(wageDetailEx).orderBy(qWageDetailInfo.cntDateTime.desc()).fetch();
+        if (null != wageDetailInfoList && wageDetailInfoList.size() > 0) {
+            String wageSheetId = wageDetailInfoList.get(0).getWageSheetId();
             log.info("wageSheetId:[{}]", wageSheetId);
             if (StringUtils.equals(mongoNewestWageSheetId, wageSheetId)) {
                 return false;
@@ -379,7 +380,7 @@ public class WageWechatServiceImpl implements WageWechatService {
                 return true;
             }
         } else {
-            log.info("fetch.size():[{}]",fetch.size());
+            log.info("fetch.size():[{}]",wageDetailInfoList.size());
         }
         return true;
     }

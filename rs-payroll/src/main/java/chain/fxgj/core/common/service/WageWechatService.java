@@ -69,11 +69,12 @@ public interface WageWechatService {
 
     /**
      *
+     * @param idNumber
      * @param groupId
      * @param mongoNewestWageSheetId mongo库中最新wageSheetId
      * @return
      * true sheetId 相等
      * false sheetId 不相等
      */
-    boolean compareSheetCrtDataTime(String groupId, String mongoNewestWageSheetId);
+    boolean compareSheetCrtDataTime(String idNumber, String groupId, String mongoNewestWageSheetId);
 }
