@@ -209,9 +209,8 @@ public class PayRollRS {
                 } else {
                     res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
                 }
+                res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
             }
-            res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
-
             return res100703;
         }).subscribeOn(Schedulers.elastic());
     }
