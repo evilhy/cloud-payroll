@@ -5,6 +5,7 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
+import chain.fxgj.core.common.service.PushSyncDataService;
 import chain.fxgj.core.common.service.WageWechatService;
 import chain.fxgj.core.common.service.WechatBindService;
 import chain.fxgj.core.common.util.TransUtil;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * 工资条
@@ -60,6 +63,12 @@ public class PayRollRS {
     RedisTemplate redisTemplate;
     @Autowired
     PayrollFeignController payrollFeignController;
+    @Autowired
+    private PushSyncDataService pushSyncDataService;
+    @Autowired
+    @Qualifier("applicationTaskExecutor")
+    Executor executor;
+
 
     /**
      * 服务当前时间
@@ -210,6 +219,18 @@ public class PayRollRS {
                     res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
                 }
                 res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
+                Runnable syncData = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            log.info("开始处理同步相应数据信息。。。。");
+                            pushSyncDataService.pushSyncDataToCache(idNumber,groupId,year,type,principal);
+                        } catch (Exception e) {
+                            log.error("WageList同步相应数据信息", e);
+                        }
+                    }
+                };
+                executor.execute(syncData);
             }
             return res100703;
         }).subscribeOn(Schedulers.elastic());
