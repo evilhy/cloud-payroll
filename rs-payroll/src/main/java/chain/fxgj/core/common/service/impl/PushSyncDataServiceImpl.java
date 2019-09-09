@@ -342,7 +342,7 @@ public class PushSyncDataServiceImpl implements PushSyncDataService {
             log.info("WageSheet信息开始同步数据.....");
                 QWageSheetInfo qSheetInfo=QWageSheetInfo.wageSheetInfo;
                 Predicate predicate = qSheetInfo.id.eq(sheetId);
-                QueryResults<WageSheetInfo> wageSheetInfoQueryResults = wageSheetInfoDaohee.selectFrom(qSheetInfo)
+                QueryResults<WageSheetInfo> wageSheetInfoQueryResults = wageSheetInfoDaohee.selectFrom(qSheetInfo).where(predicate)
                         .orderBy(qSheetInfo.crtDateTime.desc())
                         .fetchResults();
                 List<WageSheetInfoDTO> wageSheetInfoDTOList=null;
