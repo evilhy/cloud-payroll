@@ -176,6 +176,7 @@ public class PayRollRS {
                 payrollRes100703ReqDTO.setType(type);
                 payrollRes100703ReqDTO.setIdNumber(idNumber);
                 payrollRes100703ReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
+                log.info("groupId:[{}]，year:[{}]，type:[{}]，idNumber:[{}]",groupId, year, type, idNumber);
                 PayrollRes100703DTO source = payrollFeignController.wageList(payrollRes100703ReqDTO);
                 BeanUtils.copyProperties(source, res100703);
                 if (null == res100703) {
