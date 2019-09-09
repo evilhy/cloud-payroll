@@ -12,9 +12,7 @@ import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.PayrollFeignController;
-import chain.payroll.dto.response.PayrollUserPrincipalDTO;
-import chain.payroll.dto.response.PayrollWageDetailDTO;
-import chain.payroll.dto.response.PayrollWageDetailReqDTO;
+import chain.payroll.dto.response.*;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -163,18 +161,37 @@ public class PayRollRS {
                                     @RequestParam("year") String year,
                                     @RequestParam("type") String type) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
-
         UserPrincipal principal = WebContext.getCurrentUser();
+        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
+        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-
             Res100703 res100703 = null;
-            if (LocalDate.now().getYear() == Integer.parseInt(year)) {
-                res100703 = wageWechatService.wageList(idNumber, groupId, year, type,principal);
-            } else {
-                res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
+            boolean qryMySql = false;
+            try {
+                PayrollRes100703ReqDTO payrollRes100703ReqDTO = new PayrollRes100703ReqDTO();
+                payrollRes100703ReqDTO.setGroupId(groupId);
+                payrollRes100703ReqDTO.setYear(year);
+                payrollRes100703ReqDTO.setType(type);
+                payrollRes100703ReqDTO.setIdNumber(idNumber);
+                payrollRes100703ReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
+                PayrollRes100703DTO source = payrollFeignController.wageList(payrollRes100703ReqDTO);
+                BeanUtils.copyProperties(source, res100703);
+                if (null == res100703) {
+                    log.info("wageList查询mongo数据为空，转查mysql,idNumber:[{}]", idNumber);
+                    qryMySql = true;
+                }
+            } catch (Exception e) {
+                qryMySql = true;
+                log.info("wageList查询mongo异常，转查mysql,idNumber:[{}]", idNumber);
+            }
+            if (qryMySql) {
+                if (LocalDate.now().getYear() == Integer.parseInt(year)) {
+                    res100703 = wageWechatService.wageList(idNumber, groupId, year, type,principal);
+                } else {
+                    res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
+                }
             }
             res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
 
@@ -219,11 +236,11 @@ public class PayRollRS {
                     list.add(wageDetailDTO);
                 }
                 if (null == list || list.size() == 0) {
-                    log.info("查询mongo数据为空，转查mysql,idNumber:[{}]", idNumber);
+                    log.info("wageDetail查询mongo数据为空，转查mysql,idNumber:[{}]", idNumber);
                     qryMySql = true;
                 }
             } catch (Exception e) {
-                log.info("查询mongo异常，转查mysql,idNumber:[{}]",idNumber);
+                log.info("wageDetail查询mongo异常，转查mysql,idNumber:[{}]",idNumber);
                 log.info("查询mongo异常:[{}]",e);
                 qryMySql = true;
             }
