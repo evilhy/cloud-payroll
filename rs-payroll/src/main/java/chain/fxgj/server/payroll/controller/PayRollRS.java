@@ -168,7 +168,7 @@ public class PayRollRS {
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            Res100703 res100703 = null;
+            Res100703 res100703 = new Res100703();
             boolean qryMySql = false;
             try {
                 PayrollRes100703ReqDTO payrollRes100703ReqDTO = new PayrollRes100703ReqDTO();
@@ -179,8 +179,19 @@ public class PayRollRS {
                 payrollRes100703ReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
                 log.info("groupId:[{}]，year:[{}]，type:[{}]，idNumber:[{}]",groupId, year, type, idNumber);
                 PayrollRes100703DTO source = payrollFeignController.wageList(payrollRes100703ReqDTO);
-                log.info("source:[{}]", JacksonUtil.objectToJson(source));
-                BeanUtils.copyProperties(source, res100703);
+                res100703.setShouldTotalAmt(source.getShouldTotalAmt());
+                res100703.setDeductTotalAmt(source.getDeductTotalAmt());
+                res100703.setEmployeeSid(source.getEmployeeSid());
+                res100703.setRealTotalAmt(source.getRealTotalAmt());
+                List<Integer> years = source.getYears();
+                res100703.setYears(years);
+
+                List<PayrollPlanListDTO> planListSource = source.getPlanList();
+                List<PlanListBean> planListBeans = new ArrayList<>();
+                BeanUtils.copyProperties(planListSource, planListBeans);
+                res100703.setPlanList(planListBeans);
+//                log.info("source:[{}]", JacksonUtil.objectToJson(source));
+//                BeanUtils.copyProperties(source, res100703);
                 log.info("res100703:[{}]", JacksonUtil.objectToJson(res100703));
                 if (null == res100703) {
                     log.info("wageList查询mongo数据为空，转查mysql,idNumber:[{}]", idNumber);
