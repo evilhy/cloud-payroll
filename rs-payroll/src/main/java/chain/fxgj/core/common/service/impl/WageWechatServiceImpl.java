@@ -365,17 +365,21 @@ public class WageWechatServiceImpl implements WageWechatService {
      */
     @Override
     public boolean compareSheetCrtDataTime(String groupId, String mongoNewestWageSheetId) {
+        log.info("mongoNewestWageSheetId:[{}]",mongoNewestWageSheetId);
         QWageSheetInfo qWageSheetInfo = QWageSheetInfo.wageSheetInfo;
         BooleanExpression ex = qWageSheetInfo.groupId.eq(groupId);
         List<WageSheetInfo> fetch = wageSheetInfoDao.selectFrom(qWageSheetInfo).where(ex)
                 .orderBy(qWageSheetInfo.crtDateTime.desc()).fetch();
         if (null != fetch && fetch.size() > 0) {
             String wageSheetId = fetch.get(0).getId();
+            log.info("wageSheetId:[{}]", wageSheetId);
             if (StringUtils.equals(mongoNewestWageSheetId, wageSheetId)) {
                 return false;
             } else {
                 return true;
             }
+        } else {
+            log.info("fetch.size():[{}]",fetch.size());
         }
         return true;
     }

@@ -200,7 +200,7 @@ public class PayRollRS {
                     String mongoNewestWageSheetId = payrollPlanListDTO.getWageSheetId();
                     boolean retBoolean = wageWechatService.compareSheetCrtDataTime(groupId, mongoNewestWageSheetId);
                     if (retBoolean) {
-                        //mongo库中，wageSheetInfo最新sheetId 与 Mysql中 最新sheetId 不相等，则需要同步数据(以Mysq为基准)
+                        log.info("mongo库中，wageSheetInfo最新sheetId 与 Mysql中 最新sheetId 不相等，则需要同步数据");
                         mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
                     }
                 }
@@ -228,6 +228,7 @@ public class PayRollRS {
                 }
                 res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
                 //同步数据
+                log.info("数据同步");
                 mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
 
             }
