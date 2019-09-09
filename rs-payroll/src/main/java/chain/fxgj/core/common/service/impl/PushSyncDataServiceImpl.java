@@ -111,7 +111,7 @@ public class PushSyncDataServiceImpl implements PushSyncDataService {
                 idNumber = idNumber.toUpperCase();  //证件号码 转成大写
                 String idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
                 log.info("====>加密后的身份证：{}", idNumberEncrytor);
-                predicate = ExpressionUtils.and(predicate, qEmployeeInfo.idNumber.eq(idNumberEncrytor));
+                predicate = ExpressionUtils.and(predicate, qEmployeeInfo.idNumber.eq(idNumber));
             }
             if (StringUtils.isNotEmpty(groupId)){
                 predicate = ExpressionUtils.and(predicate, qEmployeeInfo.groupId.eq(groupId));
@@ -267,7 +267,7 @@ public class PushSyncDataServiceImpl implements PushSyncDataService {
             if (StringUtils.isNotEmpty(idNumber)){
                 String idNumberEncrytor = employeeEncrytorService.encryptIdNumber(idNumber);
                 log.info("====>加密后的身份证：{}", idNumberEncrytor);
-                predicate= ExpressionUtils.and(predicate, qWageDetailInfo.idNumber.eq(idNumber));
+                predicate= ExpressionUtils.and(predicate, qWageDetailInfo.idNumber.eq(idNumberEncrytor));
             }
             if (StringUtils.isNotEmpty(groupId)){
                 predicate= ExpressionUtils.and(predicate, qWageDetailInfo.groupId.eq(groupId));
