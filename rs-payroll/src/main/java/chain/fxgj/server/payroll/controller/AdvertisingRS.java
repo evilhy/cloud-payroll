@@ -3,9 +3,9 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
-import chain.fxgj.core.common.dto.advertising.AdvertisingRotationDTO;
 import chain.fxgj.core.common.service.AdvertisementService;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
+import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +30,6 @@ public class AdvertisingRS {
 
     @Autowired
     AdvertisementService advertisementService;
-//    @Autowired
-//    AdvertisingFeignService advertisingFeignService;
 
     /**
      * 轮播图查询
@@ -52,11 +49,6 @@ public class AdvertisingRS {
             log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
             log.info("fundLiquidationEnum:[{}]", liquidation.toString());
             List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisementService.rotation(channelId, liquidation);
-//            List<AdvertisingRotationDTO> advertisingRotationDTOS = advertisingFeignService.rotationList(channelId, liquidation);
-            if (null != advertisingRotationDTOS) {
-                String url = advertisingRotationDTOS.get(0).getUrl();
-                log.info("success url:[{}]",url);
-            }
             return advertisingRotationDTOS;
         }).subscribeOn(Schedulers.elastic());
     }
