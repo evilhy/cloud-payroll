@@ -195,24 +195,26 @@ public class PayRollRS {
                 res100703.setYears(years);
 
                 List<PayrollPlanListDTO> planListSource = source.getPlanList();
+                List<PlanListBean> planListBeans = new ArrayList<>();
                 if (null != planListSource && planListSource.size() > 0) {
+                    for (PayrollPlanListDTO payrollPlanListDTO : planListSource) {
+                        PlanListBean planListBean = new PlanListBean();
+                        BeanUtils.copyProperties(payrollPlanListDTO, planListBean);
+                        planListBeans.add(planListBean);
+                    }
+                    res100703.setPlanList(planListBeans);
+                    log.info("res100703:[{}]", JacksonUtil.objectToJson(res100703));
+
+                    //判断是否需要数据同步(比较 mongo 和 mysql 中最新的sheetId 是否相同，不相同则数据同步)
                     PayrollPlanListDTO payrollPlanListDTO = planListSource.get(0);
                     String mongoNewestWageSheetId = payrollPlanListDTO.getWageSheetId();
                     boolean retBoolean = wageWechatService.compareSheetCrtDataTime(idNumber, groupId, mongoNewestWageSheetId);
-                    if (retBoolean) {
+                    if (!retBoolean) {
                         log.info("mongo库中，wageSheetInfo最新sheetId 与 Mysql中 最新sheetId 不相等，则需要同步数据");
                         mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
                     }
                 }
-                List<PlanListBean> planListBeans = new ArrayList<>();
-                for (PayrollPlanListDTO payrollPlanListDTO : planListSource) {
-                    PlanListBean planListBean = new PlanListBean();
-                    BeanUtils.copyProperties(payrollPlanListDTO, planListBean);
-                    planListBeans.add(planListBean);
-                }
-                res100703.setPlanList(planListBeans);
-                log.info("res100703:[{}]", JacksonUtil.objectToJson(res100703));
-                if (null == res100703) {
+                if (null == planListSource || planListSource.size() == 0) {
                     log.info("wageList查询mongo数据为空，转查mysql,idNumber:[{}]", idNumber);
                     qryMySql = true;
                 }
@@ -230,7 +232,6 @@ public class PayRollRS {
                 //同步数据
                 log.info("数据同步");
                 mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
-
             }
             return res100703;
         }).subscribeOn(Schedulers.elastic());

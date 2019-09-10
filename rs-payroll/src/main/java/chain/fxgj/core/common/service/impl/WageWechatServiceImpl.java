@@ -375,12 +375,12 @@ public class WageWechatServiceImpl implements WageWechatService {
             String wageSheetId = wageDetailInfoList.get(0).getWageSheetId();
             log.info("wageSheetId:[{}]", wageSheetId);
             if (StringUtils.equals(mongoNewestWageSheetId, wageSheetId)) {
-                return false;
-            } else {
                 return true;
+            } else {
+                return false;
             }
         } else {
-            log.info("fetch.size():[{}]",wageDetailInfoList.size());
+            log.info("wageDetailInfoList == null or wageDetailInfoList.size() = 0");
         }
         return true;
     }
