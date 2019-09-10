@@ -9,10 +9,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-
-import java.util.List;
 
 @RestController
 @Validated
@@ -28,79 +24,78 @@ public class SynDataRS {
 
     @GetMapping("/wagedetail")
     @TrackLog
-    public Mono<Integer> wagedetail(String date) {
+    public void wagedetail(String date) {
+        log.info("wagedetail开始同步....");
+        long starTime=System.currentTimeMillis();
         if (StringUtils.isEmpty(date)){
             throw new RuntimeException("同步年份不能为空");
         }
-        return Mono.fromCallable(() -> {
-            //MDC.setContextMap(mdcContext);
-            Integer count = synDataService.wagedetail(date);
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+        Integer count=synDataService.wagedetail(date);
+        log.info("wagedetail:{},耗时{}",count,System.currentTimeMillis()-starTime);
     }
 
     @GetMapping("/empinfo")
     @TrackLog
-    public Mono<Integer> empinfo() {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataService.empinfo();
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void empinfo() {
+        log.info("empinfo开始同步....");
+        long starTime=System.currentTimeMillis();
+        Integer count = synDataService.empinfo();
+        log.info("empinfo:{},耗时{}",count,System.currentTimeMillis()-starTime);
     }
 
     @GetMapping("/empwetchat")
     @TrackLog
-    public Mono<Integer> empwetchat() {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataService.empwetchat();
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void empwetchat() {
+        log.info("empwetchat开始同步....");
+        long starTime=System.currentTimeMillis();
+        Integer count = synDataService.empwetchat();
+        log.info("empwetchat-->{},耗时:{}",count,System.currentTimeMillis()-starTime);
     }
 
 
     @GetMapping("/enterprise")
     @TrackLog
-    public Mono<Integer> enterprise() {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataService.enterprise();
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void enterprise() {
+        log.info("enterprise开始同步....");
+        long starTime=System.currentTimeMillis();
+        Integer count = synDataService.enterprise();
+        log.info("enterprise-->{},耗时:{}",count,System.currentTimeMillis()-starTime);
     }
 
     @GetMapping("/entgroup")
     @TrackLog
-    public Mono<Integer> entgroup() {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataService.entgroup();
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void entgroup() {
+        log.info("entgroup开始同步....");
+        long starTime=System.currentTimeMillis();
+        Integer count = synDataService.entgroup();
+        log.info("entgroup-->{},耗时:{}",count,System.currentTimeMillis()-starTime);
     }
 
     @GetMapping("/manager")
     @TrackLog
-    public Mono<Integer> manager() {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataService.manager();
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void manager() {
+        log.info("manager开始同步....");
+        long starTime=System.currentTimeMillis();
+        Integer count = synDataService.manager();
+        log.info("manager-->{},耗时:{}",count,System.currentTimeMillis()-starTime);
     }
 
     @GetMapping("/wagesheet")
     @TrackLog
-    public Mono<Integer> sheet() {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataService.wageSheet();
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void sheet() {
+        log.info("sheet开始同步....");
+        long starTime=System.currentTimeMillis();
+        Integer count = synDataService.wageSheet();
+        log.info("wagesheet-->{},耗时:{}",count,System.currentTimeMillis()-starTime);
     }
 
     @GetMapping("/wageshow")
     @TrackLog
-    public Mono<Integer> wageShow() {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataService.wageShow();
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void wageShow() {
+        log.info("wageShow开始同步....");
+        long starTime=System.currentTimeMillis();
+        Integer count = synDataService.wageShow();
+        log.info("wageShow-->{},耗时:{}",count,System.currentTimeMillis()-starTime);
     }
 
 
