@@ -92,6 +92,7 @@ public class SynDataServiceImpl implements SynDataService {
         log.info("工资详情开始同步数据.....");
         LocalDateTime startDate=startDate(date);
         LocalDateTime endDate=endDate(date);
+
         while (true){
             int currentData=(page-1)*PAGE_SIZE;
             QWageDetailInfo qWageDetailInfo=QWageDetailInfo.wageDetailInfo;
@@ -146,7 +147,7 @@ public class SynDataServiceImpl implements SynDataService {
                     wageDetailInfoDTOList.add(dto);
                 }
                 log.info("wageDetailInfoQueryResults--->size:{}",wageDetailInfoDTOList.size());
-                boolean b = synDataFeignController.syncWageDetail("2019",wageDetailInfoDTOList);
+                boolean b = synDataFeignController.syncWageDetail(formatter1.format(startDate),wageDetailInfoDTOList);
                 if (b){
                     result+=wageDetailInfoDTOList.size();
                 }

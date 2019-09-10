@@ -316,7 +316,7 @@ public class PushSyncDataServiceImpl implements PushSyncDataService {
                     pushWageShow(dto.getWageSheetId());
                 }
                 log.info("wageDetailInfoQueryResults--->size:{}", wageDetailInfoDTOList.size());
-                boolean b = synDataFeignController.syncWageDetail("2019", wageDetailInfoDTOList);
+                boolean b = synDataFeignController.syncWageDetail(year, wageDetailInfoDTOList);
             }
         }catch (Exception e){
             log.info("pushWageDetail Exception--->{}",e);

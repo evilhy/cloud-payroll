@@ -229,7 +229,7 @@ public class SynDataTimerServiceImpl implements SynDataTimerService {
                         wageDetailInfoDTOList.add(dto);
                     }
                     log.info("wageDetailInfoQueryResults--->size:{}",wageDetailInfoDTOList.size());
-                    boolean b = synDataFeignController.syncWageDetail("2019",wageDetailInfoDTOList);
+                    boolean b = synDataFeignController.syncWageDetail(formatter1.format(startDate),wageDetailInfoDTOList);
                     if (b){
                         result+=wageDetailInfoDTOList.size();
                     }
