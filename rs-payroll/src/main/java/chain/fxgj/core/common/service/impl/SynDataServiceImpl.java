@@ -190,20 +190,61 @@ public class SynDataServiceImpl implements SynDataService {
         return endDate;
     }
 
+    private static LocalDateTime startMonthFirst(String date){
+        LocalDateTime startDate=LocalDateTime.now();
+        date=date.concat("-01");
+        DateTimeFormatter df = DateTimeFormatter.ofPattern(Constants.DEFAULT_DATE_TIME_FORMAT);
+        if (StringUtils.isNotEmpty(date)){
+            date=date.concat(" 00:00:00.000");
+            System.out.println(date);
+            startDate = LocalDateTime.parse(date, df);
+        }else{
+            startDate = LocalDate.now().plusDays(-1).atTime(0, 0, 0);
+        }
+        log.info("startDate----{}",startDate);
+        return startDate;
+    }
+    private static LocalDateTime startMonthLast(String date){
+        LocalDateTime endDate=LocalDateTime.now();
+        date=date.concat("-31");
+        DateTimeFormatter df = DateTimeFormatter.ofPattern(Constants.DEFAULT_DATE_TIME_FORMAT);
+        if (StringUtils.isNotEmpty(date)){
+            date=date.concat(" 23:59:59.999");
+            endDate = LocalDateTime.parse(date, df);
+        }else{
+            endDate = LocalDate.now().plusDays(-1).atTime(23, 59, 59);
+        }
+        log.info("endDate----{}",endDate);
+        return endDate;
+    }
+
     /**
      * 同步用户信息
      * @return
      */
     @Override
-    public Integer empinfo() {
+    public Integer empinfo(String date) {
         int page=1;
         Integer result=0;
+        if (StringUtils.isEmpty(date)){
+            return 0;
+        }
         //分页查询
         log.info("用户信息开始同步数据.....");
+        LocalDateTime startDate=startMonthFirst(date);
+        LocalDateTime endDate=startMonthLast(date);
+        log.info("信息开始同步数据:startDate:{},endDate:{}",startDate,endDate);
         while (true){
             int currentData=(page-1)*PAGE_SIZE;
             QEmployeeInfo qEmployeeInfo=QEmployeeInfo.employeeInfo;
-            QueryResults<EmployeeInfo> employeeInfoQueryResults = employeeInfoDao.selectFrom(qEmployeeInfo)
+            Predicate predicate = qEmployeeInfo.id.isNotEmpty();
+            if (startDate != null) {
+                predicate = ExpressionUtils.and(predicate, qEmployeeInfo.crtDateTime.after(startDate));
+            }
+            if (endDate != null) {
+                predicate = ExpressionUtils.and(predicate, qEmployeeInfo.crtDateTime.before(endDate));
+            }
+            QueryResults<EmployeeInfo> employeeInfoQueryResults = employeeInfoDao.selectFrom(qEmployeeInfo).where(predicate)
                     .orderBy(qEmployeeInfo.crtDateTime.desc())
                     .offset(currentData)
                     .limit(PAGE_SIZE)
@@ -839,9 +880,10 @@ public class SynDataServiceImpl implements SynDataService {
     }
 
     public static void main(String[] args) {
-        System.out.println(startDate("2018"));
-        System.out.println(endDate("2018"));
-
+       // System.out.println(startDate("2018"));
+        //System.out.println(endDate("2018"));
+        System.out.println(startMonthFirst("2018-02"));
+        System.out.println(startMonthLast("2020-02"));
     }
 
 }

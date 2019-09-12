@@ -36,10 +36,10 @@ public class SynDataRS {
 
     @GetMapping("/empinfo")
     @TrackLog
-    public void empinfo() {
+    public void empinfo(String date) {
         log.info("empinfo开始同步....");
         long starTime=System.currentTimeMillis();
-        Integer count = synDataService.empinfo();
+        Integer count = synDataService.empinfo(date);
         log.info("empinfo:{},耗时{}",count,System.currentTimeMillis()-starTime);
     }
 

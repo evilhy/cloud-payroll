@@ -15,7 +15,7 @@ spring:
         hbm2ddl:
           auto: update
         ### 懒加载使用此方法
-        enable_lazy_load_no_trans: true
+        enable_lazy_load_no_trans: false
     show-sql: true
     naming:
       physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy

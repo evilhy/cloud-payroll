@@ -4,7 +4,7 @@ public interface SynDataService {
 
     Integer wagedetail(String date);
 
-    Integer empinfo();
+    Integer empinfo(String date);
 
     Integer empwetchat();
 
