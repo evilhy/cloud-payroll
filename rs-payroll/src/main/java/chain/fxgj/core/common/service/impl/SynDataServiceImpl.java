@@ -85,14 +85,14 @@ public class SynDataServiceImpl implements SynDataService {
         Integer result=0;
         DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy");
         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("MM");
-        if (date.length()!=4){
+        if (date.length()!=7){
             return 0;
         }
         //分页查询
         log.info("工资详情开始同步数据.....");
         LocalDateTime startDate=startDate(date);
         LocalDateTime endDate=endDate(date);
-
+        log.info("工资详情开始同步数据:startDate:{},endDate:{}",startDate,endDate);
         while (true){
             int currentData=(page-1)*PAGE_SIZE;
             QWageDetailInfo qWageDetailInfo=QWageDetailInfo.wageDetailInfo;
@@ -163,7 +163,7 @@ public class SynDataServiceImpl implements SynDataService {
 
     private static LocalDateTime startDate(String date){
         LocalDateTime startDate=LocalDateTime.now();
-        date=date.concat("-01-01");
+        date=date.concat("-01");
         DateTimeFormatter df = DateTimeFormatter.ofPattern(Constants.DEFAULT_DATE_TIME_FORMAT);
         if (StringUtils.isNotEmpty(date)){
             date=date.concat(" 00:00:00.000");
@@ -178,7 +178,7 @@ public class SynDataServiceImpl implements SynDataService {
 
     private static LocalDateTime endDate(String date){
         LocalDateTime endDate=LocalDateTime.now();
-        date=date.concat("-12-31");
+        date=date.concat("-31");
         DateTimeFormatter df = DateTimeFormatter.ofPattern(Constants.DEFAULT_DATE_TIME_FORMAT);
         if (StringUtils.isNotEmpty(date)){
             date=date.concat(" 23:59:59.999");
@@ -233,7 +233,7 @@ public class SynDataServiceImpl implements SynDataService {
         log.info("用户信息开始同步数据.....");
         LocalDateTime startDate=startMonthFirst(date);
         LocalDateTime endDate=startMonthLast(date);
-        log.info("信息开始同步数据:startDate:{},endDate:{}",startDate,endDate);
+        log.info("用户信息开始同步数据:startDate:{},endDate:{}",startDate,endDate);
         while (true){
             int currentData=(page-1)*PAGE_SIZE;
             QEmployeeInfo qEmployeeInfo=QEmployeeInfo.employeeInfo;
