@@ -46,7 +46,7 @@ import java.util.Map;
  */
 @RestController
 @Validated
-@RequestMapping("/tfinance")
+@RequestMapping("/tfinances")
 @Slf4j
 public class TFinanceRS {
     @Autowired

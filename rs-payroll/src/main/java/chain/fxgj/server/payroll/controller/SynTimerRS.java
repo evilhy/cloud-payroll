@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.service.SynDataTimerService;
+import chain.fxgj.feign.client.SynTimerFeignService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -18,8 +19,10 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 public class SynTimerRS {
 
+    //@Autowired
+    //private SynDataTimerService synDataTimerService;
     @Autowired
-    private SynDataTimerService synDataTimerService;
+    private SynTimerFeignService synTimerFeignService;
 
     /**
      * 同步工资详情,包括 wage_detail_info,wage_sheet_info,wage_show_info
@@ -28,11 +31,10 @@ public class SynTimerRS {
      */
     @GetMapping(value = {"/wagedata/{date}","/wagedata"})
     @TrackLog
-    public Mono<Integer> synWageDataInfo(@PathVariable(value = "date",required = false) String date) {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataTimerService.synWageDataInfo(date);
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void synWageDataInfo(@PathVariable(value = "date",required = false) String date) {
+        long starTime=System.currentTimeMillis();
+        Integer count=synTimerFeignService.wagedata(date);
+        log.info("wagedata-->{},耗时:{}",count,System.currentTimeMillis()-starTime);
     }
 
     /**
@@ -42,11 +44,10 @@ public class SynTimerRS {
      */
     @GetMapping(value = {"/empdata/{date}","/empdata"})
     @TrackLog
-    public Mono<Integer> synEmpInfoDataInfo(@PathVariable(value = "date",required = false) String date) {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataTimerService.synEmpInfoDataInfo(date);
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void synEmpInfoDataInfo(@PathVariable(value = "date",required = false) String date) {
+        long starTime=System.currentTimeMillis();
+        Integer count=synTimerFeignService.empdata(date);
+        log.info("empdata-->{},耗时:{}",count,System.currentTimeMillis()-starTime);
     }
 
     /**
@@ -56,11 +57,10 @@ public class SynTimerRS {
      */
     @GetMapping(value = {"/entgroupdata/{date}","/entgroupdata"})
     @TrackLog
-    public Mono<Integer> synEntGroupDataInfo(@PathVariable(value = "date",required = false) String date) {
-        return Mono.fromCallable(() -> {
-            Integer count = synDataTimerService.synEntGroupDataInfo(date);
-            return count;
-        }).subscribeOn(Schedulers.elastic());
+    public void synEntGroupDataInfo(@PathVariable(value = "date",required = false) String date) {
+        long starTime=System.currentTimeMillis();
+        Integer count=synTimerFeignService.entgroupdata(date);
+        log.info("entgroupdata-->{},耗时:{}",count,System.currentTimeMillis()-starTime);
     }
 
 }
