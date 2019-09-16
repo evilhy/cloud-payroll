@@ -61,9 +61,9 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         log.info("--------------->jsessionId:[{}]", jsessionId);
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
         //todo 跑数据使用，正式环境必须删除
-//        if (true) {
-//            return chain.filter(exchange);
-//        }
+        if (true) {
+            return chain.filter(exchange);
+        }
         String requestUrl = serverHttpRequest.getURI().getPath();
         for (String url : excludeUrls) {
             if (StringUtils.indexOf(requestUrl, url) > -1) {

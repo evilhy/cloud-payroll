@@ -7,6 +7,7 @@ import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.feign.client.WechatFeignService;
 import chain.fxgj.feign.dto.base.WageWeixinJsapiDTO;
 import chain.fxgj.feign.dto.response.WageRes100705;
+import chain.fxgj.feign.dto.wechat.WageSignaturegPostDTO;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.base.*;
 import chain.fxgj.server.payroll.dto.response.Res100705;
@@ -100,8 +101,14 @@ public class WechatController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("====>apppartnerdesc={},appPartner={}",MDC.get("apppartnerdesc"),MDC.get("apppartner"));
+            WageSignaturegPostDTO wageSignaturegPostDTO = new WageSignaturegPostDTO();
+            wageSignaturegPostDTO.setAppPartnerEnum(id);
+            wageSignaturegPostDTO.setNonce(nonce);
+            wageSignaturegPostDTO.setSignature(signature);
+            wageSignaturegPostDTO.setTimestamp(timestamp);
+            wageSignaturegPostDTO.setXml(xml);
             //验签
-            String sendContent = wechatFeignService.signaturegPost(signature,timestamp,nonce,id,xml);
+            String sendContent = wechatFeignService.signaturegPost(wageSignaturegPostDTO);
             log.info("signaturegPost-->{}",sendContent);
             return sendContent;
         }).subscribeOn(Schedulers.elastic());
@@ -160,5 +167,18 @@ public class WechatController {
         }).subscribeOn(Schedulers.elastic());
     }
 
+
+    //todo 请删除
+//    @GetMapping("/testAll")
+//    @PermitAll
+//    public void testAll() throws BusiVerifyException {
+//        String signature = "2";
+//        String timestamp = "3";
+//        String nonce = "4";
+//        AppPartnerEnum id = AppPartnerEnum.FXGJ;
+//        String xml = "6";
+//        String sendContent = wechatFeignService.signaturegPost(signature,timestamp,nonce,id,xml);
+//        log.info("sendContent end");
+//    }
 
 }
