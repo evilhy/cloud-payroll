@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @RestController
 @Validated
-@RequestMapping("/weixins")
+@RequestMapping("/weixin")
 @Slf4j
 public class WechatController {
 

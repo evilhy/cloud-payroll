@@ -46,7 +46,7 @@ import java.util.concurrent.Executor;
  */
 @RestController
 @Validated
-@RequestMapping(value = "/roll")
+@RequestMapping(value = "/rolls")
 @Slf4j
 @SuppressWarnings("unchecked")
 public class PayRollRS {

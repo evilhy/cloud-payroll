@@ -40,7 +40,7 @@ import java.util.Map;
  */
 @RestController
 @Validated
-@RequestMapping("/weixin")
+@RequestMapping("/weixins")
 @Slf4j
 public class WechatRS {
 
