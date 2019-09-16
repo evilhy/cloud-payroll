@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Validated
-@RequestMapping(value = "/sync")
+
+@RequestMapping(value = "/unAuth/sync")
 @Slf4j
 @SuppressWarnings("unchecked")
 public class SynDataRS {

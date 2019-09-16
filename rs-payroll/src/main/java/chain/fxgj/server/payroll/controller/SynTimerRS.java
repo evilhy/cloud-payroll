@@ -15,7 +15,7 @@ import reactor.core.scheduler.Schedulers;
 
 @RestController
 @Validated
-@RequestMapping(value = "/synctimer")
+@RequestMapping(value = "/unAuth/synctimer")
 @Slf4j
 public class SynTimerRS {
 
