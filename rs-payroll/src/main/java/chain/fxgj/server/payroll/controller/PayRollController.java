@@ -45,7 +45,7 @@ import java.util.concurrent.Executor;
  */
 @RestController
 @Validated
-@RequestMapping(value = "/roll")
+@RequestMapping(value = "/rolls")
 @Slf4j
 @SuppressWarnings("unchecked")
 public class PayRollController {
@@ -80,7 +80,7 @@ public class PayRollController {
     /**
      * 首页
      */
-    @GetMapping("/indexs")
+    @GetMapping("/index")
     @TrackLog
     public Mono<IndexDTO> index() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
