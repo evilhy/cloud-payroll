@@ -79,6 +79,7 @@ public class TransferUtil {
                 entInfoDTOSList.add(entInfoDTO1);
             }
         }
+
         userPrincipal.setEntInfoDTOS(entInfoDTOSList);
         userPrincipal.setEntName(wageUserPrincipal.getEntName());
         userPrincipal.setGroupIds(wageUserPrincipal.getGroupIds());
