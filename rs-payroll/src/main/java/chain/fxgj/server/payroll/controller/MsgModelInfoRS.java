@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @Validated
-@RequestMapping(value = "/msgmode")
+@RequestMapping(value = "/msgmodes")
 @Slf4j
 public class MsgModelInfoRS {
 

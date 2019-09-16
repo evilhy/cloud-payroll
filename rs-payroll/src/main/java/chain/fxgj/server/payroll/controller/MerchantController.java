@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.controller;
 
+
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
@@ -9,6 +10,11 @@ import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.core.common.service.MerchantService;
 import chain.fxgj.core.jpa.model.EmployeeInfo;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
+import chain.fxgj.feign.client.EmployeeFeignService;
+import chain.fxgj.feign.client.MerchantFeignService;
+import chain.fxgj.feign.dto.response.WageEmpInfoDTO;
+import chain.fxgj.feign.dto.response.WageEmployeeWechatInfoDTO;
+import chain.fxgj.feign.dto.response.WageRes100705;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
@@ -24,6 +30,7 @@ import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.MDC;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -42,19 +49,21 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @Validated
-@RequestMapping(value = "/merchants")
+@RequestMapping(value = "/merchant")
 @Slf4j
 @SuppressWarnings("unchecked")
-public class MerchantRS {
+public class MerchantController {
 
-    //@Autowired
+    @Autowired
     MerchantsProperties merchantProperties;
-    //@Autowired
-    MerchantService merchantService;
-    // @Autowired
+    @Autowired
     EmployeeEncrytorService employeeEncrytorService;
     @Resource
     RedisTemplate redisTemplate;
+    @Autowired
+    private MerchantFeignService merchantFeignService;
+    @Autowired
+    private EmployeeFeignService employeeFeignService;
 
     /**
      * 根据appid 查询工资条接入合作方信息
@@ -139,27 +148,31 @@ public class MerchantRS {
 
             //employeeWechatInfo.setAppPartner(AppPartnerEnum.values()[Integer.valueOf(merchant.getMerchantCode())]);
             employeeWechatInfo.setAppPartner(merchant.getMerchantCode());
-
-            EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
-            if (employeeWechat != null) {  //认证绑定信息表已经存在，则说明已经绑定成功
+            WageEmployeeWechatInfoDTO paramWetchatDto=new WageEmployeeWechatInfoDTO();
+            BeanUtils.copyProperties(employeeWechatInfo,paramWetchatDto);
+            WageEmployeeWechatInfoDTO wechatInfoDTO=employeeFeignService.findEmployeeWetchatInfo(paramWetchatDto);
+            //EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
+            if (wechatInfoDTO != null) {  //认证绑定信息表已经存在，则说明已经绑定成功
                 log.info("认证绑定信息表【存在】，则说明已经绑定成功！");
-                employeeWechat.setNickname(employeeWechatInfo.getNickname());
-                employeeWechat.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
-                employeeWechat.setUid(employeeWechatInfo.getUid());
-                employeeWechat.setOpenId(employeeWechatInfo.getUid());
-                employeeWechat.setRegisterType(RegisterTypeEnum.UUID);
-                merchantService.saveMerchant(employeeWechat);
+                wechatInfoDTO.setNickname(employeeWechatInfo.getNickname());
+                wechatInfoDTO.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
+                wechatInfoDTO.setUid(employeeWechatInfo.getUid());
+                wechatInfoDTO.setOpenId(employeeWechatInfo.getUid());
+                wechatInfoDTO.setRegisterType(RegisterTypeEnum.UUID.getCode());
+                employeeFeignService.saveEmployeeWetchatInfo(wechatInfoDTO);
             } else {
                 log.info("认证绑定信息表【不存在】！");
                 //查询用户信息
                 EmployeeInfo employeeInfo = new EmployeeInfo();
                 employeeInfo.setIdNumber(merchantDecrypt.getIdNumber()); //员工证件号
                 employeeInfo.setEmployeeName(merchantDecrypt.getName());//员工姓名
-
-                EmployeeInfo emp = merchantService.findEmployeeInfo(employeeInfo);
-                if (emp != null) {
+                WageEmpInfoDTO wageEmpInfoDTO=new WageEmpInfoDTO();
+                BeanUtils.copyProperties(employeeInfo,wageEmpInfoDTO);
+                WageEmpInfoDTO empInfoDTO=employeeFeignService.findEmployeeInfo(wageEmpInfoDTO);
+                //EmployeeInfo emp = merchantService.findEmployeeInfo(employeeInfo);
+                if (empInfoDTO != null) {
                     log.info("员工信息表中【存在】！");
-                    employeeWechatInfo = merchantService.saveMerchant(employeeWechatInfo);
+                    wechatInfoDTO = employeeFeignService.saveEmployeeWetchatInfo(paramWetchatDto);
                 } else {
                     log.info("员工信息表中【不存在】！信息未认证");
                     throw new ParamsIllegalException(ErrorConstant.MERCHANT_07.getErrorMsg());
@@ -231,29 +244,21 @@ public class MerchantRS {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-
             String jsessionId = UUIDUtil.createUUID32();
             Res100705 res100705 = Res100705.builder().build();
-
             log.info("set之前打印jsessionId:[{}]", jsessionId);
             res100705.setJsessionId(jsessionId);
-
-            EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
-            if (employeeWechat != null) {
-                log.info("用户信息存在！");
-                UserPrincipal userPrincipal = merchantService.setWechatInfo(jsessionId, employeeWechat,merchantDecrypt.getDataAuths());
-                if (StringUtils.isNotBlank(userPrincipal.getIdNumber())) {
-                    res100705.setBindStatus("1");
-                    res100705.setIdNumber(userPrincipal.getIdNumberEncrytor());
-                    res100705.setIfPwd(StringUtils.isEmpty(StringUtils.trimToEmpty(userPrincipal.getQueryPwd())) ? IsStatusEnum.NO.getCode() : IsStatusEnum.YES.getCode());
-                    res100705.setName(userPrincipal.getName());
-                    res100705.setPhone(userPrincipal.getPhone());
-                    res100705.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
+            WageEmployeeWechatInfoDTO paramWetchatDto=new WageEmployeeWechatInfoDTO();
+            BeanUtils.copyProperties(employeeWechatInfo,paramWetchatDto);
+            WageEmployeeWechatInfoDTO wechatInfoDTO=employeeFeignService.findEmployeeWetchatInfo(paramWetchatDto);
+            if (wechatInfoDTO != null) {
+                WageRes100705 wageRes100705=merchantFeignService.wxCallback(accessToken);
+                if (res100705!=null){
+                    BeanUtils.copyProperties(wageRes100705,res100705);
                 }
             } else {
                 log.info("用户信息不存在！");
             }
-
             return res100705;
         }).subscribeOn(Schedulers.elastic());
 
