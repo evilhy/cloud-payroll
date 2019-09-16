@@ -80,7 +80,7 @@ public class PayRollController {
     /**
      * 首页
      */
-    @GetMapping("/index")
+    @GetMapping("/indexs")
     @TrackLog
     public Mono<IndexDTO> index() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
