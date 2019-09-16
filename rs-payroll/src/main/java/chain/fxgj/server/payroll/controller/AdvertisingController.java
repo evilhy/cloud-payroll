@@ -27,7 +27,7 @@ import java.util.Map;
 
 @RestController
 @Validated
-@RequestMapping(value = "/advertisingController")
+@RequestMapping(value = "/advertising")
 @Slf4j
 public class AdvertisingController {
 

@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @RestController
 @Validated
-@RequestMapping("/managerController")
+@RequestMapping("/manager")
 @Slf4j
 public class CustManagerController {
     @Autowired

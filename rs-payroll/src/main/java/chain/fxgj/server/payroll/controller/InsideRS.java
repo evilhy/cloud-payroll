@@ -30,7 +30,7 @@ import java.util.Map;
 
 @RestController
 @Validated
-@RequestMapping("/inside")
+@RequestMapping("/insides")
 @Slf4j
 public class InsideRS {
 
