@@ -53,8 +53,6 @@ public class WechatBindServiceImpl implements WechatBindService {
     EmpWechatService empWechatService;
     @Autowired
     EmployeeCardLogDao employeeCardLogDao;
-    @Autowired
-    WechatBindService wechatBindService;
 
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -414,7 +412,7 @@ public class WechatBindServiceImpl implements WechatBindService {
     @Override
     public List<EmpEntDTO> empEntList(String idNumber, UserPrincipal userPrincipal) {
 
-        List<EntInfoDTO> entInfoDTOS = wechatBindService.getEntInfos(idNumber, userPrincipal);
+        List<EntInfoDTO> entInfoDTOS = getEntInfos(idNumber, userPrincipal);
         List<EmpEntDTO> list = new ArrayList<>();
         for (EntInfoDTO entInfoDTO : entInfoDTOS) {
             EmpEntDTO empEntDTO = new EmpEntDTO();
