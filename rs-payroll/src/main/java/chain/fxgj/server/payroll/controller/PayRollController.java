@@ -394,9 +394,9 @@ public class PayRollController {
             if (StringUtils.isEmpty(pwd)) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
-            boolean bool=wageMangerFeignService.checkPwd(pwd,wageUserPrincipal);
+            boolean bool = wageMangerFeignService.checkPwd(pwd,wageUserPrincipal);
             if (!bool){
-                throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
+                throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
