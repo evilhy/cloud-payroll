@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.ErrorConstant;
+import chain.fxgj.core.common.service.WageWechatService;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.response.*;
@@ -61,7 +62,8 @@ public class PayRollController {
     private PayRollFeignService wageMangerFeignService;
     @Autowired
     private SynTimerFeignService wageSynFeignService;
-
+    @Inject
+    WageWechatService wageWechatService;
 
     /**
      * 服务当前时间
@@ -217,7 +219,7 @@ public class PayRollController {
                     //判断是否需要数据同步(比较 mongo 和 mysql 中最新的sheetId 是否相同，不相同则数据同步)
                     PayrollPlanListDTO payrollPlanListDTO = planListSource.get(0);
                     String mongoNewestWageSheetId = payrollPlanListDTO.getWageSheetId();
-                    boolean retBoolean =wageMangerFeignService.compareSheetCrtDataTime(idNumber, groupId, mongoNewestWageSheetId) ;//wageWechatService.compareSheetCrtDataTime(idNumber, groupId, mongoNewestWageSheetId);
+                    boolean retBoolean = wageWechatService.compareSheetCrtDataTime(idNumber, groupId, mongoNewestWageSheetId);
                     if (!retBoolean) {
                         log.info("mongo库中，wageSheetInfo最新sheetId 与 Mysql中 最新sheetId 不相等，则需要同步数据");
                         mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
@@ -232,16 +234,13 @@ public class PayRollController {
                 log.info("wageList查询mongo异常，转查mysql,idNumber:[{}]", idNumber);
             }
             if (qryMySql) {
-                WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-                BeanUtils.copyProperties(principal,wageUserPrincipal);
-                WageRes100703 wageRes100703=wageMangerFeignService.wageList(groupId,year,type,wageUserPrincipal);
-                log.info("wageRes100703-->{}",wageRes100703);
-                if (wageRes100703!=null){
-                    if (res100703==null){
-                        res100703=new Res100703();
-                    }
-                    BeanUtils.copyProperties(wageRes100703,res100703);
+                if (LocalDate.now().getYear() == Integer.parseInt(year)) {
+                    res100703 = wageWechatService.wageList(idNumber, groupId, year, type,principal);
+                } else {
+                    res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
                 }
+                res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
+                //同步数据
                 log.info("数据同步");
                 mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
             }
@@ -297,20 +296,7 @@ public class PayRollController {
             //查询mongo异常，转查mysql
             log.info("qryMySql:[{}]",qryMySql);
             if (qryMySql) {
-                WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-                BeanUtils.copyProperties(principal,wageUserPrincipal);
-                List<WageDetailInfoDTO> wageDetailInfoDTOList=wageMangerFeignService.wageDetail(wageSheetId,groupId,wageUserPrincipal);
-                log.info("wageDetailInfoDTOList--->{}",wageDetailInfoDTOList);
-                if(!CollectionUtils.isEmpty(wageDetailInfoDTOList)){
-                   if (list==null){
-                       list=new ArrayList<>();
-                   }
-                   for (WageDetailInfoDTO wageDetailInfoDTO:wageDetailInfoDTOList){
-                       WageDetailDTO detailDTO=new WageDetailDTO();
-                       BeanUtils.copyProperties(wageDetailInfoDTO,detailDTO);
-                       list.add(detailDTO);
-                   }
-                }
+                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
             }
             return list;
         }).subscribeOn(Schedulers.elastic());
