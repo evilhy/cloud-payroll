@@ -92,12 +92,17 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
-            WageIndexDTO wageIndexDTO=wageMangerFeignService.index(wageUserPrincipal);
-            log.info("index-->{}",wageIndexDTO);
-            IndexDTO indexDTO = new IndexDTO();
-            if (wageIndexDTO!=null){
-                BeanUtils.copyProperties(wageIndexDTO,indexDTO);
+            WageIndexDTO wageIndexDTO = wageMangerFeignService.index(wageUserPrincipal);
+            NewestWageLogDTO newestWageLogDTO = new NewestWageLogDTO();
+            Integer isNew = 0;
+            if (null != wageIndexDTO) {
+                WageNewestWageLogDTO wageNewestWageLogDTO = wageIndexDTO.getBean();
+                BeanUtils.copyProperties(wageNewestWageLogDTO,newestWageLogDTO);
+                isNew = wageIndexDTO.getIsNew();
             }
+            IndexDTO indexDTO = new IndexDTO();
+            indexDTO.setBean(newestWageLogDTO);
+            indexDTO.setIsNew(isNew);
             return indexDTO;
         }).subscribeOn(Schedulers.elastic());
     }

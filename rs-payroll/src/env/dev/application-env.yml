@@ -102,6 +102,6 @@ merchants:
         - HXB
 
 #设置feign调用超时时间
-ribbon:
-  ReadTimeout: 20000
-  ConnectTimeout: 20000
+#ribbon:
+#  ReadTimeout: 20000
+#  ConnectTimeout: 20000
