@@ -103,5 +103,5 @@ merchants:
 
 #设置feign调用超时时间
 ribbon:
-  ReadTimeout: 20000
-  ConnectTimeout: 20000
+  ReadTimeout: 30000
+  ConnectTimeout: 30000
