@@ -388,8 +388,7 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal principal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-        BeanUtils.copyProperties(principal,wageUserPrincipal);
+        WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             if (StringUtils.isEmpty(pwd)) {

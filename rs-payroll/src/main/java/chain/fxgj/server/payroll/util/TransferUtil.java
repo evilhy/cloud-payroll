@@ -100,7 +100,7 @@ public class TransferUtil {
         userPrincipal.setUid(wageUserPrincipal.getUid());
         userPrincipal.setUserName(wageUserPrincipal.getUserName());
         userPrincipal.setWechatId(wageUserPrincipal.getWechatId());
-        log.info("wageUserPrincipal:[{}]", JacksonUtil.objectToJson(wageUserPrincipal));
+        log.info("userPrincipal:[{}]", JacksonUtil.objectToJson(wageUserPrincipal));
         return userPrincipal;
     }
 }
