@@ -99,12 +99,19 @@ public class InsideController {
      */
     @PostMapping("/read")
     @TrackLog
-    public void readWage(@RequestBody ReadWageDTO readWageDTO) {
+    public Mono<Void> readWage(@RequestBody ReadWageDTO readWageDTO) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
-        WageReadWageDTO wageReadWageDTO = new WageReadWageDTO();
-        BeanUtils.copyProperties(readWageDTO, wageReadWageDTO);
+        String idNumber = WebContext.getCurrentUser().getIdNumberEncrytor();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            WageReadWageDTO wageReadWageDTO = new WageReadWageDTO();
+            wageReadWageDTO.setIdNumber(idNumber);
+            BeanUtils.copyProperties(readWageDTO, wageReadWageDTO);
+            insideFeignService.readWage(wageReadWageDTO);
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
 
-        insideFeignService.readWage(wageReadWageDTO);
     }
 
     /**
