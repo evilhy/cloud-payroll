@@ -20,6 +20,7 @@ import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -106,8 +107,9 @@ public class InsideController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WageReadWageDTO wageReadWageDTO = new WageReadWageDTO();
-            wageReadWageDTO.setIdNumber(idNumber);
+            readWageDTO.setIdNumber(idNumber);
             BeanUtils.copyProperties(readWageDTO, wageReadWageDTO);
+            log.info("wageReadWageDTO:[{}]", JacksonUtil.objectToJson(wageReadWageDTO));
             insideFeignService.readWage(wageReadWageDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
