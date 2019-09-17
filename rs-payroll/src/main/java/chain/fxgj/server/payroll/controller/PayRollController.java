@@ -8,6 +8,7 @@ import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.response.*;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.PayrollFeignController;
@@ -90,8 +91,7 @@ public class PayRollController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(principal,wageUserPrincipal);
+            WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
             WageIndexDTO wageIndexDTO=wageMangerFeignService.index(wageUserPrincipal);
             log.info("index-->{}",wageIndexDTO);
             IndexDTO indexDTO = new IndexDTO();
