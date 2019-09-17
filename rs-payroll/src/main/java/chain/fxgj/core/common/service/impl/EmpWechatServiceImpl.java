@@ -16,6 +16,7 @@ import chain.fxgj.core.jpa.dao.EmployeeCardInfoDao;
 import chain.fxgj.core.jpa.dao.EmployeeCardLogDao;
 import chain.fxgj.core.jpa.dao.EmployeeWechatInfoDao;
 import chain.fxgj.core.jpa.model.*;
+import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
@@ -300,4 +301,8 @@ public class EmpWechatServiceImpl implements EmpWechatService {
                 .fetchFirst();
     }
 
+    @Override
+    public WageUserPrincipal getWechatInfoDetail(String jsessionId) {
+        return null;
+    }
 }

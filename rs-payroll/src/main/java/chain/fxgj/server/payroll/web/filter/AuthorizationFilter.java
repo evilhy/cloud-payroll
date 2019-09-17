@@ -2,8 +2,10 @@ package chain.fxgj.server.payroll.web.filter;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.core.common.service.EmpWechatService;
+import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
+import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +49,6 @@ public class AuthorizationFilter implements WebFilter, Ordered {
 
     @Autowired
     private EmpWechatService empWechatService;
-
     public AuthorizationFilter(EmpWechatService empWechatService) {
         this.empWechatService = empWechatService;
     }
@@ -72,7 +73,10 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             }
         }
         log.info("[{}]需要验证jsessionId", requestUrl);
-        UserPrincipal principal = empWechatService.getWechatInfo(jsessionId);
+        //todo 需要找出 哪里入的redis
+//        UserPrincipal principal = empWechatService.getWechatInfo(jsessionId);
+        WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+        UserPrincipal principal = TransferUtil.WageUserPrincipalToUserPrincipal(wechatInfoDetail);
         if (principal == null) {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
         }

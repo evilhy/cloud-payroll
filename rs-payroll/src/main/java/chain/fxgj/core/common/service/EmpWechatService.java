@@ -3,6 +3,7 @@ package chain.fxgj.core.common.service;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.jpa.model.CardbinInfo;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
+import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import chain.fxgj.server.payroll.dto.request.UpdBankCardDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -42,6 +43,14 @@ public interface EmpWechatService {
      */
     @Cacheable(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
     UserPrincipal getWechatInfo(String jsessionId);
+
+    /**
+     * 获取微信绑定信息 WageUserPrincipal 接收
+     *
+     * @return
+     */
+    @Cacheable(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
+    WageUserPrincipal getWechatInfoDetail(String jsessionId);
 
     /**
      * 用户登录信息
