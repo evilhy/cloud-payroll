@@ -30,10 +30,12 @@ public class TransferUtil {
         wageUserPrincipal.setEntId(userPrincipal.getEntId());
         List<EntInfoDTO> entInfoDTOS = userPrincipal.getEntInfoDTOS();
         List<chain.fxgj.feign.dto.ent.EntInfoDTO> entInfoDTOSList = wageUserPrincipal.getEntInfoDTOS();
-        for (EntInfoDTO entInfoDTO : entInfoDTOS) {
-            chain.fxgj.feign.dto.ent.EntInfoDTO feiginEntInfoDto = new chain.fxgj.feign.dto.ent.EntInfoDTO();
-            BeanUtils.copyProperties(entInfoDTO,feiginEntInfoDto);
-            entInfoDTOSList.add(feiginEntInfoDto);
+        if (null != entInfoDTOS && entInfoDTOS.size() > 0) {
+            for (EntInfoDTO entInfoDTO : entInfoDTOS) {
+                chain.fxgj.feign.dto.ent.EntInfoDTO feiginEntInfoDto = new chain.fxgj.feign.dto.ent.EntInfoDTO();
+                BeanUtils.copyProperties(entInfoDTO,feiginEntInfoDto);
+                entInfoDTOSList.add(feiginEntInfoDto);
+            }
         }
         wageUserPrincipal.setEntInfoDTOS(entInfoDTOSList);
         wageUserPrincipal.setEntName(userPrincipal.getEntName());
@@ -60,7 +62,6 @@ public class TransferUtil {
 
     public static UserPrincipal WageUserPrincipalToUserPrincipal (WageUserPrincipal wageUserPrincipal){
         UserPrincipal userPrincipal = new UserPrincipal();
-
         userPrincipal.setSessionId(wageUserPrincipal.getSessionId());
         userPrincipal.setName(wageUserPrincipal.getName());
         userPrincipal.setRoles(wageUserPrincipal.getRoles());
@@ -72,7 +73,7 @@ public class TransferUtil {
         userPrincipal.setEntId(wageUserPrincipal.getEntId());
         List<chain.fxgj.feign.dto.ent.EntInfoDTO> entInfoDTOS = wageUserPrincipal.getEntInfoDTOS();
         List<EntInfoDTO> entInfoDTOSList = userPrincipal.getEntInfoDTOS();
-        if (null != entInfoDTOS) {
+        if (null != entInfoDTOS && entInfoDTOS.size()>0) {
             for (chain.fxgj.feign.dto.ent.EntInfoDTO entInfoDTO : entInfoDTOS) {
                 EntInfoDTO entInfoDTO1 = new EntInfoDTO();
                 BeanUtils.copyProperties(entInfoDTO,entInfoDTO1);
