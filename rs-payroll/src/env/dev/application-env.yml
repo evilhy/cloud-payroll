@@ -100,3 +100,8 @@ merchants:
       #查询 数据权限   【 取 FundLiquidationEnum  枚举值 】
       dataAuths:
         - HXB
+
+//设置feign调用超时时间
+ribbon:
+  ReadTimeout: 20000
+  ConnectTimeout: 20000
