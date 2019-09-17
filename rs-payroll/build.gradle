@@ -63,7 +63,7 @@ dependencyManagement {
     }
 }
 dependencies {
-    compile('chain:wage-client:1.0.2.11')
+    compile('chain:wage-client:1.0.2.12')
     compile('chain:wage-client:1.0.2.9')
     compile('chain:payroll-client:1.0.28')
     compile('chain:utils-jpa:1.0.4')
