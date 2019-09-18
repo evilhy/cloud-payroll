@@ -155,8 +155,7 @@ public class PayRollController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(principal,wageUserPrincipal);
+            WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
             Res100701 res100701=null;
             WageRes100701 wageRes100701=wageMangerFeignService.entEmp(idNumber,wageUserPrincipal);
             log.info("wageRes100701-->{}",wageRes100701);
