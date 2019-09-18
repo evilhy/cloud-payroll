@@ -494,20 +494,19 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-        BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
+        WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            List<EmpEntDTO> list=null;
+            List<EmpEntDTO> list = new ArrayList<>();
             List<WageEmpEntDTO> wageEmpEntDTOList=wageMangerFeignService.empCard(wageUserPrincipal);
             if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
-                list=new ArrayList<>();
                 for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
                     EmpEntDTO entDTO=new EmpEntDTO();
                     BeanUtils.copyProperties(wageEmpEntDTO,entDTO);
                     list.add(entDTO);
                 }
             }
+            log.info("list.size():[{}]",list.size());
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
