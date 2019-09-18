@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.service.WageWechatService;
 import chain.fxgj.feign.client.PayRollFeignService;
@@ -492,9 +493,19 @@ public class PayRollController {
     @TrackLog
     public Mono<List<EmpEntDTO>> empCard() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
+        try {
+            List<FundLiquidationEnum> userPrincipalDataAuths = userPrincipal.getDataAuths();
+            List<FundLiquidationEnum> wageUserPrincipalDataAuths = wageUserPrincipal.getDataAuths();
+            log.info("userPrincipalDataAuths.size():[{}]",userPrincipalDataAuths.size());
+            log.info("wageUserPrincipalDataAuths.size():[{}]",wageUserPrincipalDataAuths.size());
+            for (FundLiquidationEnum userPrincipalDataAuth : userPrincipalDataAuths) {
+                log.info("userPrincipalDataAuth:[{}]",userPrincipalDataAuth.getDesc());
+            }
+        } catch (Exception e) {
+            log.info("日志打印报错");
+        }
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EmpEntDTO> list = new ArrayList<>();
