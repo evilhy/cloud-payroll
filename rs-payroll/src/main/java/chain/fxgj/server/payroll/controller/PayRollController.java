@@ -234,13 +234,16 @@ public class PayRollController {
                 log.info("wageList查询mongo异常，转查mysql,idNumber:[{}]", idNumber);
             }
             if (qryMySql) {
-                if (LocalDate.now().getYear() == Integer.parseInt(year)) {
-                    res100703 = wageWechatService.wageList(idNumber, groupId, year, type,principal);
-                } else {
-                    res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
+                WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
+                BeanUtils.copyProperties(principal,wageUserPrincipal);
+                WageRes100703 wageRes100703 = wageMangerFeignService.wageList(groupId,year,type,wageUserPrincipal);
+                log.info("wageRes100703-->{}",wageRes100703);
+                if (wageRes100703!=null){
+                    if (res100703==null){
+                        res100703 = new Res100703();
+                    }
+                    BeanUtils.copyProperties(wageRes100703,res100703);
                 }
-                res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
-                //同步数据
                 log.info("数据同步");
                 mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
             }
@@ -296,7 +299,20 @@ public class PayRollController {
             //查询mongo异常，转查mysql
             log.info("qryMySql:[{}]",qryMySql);
             if (qryMySql) {
-                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
+                WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
+                BeanUtils.copyProperties(principal,wageUserPrincipal);
+                List<WageDetailInfoDTO> wageDetailInfoDTOList=wageMangerFeignService.wageDetail(wageSheetId,groupId,wageUserPrincipal);
+                log.info("wageDetailInfoDTOList--->{}",wageDetailInfoDTOList);
+                if(!CollectionUtils.isEmpty(wageDetailInfoDTOList)){
+                    if (list==null){
+                        list=new ArrayList<>();
+                    }
+                    for (WageDetailInfoDTO wageDetailInfoDTO:wageDetailInfoDTOList){
+                        WageDetailDTO detailDTO=new WageDetailDTO();
+                        BeanUtils.copyProperties(wageDetailInfoDTO,detailDTO);
+                        list.add(detailDTO);
+                    }
+                }
             }
             return list;
         }).subscribeOn(Schedulers.elastic());
