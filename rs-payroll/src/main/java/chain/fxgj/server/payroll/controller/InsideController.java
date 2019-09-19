@@ -315,6 +315,11 @@ public class InsideController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
+            String regex = "[0-9]{1,}";
+            if (!updBankCardDTO.getCardNo().matches(regex)) {
+                throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());
+            }
+
             WageUpdBankCardDTO wageUpdBankCardDTO = new WageUpdBankCardDTO();
             BeanUtils.copyProperties(updBankCardDTO, wageUpdBankCardDTO);
 
