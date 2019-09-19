@@ -94,8 +94,12 @@ public class InsideController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            String wageDetailId = resReceiptDTO.getWageDetailId();
+            log.info("resReceiptDTO.WageDetailId:[{}]", wageDetailId);
             WageResReceiptDTO wageResReceiptDTO = new WageResReceiptDTO();
-            BeanUtils.copyProperties(resReceiptDTO, wageResReceiptDTO);
+            wageResReceiptDTO.setWageDetailId(wageDetailId);
+            wageResReceiptDTO.setReceiptsStatus(resReceiptDTO.getReceiptsStatus());
+            wageResReceiptDTO.setMsg(resReceiptDTO.getMsg());
             insideFeignService.receipt(wageResReceiptDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
