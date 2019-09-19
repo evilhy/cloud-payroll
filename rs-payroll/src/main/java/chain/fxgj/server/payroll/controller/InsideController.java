@@ -22,6 +22,7 @@ import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -329,8 +330,13 @@ public class InsideController {
             WageUpdBankCardRequestDTO wageUpdBankCardRequestDTO = new WageUpdBankCardRequestDTO();
             wageUpdBankCardRequestDTO.setWageUpdBankCardDTO(wageUpdBankCardDTO);
             wageUpdBankCardRequestDTO.setWageUserPrincipal(wageUserPrincipal);
+            String retStr ="";
+            try{
+                retStr = insideFeignService.updBankCard(wageUpdBankCardRequestDTO);
+            }catch (FeignException ex){
+                return ex.getMessage();
+            }
 
-            String retStr = insideFeignService.updBankCard(wageUpdBankCardRequestDTO);
             return retStr;
         }).subscribeOn(Schedulers.elastic());
     }

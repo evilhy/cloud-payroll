@@ -17,7 +17,7 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
 
     @Override
     public Exception decode(String methodKey, Response response) {
-        log.info("feign client response:", response);
+        log.info("feign client response:{}", response);
         String body = null;
         try {
             body = Util.toString(response.body().asReader());
