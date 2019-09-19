@@ -284,17 +284,52 @@ public class PayRollController {
                 log.info("source.size():[{}]",source.size());
                 for (PayrollWageDetailDTO payrollWageDetailDTO : source) {
                     WageDetailDTO wageDetailDTO = new WageDetailDTO();
-                    BeanUtils.copyProperties(payrollWageDetailDTO, wageDetailDTO);
-                    List<PayrollWageDetailDTO.Content> content = payrollWageDetailDTO.getContent();
-                    if (null != content && content.size() > 0) {
-                        List<WageDetailDTO.Content> contentList = new ArrayList<>();
-                        for (PayrollWageDetailDTO.Content content1 : content) {
-                            WageDetailDTO.Content wageContent = WageDetailDTO.Content.builder().build();
-                            BeanUtils.copyProperties(content1, wageContent);
-                            contentList.add(wageContent);
-                        }
-                        wageDetailDTO.setContent(contentList);
+
+                    PayrollWageHeadDTO payrollWageHeadDTO = payrollWageDetailDTO.getWageHeadDTO();
+                    WageHeadDTO wageHeadDTO = new WageHeadDTO();
+                    wageHeadDTO.setDoubleRow(payrollWageHeadDTO.isDoubleRow());
+                    wageHeadDTO.setHeadIndex(payrollWageHeadDTO.getHeadIndex());
+                    List<PayrollWageHeadDTO.Cell> heads = payrollWageHeadDTO.getHeads();
+                    List<WageHeadDTO.Cell> headsList = new ArrayList<>();
+                    for (PayrollWageHeadDTO.Cell head : heads) {
+                        WageHeadDTO.Cell cell = new WageHeadDTO.Cell();
+                        cell.setColName(head.getColName());
+                        cell.setColNum(head.getColNum());
+                        cell.setHidden(head.isHidden());
+                        PayrollWageHeadDTO.Type type = head.getType();
+                        WageHeadDTO.Type type1 = WageHeadDTO.Type.valueOf(type.name());
+                        cell.setType(type1);
+                        headsList.add(cell);
                     }
+                    wageHeadDTO.setHeads(headsList);
+                    wageDetailDTO.setWageHeadDTO(wageHeadDTO);
+
+                    PayrollWageDetailDTO.PayrollWageShowDTO payrollWageShowDTO = payrollWageDetailDTO.getWageShowDTO();
+                    WageDetailDTO.WageShowDTO wageShowDTO = new WageDetailDTO.WageShowDTO();
+                    BeanUtils.copyProperties(payrollWageShowDTO, wageShowDTO);
+                    wageDetailDTO.setWageShowDTO(wageShowDTO);
+
+                    List<PayrollWageDetailDTO.Content> payrollContent = payrollWageDetailDTO.getContent();
+                    List<WageDetailDTO.Content> contentList = new ArrayList<>();
+                    for (PayrollWageDetailDTO.Content content : payrollContent) {
+                        WageDetailDTO.Content content1 = new WageDetailDTO.Content();
+                        BeanUtils.copyProperties(content, content1);
+                        contentList.add(content1);
+                    }
+                    wageDetailDTO.setContent(contentList);
+
+                    wageDetailDTO.setWageDetailId(payrollWageDetailDTO.getWageDetailId());
+                    wageDetailDTO.setBankName(payrollWageDetailDTO.getBankName());
+                    wageDetailDTO.setCardNo(payrollWageDetailDTO.getCardNo());
+                    wageDetailDTO.setWageName(payrollWageDetailDTO.getWageName());
+                    wageDetailDTO.setRealAmt(payrollWageDetailDTO.getRealAmt());
+                    wageDetailDTO.setEntName(payrollWageDetailDTO.getEntName());
+                    wageDetailDTO.setGroupName(payrollWageDetailDTO.getGroupName());
+                    wageDetailDTO.setGroupId(payrollWageDetailDTO.getGroupId());
+                    wageDetailDTO.setPushDateTime(payrollWageDetailDTO.getPushDateTime());
+                    wageDetailDTO.setReceiptStautus(payrollWageDetailDTO.getReceiptStautus());
+                    wageDetailDTO.setDifferRealAmt(payrollWageDetailDTO.getDifferRealAmt());
+                    wageDetailDTO.setPayStatus(payrollWageDetailDTO.getPayStatus());
                     list.add(wageDetailDTO);
                 }
                 if (null == list || list.size() == 0) {
