@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.service.WageWechatService;
 import chain.fxgj.feign.client.PayRollFeignService;
@@ -154,8 +155,7 @@ public class PayRollController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(principal,wageUserPrincipal);
+            WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
             Res100701 res100701=null;
             WageRes100701 wageRes100701=wageMangerFeignService.entEmp(idNumber,wageUserPrincipal);
             log.info("wageRes100701-->{}",wageRes100701);
@@ -234,13 +234,16 @@ public class PayRollController {
                 log.info("wageList查询mongo异常，转查mysql,idNumber:[{}]", idNumber);
             }
             if (qryMySql) {
-                if (LocalDate.now().getYear() == Integer.parseInt(year)) {
-                    res100703 = wageWechatService.wageList(idNumber, groupId, year, type,principal);
-                } else {
-                    res100703 = wageWechatService.wageHistroyList(idNumber, groupId, year, type,principal);
+                WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
+                BeanUtils.copyProperties(principal,wageUserPrincipal);
+                WageRes100703 wageRes100703 = wageMangerFeignService.wageList(groupId,year,type,wageUserPrincipal);
+                log.info("wageRes100703-->{}",wageRes100703);
+                if (wageRes100703!=null){
+                    if (res100703==null){
+                        res100703 = new Res100703();
+                    }
+                    BeanUtils.copyProperties(wageRes100703,res100703);
                 }
-                res100703.setYears(wageWechatService.years(res100703.getEmployeeSid(), type));
-                //同步数据
                 log.info("数据同步");
                 mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
             }
@@ -296,7 +299,20 @@ public class PayRollController {
             //查询mongo异常，转查mysql
             log.info("qryMySql:[{}]",qryMySql);
             if (qryMySql) {
-                list = wageWechatService.getWageDetail(principal.getIdNumber(), groupId, wageSheetId,principal);
+                WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
+                BeanUtils.copyProperties(principal,wageUserPrincipal);
+                List<WageDetailInfoDTO> wageDetailInfoDTOList=wageMangerFeignService.wageDetail(wageSheetId,groupId,wageUserPrincipal);
+                log.info("wageDetailInfoDTOList--->{}",wageDetailInfoDTOList);
+                if(!CollectionUtils.isEmpty(wageDetailInfoDTOList)){
+                    if (list==null){
+                        list=new ArrayList<>();
+                    }
+                    for (WageDetailInfoDTO wageDetailInfoDTO:wageDetailInfoDTOList){
+                        WageDetailDTO detailDTO=new WageDetailDTO();
+                        BeanUtils.copyProperties(wageDetailInfoDTO,detailDTO);
+                        list.add(detailDTO);
+                    }
+                }
             }
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -476,22 +492,31 @@ public class PayRollController {
     @TrackLog
     public Mono<List<EmpEntDTO>> empCard() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-        BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
+        WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
+        try {
+            List<FundLiquidationEnum> userPrincipalDataAuths = userPrincipal.getDataAuths();
+            List<FundLiquidationEnum> wageUserPrincipalDataAuths = wageUserPrincipal.getDataAuths();
+            log.info("userPrincipalDataAuths.size():[{}]",userPrincipalDataAuths.size());
+            log.info("wageUserPrincipalDataAuths.size():[{}]",wageUserPrincipalDataAuths.size());
+            for (FundLiquidationEnum userPrincipalDataAuth : userPrincipalDataAuths) {
+                log.info("userPrincipalDataAuth:[{}]",userPrincipalDataAuth.getDesc());
+            }
+        } catch (Exception e) {
+            log.info("日志打印报错");
+        }
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            List<EmpEntDTO> list=null;
+            List<EmpEntDTO> list = new ArrayList<>();
             List<WageEmpEntDTO> wageEmpEntDTOList=wageMangerFeignService.empCard(wageUserPrincipal);
             if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
-                list=new ArrayList<>();
                 for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
                     EmpEntDTO entDTO=new EmpEntDTO();
                     BeanUtils.copyProperties(wageEmpEntDTO,entDTO);
                     list.add(entDTO);
                 }
             }
+            log.info("list.size():[{}]",list.size());
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
