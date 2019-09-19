@@ -285,6 +285,16 @@ public class PayRollController {
                 for (PayrollWageDetailDTO payrollWageDetailDTO : source) {
                     WageDetailDTO wageDetailDTO = new WageDetailDTO();
                     BeanUtils.copyProperties(payrollWageDetailDTO, wageDetailDTO);
+                    List<PayrollWageDetailDTO.Content> content = payrollWageDetailDTO.getContent();
+                    if (null != content && content.size() > 0) {
+                        List<WageDetailDTO.Content> contentList = new ArrayList<>();
+                        for (PayrollWageDetailDTO.Content content1 : content) {
+                            WageDetailDTO.Content wageContent = WageDetailDTO.Content.builder().build();
+                            BeanUtils.copyProperties(content1, wageContent);
+                            contentList.add(wageContent);
+                        }
+                        wageDetailDTO.setContent(contentList);
+                    }
                     list.add(wageDetailDTO);
                 }
                 if (null == list || list.size() == 0) {
