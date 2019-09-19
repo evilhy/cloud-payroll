@@ -1,14 +1,12 @@
 package chain.fxgj.core.common.config;
 
-import com.netflix.hystrix.util.Exceptions;
 import feign.Response;
 import feign.Util;
 import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
-
+import reactor.core.Exceptions;
 import java.io.IOException;
-
 import static feign.FeignException.errorStatus;
 
 @Configuration
@@ -24,9 +22,10 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
         } catch (IOException e) {
             log.error("feign.IOException:{}", e);
         }
-//        if (response.status() >= 400 && response.status() <= 500) {
-//            throw Exceptions.badRequestParams(body);
-//        }
+        log.info("body:{}",body);
+        if (response.status() >= 400 && response.status() <= 500) {
+            throw Exceptions.failWithOverflow(body);
+        }
         return errorStatus(methodKey, response);
     }
 }
