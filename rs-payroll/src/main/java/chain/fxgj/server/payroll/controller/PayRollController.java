@@ -324,6 +324,7 @@ public class PayRollController {
                     }
                 }
             }
+            log.info("web.list:[{}]",JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
