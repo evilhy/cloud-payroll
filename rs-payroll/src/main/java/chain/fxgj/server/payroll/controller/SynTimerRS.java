@@ -1,7 +1,6 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.service.SynDataTimerService;
 import chain.fxgj.feign.client.SynTimerFeignService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @RestController
 @Validated

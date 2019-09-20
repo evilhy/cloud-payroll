@@ -4,7 +4,6 @@ import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.fxgj.core.common.service.WageWechatService;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.response.*;
@@ -63,8 +62,6 @@ public class PayRollController {
     private PayRollFeignService wageMangerFeignService;
     @Autowired
     private SynTimerFeignService wageSynFeignService;
-    @Inject
-    WageWechatService wageWechatService;
 
     /**
      * 服务当前时间
@@ -219,7 +216,7 @@ public class PayRollController {
                     //判断是否需要数据同步(比较 mongo 和 mysql 中最新的sheetId 是否相同，不相同则数据同步)
                     PayrollPlanListDTO payrollPlanListDTO = planListSource.get(0);
                     String mongoNewestWageSheetId = payrollPlanListDTO.getWageSheetId();
-                    boolean retBoolean = wageWechatService.compareSheetCrtDataTime(idNumber, groupId, mongoNewestWageSheetId);
+                    boolean retBoolean =wageMangerFeignService.compareSheetCrtDataTime(idNumber, groupId, mongoNewestWageSheetId);
                     if (!retBoolean) {
                         log.info("mongo库中，wageSheetInfo最新sheetId 与 Mysql中 最新sheetId 不相等，则需要同步数据");
                         mysqlDataSynToMongo(idNumber,groupId,year,type,principal);

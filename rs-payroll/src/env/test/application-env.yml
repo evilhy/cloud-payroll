@@ -7,18 +7,6 @@ spring:
   devtools:
     restart:
       enabled: false
-  jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    properties:
-      hibernate:
-        hbm2ddl:
-          auto: update
-        ### 懒加载使用此方法
-        enable_lazy_load_no_trans: false
-    show-sql: true
-    naming:
-      physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
   redis:
     database: 1
     host: 127.0.0.1
@@ -34,13 +22,6 @@ spring:
   data:
     mongodb:
       uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
-fxgj:
-  datasource:
-    jdbc-url: jdbc:mysql://192.168.2.5:3307/sit_kayak_fxgj?useSSL=false&characterEncoding=utf-8&allowMultiQueries=true
-    username: fxgj
-    password: Kayak@20180821
-    maximum-pool-size: 20
-    pool-name: fxgj_db
 
 payroll:
   #调用inside地址

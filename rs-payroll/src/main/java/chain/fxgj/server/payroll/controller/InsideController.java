@@ -3,22 +3,13 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
-import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
-import chain.fxgj.core.common.service.EmpWechatService;
-import chain.fxgj.core.common.service.EmployeeEncrytorService;
-import chain.fxgj.core.common.service.InsideService;
-import chain.fxgj.core.common.service.WechatBindService;
-import chain.fxgj.core.jpa.model.CardbinInfo;
 import chain.fxgj.feign.client.InsideFeignService;
 import chain.fxgj.feign.dto.request.*;
 import chain.fxgj.feign.dto.response.WageRes100302;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.response.Res100302;
-import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
@@ -45,16 +36,6 @@ import java.util.Map;
 @Slf4j
 public class InsideController {
 
-    @Autowired
-    EmployeeEncrytorService employeeEncrytorService;
-    @Autowired
-    EmpWechatService empWechatService;
-    @Autowired
-    WechatBindService wechatBindService;
-    @Autowired
-    InsideService insideService;
-    @Autowired
-    CallInsideService callInsideService;
     @Autowired
     InsideFeignService insideFeignService;
 

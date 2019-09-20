@@ -2,7 +2,6 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.dto.msg.MsgModelInfoDTO;
-import chain.fxgj.core.common.service.MsgModelInfoService;
 import chain.fxgj.feign.client.MsgModuleInfoFeignService;
 import chain.fxgj.feign.dto.response.WageMsgModelInfoDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +24,6 @@ import java.util.Map;
 @Slf4j
 public class MsgModelInfoController {
 
-    @Autowired
-    MsgModelInfoService msgModelInfoService;
 
     @Autowired
     private MsgModuleInfoFeignService msgModuleInfoFeignService;

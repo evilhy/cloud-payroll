@@ -1,10 +1,10 @@
 package chain.fxgj.server.payroll.web.filter;
 
 import chain.css.exception.ParamsIllegalException;
-import chain.fxgj.core.common.service.EmpWechatService;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
+import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
@@ -44,7 +44,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/advertising/rotation",
             "/merchant/getAccess",
             "/merchant/callback",
-            "/sync"
+            "/unAuth/sync"
     };
 
     @Autowired
