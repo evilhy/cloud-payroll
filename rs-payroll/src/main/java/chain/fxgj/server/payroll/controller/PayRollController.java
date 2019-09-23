@@ -357,8 +357,12 @@ public class PayRollController {
                     }
                 }
                 try {
-                    Long pushDateTime = list.get(0).getPushDateTime();
+                    WageDetailDTO wageDetailDTO = list.get(0);
+                    log.info("wageDetail.get(0):[{}]", JacksonUtil.objectToJson(wageDetailDTO));
+                    Long pushDateTime = wageDetailDTO.getPushDateTime();
+                    log.info("pushDetailTime:[{}]", payrollUserPrincipalDTO);
                     LocalDateTime pushDateTimeLocal = LocalDateTime.ofInstant(Instant.ofEpochMilli(pushDateTime), ZoneId.systemDefault());
+                    log.info("pushDateTimeLocal:[{}]",pushDateTimeLocal);
                     int year = pushDateTimeLocal.getYear();
                     mysqlDataSynToMongo(idNumber,groupId,String.valueOf(year),null,principal);
                 } catch (Exception e) {
