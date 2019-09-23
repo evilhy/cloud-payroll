@@ -34,6 +34,7 @@ import reactor.core.scheduler.Schedulers;
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -354,6 +355,14 @@ public class PayRollController {
                         BeanUtils.copyProperties(wageDetailInfoDTO,detailDTO);
                         list.add(detailDTO);
                     }
+                }
+                try {
+                    Long pushDateTime = list.get(0).getPushDateTime();
+                    LocalDateTime pushDateTimeLocal = LocalDateTime.ofInstant(Instant.ofEpochMilli(pushDateTime), ZoneId.systemDefault());
+                    int year = pushDateTimeLocal.getYear();
+                    mysqlDataSynToMongo(idNumber,groupId,String.valueOf(year),null,principal);
+                } catch (Exception e) {
+                    log.info("wageDetail 同步数据异常！");
                 }
             }
             log.info("web.list:[{}]",JacksonUtil.objectToJson(list));
