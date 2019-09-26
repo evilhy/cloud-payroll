@@ -360,7 +360,7 @@ public class PayRollController {
                     //同步当前年的数据
                     LocalDateTime now = LocalDateTime.now();
                     int year = now.getYear();
-                    mysqlDataSynToMongo(idNumber, groupId, String.valueOf(year), null, principal);
+                    mysqlDataSynToMongo(idNumber, groupId, String.valueOf(year), "", principal);
                 } catch (Exception e) {
                     log.info("wageDetail 同步数据异常！");
                 }
