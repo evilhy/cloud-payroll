@@ -355,12 +355,66 @@ public class PayRollController {
                         BeanUtils.copyProperties(wageDetailInfoDTO,detailDTO);
                         list.add(detailDTO);
                     }
+                    for (WageDetailInfoDTO wageDetailInfoDTO:wageDetailInfoDTOList){
+                        WageDetailDTO wageDetailDTO = new WageDetailDTO();
+
+                        WageWageHeadDTO wageHeadDTO1 = wageDetailInfoDTO.getWageHeadDTO();
+                        WageHeadDTO wageHeadDTO = new WageHeadDTO();
+                        wageHeadDTO.setDoubleRow(wageHeadDTO1.isDoubleRow());
+                        wageHeadDTO.setHeadIndex(wageHeadDTO1.getHeadIndex());
+                        List<WageWageHeadDTO.Cell> heads = wageHeadDTO1.getHeads();
+                        List<WageHeadDTO.Cell> headsList = new ArrayList<>();
+                        for (WageWageHeadDTO.Cell head : heads) {
+                            WageHeadDTO.Cell cell = new WageHeadDTO.Cell();
+                            cell.setColName(head.getColName());
+                            cell.setColNum(head.getColNum());
+                            cell.setHidden(head.isHidden());
+                            WageWageHeadDTO.Type type = head.getType();
+                            WageHeadDTO.Type type1 = WageHeadDTO.Type.valueOf(type.name());
+                            cell.setType(type1);
+                            headsList.add(cell);
+                        }
+                        wageHeadDTO.setHeads(headsList);
+                        wageDetailDTO.setWageHeadDTO(wageHeadDTO);
+
+                        WageDetailInfoDTO.WageShowDTO wageShowDTO1 = wageDetailInfoDTO.getWageShowDTO();
+                        WageDetailDTO.WageShowDTO wageShowDTO = new WageDetailDTO.WageShowDTO();
+                        BeanUtils.copyProperties(wageShowDTO1, wageShowDTO);
+                        wageDetailDTO.setWageShowDTO(wageShowDTO);
+
+                        List<WageDetailInfoDTO.Content> payrollContent = wageDetailInfoDTO.getContent();
+                        List<WageDetailDTO.Content> contentList = new ArrayList<>();
+                        for (WageDetailInfoDTO.Content content : payrollContent) {
+                            WageDetailDTO.Content content1 = new WageDetailDTO.Content();
+                            BeanUtils.copyProperties(content, content1);
+                            contentList.add(content1);
+                        }
+                        wageDetailDTO.setContent(contentList);
+
+                        wageDetailDTO.setWageDetailId(wageDetailInfoDTO.getWageDetailId());
+                        wageDetailDTO.setBankName(wageDetailInfoDTO.getBankName());
+                        wageDetailDTO.setCardNo(wageDetailInfoDTO.getCardNo());
+                        wageDetailDTO.setWageName(wageDetailInfoDTO.getWageName());
+                        wageDetailDTO.setRealAmt(wageDetailInfoDTO.getRealAmt());
+                        wageDetailDTO.setEntName(wageDetailInfoDTO.getEntName());
+                        wageDetailDTO.setGroupName(wageDetailInfoDTO.getGroupName());
+                        wageDetailDTO.setGroupId(wageDetailInfoDTO.getGroupId());
+                        wageDetailDTO.setPushDateTime(wageDetailInfoDTO.getPushDateTime());
+                        wageDetailDTO.setReceiptStautus(wageDetailInfoDTO.getReceiptStautus());
+                        wageDetailDTO.setDifferRealAmt(wageDetailInfoDTO.getDifferRealAmt());
+                        wageDetailDTO.setPayStatus(wageDetailInfoDTO.getPayStatus());
+                        list.add(wageDetailDTO);
+                    }
                 }
                 try {
-                    //同步当前年的数据
-                    LocalDateTime now = LocalDateTime.now();
-                    int year = now.getYear();
-                    mysqlDataSynToMongo(idNumber, groupId, String.valueOf(year), "", principal);
+                    WageDetailDTO wageDetailDTO = list.get(0);
+                    log.info("wageDetail.get(0):[{}]", JacksonUtil.objectToJson(wageDetailDTO));
+                    Long pushDateTime = wageDetailDTO.getPushDateTime();
+                    log.info("pushDetailTime:[{}]", payrollUserPrincipalDTO);
+                    LocalDateTime pushDateTimeLocal = LocalDateTime.ofInstant(Instant.ofEpochMilli(pushDateTime), ZoneId.systemDefault());
+                    log.info("pushDateTimeLocal:[{}]",pushDateTimeLocal);
+                    int year = pushDateTimeLocal.getYear();
+                    mysqlDataSynToMongo(idNumber,groupId,String.valueOf(year),null,principal);
                 } catch (Exception e) {
                     log.info("wageDetail 同步数据异常！");
                 }
