@@ -28,7 +28,6 @@ import java.util.Map;
  * 微信通讯
  */
 @RestController
-@Validated
 @RequestMapping("/weixin")
 @Slf4j
 public class WechatController {
