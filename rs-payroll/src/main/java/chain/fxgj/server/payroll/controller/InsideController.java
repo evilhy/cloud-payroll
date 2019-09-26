@@ -10,6 +10,7 @@ import chain.fxgj.feign.dto.response.WageRes100302;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.response.Res100302;
+import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
@@ -265,15 +266,14 @@ public class InsideController {
     @TrackLog
     public Mono<Void> updPhone(@RequestBody ReqPhone reqPhone) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
+        log.info("updPhone reqPhone:[{}]",JacksonUtil.objectToJson(reqPhone));
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WageReqPhone wageReqPhone = new WageReqPhone();
             BeanUtils.copyProperties(reqPhone, wageReqPhone);
 
-            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
-            BeanUtils.copyProperties(userPrincipal, wageReqPhone);
+            WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
 
             WageUpdPhoneRequestDTO wageUpdPhoneRequestDTO = new WageUpdPhoneRequestDTO();
             wageUpdPhoneRequestDTO.setWageReqPhone(wageReqPhone);
