@@ -357,14 +357,10 @@ public class PayRollController {
                     }
                 }
                 try {
-                    WageDetailDTO wageDetailDTO = list.get(0);
-                    log.info("wageDetail.get(0):[{}]", JacksonUtil.objectToJson(wageDetailDTO));
-                    Long pushDateTime = wageDetailDTO.getPushDateTime();
-                    log.info("pushDetailTime:[{}]", payrollUserPrincipalDTO);
-                    LocalDateTime pushDateTimeLocal = LocalDateTime.ofInstant(Instant.ofEpochMilli(pushDateTime), ZoneId.systemDefault());
-                    log.info("pushDateTimeLocal:[{}]",pushDateTimeLocal);
-                    int year = pushDateTimeLocal.getYear();
-                    mysqlDataSynToMongo(idNumber,groupId,String.valueOf(year),null,principal);
+                    //同步当前年的数据
+                    LocalDateTime now = LocalDateTime.now();
+                    int year = now.getYear();
+                    mysqlDataSynToMongo(idNumber, groupId, String.valueOf(year), null, principal);
                 } catch (Exception e) {
                     log.info("wageDetail 同步数据异常！");
                 }
