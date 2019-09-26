@@ -13,6 +13,8 @@ import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.payroll.client.feign.InsideFeignController;
+import chain.payroll.dto.request.PayrollResReceiptDTO;
 import chain.utils.commons.JacksonUtil;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +41,8 @@ public class InsideController {
 
     @Autowired
     InsideFeignService insideFeignService;
-
+    @Autowired
+    InsideFeignController insideFeignController;
     /**
      * 发送短信验证码
      *
@@ -73,16 +76,18 @@ public class InsideController {
     @TrackLog
     @PostMapping("/receipt")
     public Mono<Void> receipt(@RequestBody ResReceiptDTO resReceiptDTO) {
+        log.info("receipt resReceiptDTO:[{}]", JacksonUtil.objectToJson(resReceiptDTO));
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            String wageDetailId = resReceiptDTO.getWageDetailId();
-            log.info("resReceiptDTO.WageDetailId:[{}]", wageDetailId);
             WageResReceiptDTO wageResReceiptDTO = new WageResReceiptDTO();
-            wageResReceiptDTO.setWageDetailId(wageDetailId);
-            wageResReceiptDTO.setReceiptsStatus(resReceiptDTO.getReceiptsStatus());
-            wageResReceiptDTO.setMsg(resReceiptDTO.getMsg());
+            BeanUtils.copyProperties(resReceiptDTO, wageResReceiptDTO);
             insideFeignService.receipt(wageResReceiptDTO);
+
+            PayrollResReceiptDTO payrollResReceiptDTO = new PayrollResReceiptDTO();
+            BeanUtils.copyProperties(resReceiptDTO, payrollResReceiptDTO);
+            insideFeignController.receipt(payrollResReceiptDTO);
+
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
