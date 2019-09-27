@@ -32,6 +32,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -43,7 +44,7 @@ public class InsideController {
 
     @Autowired
     InsideFeignService insideFeignService;
-    @Qualifier("applicationTaskExecutor")
+    @Qualifier("applicationExecutor")
     Executor executor;
     @Autowired
     private SynTimerFeignService wageSynFeignService;
@@ -92,12 +93,12 @@ public class InsideController {
             WageRetReceiptDTO wageRetReceiptDTO = insideFeignService.receipt(wageResReceiptDTO);
             try {
                 log.info("同步数据receipt wageRetReceiptDTO:[{}]",JacksonUtil.objectToJson(wageRetReceiptDTO));
-                mysqlDataSynToMongo(wageRetReceiptDTO.getIdNumber(),
-                        wageRetReceiptDTO.getGroupId(),
-                        String.valueOf(wageRetReceiptDTO.getCrtDateTime().getYear()),
-                        "",principal);
+                String idNumber = wageRetReceiptDTO.getIdNumber();
+                String groupId = wageRetReceiptDTO.getGroupId();
+                LocalDateTime crtDateTime = wageRetReceiptDTO.getCrtDateTime();
+                mysqlDataSynToMongo(idNumber,groupId, String.valueOf(crtDateTime.getYear()), "",principal);
             } catch (Exception e) {
-                log.info("回执后，同步数据失败");
+                log.info("回执后,同步数据失败:[{}]", e);
             }
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
