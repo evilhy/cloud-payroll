@@ -44,7 +44,7 @@ public class InsideController {
 
     @Autowired
     InsideFeignService insideFeignService;
-    @Qualifier("applicationExecutor")
+    @Qualifier("applicationTaskExecutor")
     Executor executor;
     @Autowired
     private SynTimerFeignService wageSynFeignService;
@@ -351,7 +351,6 @@ public class InsideController {
                     WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
                     BeanUtils.copyProperties(principal,wageUserPrincipal);
                     wageSynFeignService.pushSyncDataToCache(idNumber,groupId,year,type,wageUserPrincipal);
-                    //pushSyncDataService.pushSyncDataToCache(idNumber,groupId,year,type,principal);
                 } catch (Exception e) {
                     log.error("WageList同步相应数据信息", e);
                 }
