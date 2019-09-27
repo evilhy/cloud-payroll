@@ -343,19 +343,8 @@ public class InsideController {
         }).subscribeOn(Schedulers.elastic());
     }
     public void mysqlDataSynToMongo(String idNumber, String groupId, String year, String type, UserPrincipal principal){
-        Runnable syncData = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    log.info("开始处理同步相应数据信息。。。。");
-                    WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-                    BeanUtils.copyProperties(principal,wageUserPrincipal);
-                    wageSynFeignService.pushSyncDataToCache(idNumber,groupId,year,type,wageUserPrincipal);
-                } catch (Exception e) {
-                    log.error("WageList同步相应数据信息", e);
-                }
-            }
-        };
-        executor.execute(syncData);
+        WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
+        BeanUtils.copyProperties(principal,wageUserPrincipal);
+        wageSynFeignService.pushSyncDataToCache(idNumber,groupId,year,type,wageUserPrincipal);
     }
 }
