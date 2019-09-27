@@ -5,6 +5,7 @@ import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.feign.client.InsideFeignService;
+import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.request.*;
 import chain.fxgj.feign.dto.response.WageRes100302;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
@@ -13,8 +14,7 @@ import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
-import chain.payroll.client.feign.InsideFeignController;
-import chain.payroll.dto.request.PayrollResReceiptDTO;
+import chain.payroll.dto.response.PayrollUserPrincipalDTO;
 import chain.utils.commons.JacksonUtil;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,7 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 @RestController
 @Validated
@@ -41,8 +43,12 @@ public class InsideController {
 
     @Autowired
     InsideFeignService insideFeignService;
+    @Qualifier("applicationTaskExecutor")
+    Executor executor;
     @Autowired
-    InsideFeignController insideFeignController;
+    private SynTimerFeignService wageSynFeignService;
+
+
     /**
      * 发送短信验证码
      *
@@ -78,16 +84,21 @@ public class InsideController {
     public Mono<Void> receipt(@RequestBody ResReceiptDTO resReceiptDTO) {
         log.info("receipt resReceiptDTO:[{}]", JacksonUtil.objectToJson(resReceiptDTO));
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WageResReceiptDTO wageResReceiptDTO = new WageResReceiptDTO();
             BeanUtils.copyProperties(resReceiptDTO, wageResReceiptDTO);
-            insideFeignService.receipt(wageResReceiptDTO);
-
-            PayrollResReceiptDTO payrollResReceiptDTO = new PayrollResReceiptDTO();
-            BeanUtils.copyProperties(resReceiptDTO, payrollResReceiptDTO);
-            insideFeignController.receipt(payrollResReceiptDTO);
-
+            WageRetReceiptDTO wageRetReceiptDTO = insideFeignService.receipt(wageResReceiptDTO);
+            try {
+                log.info("同步数据receipt wageRetReceiptDTO:[{}]",JacksonUtil.objectToJson(wageRetReceiptDTO));
+                mysqlDataSynToMongo(wageRetReceiptDTO.getIdNumber(),
+                        wageRetReceiptDTO.getGroupId(),
+                        String.valueOf(wageRetReceiptDTO.getCrtDateTime().getYear()),
+                        "",principal);
+            } catch (Exception e) {
+                log.info("回执后，同步数据失败");
+            }
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -330,5 +341,21 @@ public class InsideController {
             return retStr;
         }).subscribeOn(Schedulers.elastic());
     }
-
+    public void mysqlDataSynToMongo(String idNumber, String groupId, String year, String type, UserPrincipal principal){
+        Runnable syncData = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    log.info("开始处理同步相应数据信息。。。。");
+                    WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
+                    BeanUtils.copyProperties(principal,wageUserPrincipal);
+                    wageSynFeignService.pushSyncDataToCache(idNumber,groupId,year,type,wageUserPrincipal);
+                    //pushSyncDataService.pushSyncDataToCache(idNumber,groupId,year,type,principal);
+                } catch (Exception e) {
+                    log.error("WageList同步相应数据信息", e);
+                }
+            }
+        };
+        executor.execute(syncData);
+    }
 }
