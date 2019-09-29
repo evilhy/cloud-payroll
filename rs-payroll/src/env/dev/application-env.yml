@@ -83,6 +83,20 @@ merchants:
         - HXB
 
 #设置feign调用超时时间
-#ribbon:
-#  ReadTimeout: 20000
-#  ConnectTimeout: 20000
+ribbon:
+  ReadTimeout: 8000
+  ConnectTimeout: 8000
+
+#禁用feign熔断
+feign:
+  hystrix:
+    enabled: false
+
+#熔断超时时间设置
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 120000
