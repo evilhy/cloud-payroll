@@ -235,12 +235,25 @@ public class PayRollController {
                 WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
                 BeanUtils.copyProperties(principal,wageUserPrincipal);
                 WageRes100703 wageRes100703 = wageMangerFeignService.wageList(groupId,year,type,wageUserPrincipal);
-                log.info("wageRes100703-->{}",wageRes100703);
+                log.info("wage wageRes100703:[{}]",JacksonUtil.objectToJson(wageRes100703));
                 if (wageRes100703!=null){
-                    if (res100703==null){
-                        res100703 = new Res100703();
+                    res100703.setShouldTotalAmt(wageRes100703.getShouldTotalAmt());
+                    res100703.setDeductTotalAmt(wageRes100703.getDeductTotalAmt());
+                    res100703.setEmployeeSid(wageRes100703.getEmployeeSid());
+                    res100703.setRealTotalAmt(wageRes100703.getRealTotalAmt());
+                    List<Integer> years = wageRes100703.getYears();
+                    res100703.setYears(years);
+                    List<WagePlanListBean> planList = wageRes100703.getPlanList();
+                    List<PlanListBean> planListBeans = new ArrayList<>();
+                    if (null != planList && planList.size() > 0) {
+                        for (WagePlanListBean wagePlanListBean : planList) {
+                            PlanListBean planListBean = new PlanListBean();
+                            BeanUtils.copyProperties(wagePlanListBean, planListBean);
+                            planListBeans.add(planListBean);
+                        }
+                        res100703.setPlanList(planListBeans);
                     }
-                    BeanUtils.copyProperties(wageRes100703,res100703);
+                log.info("转换后 res100703:[{}]", JacksonUtil.objectToJson(res100703));
                 }
                 log.info("数据同步");
                 mysqlDataSynToMongo(idNumber,groupId,year,type,principal);
