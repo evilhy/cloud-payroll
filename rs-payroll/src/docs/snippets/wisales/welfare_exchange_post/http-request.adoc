@@ -1,0 +1,15 @@
+[source,http,options="nowrap"]
+----
+POST /wisales/welfareCustOrder/welfareExchange/ HTTP/1.1
+Content-Length: 205
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8081
+
+{
+  "idNumber" : "123456789012345678",
+  "goodsId" : "5c9dbba324927af0e59304a4",
+  "couponTicketCode" : "5d8cb1439685a4055c73f2a1",
+  "activityId" : "2019091800156",
+  "countActivityGoodsTimes" : 0
+}
+----

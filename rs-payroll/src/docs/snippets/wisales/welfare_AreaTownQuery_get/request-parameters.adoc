@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+code+`
+|区域编码
+
+|===

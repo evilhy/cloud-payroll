@@ -1,0 +1,19 @@
+[source,bash]
+----
+$ echo '{
+  "phoneNo" : "15811362835",
+  "receiveName" : "zhang2",
+  "receivePhone" : "18611570287",
+  "province" : "省1",
+  "provinceCode" : "0001",
+  "city" : "市1",
+  "cityCode" : "000101",
+  "county" : "区1",
+  "countyCode" : "000101011",
+  "town" : "乡镇1",
+  "townCode" : "00010101101",
+  "address" : "11122222",
+  "isDefault" : "YES"
+}' | http POST 'http://localhost:8081/wisales/welfareCust/address/save' \
+    'Content-Type:application/json;charset=UTF-8'
+----

@@ -1,0 +1,8 @@
+|===
+|Path|Type|Description
+
+|`+addressId+`
+|`+String+`
+|客户收货地址ID YYYYMMDD+7位序列
+
+|===

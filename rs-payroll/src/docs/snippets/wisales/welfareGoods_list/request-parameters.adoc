@@ -1,0 +1,25 @@
+|===
+|Parameter|Description
+
+|`+activityId+`
+|活动id(传活动id查询活动配置商品，不传则查询可配置所有商品信息)
+
+|`+goodsNo+`
+|商品编码
+
+|`+goodsName+`
+|商品名称
+
+|`+fItemCatId+`
+|商品一级类目id
+
+|`+sItemCatId+`
+|商品一级类目id
+
+|`+tItemCatId+`
+|商品一级类目id
+
+|`+pickFlag+`
+|是否已选择标志(false 否 true 是)
+
+|===

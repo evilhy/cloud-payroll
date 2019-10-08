@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ echo '{
+  "addressId" : "11111111111222"
+}' | http POST 'http://localhost:8081/wisales/welfareCust/address/delete' \
+    'Content-Type:application/json;charset=UTF-8'
+----

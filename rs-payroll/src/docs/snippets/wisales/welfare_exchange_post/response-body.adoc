@@ -1,0 +1,46 @@
+[source,options="nowrap"]
+----
+{
+  "transOrderId" : "201909270000027",
+  "channel" : "WELFARE",
+  "transTime" : 1569571608265,
+  "custId" : "201903210003330",
+  "idNumber" : "123456789012345678",
+  "custName" : "韩11",
+  "phoneNo" : "13683609282",
+  "activityGoodId" : "5c9dbba324927af0e59304a4",
+  "goodsId" : "5c9dbba324927af0e59304a4",
+  "goodsNo" : "1501300400002",
+  "goodsName" : "测试产品3",
+  "merOrgId" : "5c99f1c2bf8bc31654fac2a7",
+  "merOrgName" : "测试商户",
+  "productId" : "1204406",
+  "goodsNum" : 1,
+  "ticketType" : "FREE",
+  "couponTicketCode" : "5d8cb1439685a4055c73f2a1",
+  "couponTicketName" : "测试券",
+  "unitAmt" : 50,
+  "saleSumAmt" : 50,
+  "discountAmt" : 50,
+  "transAmt" : 0,
+  "unitPrice" : 0,
+  "equityPrice" : 0,
+  "purchasePrice" : 1000,
+  "activityId" : "2019091800156",
+  "activityName" : "2121212121",
+  "activityOrgId" : "ff80808169fbf8eb0169fca1a4b60004",
+  "activityOrgName" : "biziwei",
+  "orderInfo" : [ {
+    "cardNumber" : "as1027415",
+    "cardPwd" : "bs1027415",
+    "cardDeadline" : "2019-03-21 00:00:00"
+  } ],
+  "orderFlag" : "SUCCESS",
+  "payFlag" : "SUCCESS",
+  "merOrderFlag" : "COMPLETE",
+  "orderStage" : "MERORDERSTAGE",
+  "orderDealStatus" : "MERCOMPLETE",
+  "refundOrderFlag" : "NO",
+  "countActivityGoodsTimes" : 0
+}
+----

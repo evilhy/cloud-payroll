@@ -1,0 +1,6 @@
+[source,http,options="nowrap"]
+----
+GET /wisales/welfareGoods/detail?idNumber=120224196908273428&activityId=2019091800156&goodsInfoId=5c9dbba324927af0e59304a4 HTTP/1.1
+Host: localhost:8081
+
+----

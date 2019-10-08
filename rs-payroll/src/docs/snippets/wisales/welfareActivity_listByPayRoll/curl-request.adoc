@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/wisales/welfareActivity/listByPayRoll?idNumber=120224196908273428' -i -X GET \
+    -H 'limit: 10' \
+    -H 'pageNum: 1'
+----

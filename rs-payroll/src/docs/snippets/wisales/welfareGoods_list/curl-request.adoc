@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/wisales/welfareGoods/list?activityId=&goodsNo=&goodsName=&fItemCatId=&sItemCatId=&tItemCatId=' -i -X GET \
+    -H 'limit: 10' \
+    -H 'pageNum: 1'
+----

@@ -1,0 +1,16 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 443
+
+{
+  "activityId" : "2019091800156",
+  "activityName" : "2121212121",
+  "unExchangeCnt" : 0,
+  "activityGreetingsDesc" : "打开吉祥的邮包，将好运抽取，吉星高照；将快乐释放，开心无限;将喜气蔓延，心花怒放；将健康赐予，福寿无边；将祝福呈上，锦上添花。祝新年开怀，万事如意！",
+  "entShowInfo" : "biziwei",
+  "activityStatus" : 2,
+  "activityStatusDesc" : "进行中"
+}
+----

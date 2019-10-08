@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8081/wisales/welfareCust/address/getById?idNumber=420111111111111111&addressId=111111111111'
+----

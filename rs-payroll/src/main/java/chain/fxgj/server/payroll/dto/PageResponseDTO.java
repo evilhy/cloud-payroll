@@ -17,7 +17,7 @@ public class PageResponseDTO<T> {
     /**
      * 分页列表
      */
-    List<T> responeList;
+    List<T> content;
     /**
      * 总页数
      */
@@ -39,8 +39,8 @@ public class PageResponseDTO<T> {
      */
     Long now;
 
-    public PageResponseDTO(List<T> responeList, int totalPages, long totalElements, int page, int size) {
-        this.responeList = responeList;
+    public PageResponseDTO(List<T> content, int totalPages, long totalElements, int page, int size) {
+        this.content = content;
         this.totalPages = totalPages;
         this.totalElements = totalElements;
         this.page = page;

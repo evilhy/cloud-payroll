@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/wisales/welfareCust/address/get?idNumber=420111111111111111' -i -X GET
+----

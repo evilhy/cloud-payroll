@@ -1,0 +1,306 @@
+:snippets: ../snippets/wechat
+== 唯销
+
+=== 微信端员工查询福利活动列表
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfareActivity_listByPayRoll/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfareActivity_listByPayRoll/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfareActivity_listByPayRoll/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfareActivity_listByPayRoll/http-response.adoc[]
+
+=== H5图片预览
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/h5_img_get/path-parameters.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/h5_img_get/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/h5_img_get/http-response.adoc[]
+
+=== 微信端员工查询福利活动详情
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfareActivity_detailByPayRoll/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfareActivity_detailByPayRoll/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfareActivity_detailByPayRoll/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfareActivity_detailByPayRoll/http-response.adoc[]
+
+=== 福利活动商品列表
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfareGoods_list/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfareGoods_list/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfareGoods_list/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfareGoods_list/http-response.adoc[]
+
+=== 商品详情
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfareGoods_detail/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfareGoods_detail/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfareGoods_detail/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfareGoods_detail/http-response.adoc[]
+
+=== 商品兑换(实物商品兑换)
+==== 接口定义
+* Reuqest Parameters:
++
+include::{snippets}/wisales/welfare_exchangeGoods_post/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_exchangeGoods_post/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_exchangeGoods_post/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_exchangeGoods_post/http-response.adoc[]
+
+=== 商品兑换(虚拟卡券)
+==== 接口定义
+* Reuqest Parameters:
++
+include::{snippets}/wisales/welfare_exchange_post/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_exchange_post/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_exchange_post/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_exchange_post/http-response.adoc[]
+
+=== 商品兑换(话费流量)
+==== 接口定义
+* Reuqest Parameters:
++
+include::{snippets}/wisales/welfare_exchangePhone_post/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_exchangePhone_post/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_exchangePhone_post/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_exchangePhone_post/http-response.adoc[]
+
+=== 商品兑换(油卡兑换)
+==== 接口定义
+* Reuqest Parameters:
++
+include::{snippets}/wisales/welfare_exchangeOilCard_post/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_exchangeOilCard_post/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_exchangeOilCard_post/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_exchangeOilCard_post/http-response.adoc[]
+
+=== 客户收货地址列表查询
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfare_custAddress_get/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_custAddress_get/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_custAddress_get/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_custAddress_get/http-response.adoc[]
+
+=== 客户详细收货地址查询
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfare_custAddressById_get/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_custAddressById_get/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_custAddressById_get/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_custAddressById_get/http-response.adoc[]
+
+=== 客户收货地址新增
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfare_custAddressSave_post/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_custAddressSave_post/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_custAddressSave_post/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_custAddressSave_post/http-response.adoc[]
+
+=== 客户收货地址删除
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfare_custAddressDelete_post/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_custAddressDelete_post/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_custAddressDelete_post/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_custAddressDelete_post/http-response.adoc[]
+
+=== 收货地址（省市区区域查询）
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfare_AreaBaseQuery_get/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_AreaBaseQuery_get/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_AreaBaseQuery_get/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_AreaBaseQuery_get/http-response.adoc[]
+
+=== 收货地址（乡镇区域查询）
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfare_AreaTownQuery_get/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_AreaTownQuery_get/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_AreaTownQuery_get/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_AreaTownQuery_get/http-response.adoc[]
+
+=== 客户兑换列表查询
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfare_custOrderList_get/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_custOrderList_get/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_custOrderList_get/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_custOrderList_get/http-response.adoc[]
+
+=== 客户订单明细
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfare_custOrderDetail_get/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_custOrderDetail_get/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_custOrderDetail_get/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_custOrderDetail_get/http-response.adoc[]
+
+=== 客户订单物流信息查询
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/wisales/welfare_orderTrack_get/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wisales/welfare_orderTrack_get/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/welfare_orderTrack_get/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/welfare_orderTrack_get/http-response.adoc[]
+

@@ -30,3 +30,5 @@ include::roll.adoc[]
 include::inside.adoc[]
 
 include::advertising.adoc[]
+
+include::wisales.adoc[]

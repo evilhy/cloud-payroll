@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8081/wisales/welfareCust/custOrderList?phoneNo=13683609282&activityId=2019091800156'
+----

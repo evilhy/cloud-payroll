@@ -1,0 +1,16 @@
+[source,http,options="nowrap"]
+----
+POST /wisales/welfareCustOrder/welfareExchangeOilCard/ HTTP/1.1
+Content-Length: 241
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8081
+
+{
+  "idNumber" : "123456789012345678",
+  "goodsId" : "5d19cb2db1fad73f278d0ddb",
+  "rechargePhone" : "18611570285",
+  "couponTicketCode" : "5d8cb0b19685a43340ec8a48",
+  "activityId" : "2019091800156",
+  "countActivityGoodsTimes" : 0
+}
+----

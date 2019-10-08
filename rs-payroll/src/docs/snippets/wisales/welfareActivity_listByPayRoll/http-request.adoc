@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+GET /wisales/welfareActivity/listByPayRoll?idNumber=120224196908273428 HTTP/1.1
+limit: 10
+Host: localhost:8081
+pageNum: 1
+
+----

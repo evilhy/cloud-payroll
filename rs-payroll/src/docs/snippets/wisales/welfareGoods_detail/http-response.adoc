@@ -1,0 +1,18 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 317
+Content-Type: application/json;charset=UTF-8
+
+{
+  "activityId" : "2019091800156",
+  "goodsId" : "5c9dbba324927af0e59304a4",
+  "goodsNo" : "1501300400002",
+  "coverUrl" : [ "titleImgId1", "titleImgId2" ],
+  "goodsName" : "测试产品3",
+  "startDateTime" : 1568995200000,
+  "endDateTime" : 1571068800000,
+  "allExchangeCnt" : 10,
+  "unExchangeCnt" : 0
+}
+----

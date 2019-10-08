@@ -1,0 +1,23 @@
+[source,http,options="nowrap"]
+----
+POST /wisales/welfareCust/address/save HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 353
+Host: localhost:8081
+
+{
+  "phoneNo" : "15811362835",
+  "receiveName" : "zhang2",
+  "receivePhone" : "18611570287",
+  "province" : "省1",
+  "provinceCode" : "0001",
+  "city" : "市1",
+  "cityCode" : "000101",
+  "county" : "区1",
+  "countyCode" : "000101011",
+  "town" : "乡镇1",
+  "townCode" : "00010101101",
+  "address" : "11122222",
+  "isDefault" : "YES"
+}
+----
