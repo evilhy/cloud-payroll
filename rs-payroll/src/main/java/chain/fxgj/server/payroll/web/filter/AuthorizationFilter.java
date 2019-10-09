@@ -30,6 +30,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
      * 不需要登录的url
      */
     public static final String[] excludeUrls = new String[]{
+            "docs",
             "/roll/sdt",
             "/roll/entEmp",
             "/inside/sendCode",
