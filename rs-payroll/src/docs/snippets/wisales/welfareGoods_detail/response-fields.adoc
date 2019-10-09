@@ -41,4 +41,16 @@
 |`+Set+`
 |商品详细图片IDs
 
+|`+now+`
+|`+Long+`
+|当前时间
+
+|`+stockCnt+`
+|`+Long+`
+|商品库存
+
+|`+itemCatId+`
+|`+String+`
+|商品类目ID
+
 |===
