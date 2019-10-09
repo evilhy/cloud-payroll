@@ -1,25 +1,40 @@
 |===
 |Parameter|Description
 
-|`+activityId+`
-|活动id(传活动id查询活动配置商品，不传则查询可配置所有商品信息)
-
 |`+goodsNo+`
+|`+String+`
 |商品编码
 
 |`+goodsName+`
+|`+String+`
 |商品名称
 
+|`+activityId+`
+|`+String+`
+|活动id(传活动id查询活动配置商品，不传则查询可配置所有商品信息)
+
 |`+fItemCatId+`
+|`+String+`
 |商品一级类目id
 
 |`+sItemCatId+`
+|`+String+`
 |商品一级类目id
 
 |`+tItemCatId+`
+|`+String+`
 |商品一级类目id
 
+|`+[].realAmt+`
+|`+BigDecimal+`
+|最大采购金额
+
+|`+[].realAmt+`
+|`+BigDecimal+`
+|最小采购金额
+
 |`+pickFlag+`
+|`+Boolean+`
 |是否已选择标志(false 否 true 是)
 
 |===

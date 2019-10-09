@@ -116,6 +116,8 @@ public class WisalesController {
     @GetMapping("/welfareGoods/list")
     Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader("pageNum") int pageNum,
                                              @RequestHeader("limit") int limit,
+                                             @Nullable @RequestParam String goodsNo,
+                                             @Nullable @RequestParam String goodsName,
                                              @Nullable @RequestParam String activityId,
                                              @Nullable @RequestParam String fItemCatId,
                                              @Nullable @RequestParam String sItemCatId,
@@ -126,7 +128,7 @@ public class WisalesController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = welfareActivityFeignService.baseList(pageNum, limit, activityId, fItemCatId, sItemCatId, tItemCatId, minAmt, maxAmt, pickFlag);
+            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = welfareActivityFeignService.baseList(pageNum, limit, goodsNo, goodsName, activityId, fItemCatId, sItemCatId, tItemCatId, minAmt, maxAmt, pickFlag);
             return welfareGoodsInfoAllResDTO;
         }).subscribeOn(Schedulers.elastic());
     }
