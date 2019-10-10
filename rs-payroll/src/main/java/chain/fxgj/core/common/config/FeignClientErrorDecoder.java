@@ -29,7 +29,12 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
         }
         if (response.status() >= 400 && response.status() <= 500) {
             JSONObject object=JSONObject.fromObject(body);
-            String message=object.getString("message");
+            String message="";
+            if (object.containsKey("message")) {
+                message = object.getString("message");
+            } else if (object.containsKey("error_msg")) {
+                message = object.getString("error_msg");
+            }
             //r010-银行卡已存在
             if (message.contains("-")){
                 if (message.split("-").length>0){

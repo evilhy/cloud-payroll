@@ -29,7 +29,7 @@
 |`+Long+`
 |结束兑换时间
 
-|`+allExchangeCnt+`
+|`+exchangeCnt+`
 |`+Long+`
 |已兑换数量
 

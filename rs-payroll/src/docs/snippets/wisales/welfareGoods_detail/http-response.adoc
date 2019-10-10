@@ -12,7 +12,7 @@ Content-Type: application/json;charset=UTF-8
   "goodsName" : "测试产品3",
   "startDateTime" : 1568995200000,
   "endDateTime" : 1571068800000,
-  "allExchangeCnt" : 10,
+  "exchangeCnt" : 10,
   "unExchangeCnt" : 0
 }
 ----
