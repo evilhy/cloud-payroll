@@ -20,7 +20,7 @@ public interface WechatRedisService {
      * @param year
      * @return
      */
-    @Cacheable(cacheNames = "wechat", key = "'wageListMongo:'.concat(#idNumber).concat(#groupId).concat(#year).concat(#type)")
+//    @Cacheable(cacheNames = "wechat", key = "'wageListMongo:'.concat(#idNumber).concat(#groupId).concat(#year).concat(#type)")
     PayrollRes100703DTO wageListByMongo(String idNumber, String groupId, String year, String type);
 
     /**
@@ -31,7 +31,7 @@ public interface WechatRedisService {
      * @param year
      * @return
      */
-    @Cacheable(cacheNames = "wechat", key = "'wageListMysql:'.concat(#idNumber).concat(#groupId).concat(#year).concat(#type)")
+//    @Cacheable(cacheNames = "wechat", key = "'wageListMysql:'.concat(#idNumber).concat(#groupId).concat(#year).concat(#type)")
     WageRes100703 wageListByMysql(String idNumber, String groupId, String year, String type);
 
     /**
@@ -39,7 +39,7 @@ public interface WechatRedisService {
      *
      * @return
      */
-    @Cacheable(cacheNames = "wechat", key = "'wageDetailMongo:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
+//    @Cacheable(cacheNames = "wechat", key = "'wageDetailMongo:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
     List<PayrollWageDetailDTO> getWageDetailByMongo(String idNumber, String groupId, String wageSheetId);
 
     /**
@@ -47,7 +47,7 @@ public interface WechatRedisService {
      *
      * @return
      */
-    @Cacheable(cacheNames = "wechat", key = "'wageDetailMysql:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
+//    @Cacheable(cacheNames = "wechat", key = "'wageDetailMysql:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
     List<WageDetailInfoDTO> getWageDetailByMysql(String idNumber, String groupId, String wageSheetId);
 
 
