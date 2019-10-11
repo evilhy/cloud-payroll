@@ -1,23 +1,14 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
-import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
-import chain.fxgj.feign.client.AdvertisingFeignService;
-import chain.fxgj.feign.dto.advertising.WageAdvertisingRotationDTO;
-import chain.fxgj.server.payroll.constant.PayrollConstants;
-import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.wisales.client.feign.WelfareActivityFeignService;
 import chain.wisales.core.constant.dictEnum.AreaEnum;
-import chain.wisales.core.constant.dictEnum.ItemCatEnum;
-import chain.wisales.core.constant.dictEnum.WelfareActivityStatusEnum;
 import chain.wisales.core.dto.PageDTO;
 import chain.wisales.core.dto.fxgj.welfare.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.lang.Nullable;
@@ -26,10 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.annotation.security.PermitAll;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.DefaultValue;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,8 +44,8 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareActivity/listByPayRoll")
-    Mono<PageDTO<WelfareActivityPayRollInfoDTO>> listByPayRoll(@RequestHeader(value = "pageNum",required = false) int pageNum,
-                                                               @RequestHeader(value = "limit",required = false) int limit,
+    Mono<PageDTO<WelfareActivityPayRollInfoDTO>> listByPayRoll(@RequestHeader("pageNum") @DefaultValue("1") int pageNum,
+                                                               @RequestHeader("limit")@DefaultValue("10") int limit,
                                                                @RequestParam String idNumber,
                                                                @RequestParam String custPhoneNo){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
@@ -114,8 +104,8 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareGoods/list")
-    Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader("pageNum") int pageNum,
-                                             @RequestHeader("limit") int limit,
+    Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader("pageNum") @DefaultValue("1") int pageNum,
+                                             @RequestHeader("limit") @DefaultValue("10") int limit,
                                              @Nullable @RequestParam String goodsNo,
                                              @Nullable @RequestParam String goodsName,
                                              @Nullable @RequestParam String activityId,
