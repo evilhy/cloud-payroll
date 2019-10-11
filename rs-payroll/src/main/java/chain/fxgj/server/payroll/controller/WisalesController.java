@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.DefaultValue;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,8 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareActivity/listByPayRoll")
-    Mono<PageDTO<WelfareActivityPayRollInfoDTO>> listByPayRoll(@RequestHeader(value = "pageNum",defaultValue = "1") int pageNum,
+    public Mono<PageDTO<WelfareActivityPayRollInfoDTO>> listByPayRoll(@RequestHeader(value = "pageNum",
+            defaultValue = "1") int pageNum,
                                                                @RequestHeader(value = "limit",defaultValue = "10") int limit,
                                                                @RequestParam(required = false) String idNumber,
                                                                @RequestParam(required = false) String custPhoneNo){
@@ -65,7 +65,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/h5/unAuth/img/{id}")
-    Mono<byte[]> lookImg(@NotNull @PathVariable String id,
+    public Mono<byte[]> lookImg(@NotNull @PathVariable String id,
                    ServerHttpResponse response){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
@@ -81,7 +81,8 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareActivity/detailByPayRoll")
-    Mono<WelfareActivityPayRollDetailDTO> detailByPayRoll(@RequestParam(required = false) String idNumber, @RequestParam String activityId){
+    public Mono<WelfareActivityPayRollDetailDTO> detailByPayRoll(@RequestParam(required = false) String idNumber,
+                                                                 @RequestParam String activityId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -104,7 +105,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareGoods/list")
-    Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader(value = "pageNum",defaultValue = "1")int pageNum,
+    public Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader(value = "pageNum",defaultValue = "1")int pageNum,
                                              @RequestHeader(value = "limit",defaultValue = "10") int limit,
                                              @Nullable @RequestParam String goodsNo,
                                              @Nullable @RequestParam String goodsName,
@@ -131,7 +132,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareGoods/detail")
-    Mono<WelfareGoodsDetailDTO> detail(@RequestParam(required = false) String idNumber,
+    public Mono<WelfareGoodsDetailDTO> detail(@RequestParam(required = false) String idNumber,
                                        @RequestParam String activityId,
                                        @RequestParam String goodsInfoId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
@@ -152,7 +153,7 @@ public class WisalesController {
      */
     @PostMapping("welfareCustOrder/welfareExchangeGoods")
     @TrackLog
-    Mono<CustTransOrderInfoDTO> welfareExchangeGoods(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
+    public Mono<CustTransOrderInfoDTO> welfareExchangeGoods(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -173,7 +174,7 @@ public class WisalesController {
      * @return
      */
     @PostMapping("welfareCustOrder/welfareExchange")
-    Mono<CustTransOrderInfoDTO> welfareExchange(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
+    public Mono<CustTransOrderInfoDTO> welfareExchange(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -194,7 +195,7 @@ public class WisalesController {
      */
     @PostMapping("welfareCustOrder/welfareExchangePhone")
     @TrackLog
-    Mono<CustTransOrderInfoDTO> welfareExchangePhone(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
+    public Mono<CustTransOrderInfoDTO> welfareExchangePhone(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -214,7 +215,7 @@ public class WisalesController {
      * @return
      */
     @PostMapping("welfareCustOrder/welfareExchangeOilCard")
-    Mono<CustTransOrderInfoDTO> welfareExchangeOilCard(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
+    public Mono<CustTransOrderInfoDTO> welfareExchangeOilCard(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -235,7 +236,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/address/get")
-    Mono<PageDTO<WelfareCustAddressInfoDTO>> getCustAddress(@RequestParam(required = false) String idNumber){
+    public Mono<PageDTO<WelfareCustAddressInfoDTO>> getCustAddress(@RequestParam(required = false) String idNumber){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -253,7 +254,8 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/address/getById")
-    Mono<WelfareCustAddressInfoDTO> getCustAddressById(@RequestParam(required = false) String idNumber, @RequestParam String addressId){
+    public Mono<WelfareCustAddressInfoDTO> getCustAddressById(@RequestParam(required = false) String idNumber,
+                                                              @RequestParam String addressId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -271,7 +273,7 @@ public class WisalesController {
      * @return
      */
     @PostMapping("welfareCust/address/save")
-    Mono<WelfareCustAddressInfoDTO> addressSave(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO){
+    public Mono<WelfareCustAddressInfoDTO> addressSave(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -293,7 +295,7 @@ public class WisalesController {
      */
     @PostMapping("welfareCust/address/delete")
     @TrackLog
-    Mono<Void> addressDelete(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO){
+    public Mono<Void> addressDelete(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -314,7 +316,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/area/baseQuery")
-    Mono<List<WelfareAreaInfoDTO>> findAreaaseQuery(@RequestParam(required = false) AreaEnum areaType,
+    public Mono<List<WelfareAreaInfoDTO>> findAreaaseQuery(@RequestParam(required = false) AreaEnum areaType,
                                                     @RequestParam(required = false) String code){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
@@ -330,7 +332,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/area/townQuery")
-    Mono<List<WelfareAreaInfoDTO>> findAreaQuery(@RequestParam(required = false) String code){
+    public Mono<List<WelfareAreaInfoDTO>> findAreaQuery(@RequestParam(required = false) String code){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -348,7 +350,8 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/custOrderList")
-    Mono<PageDTO<CustTransOrderInfoDTO>> findAllByPage(@RequestParam(required = false) String phoneNo, @RequestParam String activityId){
+    public Mono<PageDTO<CustTransOrderInfoDTO>> findAllByPage(@RequestParam(required = false) String phoneNo,
+                                                              @RequestParam String activityId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String phone = principal.getPhone();
@@ -366,7 +369,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/custOrderDetail")
-    Mono<CustTransOrderInfoDTO> findTransDtailById(@RequestParam String transOrderId){
+    public Mono<CustTransOrderInfoDTO> findTransDtailById(@RequestParam String transOrderId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -381,7 +384,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/orderTrack")
-    Mono<CustExchangeTransTrackResultDataDTO> findOrderTrack(@RequestParam String transLogId){
+    public Mono<CustExchangeTransTrackResultDataDTO> findOrderTrack(@RequestParam String transLogId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
