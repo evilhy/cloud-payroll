@@ -105,6 +105,8 @@ dependencies {
     //application/json
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.26'
     //compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    //链路跟踪
+    compile 'org.springframework.cloud:spring-cloud-starter-zipkin'
 }
 
 test {
