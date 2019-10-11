@@ -9,6 +9,7 @@ import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.response.*;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
@@ -63,6 +64,8 @@ public class PayRollController {
     private PayRollFeignService wageMangerFeignService;
     @Autowired
     private SynTimerFeignService wageSynFeignService;
+    @Autowired
+    private WechatRedisService wechatRedisService;
 
     /**
      * 服务当前时间
@@ -195,7 +198,14 @@ public class PayRollController {
                 payrollRes100703ReqDTO.setIdNumber(idNumber);
                 payrollRes100703ReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
                 log.info("groupId:[{}]，year:[{}]，type:[{}]，idNumber:[{}]",groupId, year, type, idNumber);
-                PayrollRes100703DTO source = payrollFeignController.wageList(payrollRes100703ReqDTO);
+                //先查redis
+                PayrollRes100703DTO source = wechatRedisService.wageListByMongo(idNumber, groupId, year, type);
+                if (null == source) {
+                    log.info("redis未查询到wageListMongo数据！");
+                    source = payrollFeignController.wageList(payrollRes100703ReqDTO);
+                } else {
+                    log.info("redis有wageListMongo缓存有数据！");
+                }
                 res100703.setShouldTotalAmt(source.getShouldTotalAmt());
                 res100703.setDeductTotalAmt(source.getDeductTotalAmt());
                 res100703.setEmployeeSid(source.getEmployeeSid());
@@ -234,7 +244,14 @@ public class PayRollController {
             if (qryMySql) {
                 WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
                 BeanUtils.copyProperties(principal,wageUserPrincipal);
-                WageRes100703 wageRes100703 = wageMangerFeignService.wageList(groupId,year,type,wageUserPrincipal);
+                //先查redis
+                WageRes100703 wageRes100703 = wechatRedisService.wageListByMysql(idNumber, groupId, year, type);
+                if (null == wageRes100703) {
+                    log.info("redis中未查到wageListMysql数据！");
+                    wageRes100703 = wageMangerFeignService.wageList(groupId, year, type, wageUserPrincipal);
+                } else {
+                    log.info("redis中有wageListMysql数据！");
+                }
                 log.info("wage wageRes100703:[{}]",JacksonUtil.objectToJson(wageRes100703));
                 if (wageRes100703!=null){
                     res100703.setShouldTotalAmt(wageRes100703.getShouldTotalAmt());
@@ -290,8 +307,14 @@ public class PayRollController {
                 payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
                 payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
                 log.info("groupId:[{}]，idNumber:[{}]，wageSheetId:[{}]",groupId, idNumber,wageSheetId);
-                List<PayrollWageDetailDTO> source = new ArrayList<>();
-                source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+                //先查redis从缓存中获取数据，缓存中没数据时，再调服务查询
+                List<PayrollWageDetailDTO> source = wechatRedisService.getWageDetailByMongo(idNumber, groupId, wageSheetId);
+                if (null == source || source.size() == 0) {
+                    log.info("redis中未查询到wageDetailMongo数据");
+                    source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+                }else {
+                    log.info("redis有wageDetailMongo数据");
+                }
                 log.info("source.size():[{}]",source.size());
                 for (PayrollWageDetailDTO payrollWageDetailDTO : source) {
                     WageDetailDTO wageDetailDTO = new WageDetailDTO();
@@ -357,7 +380,14 @@ public class PayRollController {
             if (qryMySql) {
                 WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
                 BeanUtils.copyProperties(principal,wageUserPrincipal);
-                List<WageDetailInfoDTO> wageDetailInfoDTOList=wageMangerFeignService.wageDetail(wageSheetId,groupId,wageUserPrincipal);
+                //先查redis
+                List<WageDetailInfoDTO> wageDetailInfoDTOList = wechatRedisService.getWageDetailByMysql(idNumber, groupId, wageSheetId);
+                if (null == wageDetailInfoDTOList || wageDetailInfoDTOList.size() == 0) {
+                    log.info("redis中未查询到wageDetailMysql数据！");
+                    wageDetailInfoDTOList = wageMangerFeignService.wageDetail(wageSheetId, groupId, wageUserPrincipal);
+                } else {
+                    log.info("redis中有wageDetailMysql数据！");
+                }
                 log.info("wageDetailInfoDTOList--->{}",wageDetailInfoDTOList);
                 if(!CollectionUtils.isEmpty(wageDetailInfoDTOList)){
                     if (list==null){
