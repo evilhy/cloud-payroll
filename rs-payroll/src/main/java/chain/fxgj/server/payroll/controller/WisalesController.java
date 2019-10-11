@@ -44,8 +44,8 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareActivity/listByPayRoll")
-    Mono<PageDTO<WelfareActivityPayRollInfoDTO>> listByPayRoll(@RequestHeader("pageNum") @DefaultValue("1") int pageNum,
-                                                               @RequestHeader("limit")@DefaultValue("10") int limit,
+    Mono<PageDTO<WelfareActivityPayRollInfoDTO>> listByPayRoll(@RequestHeader(value = "pageNum",defaultValue = "1") int pageNum,
+                                                               @RequestHeader(value = "limit",defaultValue = "10") int limit,
                                                                @RequestParam String idNumber,
                                                                @RequestParam String custPhoneNo){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
@@ -104,8 +104,8 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareGoods/list")
-    Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader("pageNum") @DefaultValue("1") int pageNum,
-                                             @RequestHeader("limit") @DefaultValue("10") int limit,
+    Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader(value = "pageNum",defaultValue = "1")int pageNum,
+                                             @RequestHeader(value = "limit",defaultValue = "10") int limit,
                                              @Nullable @RequestParam String goodsNo,
                                              @Nullable @RequestParam String goodsName,
                                              @Nullable @RequestParam String activityId,
