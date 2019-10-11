@@ -53,4 +53,7 @@
 |`+String+`
 |商品类目ID
 
+|`+titleImgIdSet+`
+|`+Set+`
+|商品图片
 |===
