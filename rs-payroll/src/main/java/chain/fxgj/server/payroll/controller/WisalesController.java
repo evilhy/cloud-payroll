@@ -46,8 +46,8 @@ public class WisalesController {
     @GetMapping("/welfareActivity/listByPayRoll")
     Mono<PageDTO<WelfareActivityPayRollInfoDTO>> listByPayRoll(@RequestHeader(value = "pageNum",defaultValue = "1") int pageNum,
                                                                @RequestHeader(value = "limit",defaultValue = "10") int limit,
-                                                               @RequestParam String idNumber,
-                                                               @RequestParam String custPhoneNo){
+                                                               @RequestParam(required = false) String idNumber,
+                                                               @RequestParam(required = false) String custPhoneNo){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -81,7 +81,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareActivity/detailByPayRoll")
-    Mono<WelfareActivityPayRollDetailDTO> detailByPayRoll(@RequestParam String idNumber, @RequestParam String activityId){
+    Mono<WelfareActivityPayRollDetailDTO> detailByPayRoll(@RequestParam(required = false) String idNumber, @RequestParam String activityId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -131,7 +131,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareGoods/detail")
-    Mono<WelfareGoodsDetailDTO> detail(@RequestParam String idNumber,
+    Mono<WelfareGoodsDetailDTO> detail(@RequestParam(required = false) String idNumber,
                                        @RequestParam String activityId,
                                        @RequestParam String goodsInfoId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
@@ -235,7 +235,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/address/get")
-    Mono<PageDTO<WelfareCustAddressInfoDTO>> getCustAddress(@RequestParam String idNumber){
+    Mono<PageDTO<WelfareCustAddressInfoDTO>> getCustAddress(@RequestParam(required = false) String idNumber){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -253,7 +253,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/address/getById")
-    Mono<WelfareCustAddressInfoDTO> getCustAddressById(@RequestParam String idNumber, @RequestParam String addressId){
+    Mono<WelfareCustAddressInfoDTO> getCustAddressById(@RequestParam(required = false) String idNumber, @RequestParam String addressId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -330,7 +330,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/area/townQuery")
-    Mono<List<WelfareAreaInfoDTO>> findAreaQuery(@RequestParam String code){
+    Mono<List<WelfareAreaInfoDTO>> findAreaQuery(@RequestParam(required = false) String code){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -348,7 +348,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/custOrderList")
-    Mono<PageDTO<CustTransOrderInfoDTO>> findAllByPage(@RequestParam String phoneNo, @RequestParam String activityId){
+    Mono<PageDTO<CustTransOrderInfoDTO>> findAllByPage(@RequestParam(required = false) String phoneNo, @RequestParam String activityId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String phone = principal.getPhone();
