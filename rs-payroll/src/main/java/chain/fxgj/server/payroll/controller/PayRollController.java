@@ -495,6 +495,7 @@ public class PayRollController {
             MDC.setContextMap(mdcContext);
             WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
             BeanUtils.copyProperties(principal,wageUserPrincipal);
+            log.info("调用wageMangerFeignService.empInfo(wageUserPrincipal)开始");
             List<WageRes100708> wageRes100708List=wageMangerFeignService.empInfo(wageUserPrincipal);
             log.info("wageRes100708List-->{}",wageRes100708List.size());
             List<Res100708> res100708=null;
@@ -526,6 +527,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<GroupInvoiceDTO> list=null;
+            log.info("调用wageMangerFeignService.invoice(wageUserPrincipal)开始");
             List<WageGroupInvoiceDTO> wageGroupInvoiceDTOList=wageMangerFeignService.invoice(wageUserPrincipal);
            log.info("invoice-->{}",wageGroupInvoiceDTOList);
             if (!CollectionUtils.isEmpty(wageGroupInvoiceDTOList)){
@@ -558,6 +560,7 @@ public class PayRollController {
             if (StringUtils.isEmpty(pwd)) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
+            log.info("调用wageMangerFeignService.checkPwd(pwd,wageUserPrincipal)开始");
             boolean bool = wageMangerFeignService.checkPwd(pwd,wageUserPrincipal);
             if (!bool){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
@@ -580,6 +583,7 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");
             boolean bool=wageMangerFeignService.checkCard(idNumber,cardNo);
             if (!bool){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
@@ -605,6 +609,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             EmpInfoDTO empInfoDTO=null;
+            log.info("调用wageMangerFeignService.emp(wageUserPrincipal)开始");
             WageEmpInfoDTO wageEmpInfoDTO=wageMangerFeignService.emp(wageUserPrincipal);
             if (wageEmpInfoDTO!=null){
                 empInfoDTO=new EmpInfoDTO();
@@ -631,6 +636,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EmpEntDTO> list=null;
+            log.info("调用wageMangerFeignService.empEnt(wageUserPrincipal)开始");
             List<WageEmpEntDTO> wageEmpEntDTOList=wageMangerFeignService.empEnt(wageUserPrincipal);
             log.info("empEnt---->{}",wageEmpEntDTOList);
             if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
@@ -670,6 +676,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EmpEntDTO> list = new ArrayList<>();
+            log.info("调用wageMangerFeignService.empCard(wageUserPrincipal)开始");
             List<WageEmpEntDTO> wageEmpEntDTOList=wageMangerFeignService.empCard(wageUserPrincipal);
             if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
                 for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
@@ -696,6 +703,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EmpCardLogDTO> list=null;
+            log.info("调用wageMangerFeignService.empCardLog(ids)开始");
             List<WageEmpCardLogDTO> wageEmpCardLogList=wageMangerFeignService.empCardLog(ids);
             log.info("empCardLog--->{}",wageEmpCardLogList);
             if (!CollectionUtils.isEmpty(wageEmpCardLogList)){
@@ -726,6 +734,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EmployeeListBean> list=null;
+            log.info("调用wageMangerFeignService.entPhone(wageUserPrincipal)开始");
             List<WageEmployeeListBean> wageEmployeeListBeanList=wageMangerFeignService.entPhone(wageUserPrincipal);
             log.info("entPhone-->{}",wageEmployeeListBeanList);
             if (!CollectionUtils.isEmpty(wageEmployeeListBeanList)){
@@ -753,6 +762,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EntUserDTO> list=null;
+            log.info("调用wageMangerFeignService.entUser(entId)开始");
             List<WageEntUserDTO> wageEntUserDTOList=wageMangerFeignService.entUser(entId);
             if (!CollectionUtils.isEmpty(wageEntUserDTOList)){
                 list=new ArrayList<>();
