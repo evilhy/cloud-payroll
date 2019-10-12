@@ -1,0 +1,11 @@
+[source,bash]
+----
+$ echo '{
+  "idNumber" : "123456789012345678",
+  "goodsId" : "5c9dbba324927af0e59304a4",
+  "couponTicketCode" : "5d8cb1439685a4055c73f2a1",
+  "activityId" : "2019091800156",
+  "countActivityGoodsTimes" : 0
+}' | http POST 'http://localhost:8081/wisales/welfareCustOrder/welfareExchange/' \
+    'Content-Type:application/json;charset=UTF-8'
+----

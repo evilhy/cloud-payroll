@@ -1,0 +1,16 @@
+[source,http,options="nowrap"]
+----
+POST /wisales/welfareCustOrder/welfareExchangePhone/ HTTP/1.1
+Content-Length: 241
+Content-Type: application/json;charset=UTF-8
+Host: localhost:8081
+
+{
+  "idNumber" : "123456789012345678",
+  "goodsId" : "5ce7993de52f780ee0b54fdb",
+  "rechargePhone" : "18611570285",
+  "couponTicketCode" : "5d8cafa09685a40dacf426e8",
+  "activityId" : "2019091800156",
+  "countActivityGoodsTimes" : 0
+}
+----

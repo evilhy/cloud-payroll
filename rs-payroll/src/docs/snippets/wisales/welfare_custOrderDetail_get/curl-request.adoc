@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/wisales/welfareCust/custOrderDetail?transOrderId=201909260000023' -i -X GET
+----

@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/wisales/welfareCust/area/townQuery?code=22469' -i -X GET
+----

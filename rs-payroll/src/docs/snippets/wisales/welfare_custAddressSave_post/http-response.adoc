@@ -1,0 +1,27 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 526
+Content-Type: application/json;charset=UTF-8
+
+{
+  "addressId" : "2019092500011",
+  "custId" : "201903210003333",
+  "phoneNo" : "15811362835",
+  "uid" : "515385115863111136538228358538",
+  "receiveName" : "zhang2",
+  "receivePhone" : "18611570287",
+  "province" : "省1",
+  "provinceCode" : "0001",
+  "city" : "市1",
+  "cityCode" : "000101",
+  "county" : "区1",
+  "countyCode" : "000101011",
+  "town" : "乡镇1",
+  "townCode" : "00010101101",
+  "address" : "11122222",
+  "isDefault" : "YES",
+  "isDefaultDesc" : "是",
+  "updateTime" : 1569412660600
+}
+----

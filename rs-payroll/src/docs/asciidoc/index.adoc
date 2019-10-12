@@ -1,4 +1,4 @@
-= 微信api文档
+= 微信工资条api文档
 开发团队;
 :toc: left
 :toclevels: 3
@@ -30,3 +30,5 @@ include::roll.adoc[]
 include::inside.adoc[]
 
 include::advertising.adoc[]
+
+include::wisales.adoc[]

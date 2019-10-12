@@ -1,0 +1,10 @@
+|===
+|Parameter|Description
+
+|`+idNumber+`
+|客户身份证
+
+|`+addressId+`
+|地址ID
+
+|===

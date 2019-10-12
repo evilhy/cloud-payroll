@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/wisales/h5/unAuth/img/5c90c3f6e52f781490459a6e' -i -X GET
+----

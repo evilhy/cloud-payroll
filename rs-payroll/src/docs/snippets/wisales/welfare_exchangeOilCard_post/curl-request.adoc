@@ -1,0 +1,13 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/wisales/welfareCustOrder/welfareExchangeOilCard/' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -d '{
+  "idNumber" : "123456789012345678",
+  "goodsId" : "5d19cb2db1fad73f278d0ddb",
+  "rechargePhone" : "18611570285",
+  "couponTicketCode" : "5d8cb0b19685a43340ec8a48",
+  "activityId" : "2019091800156",
+  "countActivityGoodsTimes" : 0
+}'
+----

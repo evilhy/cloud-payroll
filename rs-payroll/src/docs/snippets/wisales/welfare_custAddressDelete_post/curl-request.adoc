@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/wisales/welfareCust/address/delete' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -d '{
+  "addressId" : "11111111111222"
+}'
+----

@@ -1,0 +1,13 @@
+|===
+|Parameter|Description
+
+|`+idNumber+`
+|身份证
+
+|`+activityId+`
+|活动id
+
+|`+goodsInfoId+`
+|商品id
+
+|===

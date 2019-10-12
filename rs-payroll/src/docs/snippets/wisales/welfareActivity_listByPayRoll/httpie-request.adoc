@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8081/wisales/wisales/welfareActivity/listByPayRoll?idNumber=120224196908273428' \
+    'limit:10' \
+    'pageNum:1'
+----

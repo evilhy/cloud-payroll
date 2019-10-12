@@ -1,0 +1,57 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 1502
+
+{
+  "transOrderId" : "201909260000023",
+  "channel" : "WELFARE",
+  "transTime" : 1569507818145,
+  "custId" : "201903210003330",
+  "idNumber" : "123456789012345678",
+  "custName" : "韩11",
+  "phoneNo" : "13683609282",
+  "activityGoodId" : "5d4aa5c04043c1d96e127a94",
+  "goodsId" : "5d4aa5c04043c1d96e127a94",
+  "goodsNo" : "21101300410009",
+  "goodsName" : "实物商品测试",
+  "merOrgId" : "5c99f1c2bf8bc31654fac2a7",
+  "merOrgName" : "测试实物商户",
+  "productId" : "14249",
+  "goodsNum" : 1,
+  "ticketType" : "FREE",
+  "couponTicketCode" : "5d8cb0ef9685a422e42e1b88",
+  "couponTicketName" : "测试券",
+  "unitAmt" : 110,
+  "saleSumAmt" : 110,
+  "discountAmt" : 110,
+  "transAmt" : 0,
+  "unitPrice" : 0,
+  "equityPrice" : 0,
+  "purchasePrice" : 1000,
+  "activityId" : "2019091800156",
+  "activityName" : "2121212121",
+  "activityOrgId" : "ff80808169fbf8eb0169fca1a4b60004",
+  "activityOrgName" : "biziwei",
+  "orderFlag" : "SUCCESS",
+  "payFlag" : "SUCCESS",
+  "merOrderFlag" : "COMPLETE",
+  "orderStage" : "MERORDERSTAGE",
+  "orderDealStatus" : "MERCOMPLETE",
+  "refundOrderFlag" : "NO",
+  "addressId" : "2019092500011",
+  "receiveName" : "zhang2",
+  "receivePhone" : "18611570287",
+  "province" : "省1",
+  "provinceCode" : "0001",
+  "city" : "市1",
+  "cityCode" : "000101",
+  "county" : "区1",
+  "countyCode" : "000101011",
+  "town" : "乡镇1",
+  "townCode" : "00010101101",
+  "address" : "11122222",
+  "countActivityGoodsTimes" : 0
+}
+----

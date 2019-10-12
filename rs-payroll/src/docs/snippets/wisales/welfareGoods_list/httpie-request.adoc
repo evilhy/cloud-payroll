@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8081/wisales/welfareGoods/list?activityId=&goodsNo=&goodsName=&fItemCatId=&sItemCatId=&tItemCatId=' \
+    'limit:10' \
+    'pageNum:1'
+----

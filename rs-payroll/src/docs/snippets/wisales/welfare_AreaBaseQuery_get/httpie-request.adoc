@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8081/wisales/welfareCust/area/baseQuery?areaType=PROVINCE&code='
+----

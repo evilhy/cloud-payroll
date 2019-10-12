@@ -1,0 +1,8 @@
+.+/h5/unAuth/img/{id}+
+|===
+|Parameter|Description
+
+|`+id+`
+|附件ID
+
+|===
