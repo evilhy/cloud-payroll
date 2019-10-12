@@ -127,6 +127,7 @@ public class PayRollController {
             MDC.setContextMap(mdcContext);
             WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
             BeanUtils.copyProperties(principal,wageUserPrincipal);
+            log.info("调用wageMangerFeignService.groupList(wageUserPrincipal)开始");
             List<WageNewestWageLogDTO> wageNewestWageLogDTOS=wageMangerFeignService.groupList(wageUserPrincipal);
             log.info("groupList--->{}",wageNewestWageLogDTOS.size());
             List<NewestWageLogDTO> list=null;
