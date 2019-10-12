@@ -96,6 +96,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
+            log.info("wageMangerFeignService.index(wageUserPrincipal)开始");
             WageIndexDTO wageIndexDTO = wageMangerFeignService.index(wageUserPrincipal);
             NewestWageLogDTO newestWageLogDTO = new NewestWageLogDTO();
             Integer isNew = 0;
@@ -159,6 +160,7 @@ public class PayRollController {
             MDC.setContextMap(mdcContext);
             WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
             Res100701 res100701=null;
+            log.info("调用wageMangerFeignService.entEmp(idNumber,wageUserPrincipal)开始");
             WageRes100701 wageRes100701=wageMangerFeignService.entEmp(idNumber,wageUserPrincipal);
             log.info("wageRes100701-->{}",wageRes100701);
             if (wageRes100701!=null){
@@ -208,9 +210,9 @@ public class PayRollController {
 //                } else {
 //                    log.info("redis有wageListMongo缓存有数据！");
 //                }
-                log.info("调用mongo开始时间:[{}]", LocalDateTime.now());
+                log.info("调用payrollFeignController.wageList(payrollRes100703ReqDTO)开始时间:[{}]", LocalDateTime.now());
                 PayrollRes100703DTO source = payrollFeignController.wageList(payrollRes100703ReqDTO);
-                log.info("调用mongo返回时间:[{}]", LocalDateTime.now());
+                log.info("调用payrollFeignController.wageList(payrollRes100703ReqDTO)返回时间:[{}]", LocalDateTime.now());
                 res100703.setShouldTotalAmt(source.getShouldTotalAmt());
                 res100703.setDeductTotalAmt(source.getDeductTotalAmt());
                 res100703.setEmployeeSid(source.getEmployeeSid());
@@ -257,9 +259,9 @@ public class PayRollController {
 //                } else {
 //                    log.info("redis中有wageListMysql数据！");
 //                }
-                log.info("调用mysql开始时间:[{}]", LocalDateTime.now());
+                log.info("调用wageMangerFeignService.wageList(groupId, year, type, wageUserPrincipal)开始时间:[{}]", LocalDateTime.now());
                 WageRes100703 wageRes100703 = wageMangerFeignService.wageList(groupId, year, type, wageUserPrincipal);
-                log.info("调用mysql结束时间:[{}]", LocalDateTime.now());
+                log.info("调用wageMangerFeignService.wageList(groupId, year, type, wageUserPrincipal)结束时间:[{}]", LocalDateTime.now());
                 log.info("wage wageRes100703:[{}]",JacksonUtil.objectToJson(wageRes100703));
                 if (wageRes100703!=null){
                     res100703.setShouldTotalAmt(wageRes100703.getShouldTotalAmt());
@@ -324,9 +326,9 @@ public class PayRollController {
 //                }else {
 //                    log.info("redis有wageDetailMongo数据");
 //                }
-                log.info("调用mongo，查明细开始时间:[{}]", LocalDateTime.now());
+                log.info("调用payrollFeignController.wageDetail(payrollWageDetailReqDTO)，查明细开始时间:[{}]", LocalDateTime.now());
                 List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
-                log.info("调用mongo，查明细结束时间:[{}]", LocalDateTime.now());
+                log.info("调用payrollFeignController.wageDetail(payrollWageDetailReqDTO)，查明细结束时间:[{}]", LocalDateTime.now());
                 log.info("source.size():[{}]",source.size());
                 for (PayrollWageDetailDTO payrollWageDetailDTO : source) {
                     WageDetailDTO wageDetailDTO = new WageDetailDTO();
@@ -400,9 +402,9 @@ public class PayRollController {
 //                } else {
 //                    log.info("redis中有wageDetailMysql数据！");
 //                }
-                log.info("调用mysql查明细开始时间:[{}]", LocalDateTime.now());
+                log.info("调用wageMangerFeignService.wageDetail(wageSheetId, groupId, wageUserPrincipal)查明细开始时间:[{}]", LocalDateTime.now());
                 List<WageDetailInfoDTO> wageDetailInfoDTOList =wageMangerFeignService.wageDetail(wageSheetId, groupId, wageUserPrincipal);
-                log.info("调用mysql查明细结束时间:[{}]", LocalDateTime.now());
+                log.info("调用wageMangerFeignService.wageDetail(wageSheetId, groupId, wageUserPrincipal)查明细结束时间:[{}]", LocalDateTime.now());
                 log.info("wageDetailInfoDTOList--->{}",wageDetailInfoDTOList);
                 if(!CollectionUtils.isEmpty(wageDetailInfoDTOList)){
                     if (list==null){
