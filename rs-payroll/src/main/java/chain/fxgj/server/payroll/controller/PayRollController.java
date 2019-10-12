@@ -408,11 +408,6 @@ public class PayRollController {
                         list=new ArrayList<>();
                     }
                     for (WageDetailInfoDTO wageDetailInfoDTO:wageDetailInfoDTOList){
-                        WageDetailDTO detailDTO=new WageDetailDTO();
-                        BeanUtils.copyProperties(wageDetailInfoDTO,detailDTO);
-                        list.add(detailDTO);
-                    }
-                    for (WageDetailInfoDTO wageDetailInfoDTO:wageDetailInfoDTOList){
                         WageDetailDTO wageDetailDTO = new WageDetailDTO();
 
                         WageWageHeadDTO wageHeadDTO1 = wageDetailInfoDTO.getWageHeadDTO();
