@@ -14,7 +14,7 @@ jar {
 }
 
 applicationDefaultJvmArgs = [
-//        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5002",
+        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5010",
         "-Dfile.encoding=utf-8",
         "-Xms512m",
         "-Xmx2048m",
