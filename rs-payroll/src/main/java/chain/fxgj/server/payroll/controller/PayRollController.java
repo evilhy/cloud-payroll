@@ -140,6 +140,7 @@ public class PayRollController {
                     list.add(dto);
                 }
             }
+            log.info("NewestWageLogDTOList:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
