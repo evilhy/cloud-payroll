@@ -45,7 +45,8 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/advertising/rotation",
             "/merchant/getAccess",
             "/merchant/callback",
-            "/unAuth/sync"
+            "/unAuth/sync",
+            "/h5/unAuth/img"
     };
 
     @Autowired
