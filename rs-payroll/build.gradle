@@ -63,7 +63,7 @@ dependencyManagement {
     }
 }
 dependencies {
-    compile('chain:wage-client:1.0.2.19')
+    compile('chain:wage-client:1.0.2.21')
     compile('chain:payroll-client:1.0.34')
     compile 'chain.wisales:wisales-client:1.0.0.61'
 
