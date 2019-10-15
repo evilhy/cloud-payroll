@@ -6,6 +6,7 @@ import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.feign.client.SynTimerFeignService;
+import chain.fxgj.feign.dto.CheckCardDTO;
 import chain.fxgj.feign.dto.response.*;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.response.*;
@@ -585,7 +586,10 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");
-            boolean bool=wageMangerFeignService.checkCard(idNumber,cardNo);
+            CheckCardDTO checkCardDTO = new CheckCardDTO();
+            checkCardDTO.setIdNumber(idNumber);
+            checkCardDTO.setCardNo(cardNo);
+            boolean bool=wageMangerFeignService.checkCard(checkCardDTO);
             if (!bool){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
             }
