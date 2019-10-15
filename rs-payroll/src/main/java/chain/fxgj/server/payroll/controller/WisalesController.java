@@ -135,13 +135,13 @@ public class WisalesController {
     @GetMapping("/welfareGoods/detail")
     public Mono<WelfareGoodsDetailDTO> detail(@RequestParam(required = false) String idNumber,
                                        @RequestParam String activityId,
-                                       @RequestParam ObjectId goodsInfoId){
+                                       @RequestParam String goodsInfoId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WelfareGoodsDetailDTO detail = welfareActivityFeignService.detail(idNum, activityId, goodsInfoId);
+            WelfareGoodsDetailDTO detail = welfareActivityFeignService.detail(idNum, activityId, new ObjectId(goodsInfoId));
             return detail;
         }).subscribeOn(Schedulers.elastic());
     }
