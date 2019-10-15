@@ -276,7 +276,7 @@ public class WisalesController {
      * @return
      */
     @PostMapping("welfareCust/address/save")
-    public Mono<WelfareCustAddressInfoDTO> addressSave(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO){
+    public Mono<Void> addressSave(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -285,9 +285,9 @@ public class WisalesController {
         welfareCustAddressInfoDTO.setIdNumber(idNum);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WelfareCustAddressInfoDTO welfareCustAddressInfoDTO1 = welfareActivityFeignService.addressSave(welfareCustAddressInfoDTO);
-            return welfareCustAddressInfoDTO1;
-        }).subscribeOn(Schedulers.elastic());
+            welfareActivityFeignService.addressSave(welfareCustAddressInfoDTO);
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
     /**
@@ -303,8 +303,8 @@ public class WisalesController {
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
         String phone = principal.getPhone();
-//        welfareCustAddressInfoDTO.setPhoneNo(phone);
-//        welfareCustAddressInfoDTO.setIdNumber(idNum);
+        welfareCustAddressInfoDTO.setPhoneNo(phone);
+        welfareCustAddressInfoDTO.setIdNumber(idNum);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Void aVoid = welfareActivityFeignService.addressDelete(welfareCustAddressInfoDTO);
