@@ -8,6 +8,7 @@ import chain.wisales.core.constant.dictEnum.AreaEnum;
 import chain.wisales.core.dto.PageDTO;
 import chain.wisales.core.dto.fxgj.welfare.*;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -134,7 +135,7 @@ public class WisalesController {
     @GetMapping("/welfareGoods/detail")
     public Mono<WelfareGoodsDetailDTO> detail(@RequestParam(required = false) String idNumber,
                                        @RequestParam String activityId,
-                                       @RequestParam String goodsInfoId){
+                                       @RequestParam ObjectId goodsInfoId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -345,19 +346,17 @@ public class WisalesController {
     /**
      * 查询客户活动兑换记录列表
      *
-     * @param phoneNo
      * @param activityId
      * @return
      */
     @GetMapping("welfareCust/custOrderList")
-    public Mono<PageDTO<CustTransOrderInfoDTO>> findAllByPage(@RequestParam(required = false) String phoneNo,
-                                                              @RequestParam String activityId){
+    public Mono<PageDTO<CustTransOrderInfoDTO>> findAllByPage(@RequestParam String activityId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
-        String phone = principal.getPhone();
+        String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            PageDTO<CustTransOrderInfoDTO> allByPage = welfareActivityFeignService.findAllByPage(phone, activityId);
+            PageDTO<CustTransOrderInfoDTO> allByPage = welfareActivityFeignService.findAllByPage(idNumber, activityId);
             return allByPage;
         }).subscribeOn(Schedulers.elastic());
     }
