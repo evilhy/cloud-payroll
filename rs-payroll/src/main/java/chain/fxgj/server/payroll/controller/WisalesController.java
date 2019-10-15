@@ -281,8 +281,8 @@ public class WisalesController {
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
         String phone = principal.getPhone();
-//        welfareCustAddressInfoDTO.setPhoneNo(phone);
-//        welfareCustAddressInfoDTO.setIdNumber(idNum);
+        welfareCustAddressInfoDTO.setPhoneNo(phone);
+        welfareCustAddressInfoDTO.setIdNumber(idNum);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WelfareCustAddressInfoDTO welfareCustAddressInfoDTO1 = welfareActivityFeignService.addressSave(welfareCustAddressInfoDTO);
