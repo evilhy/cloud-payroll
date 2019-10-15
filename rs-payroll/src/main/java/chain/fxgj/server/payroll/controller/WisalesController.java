@@ -156,12 +156,17 @@ public class WisalesController {
     @PostMapping("welfareCustOrder/welfareExchangeGoods")
     @TrackLog
     public Mono<CustTransOrderInfoDTO> welfareExchangeGoods(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
+        try {
+            log.info("custTransOrderInfoDTO:[{}]", JacksonUtil.objectToJson(custTransOrderInfoDTO));
+        } catch (Exception e) {
+            log.info("日志打印错误！");
+        }
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
         String phone = principal.getPhone();
-//        custTransOrderInfoDTO.setIdNumber(idNum);
-//        custTransOrderInfoDTO.setPhoneNo(phone);
+        custTransOrderInfoDTO.setIdNumber(idNum);
+        custTransOrderInfoDTO.setPhoneNo(phone);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             CustTransOrderInfoDTO custTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchangeGoods(custTransOrderInfoDTO);
