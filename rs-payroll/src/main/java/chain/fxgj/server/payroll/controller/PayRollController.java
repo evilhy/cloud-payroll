@@ -127,9 +127,10 @@ public class PayRollController {
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
+//            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
 //            BeanUtils.copyProperties(principal,wageUserPrincipal);
-            TransferUtil.userPrincipalToWageUserPrincipal(principal);
+            WageUserPrincipal wageUserPrincipal=TransferUtil.userPrincipalToWageUserPrincipal(principal);
+
             log.info("调用wageMangerFeignService.groupList(wageUserPrincipal)开始");
             List<WageNewestWageLogDTO> wageNewestWageLogDTOS=wageMangerFeignService.groupList(wageUserPrincipal);
             log.info("groupList--->{}",wageNewestWageLogDTOS.size());
