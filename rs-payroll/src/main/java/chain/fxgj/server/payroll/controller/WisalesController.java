@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.utils.commons.JacksonUtil;
 import chain.wisales.client.feign.WelfareActivityFeignService;
 import chain.wisales.core.constant.dictEnum.AreaEnum;
 import chain.wisales.core.dto.PageDTO;
@@ -180,8 +181,9 @@ public class WisalesController {
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
         String phone = principal.getPhone();
-//        custTransOrderInfoDTO.setIdNumber(idNum);
-//        custTransOrderInfoDTO.setPhoneNo(phone);
+        custTransOrderInfoDTO.setIdNumber(idNum);
+        custTransOrderInfoDTO.setPhoneNo(phone);
+        log.info("custTransOrderInfoDTO:[{}]", JacksonUtil.objectToJson(custTransOrderInfoDTO));
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             CustTransOrderInfoDTO custTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchange(custTransOrderInfoDTO);
