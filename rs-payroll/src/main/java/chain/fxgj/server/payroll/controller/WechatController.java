@@ -11,6 +11,9 @@ import chain.fxgj.feign.dto.wechat.WageSignaturegPostDTO;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.base.*;
 import chain.fxgj.server.payroll.dto.response.Res100705;
+import chain.pub.client.feign.WechatFeignClient;
+import chain.pub.common.dto.wechat.AccessTokenDTO;
+import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -35,6 +38,8 @@ public class WechatController {
     @Autowired
     private WechatFeignService wechatFeignService;
 
+    @Autowired
+    WechatFeignClient wechatFeignClient;
     /**
      * (GET方式)验证消息的确来自微信服务器
      * 使用场景：</p>
@@ -64,7 +69,8 @@ public class WechatController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("====>微信服务器发送的消: signature ={} , timestamp ={} ,nonce ={} ,echostr ={},id={}", signature, timestamp, nonce, echostr, id);
-            String resultEchostr=wechatFeignService.signatureGet(signature, timestamp, nonce, echostr,id);
+//            String resultEchostr=wechatFeignService.signatureGet(signature, timestamp, nonce, echostr,id);
+            String resultEchostr = wechatFeignClient.signature(WechatGroupEnum.fxgj, signature, timestamp, nonce, echostr);
             if (!echostr.equals(resultEchostr)) {
                 log.info("====>验签失败！");
                 throw new ParamsIllegalException(ErrorConstant.WZWAGE_011.getErrorMsg());
@@ -107,7 +113,8 @@ public class WechatController {
             wageSignaturegPostDTO.setTimestamp(timestamp);
             wageSignaturegPostDTO.setXml(xml);
             //验签
-            String sendContent = wechatFeignService.signaturegPost(wageSignaturegPostDTO);
+//            String sendContent = wechatFeignService.signaturegPost(wageSignaturegPostDTO);
+            String sendContent = wechatFeignClient.signature(WechatGroupEnum.fxgj, xml);
             log.info("signaturegPost-->{}",sendContent);
             return sendContent;
         }).subscribeOn(Schedulers.elastic());
@@ -153,7 +160,6 @@ public class WechatController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            //WeixinJsapiDTO weixinJsapiDTO = iwechatFeignService.getJsapiSignature(payrollProperties.getId(),url);
             WeixinJsapiDTO weixinJsapiDTO = null;
             WageWeixinJsapiDTO jsapiDTO=wechatFeignService.getJsapiSignature(url);
             log.info("getJsapiSignature--result:{}",jsapiDTO);
@@ -166,18 +172,5 @@ public class WechatController {
         }).subscribeOn(Schedulers.elastic());
     }
 
-
-    //todo 请删除
-//    @GetMapping("/testAll")
-//    @PermitAll
-//    public void testAll() throws BusiVerifyException {
-//        String signature = "2";
-//        String timestamp = "3";
-//        String nonce = "4";
-//        AppPartnerEnum id = AppPartnerEnum.FXGJ;
-//        String xml = "6";
-//        String sendContent = wechatFeignService.signaturegPost(signature,timestamp,nonce,id,xml);
-//        log.info("sendContent end");
-//    }
 
 }
