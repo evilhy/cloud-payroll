@@ -79,8 +79,7 @@ public class WechatController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.info("====>微信服务器发送的消: signature ={} , timestamp ={} ,nonce ={} ,echostr ={},id={}", signature, timestamp, nonce, echostr, id);
-//            String resultEchostr=wechatFeignService.signatureGet(signature, timestamp, nonce, echostr,id);
+            log.info("微信服务器发送的消:signature:[{}], timestamp:[{}], nonce:[{}], echostr:[{}], id:[{}]", signature, timestamp, nonce, echostr, id);
             String name = id.name();
             String resultEchostr = wechatFeignClient.signature(WechatGroupEnum.valueOf(name), signature, timestamp, nonce, echostr);
             if (!echostr.equals(resultEchostr)) {
@@ -252,6 +251,7 @@ public class WechatController {
                 res100705.setPhone(wageUserPrincipal.getPhone());
             }
             res100705.setHeadimgurl(headImgurl);
+            log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
         }).subscribeOn(Schedulers.elastic());
     }
