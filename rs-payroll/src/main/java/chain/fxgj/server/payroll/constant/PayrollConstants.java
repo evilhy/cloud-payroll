@@ -26,5 +26,14 @@ public class PayrollConstants {
      */
     public final static Integer MERCHANT_EXPIRESIN = 3600;
 
+    /**
+     * 构造网页授权链接，获取code
+     */
+    public static final String OAUTH_AUTHORIZE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
+
+    /**
+     * 构造网页授权链接，获取code
+     */
+    public static final String SNSAPI_USERINFO = "snsapi_userinfo";
 
 }
