@@ -70,11 +70,11 @@ public interface WechatRedisService {
      * access_token 有效期为  7200秒 ，2个小时，
      * 如果在 2个小时内，获取用户信息，从缓存中查取
      * @param accessToken
-     * @param openId
+     * @param openid
      * @return
      */
     @Cacheable(value = "weixinOauth2AccessTokenOpenid", key = "#root.methodName+':'+#openid")
-    UserInfoDTO getUserInfo(String accessToken, String openId);
+    UserInfoDTO getUserInfo(String accessToken, String openid);
 
     /**
      * 工资条登录

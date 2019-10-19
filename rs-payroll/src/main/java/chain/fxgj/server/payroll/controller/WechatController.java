@@ -217,8 +217,9 @@ public class WechatController {
                 return res100705;
             }
             //【一】根据code获取openId、accessToken
-            log.info("appPartner:[{}], code:[{}]", appPartner.getCode(), code);
-            AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(WechatGroupEnum.valueOf(appPartner.name()), code);
+            WechatGroupEnum wechatGroup = WechatGroupEnum.valueOf(appPartner.name());
+            log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
+            AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(wechatGroup, code);
             log.info("accessTokenDTO:[{}]", JacksonUtil.objectToJson(accessTokenDTO));
             String openId = accessTokenDTO.getOpenid();
             String accessToken = accessTokenDTO.getAccessToken();
