@@ -20,6 +20,7 @@ import chain.pub.client.feign.WechatFeignClient;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.dto.wechat.WechatConfigDTO;
+import chain.pub.common.dto.wechat.WechatJsapiRequestDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
@@ -267,17 +268,22 @@ public class WechatController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WeixinJsapiDTO weixinJsapiDTO = null;
-            WageWeixinJsapiDTO jsapiDTO=wechatFeignService.getJsapiSignature(url);
-            log.info("getJsapiSignature--result:{}",jsapiDTO);
-            if (jsapiDTO!=null){
-                weixinJsapiDTO=new WeixinJsapiDTO();
-                BeanUtils.copyProperties(jsapiDTO,weixinJsapiDTO);
-            }
-            log.info("====>ret.weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
+            WeixinJsapiDTO weixinJsapiDTO = new WeixinJsapiDTO();
+//            WageWeixinJsapiDTO jsapiDTO=wechatFeignService.getJsapiSignature(url);
+//            log.info("getJsapiSignature--result:{}",jsapiDTO);
+//            if (jsapiDTO!=null){
+//                weixinJsapiDTO=new WeixinJsapiDTO();
+//                BeanUtils.copyProperties(jsapiDTO,weixinJsapiDTO);
+//            }
+//            log.info("====>ret.weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
+        log.info("getJsapiSignature url:[{}]", url);
+        //todo 需要与前端同时修改上线 增加入参 AppPartnerEnum
+        String name = "FXGJ";
+        WechatJsapiRequestDTO wechatJsapiRequestDTO = wechatFeignClient.jsapiSignature(WechatGroupEnum.valueOf(name), url);
+        log.info("wechatJsapiRequestDTO:[{}]", JacksonUtil.objectToJson(wechatJsapiRequestDTO));
+        BeanUtils.copyProperties(wechatJsapiRequestDTO, weixinJsapiDTO);
             return weixinJsapiDTO;
         }).subscribeOn(Schedulers.elastic());
     }
-
 
 }

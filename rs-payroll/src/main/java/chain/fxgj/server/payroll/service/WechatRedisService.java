@@ -62,7 +62,7 @@ public interface WechatRedisService {
      * @param code
      * @return
      */
-    @Cacheable(value = "weixinOauth2", key = "#root.methodName+':'+#code")
+//    @Cacheable(value = "weixinOauth2", key = "#root.methodName+':'+#code")
     AccessTokenDTO oauth2AccessToken(WechatGroupEnum wechatGroupEnum, String code);
 
     /**

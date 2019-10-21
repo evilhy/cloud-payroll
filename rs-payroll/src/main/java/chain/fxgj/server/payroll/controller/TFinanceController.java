@@ -8,10 +8,14 @@ import chain.fxgj.feign.client.TFinanceFeignService;
 import chain.fxgj.feign.dto.WagePageResponseDTO;
 import chain.fxgj.feign.dto.tfinance.*;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
+import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.PageResponseDTO;
 import chain.fxgj.server.payroll.dto.tfinance.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.pub.client.feign.WechatFeignClient;
+import chain.pub.common.dto.wechat.WechatConfigDTO;
+import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +29,7 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.DefaultValue;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +44,8 @@ import java.util.Map;
 public class TFinanceController {
     @Autowired
     private TFinanceFeignService financeFeignService;
-
+    @Autowired
+    WechatFeignClient wechatFeignClient;
 
     /**
      * 活动产品列表
@@ -281,9 +287,22 @@ public class TFinanceController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            String str=financeFeignService.getCodeUrl(redirectUrl);
-            log.info("getCodeUrl-->{}",str);
-            return str;
+            //inside停用，所以注释
+//            String str=financeFeignService.getCodeUrl(redirectUrl);
+
+            //改为调用put-client获取微信配置，构造网络授权连接
+            log.info("getCodeUrl start:[{}]", WechatGroupEnum.FXGJ);
+            WechatConfigDTO wechatConfigDTO = wechatFeignClient.getConfig(WechatGroupEnum.FXGJ);
+            log.info("getCodeUrl wechatConfigDTO:[{}]", wechatConfigDTO);
+            String appId = wechatConfigDTO.getAppId();
+            String oauthUrl = wechatConfigDTO.getOauthUrl();
+            String authorizeurl = PayrollConstants.OAUTH_AUTHORIZE_URL;
+            authorizeurl = authorizeurl.replace("APPID", appId);
+            authorizeurl = authorizeurl.replace("REDIRECT_URI", URLEncoder.encode(oauthUrl, "UTF-8"));
+            authorizeurl = authorizeurl.replace("STATE", "STATE");
+            authorizeurl = authorizeurl.replace("SCOPE", PayrollConstants.SNSAPI_USERINFO);
+            log.info("authorizeurl:[{}]",authorizeurl);
+            return authorizeurl;
         }).subscribeOn(Schedulers.elastic());
     }
 }
