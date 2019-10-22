@@ -64,7 +64,7 @@ dependencyManagement {
 }
 dependencies {
     compile("chain:pub-client:1.1.5-SNAPSHOT")
-    compile('chain:wage-client:1.0.3.1')
+    compile('chain:wage-client:1.0.3.2')
     compile('chain:payroll-client:1.0.34')
     compile 'chain.wisales:wisales-client:1.0.0.74'
 

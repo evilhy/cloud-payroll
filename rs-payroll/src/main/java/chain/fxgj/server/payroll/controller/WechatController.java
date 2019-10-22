@@ -208,39 +208,11 @@ public class WechatController {
             WageProcessRequestDTO wageProcessRequestDTO = new WageProcessRequestDTO();
             wageProcessRequestDTO.setAuthorizeurl(authorizeurl);
             wageProcessRequestDTO.setXml(xml);
+            wageProcessRequestDTO.setAppPartner(id);
             log.info("wageProcessRequestDTO:[{}]", JacksonUtil.objectToJson(wageProcessRequestDTO));
             String sendContent = wechatFeignService.processRequest(wageProcessRequestDTO);
             log.info("sendContent:[{}]", sendContent);
             return sendContent;
-        }).subscribeOn(Schedulers.elastic());
-    }
-
-    /**
-     * 微信回调接口
-     */
-    @GetMapping("/wxCallbackOld")
-    @TrackLog
-    @PermitAll
-    public Mono<Res100705> wxCallbackOld(@RequestParam("code") String code,
-                                         @RequestParam(value = "wageSheetId", required = false) String wageSheetId,
-                                         @RequestParam(value = "appPartner", required = true, defaultValue = "FXGJ") AppPartnerEnum appPartner,
-                                         @RequestParam(value = "routeName", required = false) String routeName) throws Exception {
-        MDC.put("apppartner_desc", appPartner.getDesc());
-        MDC.put("apppartner", appPartner.getCode().toString());
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            Res100705 res100705 = null;
-            WageRes100705 wageRes100705 = wechatFeignService.wxCallback(code, wageSheetId, appPartner, routeName);
-            log.info("wxCallback--->{}", wageRes100705);
-            if (wageRes100705 != null) {
-                res100705 = new Res100705();
-                BeanUtils.copyProperties(wageRes100705, res100705);
-            }
-            //todo 重定向地址
-            log.info("====>res100705返回的所有值:[{}]", res100705.toString());
-            return res100705;
         }).subscribeOn(Schedulers.elastic());
     }
 
@@ -265,7 +237,7 @@ public class WechatController {
             String jsessionId = UUIDUtil.createUUID32();
             Res100705 res100705 = Res100705.builder()
                     .jsessionId(jsessionId)
-                    .apppartner(appPartner.getCode())
+                    .apppartner(appPartner)
                     .apppartnerDesc(appPartner.getDesc())
                     .build();
             if ("authdeny".equals(code)) {
