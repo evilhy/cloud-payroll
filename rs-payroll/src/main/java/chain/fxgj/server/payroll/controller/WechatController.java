@@ -95,20 +95,20 @@ public class WechatController {
      */
     @GetMapping("/getMenu")
     @TrackLog(maxLogLength = 1000)
-    public Mono<WechatGetMenuDTO> getMenu(@RequestParam(value = "id") AppPartnerEnum id) {
+    public Mono<WechatQueryMenuDTO> getMenu(@RequestParam(value = "id") AppPartnerEnum id) {
         MDC.put("apppartner_desc", id.getDesc());
         MDC.put("appPartner", id.getCode().toString());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WechatGetMenuDTO menu = wechatFeignClient.getMenu(WechatGroupEnum.valueOf(id.name()));
+            WechatQueryMenuDTO menu = wechatFeignClient.getMenu(WechatGroupEnum.valueOf(id.name()));
             log.info("微信菜单获取:[{}] ", JacksonUtil.objectToJson(menu));
             return menu;
         }).subscribeOn(Schedulers.elastic());
     }
 
     /**
-     * (GET方式)验证消息的确来自微信服务器
+     * (GET方式)验证消息的确来自微信服务器 仅仅是验签
      * 使用场景：</p>
      * 微信直接发送 ->  后台服务器
      * </p>
@@ -148,7 +148,7 @@ public class WechatController {
     }
 
     /**
-     * (POST方式)验证消息的确来自微信服务器
+     * (POST方式)验证消息的确来自微信服务器 验签+业务处理
      * 用户发送信息->微信接收信息后再调用->后台服务(后台验签，通过后返回对应消息)->微信->用户</p>
      *
      * @param signature 微信加密签名
