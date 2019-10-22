@@ -118,4 +118,10 @@ subprojects {
         testCompile('pl.pragmatists:JUnitParams:1.1.1')
         compileOnly "org.springframework.boot:spring-boot-configuration-processor"
     }
+    configurations.all {
+        //每隔 0 秒 检查远程依赖是否存在更新
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+        // 采用动态版本声明的依赖缓存每隔 0 秒
+        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+    }
 }
