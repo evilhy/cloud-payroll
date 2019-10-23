@@ -32,6 +32,7 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -313,4 +314,36 @@ public class WechatController {
         }).subscribeOn(Schedulers.elastic());
     }
 
+    /**
+     * 工资条推送
+     */
+    @GetMapping("/wagePush")
+    @TrackLog
+    @PermitAll
+    public Mono<WechatTemplateMsgDTO> wagePush(@RequestParam(value = "id",defaultValue = "FXGJ") AppPartnerEnum id) throws BusiVerifyException {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            WechatTemplateMsgRequestDTO wechatTemplateMsgRequestDTO = new WechatTemplateMsgRequestDTO();
+            Map<String, WechatTemplateDataDTO> data = new HashMap<>();
+            wechatTemplateMsgRequestDTO.setData(data);
+
+            Map<String, WechatTemplateDataDTO> items = new HashMap<>();
+            wechatTemplateMsgRequestDTO.setItems(items);
+
+            String templateId = "TLQKUf4AbszVrkNYELnpgOlexa_Bm5TuriBXUCgunIU";
+            wechatTemplateMsgRequestDTO.setTemplateId(templateId);
+
+            String touser = "oFnSLvyxBArqJtYqd3-xU6H7Xr08";
+            wechatTemplateMsgRequestDTO.setTouser(touser);
+
+            String url = "";
+            wechatTemplateMsgRequestDTO.setUrl(url);
+
+            WechatTemplateMsgDTO wechatTemplateMsgDTO = wechatFeignClient.sendTemplateMsg(WechatGroupEnum.valueOf(id.name()), wechatTemplateMsgRequestDTO);
+
+            return wechatTemplateMsgDTO;
+        }).subscribeOn(Schedulers.elastic());
+    }
 }
