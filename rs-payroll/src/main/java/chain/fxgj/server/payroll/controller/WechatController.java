@@ -332,11 +332,15 @@ public class WechatController {
             Map<String, WechatTemplateDataDTO> items = new HashMap<>();
             wechatTemplateMsgRequestDTO.setItems(items);
 
-            String templateId = "TLQKUf4AbszVrkNYELnpgOlexa_Bm5TuriBXUCgunIU";
+            //模板id
+//            String templateId = "TLQKUf4AbszVrkNYELnpgOlexa_Bm5TuriBXUCgunIU";//华夏
+            String templateId = "3kwYRcDX6kQmWA1LG6TGdM_0bie68xIFs_gL4bLLaUI";//汇融
             wechatTemplateMsgRequestDTO.setTemplateId(templateId);
 
-            String touser = "oFnSLvyxBArqJtYqd3-xU6H7Xr08";
-            wechatTemplateMsgRequestDTO.setTouser(touser);
+            //openId
+//            String openId = "oFnSLvyxBArqJtYqd3-xU6H7Xr08";//华夏
+            String openId = "oikrq5giuCd4Rw4qG3fYY3sxn2sI";//汇融
+            wechatTemplateMsgRequestDTO.setTouser(openId);
 
             String url = "";
             wechatTemplateMsgRequestDTO.setUrl(url);
