@@ -334,7 +334,7 @@ public class WechatController {
 
             //模板id
 //            String templateId = "TLQKUf4AbszVrkNYELnpgOlexa_Bm5TuriBXUCgunIU";//华夏
-            String templateId = "3kwYRcDX6kQmWA1LG6TGdM_0bie68xIFs_gL4bLLaUI";//汇融
+            String templateId = "f-NeM_wE_xdMtrFZnIPfh3eo3v55m1aVCJ8LCk5JBHU";//汇融
             wechatTemplateMsgRequestDTO.setTemplateId(templateId);
 
             //openId
