@@ -32,7 +32,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
     public static final String[] excludeUrls = new String[]{
             "docs",
             "/roll/sdt",
-            "/roll/entEmp",
+//            "/roll/entEmp",
             "/inside/sendCode",
             "/actuator",
             "/weixin",
