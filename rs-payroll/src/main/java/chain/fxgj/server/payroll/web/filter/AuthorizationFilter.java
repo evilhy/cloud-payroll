@@ -32,12 +32,10 @@ public class AuthorizationFilter implements WebFilter, Ordered {
     public static final String[] excludeUrls = new String[]{
             "docs",
             "/roll/sdt",
-            "/roll/entEmp",
+//            "/roll/entEmp",
             "/inside/sendCode",
             "/actuator",
-            "/weixin/signature",
-            "/weixin/wxCallback",
-            "/weixin/getJsapiSignature",
+            "/weixin",
             "/tfinance/intentionList",
             "/inside/rz/",
             "/roll/checkCar",
@@ -45,7 +43,8 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/advertising/rotation",
             "/merchant/getAccess",
             "/merchant/callback",
-            "/unAuth"
+            "/unAuth",
+            "/sync"
     };
 
     @Autowired

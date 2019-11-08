@@ -127,8 +127,10 @@ public class PayRollController {
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(principal,wageUserPrincipal);
+//            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
+//            BeanUtils.copyProperties(principal,wageUserPrincipal);
+            WageUserPrincipal wageUserPrincipal=TransferUtil.userPrincipalToWageUserPrincipal(principal);
+
             log.info("调用wageMangerFeignService.groupList(wageUserPrincipal)开始");
             List<WageNewestWageLogDTO> wageNewestWageLogDTOS=wageMangerFeignService.groupList(wageUserPrincipal);
             log.info("groupList--->{}",wageNewestWageLogDTOS.size());
@@ -164,7 +166,7 @@ public class PayRollController {
             Res100701 res100701=null;
             log.info("调用wageMangerFeignService.entEmp(idNumber,wageUserPrincipal)开始");
             WageRes100701 wageRes100701=wageMangerFeignService.entEmp(idNumber,wageUserPrincipal);
-            log.info("wageRes100701-->{}",wageRes100701);
+            log.info("wageRes100701:[{}]",JacksonUtil.objectToJson(wageRes100701));
             if (wageRes100701!=null){
                 res100701=new Res100701();
                 BeanUtils.copyProperties(wageRes100701,res100701);

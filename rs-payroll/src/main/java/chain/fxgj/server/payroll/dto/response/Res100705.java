@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.dto.response;
 
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -49,7 +50,7 @@ public class Res100705 {
     /**
      * 合作方编号
      */
-    private Integer apppartner;
+    private AppPartnerEnum apppartner;
     /**
      * 合作方描述
      */

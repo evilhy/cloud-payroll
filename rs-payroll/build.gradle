@@ -17,7 +17,7 @@ applicationDefaultJvmArgs = [
         "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5010",
         "-Dfile.encoding=utf-8",
         "-Xms512m",
-        "-Xmx2048m",
+        "-Xmx1024m",
         "-Xss1024K",
         "-XX:PermSize=256m",
         "-XX:MaxPermSize=512m"
@@ -63,9 +63,10 @@ dependencyManagement {
     }
 }
 dependencies {
-    compile('chain:wage-client:1.0.2.22')
+    compile("chain:pub-client:1.1.5")
+    compile('chain:wage-client:1.0.3.2')
     compile('chain:payroll-client:1.0.34')
-    compile 'chain.wisales:wisales-client:1.0.0.63'
+    compile 'chain.wisales:wisales-client:1.0.0.74'
 
     compile('chain:utils-jpa:1.0.4')
     compile('chain:utils-poi:2.0.2')

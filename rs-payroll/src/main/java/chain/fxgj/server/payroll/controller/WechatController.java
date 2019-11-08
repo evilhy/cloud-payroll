@@ -4,24 +4,35 @@ import chain.css.exception.BusiVerifyException;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.feign.client.WechatFeignService;
-import chain.fxgj.feign.dto.base.WageWeixinJsapiDTO;
 import chain.fxgj.feign.dto.response.WageRes100705;
+import chain.fxgj.feign.dto.web.WageUserPrincipal;
+import chain.fxgj.feign.dto.wechat.WageProcessRequestDTO;
 import chain.fxgj.feign.dto.wechat.WageSignaturegPostDTO;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
-import chain.fxgj.server.payroll.dto.base.*;
+import chain.fxgj.server.payroll.constant.PayrollConstants;
+import chain.fxgj.server.payroll.dto.base.WeixinJsapiDTO;
 import chain.fxgj.server.payroll.dto.response.Res100705;
+import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.pub.client.feign.WechatFeignClient;
+import chain.pub.common.dto.wechat.*;
+import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
+import chain.utils.commons.StringUtils;
+import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
 import javax.annotation.security.PermitAll;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -34,9 +45,71 @@ public class WechatController {
 
     @Autowired
     private WechatFeignService wechatFeignService;
+    @Autowired
+    WechatFeignClient wechatFeignClient;
+    @Autowired
+    WechatRedisService wechatRedisService;
 
     /**
-     * (GET方式)验证消息的确来自微信服务器
+     * 微信菜单创建
+     *
+     * @param id 合作方定义(FXGJ-放薪管家, ZRL-中人联, YDNSH-尧都农商, SJZHRB-汇融银行)
+     *
+     */
+    @GetMapping("/creatMenu")
+    @TrackLog
+    public Mono<WechatMenuResponseDTO> creatMenu(@RequestParam(value = "id") AppPartnerEnum id) {
+        MDC.put("apppartner_desc", id.getDesc());
+        MDC.put("appPartner", id.getCode().toString());
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            WechatMenuResponseDTO menuById = wechatFeignClient.createMenuById(WechatGroupEnum.valueOf(id.name()));
+            log.info("微信菜单创建:[{}] ", JacksonUtil.objectToJson(menuById));
+            return menuById;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    /**
+     * 微信菜单删除
+     *
+     * @param id 合作方定义(FXGJ-放薪管家, ZRL-中人联, YDNSH-尧都农商, SJZHRB-汇融银行)
+     */
+    @GetMapping("/deleteMenu")
+    @TrackLog
+    public Mono<WechatMenuResponseDTO> deleteMenu(@RequestParam(value = "id") AppPartnerEnum id) {
+        MDC.put("apppartner_desc", id.getDesc());
+        MDC.put("appPartner", id.getCode().toString());
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            WechatMenuResponseDTO wechatMenuResponseDTO = wechatFeignClient.deleteMenu(WechatGroupEnum.valueOf(id.name()));
+            log.info("微信菜单删除:[{}] ", JacksonUtil.objectToJson(wechatMenuResponseDTO));
+            return wechatMenuResponseDTO;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    /**
+     * 微信菜单获取
+     *
+     * @param id 合作方定义(FXGJ-放薪管家, ZRL-中人联, YDNSH-尧都农商, SJZHRB-汇融银行)
+     */
+    @GetMapping("/getMenu")
+    @TrackLog(maxLogLength = 1000)
+    public Mono<WechatQueryMenuDTO> getMenu(@RequestParam(value = "id") AppPartnerEnum id) {
+        MDC.put("apppartner_desc", id.getDesc());
+        MDC.put("appPartner", id.getCode().toString());
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            WechatQueryMenuDTO menu = wechatFeignClient.getMenu(WechatGroupEnum.valueOf(id.name()));
+            log.info("微信菜单获取:[{}] ", JacksonUtil.objectToJson(menu));
+            return menu;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    /**
+     * (GET方式)验证消息的确来自微信服务器 仅仅是验签
      * 使用场景：</p>
      * 微信直接发送 ->  后台服务器
      * </p>
@@ -58,13 +131,14 @@ public class WechatController {
                                      @RequestParam("echostr") String echostr,
                                      @RequestParam(value = "id", required = true, defaultValue = "FXGJ") AppPartnerEnum id
     ) {
-        MDC.put("apppartner_desc",id.getDesc());
-        MDC.put("appPartner",id.getCode().toString());
+        MDC.put("apppartner_desc", id.getDesc());
+        MDC.put("appPartner", id.getCode().toString());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.info("====>微信服务器发送的消: signature ={} , timestamp ={} ,nonce ={} ,echostr ={},id={}", signature, timestamp, nonce, echostr, id);
-            String resultEchostr=wechatFeignService.signatureGet(signature, timestamp, nonce, echostr,id);
+            log.info("微信服务器发送的消:signature:[{}], timestamp:[{}], nonce:[{}], echostr:[{}], id:[{}]", signature, timestamp, nonce, echostr, id);
+            String name = id.name();
+            String resultEchostr = wechatFeignClient.signature(WechatGroupEnum.valueOf(name), signature, timestamp, nonce, echostr);
             if (!echostr.equals(resultEchostr)) {
                 log.info("====>验签失败！");
                 throw new ParamsIllegalException(ErrorConstant.WZWAGE_011.getErrorMsg());
@@ -75,7 +149,7 @@ public class WechatController {
     }
 
     /**
-     * (POST方式)验证消息的确来自微信服务器
+     * (POST方式)验证消息的确来自微信服务器 验签+业务处理
      * 用户发送信息->微信接收信息后再调用->后台服务(后台验签，通过后返回对应消息)->微信->用户</p>
      *
      * @param signature 微信加密签名
@@ -93,25 +167,56 @@ public class WechatController {
                                        @RequestParam("nonce") String nonce,
                                        @RequestParam(value = "id", required = true, defaultValue = "FXGJ") AppPartnerEnum id,
                                        @RequestBody String xml) {
-        MDC.put("apppartnerdesc",id.getDesc());
-        MDC.put("apppartner",id.getCode().toString());
+        log.info("signature:[{}], timestamp:[{}], nonce:[{}], appPartner:[{}],[{}]", signature, timestamp, nonce, id.getCode(), id.getDesc());
+        MDC.put("apppartnerdesc", id.getDesc());
+        MDC.put("apppartner", id.getCode().toString());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.info("====>apppartnerdesc={},appPartner={}",MDC.get("apppartnerdesc"),MDC.get("apppartner"));
             WageSignaturegPostDTO wageSignaturegPostDTO = new WageSignaturegPostDTO();
             wageSignaturegPostDTO.setAppPartnerEnum(id);
             wageSignaturegPostDTO.setNonce(nonce);
             wageSignaturegPostDTO.setSignature(signature);
             wageSignaturegPostDTO.setTimestamp(timestamp);
             wageSignaturegPostDTO.setXml(xml);
-            //验签
-            String sendContent = wechatFeignService.signaturegPost(wageSignaturegPostDTO);
-            log.info("signaturegPost-->{}",sendContent);
+            String name = id.name();
+            WechatGroupEnum wechatGroup = WechatGroupEnum.valueOf(name);
+
+            //【一】先验签， 通过之后再处理微信请求
+            String echostr = UUIDUtil.createUUID32();
+            log.info("====>echostr:[{}]，验签开始！", echostr);
+            String resultEchostr = wechatFeignClient.signature(wechatGroup, signature, timestamp, nonce, echostr);
+            if (!echostr.equals(resultEchostr)) {
+                log.info("====>验签失败！");
+                throw new ParamsIllegalException(ErrorConstant.WZWAGE_011.getErrorMsg());
+            } else {
+                log.info("====>echostrRet:[{}]，验签成功！", resultEchostr);
+            }
+
+            //【二】调用put-client获取微信配置，构造网络授权连接
+            WechatConfigDTO wechatConfigDTO = wechatFeignClient.getConfig(wechatGroup);
+            log.info("wechatConfigDTO:[{}]", wechatConfigDTO);
+            String appId = wechatConfigDTO.getAppId();
+            String oauthUrl = wechatConfigDTO.getOauthUrl();
+            String authorizeurl = PayrollConstants.OAUTH_AUTHORIZE_URL;
+            authorizeurl = authorizeurl.replace("APPID", appId);
+            authorizeurl = authorizeurl.replace("REDIRECT_URI", URLEncoder.encode(oauthUrl, "UTF-8"));
+            authorizeurl = authorizeurl.replace("STATE", StringUtils.trimToEmpty(""));
+            authorizeurl = authorizeurl.replace("SCOPE", PayrollConstants.SNSAPI_USERINFO);
+
+            //【三】处理微信用户请求
+            WageProcessRequestDTO wageProcessRequestDTO = new WageProcessRequestDTO();
+            wageProcessRequestDTO.setAuthorizeurl(authorizeurl);
+            wageProcessRequestDTO.setXml(xml);
+            wageProcessRequestDTO.setAppPartner(id);
+            log.info("wageProcessRequestDTO:[{}]", JacksonUtil.objectToJson(wageProcessRequestDTO));
+            String sendContent = wechatFeignService.processRequest(wageProcessRequestDTO);
+            log.info("sendContent:[{}]", sendContent);
             return sendContent;
         }).subscribeOn(Schedulers.elastic());
     }
+
 
     /**
      * 微信回调接口
@@ -123,21 +228,59 @@ public class WechatController {
                                       @RequestParam(value = "wageSheetId", required = false) String wageSheetId,
                                       @RequestParam(value = "appPartner", required = true, defaultValue = "FXGJ") AppPartnerEnum appPartner,
                                       @RequestParam(value = "routeName", required = false) String routeName) throws Exception {
-        MDC.put("apppartner_desc",appPartner.getDesc());
-        MDC.put("apppartner",appPartner.getCode().toString());
+        MDC.put("apppartner_desc", appPartner.getDesc());
+        MDC.put("apppartner", appPartner.getCode().toString());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            Res100705 res100705=null;
-            WageRes100705 wageRes100705 =wechatFeignService.wxCallback(code,wageSheetId,appPartner,routeName);
-            log.info("wxCallback--->{}",wageRes100705);
-            if (wageRes100705!=null){
-                res100705=new Res100705();
-                BeanUtils.copyProperties(wageRes100705,res100705);
+
+            String jsessionId = UUIDUtil.createUUID32();
+            Res100705 res100705 = Res100705.builder()
+                    .jsessionId(jsessionId)
+                    .apppartner(appPartner)
+                    .apppartnerDesc(appPartner.getDesc())
+                    .build();
+            if ("authdeny".equals(code)) {
+                return res100705;
             }
-            //todo 重定向地址
-            log.info("====>res100705返回的所有值:[{}]", res100705.toString());
+            //【一】根据code获取openId、accessToken
+            WechatGroupEnum wechatGroup = WechatGroupEnum.valueOf(appPartner.name());
+            log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
+            AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(wechatGroup, code);
+            log.info("accessTokenDTO:[{}]", JacksonUtil.objectToJson(accessTokenDTO));
+            String openId = accessTokenDTO.getOpenid();
+            String accessToken = accessTokenDTO.getAccessToken();
+            if (StringUtils.isEmpty(openId)) {
+                throw new ParamsIllegalException(ErrorConstant.AUTH_ERR.getErrorMsg());
+            }
+            //【二】根据openId、accessToken获取用户信息
+            UserInfoDTO userInfo = wechatRedisService.getUserInfo(accessToken, openId);
+            String nickName = userInfo.getNickname();
+            String headImgurl = userInfo.getHeadimgurl();
+            log.info("userInfo:[{}]", JacksonUtil.objectToJson(userInfo));
+            if (null == userInfo || StringUtils.isEmpty(userInfo.getNickname())) {
+                log.info("根据openId、accessToken获取用户信息失败");
+            } else {
+                try {
+                    nickName = URLEncoder.encode(userInfo.getNickname(), "UTF-8");
+                } catch (Exception e) {
+                    log.info("获取昵称出现异常！");
+                }
+                headImgurl = userInfo.getHeadimgurl();
+            }
+
+            //【三】用户登录工资条
+            WageUserPrincipal wageUserPrincipal = wechatRedisService.registeWechatPayroll(jsessionId, openId, nickName, headImgurl, "", appPartner);
+            if (StringUtils.isNotBlank(wageUserPrincipal.getIdNumber())) {
+                res100705.setBindStatus("1");
+                res100705.setIdNumber(wageUserPrincipal.getIdNumberEncrytor());
+                res100705.setIfPwd(StringUtils.isEmpty(StringUtils.trimToEmpty(wageUserPrincipal.getQueryPwd())) ? IsStatusEnum.NO.getCode() : IsStatusEnum.YES.getCode());
+                res100705.setName(wageUserPrincipal.getName());
+                res100705.setPhone(wageUserPrincipal.getPhone());
+            }
+            res100705.setHeadimgurl(headImgurl);
+            log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -153,31 +296,58 @@ public class WechatController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            //WeixinJsapiDTO weixinJsapiDTO = iwechatFeignService.getJsapiSignature(payrollProperties.getId(),url);
-            WeixinJsapiDTO weixinJsapiDTO = null;
-            WageWeixinJsapiDTO jsapiDTO=wechatFeignService.getJsapiSignature(url);
-            log.info("getJsapiSignature--result:{}",jsapiDTO);
-            if (jsapiDTO!=null){
-                weixinJsapiDTO=new WeixinJsapiDTO();
-                BeanUtils.copyProperties(jsapiDTO,weixinJsapiDTO);
-            }
-            log.info("====>ret.weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
+            WeixinJsapiDTO weixinJsapiDTO = new WeixinJsapiDTO();
+//            WageWeixinJsapiDTO jsapiDTO=wechatFeignService.getJsapiSignature(url);
+//            log.info("getJsapiSignature--result:{}",jsapiDTO);
+//            if (jsapiDTO!=null){
+//                weixinJsapiDTO=new WeixinJsapiDTO();
+//                BeanUtils.copyProperties(jsapiDTO,weixinJsapiDTO);
+//            }
+//            log.info("====>ret.weixinJsapiDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
+            log.info("getJsapiSignature url:[{}]", url);
+            //todo 需要与前端同时修改上线 增加入参 AppPartnerEnum
+            String name = "FXGJ";
+            WechatJsapiRequestDTO wechatJsapiRequestDTO = wechatFeignClient.jsapiSignature(WechatGroupEnum.valueOf(name), url);
+            log.info("wechatJsapiRequestDTO:[{}]", JacksonUtil.objectToJson(wechatJsapiRequestDTO));
+            BeanUtils.copyProperties(wechatJsapiRequestDTO, weixinJsapiDTO);
             return weixinJsapiDTO;
         }).subscribeOn(Schedulers.elastic());
     }
 
+    /**
+     * 工资条推送
+     */
+    @GetMapping("/wagePush")
+    @TrackLog
+    @PermitAll
+    public Mono<WechatTemplateMsgDTO> wagePush(@RequestParam(value = "id",defaultValue = "FXGJ") AppPartnerEnum id) throws BusiVerifyException {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
-    //todo 请删除
-//    @GetMapping("/testAll")
-//    @PermitAll
-//    public void testAll() throws BusiVerifyException {
-//        String signature = "2";
-//        String timestamp = "3";
-//        String nonce = "4";
-//        AppPartnerEnum id = AppPartnerEnum.FXGJ;
-//        String xml = "6";
-//        String sendContent = wechatFeignService.signaturegPost(signature,timestamp,nonce,id,xml);
-//        log.info("sendContent end");
-//    }
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            WechatTemplateMsgRequestDTO wechatTemplateMsgRequestDTO = new WechatTemplateMsgRequestDTO();
+            Map<String, WechatTemplateDataDTO> data = new HashMap<>();
+            wechatTemplateMsgRequestDTO.setData(data);
 
+            Map<String, WechatTemplateDataDTO> items = new HashMap<>();
+            wechatTemplateMsgRequestDTO.setItems(items);
+
+            //模板id
+//            String templateId = "TLQKUf4AbszVrkNYELnpgOlexa_Bm5TuriBXUCgunIU";//华夏
+            String templateId = "f-NeM_wE_xdMtrFZnIPfh3eo3v55m1aVCJ8LCk5JBHU";//汇融
+            wechatTemplateMsgRequestDTO.setTemplateId(templateId);
+
+            //openId
+//            String openId = "oFnSLvyxBArqJtYqd3-xU6H7Xr08";//华夏
+            String openId = "oikrq5giuCd4Rw4qG3fYY3sxn2sI";//汇融
+            wechatTemplateMsgRequestDTO.setTouser(openId);
+
+            String url = "";
+            wechatTemplateMsgRequestDTO.setUrl(url);
+
+            WechatTemplateMsgDTO wechatTemplateMsgDTO = wechatFeignClient.sendTemplateMsg(WechatGroupEnum.valueOf(id.name()), wechatTemplateMsgRequestDTO);
+
+            return wechatTemplateMsgDTO;
+        }).subscribeOn(Schedulers.elastic());
+    }
 }

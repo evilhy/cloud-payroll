@@ -1,10 +1,15 @@
 package chain.fxgj.server.payroll.service;
 
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.feign.dto.response.WageDetailInfoDTO;
 import chain.fxgj.feign.dto.response.WageRes100703;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.payroll.dto.response.PayrollRes100703DTO;
 import chain.payroll.dto.response.PayrollWageDetailDTO;
+import chain.pub.common.dto.wechat.AccessTokenDTO;
+import chain.pub.common.dto.wechat.UserInfoDTO;
+import chain.pub.common.enums.WechatGroupEnum;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +54,33 @@ public interface WechatRedisService {
      */
 //    @Cacheable(cacheNames = "wechat", key = "'wageDetailMysql:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
     List<WageDetailInfoDTO> getWageDetailByMysql(String idNumber, String groupId, String wageSheetId);
+
+    /**
+     * 根据code获取凭证
+     * 缓存 有效期为 5分钟
+     * @param wechatGroupEnum
+     * @param code
+     * @return
+     */
+//    @Cacheable(value = "weixinOauth2", key = "#root.methodName+':'+#code")
+    AccessTokenDTO oauth2AccessToken(WechatGroupEnum wechatGroupEnum, String code);
+
+    /**
+     * 根据网页授权openId、accessToken获取用户信息
+     * access_token 有效期为  7200秒 ，2个小时，
+     * 如果在 2个小时内，获取用户信息，从缓存中查取
+     * @param accessToken
+     * @param openId
+     * @return
+     */
+    @Cacheable(value = "weixinOauth2AccessTokenOpenid", key = "#root.methodName+':'+#openId")
+    UserInfoDTO getUserInfo(String accessToken, String openId);
+
+    /**
+     * 工资条登录
+     */
+    @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
+    WageUserPrincipal registeWechatPayroll(String jsessionId, String openId, String nickName, String headImgurl, String idNumber, AppPartnerEnum appPartner) throws Exception;
 
 
 

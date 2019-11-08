@@ -86,8 +86,8 @@ merchants:
 
 #设置feign调用超时时间
 ribbon:
-  ReadTimeout: 8000
-  ConnectTimeout: 8000
+  ReadTimeout: 30000
+  ConnectTimeout: 30000
 
 #禁用feign熔断
 feign:
