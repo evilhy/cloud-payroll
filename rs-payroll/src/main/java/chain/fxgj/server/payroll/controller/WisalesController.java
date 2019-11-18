@@ -150,92 +150,68 @@ public class WisalesController {
     // 兑换
     /**
      * 福利货柜活动商品兑换(实物兑换)
-     * @param custTransOrderInfoDTO
+     * @param addCustTransOrderInfoDTO
      * @return
      */
     @PostMapping("welfareCustOrder/welfareExchangeGoods")
     @TrackLog
-    public Mono<CustTransOrderInfoDTO> welfareExchangeGoods(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
+    public Mono<AddCustTransOrderInfoDTO> welfareExchangeGoods(@RequestBody AddCustTransOrderInfoDTO addCustTransOrderInfoDTO){
         try {
-            log.info("custTransOrderInfoDTO:[{}]", JacksonUtil.objectToJson(custTransOrderInfoDTO));
+            log.info("addCustTransOrderInfoDTO:[{}]", JacksonUtil.objectToJson(addCustTransOrderInfoDTO));
         } catch (Exception e) {
             log.info("日志打印错误！");
         }
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
-        String phone = principal.getPhone();
-        custTransOrderInfoDTO.setIdNumber(idNum);
-        custTransOrderInfoDTO.setPhoneNo(phone);
+        addCustTransOrderInfoDTO.setIdNumber(idNum);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            CustTransOrderInfoDTO custTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchangeGoods(custTransOrderInfoDTO);
-            return custTransOrderInfoDTO1;
+            AddCustTransOrderInfoDTO addCustTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchangeGoods(addCustTransOrderInfoDTO);
+            return addCustTransOrderInfoDTO1;
         }).subscribeOn(Schedulers.elastic());
     }
 
     /**
      * 福利货柜活动商品兑换(虚拟卡券影视月卡电影票星巴克)
      *
-     * @param custTransOrderInfoDTO
+     * @param addCustTransOrderInfoDTO
      * @return
      */
     @PostMapping("welfareCustOrder/welfareExchange")
-    public Mono<CustTransOrderInfoDTO> welfareExchange(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
+    public Mono<AddCustTransOrderInfoDTO> welfareExchange(@RequestBody AddCustTransOrderInfoDTO addCustTransOrderInfoDTO){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
-        String phone = principal.getPhone();
-        custTransOrderInfoDTO.setIdNumber(idNum);
-        custTransOrderInfoDTO.setPhoneNo(phone);
-        log.info("custTransOrderInfoDTO:[{}]", JacksonUtil.objectToJson(custTransOrderInfoDTO));
+        addCustTransOrderInfoDTO.setIdNumber(idNum);
+        log.info("custTransOrderInfoDTO:[{}]", JacksonUtil.objectToJson(addCustTransOrderInfoDTO));
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            CustTransOrderInfoDTO custTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchange(custTransOrderInfoDTO);
-            return custTransOrderInfoDTO1;
+            AddCustTransOrderInfoDTO addCustTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchange(addCustTransOrderInfoDTO);
+            return addCustTransOrderInfoDTO1;
         }).subscribeOn(Schedulers.elastic());
     }
 
     /**
      * 福利货柜活动商品兑换(话费流量兑换)
-     * @param custTransOrderInfoDTO
+     * @param addCustTransOrderInfoDTO
      * @return
      */
     @PostMapping("welfareCustOrder/welfareExchangePhone")
     @TrackLog
-    public Mono<CustTransOrderInfoDTO> welfareExchangePhone(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
+    public Mono<AddCustTransOrderInfoDTO> welfareExchangePhone(@RequestBody AddCustTransOrderInfoDTO addCustTransOrderInfoDTO){
+        log.info("addCustTransOrderInfoDTO:[{}]", JacksonUtil.objectToJson(addCustTransOrderInfoDTO));
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
-        String phone = principal.getPhone();
-//        custTransOrderInfoDTO.setIdNumber(idNum);
-//        custTransOrderInfoDTO.setPhoneNo(phone);
+        addCustTransOrderInfoDTO.setIdNumber(idNum);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            CustTransOrderInfoDTO custTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchangePhone(custTransOrderInfoDTO);
-            return custTransOrderInfoDTO1;
+            AddCustTransOrderInfoDTO addCustTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchangePhone(addCustTransOrderInfoDTO);
+            return addCustTransOrderInfoDTO1;
         }).subscribeOn(Schedulers.elastic());
     }
 
-    /**
-     * 福利货柜活动商品兑换(油卡兑换)
-     * @param custTransOrderInfoDTO
-     * @return
-     */
-    @PostMapping("welfareCustOrder/welfareExchangeOilCard")
-    public Mono<CustTransOrderInfoDTO> welfareExchangeOilCard(@RequestBody CustTransOrderInfoDTO custTransOrderInfoDTO){
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal principal = WebContext.getCurrentUser();
-        String idNum = principal.getIdNumber();
-        String phone = principal.getPhone();
-//        custTransOrderInfoDTO.setIdNumber(idNum);
-//        custTransOrderInfoDTO.setPhoneNo(phone);
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            CustTransOrderInfoDTO custTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchangeOilCard(custTransOrderInfoDTO);
-            return custTransOrderInfoDTO1;
-        }).subscribeOn(Schedulers.elastic());
-    }
 
     //收获地址
     /**
@@ -375,11 +351,11 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/custOrderDetail")
-    public Mono<CustTransOrderInfoDTO> findTransDtailById(@RequestParam String transOrderId){
+    public Mono<CustTransOrderInfoDetailDTO> findTransDtailById(@RequestParam String transOrderId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            CustTransOrderInfoDTO transDtailById = welfareActivityFeignService.findTransDtailById(transOrderId);
+            CustTransOrderInfoDetailDTO transDtailById = welfareActivityFeignService.findTransDtailById(transOrderId);
             return transDtailById;
         }).subscribeOn(Schedulers.elastic());
     }
