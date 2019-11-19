@@ -72,7 +72,7 @@ public class WisalesController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            byte[] bytes = welfareActivityFeignService.lookImg(id, response);
+            byte[] bytes = welfareActivityFeignService.lookImg(id);
             return bytes;
         }).subscribeOn(Schedulers.elastic());
     }
