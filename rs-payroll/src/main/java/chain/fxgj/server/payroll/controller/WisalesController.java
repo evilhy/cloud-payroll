@@ -107,7 +107,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareGoods/list")
-    public Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader(value = "pageNum",defaultValue = "1")int pageNum,
+    public Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader(value = "page-num",defaultValue = "1")int pageNum,
                                              @RequestHeader(value = "limit",defaultValue = "10") int limit,
                                              @Nullable @RequestParam String goodsNo,
                                              @Nullable @RequestParam String goodsName,
