@@ -362,15 +362,15 @@ public class WisalesController {
 
     /**
      * 根据系统下单订单号查询物流信息
-     * @param transLogId
+     * @param transOrderId
      * @return
      */
     @GetMapping("welfareCust/orderTrack")
-    public Mono<CustExchangeTransTrackResultDataDTO> findOrderTrack(@RequestParam String transLogId){
+    public Mono<CustExchangeTransTrackResultDataDTO> findOrderTrack(@RequestParam("transOrderId") String transOrderId){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            CustExchangeTransTrackResultDataDTO orderTrack = welfareActivityFeignService.findOrderTrack(transLogId);
+            CustExchangeTransTrackResultDataDTO orderTrack = welfareActivityFeignService.findOrderTrack(transOrderId);
             return orderTrack;
         }).subscribeOn(Schedulers.elastic());
     }
