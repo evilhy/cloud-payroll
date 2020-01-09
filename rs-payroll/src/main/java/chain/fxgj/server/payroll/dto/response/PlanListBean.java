@@ -54,6 +54,16 @@ public class PlanListBean {
      */
     private Integer payCnt;
 
+    /**
+     * 资金所属日期
+     */
+    private Integer fundDate;
+
+    /**
+     * 资金所属日期(描述)
+     */
+    private String fundDateDesc;
+
     public PlanListBean(String wageSheetId, BigDecimal totalAmt) {
         this.wageSheetId = wageSheetId;
         this.totalAmt = totalAmt;
