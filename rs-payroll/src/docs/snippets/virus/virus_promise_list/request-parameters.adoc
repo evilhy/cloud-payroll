@@ -1,0 +1,13 @@
+|===
+|Parameter|Description
+
+|`+openId+`
+|openId
+
+|`+page+`
+|页数（请求头参数）
+
+|`+size+`
+|页数大小(请求头参数)
+
+|===

@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8081/virus?openId=' \
+    'limit:10' \
+    'pageNum:1'
+----
