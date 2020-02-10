@@ -37,8 +37,8 @@ public class VirusController {
      */
     @GetMapping
     @TrackLog
-    public Mono<PageDTO<NcpVirusPromiseListDto>> list(@RequestHeader("page") @DefaultValue("1") int pageNum,
-                                                      @RequestHeader("size") @DefaultValue("20") int size,
+    public Mono<PageDTO<NcpVirusPromiseListDto>> list(@RequestHeader("page-num") @DefaultValue("1") int pageNum,
+                                                      @RequestHeader("limit") @DefaultValue("20") int size,
                                                       @RequestParam String openId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
