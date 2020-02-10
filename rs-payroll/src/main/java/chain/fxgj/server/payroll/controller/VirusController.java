@@ -1,10 +1,19 @@
 package chain.fxgj.server.payroll.controller;
 
+import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.fxgj.server.payroll.constant.ErrorConstant;
+import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.payroll.client.feign.VirusFeignService;
 import chain.payroll.dto.PageDTO;
 import chain.payroll.dto.request.virus.VirusRequestDto;
 import chain.payroll.dto.response.virus.NcpVirusPromiseListDto;
+import chain.pub.common.dto.wechat.AccessTokenDTO;
+import chain.pub.common.dto.wechat.UserInfoDTO;
+import chain.pub.common.enums.WechatGroupEnum;
+import chain.utils.commons.JacksonUtil;
+import chain.utils.commons.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +23,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.ws.rs.DefaultValue;
+import java.net.URLEncoder;
 import java.util.Map;
 
 /**
@@ -28,6 +38,8 @@ public class VirusController {
 
     @Autowired
     VirusFeignService virusFeignService;
+    @Autowired
+    WechatRedisService wechatRedisService;
 
     /**
      * 查询列表
@@ -58,6 +70,41 @@ public class VirusController {
             MDC.setContextMap(mdcContext);
 
             return virusFeignService.post(virusRequestDto);
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/userInfo")
+    @TrackLog
+    public Mono<UserInfoDTO> getUserInfo(@RequestParam("code") String code,
+                                         @RequestParam(value = "appPartner", defaultValue = "FXGJ") AppPartnerEnum appPartner,
+                                         @RequestParam(value = "routeName", required = false) String routeName){
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
+        return Mono.fromCallable(() -> {
+
+            //【一】根据code获取openId、accessToken
+            WechatGroupEnum wechatGroup = WechatGroupEnum.valueOf(appPartner.name());
+            log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
+            AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(wechatGroup, code);
+            log.info("accessTokenDTO:[{}]", JacksonUtil.objectToJson(accessTokenDTO));
+            String openId = accessTokenDTO.getOpenid();
+            String accessToken = accessTokenDTO.getAccessToken();
+            if (StringUtils.isEmpty(openId)) {
+                throw new ParamsIllegalException(ErrorConstant.AUTH_ERR.getErrorMsg());
+            }
+            //【二】根据openId、accessToken获取用户信息
+            UserInfoDTO userInfo = wechatRedisService.getUserInfo(accessToken, openId);
+            log.info("userInfo:[{}]", JacksonUtil.objectToJson(userInfo));
+            if (null == userInfo || StringUtils.isEmpty(userInfo.getNickname())) {
+                log.info("根据openId、accessToken获取用户信息失败");
+            } else {
+                try {
+                    userInfo.setNickname(URLEncoder.encode(userInfo.getNickname(), "UTF-8"));
+                } catch (Exception e) {
+                    log.info("获取昵称出现异常！");
+                }
+            }
+        return userInfo;
         }).subscribeOn(Schedulers.elastic());
     }
 
