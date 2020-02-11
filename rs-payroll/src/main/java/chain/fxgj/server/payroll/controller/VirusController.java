@@ -9,6 +9,7 @@ import chain.payroll.client.feign.VirusFeignService;
 import chain.payroll.dto.PageDTO;
 import chain.payroll.dto.request.virus.VirusRequestDto;
 import chain.payroll.dto.response.virus.NcpVirusPromiseListDto;
+import chain.payroll.dto.response.virus.VirusPromiseAddResDto;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
@@ -63,7 +64,7 @@ public class VirusController {
 
     @PostMapping
     @TrackLog
-    public Mono<Long> post(@RequestBody VirusRequestDto virusRequestDto){
+    public Mono<VirusPromiseAddResDto> post(@RequestBody VirusRequestDto virusRequestDto){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
