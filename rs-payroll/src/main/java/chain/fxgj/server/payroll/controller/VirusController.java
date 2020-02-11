@@ -97,12 +97,6 @@ public class VirusController {
             log.info("userInfo:[{}]", JacksonUtil.objectToJson(userInfo));
             if (null == userInfo || StringUtils.isEmpty(userInfo.getNickname())) {
                 log.info("根据openId、accessToken获取用户信息失败");
-            } else {
-                try {
-                    userInfo.setNickname(URLEncoder.encode(userInfo.getNickname(), "UTF-8"));
-                } catch (Exception e) {
-                    log.info("获取昵称出现异常！");
-                }
             }
         return userInfo;
         }).subscribeOn(Schedulers.elastic());
