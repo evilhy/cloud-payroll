@@ -51,13 +51,13 @@ public class VirusController {
     @TrackLog
     public Mono<PageDTO<NcpVirusPromiseListDto>> list(@RequestHeader("page-num") @DefaultValue("1") int pageNum,
                                                       @RequestHeader("limit") @DefaultValue("20") int size,
-                                                      @RequestParam String openId) {
+                                                      @RequestParam(required = false) String openid) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            return virusFeignService.list(pageNum,size,openId);
+            return virusFeignService.list(pageNum,size,openid);
         }).subscribeOn(Schedulers.elastic());
     }
 
