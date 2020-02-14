@@ -1,0 +1,39 @@
+:snippets: ../snippets/wechat
+== 新冠病毒
+
+=== 用户抗病毒承诺列表
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/virus/virus_promise_list/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/virus/virus_promise_list/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/virus/virus_promise_list/curl-request.adoc[]
+* Response:
++
+include::{snippets}/virus/virus_promise_list/http-response.adoc[]
+
+=== 用户抗病毒承诺新建
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/virus/virus_new_post/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/virus/virus_new_post/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/virus/virus_new_post/curl-request.adoc[]
+* Response:
++
+include::{snippets}/virus/virus_new_post/http-response.adoc[]
+
+
+

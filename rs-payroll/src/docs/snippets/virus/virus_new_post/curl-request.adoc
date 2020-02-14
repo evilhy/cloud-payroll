@@ -1,0 +1,12 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/virus/' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -d '{
+  "nickName" : "哈哈哈",
+  "phone" : "13812345689",
+  "headImageUrl" : "http://123.jpg",
+  "msgTemplateId" : "1",
+  "openId" : "dkjhfld3f63df6dkfd"
+}'
+----
