@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/virus?openId=' -i -X GET \
+    -H 'limit: 10' \
+    -H 'pageNum: 1'
+----

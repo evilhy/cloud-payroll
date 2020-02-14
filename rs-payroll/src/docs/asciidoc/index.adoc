@@ -32,3 +32,5 @@ include::inside.adoc[]
 include::advertising.adoc[]
 
 include::wisales.adoc[]
+
+include::virus.adoc[]
