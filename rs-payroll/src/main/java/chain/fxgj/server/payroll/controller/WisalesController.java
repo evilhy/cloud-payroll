@@ -121,7 +121,9 @@ public class WisalesController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = welfareActivityFeignService.baseList(pageNum, limit, goodsNo, goodsName, activityId, fItemCatId, sItemCatId, tItemCatId, minAmt, maxAmt, pickFlag);
+            //todo 待解决
+            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = new WelfareGoodsInfoAllResDTO();
+//            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = welfareActivityFeignService.baseList(pageNum, limit, goodsNo, goodsName, activityId, fItemCatId, sItemCatId, tItemCatId, minAmt, maxAmt, pickFlag);
             return welfareGoodsInfoAllResDTO;
         }).subscribeOn(Schedulers.elastic());
     }

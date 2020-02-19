@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"bindStatus":"0","jsessionId":"123123123","idNumber":null,"ifPwd":0,"headimgurl":"http://xxx.xxx..","name":null,"phone":"13400000001","apppartner":null,"apppartnerDesc":null}
+----

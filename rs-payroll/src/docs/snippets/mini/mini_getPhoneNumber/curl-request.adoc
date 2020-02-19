@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/mini/getPhoneNumber' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{"signature":null,"timestamp":null,"encryptedData":null,"jsessionId":"123123"}'
+----
