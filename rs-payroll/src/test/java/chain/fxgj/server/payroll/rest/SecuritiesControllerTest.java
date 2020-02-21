@@ -2,12 +2,9 @@ package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.dto.base.WeixinJsapiDTO;
-import chain.fxgj.server.payroll.dto.request.ReqMiniInfo;
 import chain.fxgj.server.payroll.dto.response.Res100705;
-import chain.fxgj.server.payroll.dto.response.ResMiniUserInfo;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesCustInfoDTO;
-import chain.fxgj.server.payroll.dto.securities.response.SecuritiesLoginDTO;
-import chain.fxgj.server.payroll.dto.tfinance.IntentRequestDTO;
+import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.*;
@@ -103,16 +100,16 @@ public class SecuritiesControllerTest {
     @Test
     public void securitiesLogin() throws Exception {
         String sessionId = "321321321";
-        SecuritiesLoginDTO securitiesLoginDTO = new SecuritiesLoginDTO();
-        securitiesLoginDTO.setCode("9527");
-        securitiesLoginDTO.setCustomerId("");
-        securitiesLoginDTO.setInvitationId("123123123");
-        securitiesLoginDTO.setPhone("13400000000");
+        ReqSecuritiesLoginDTO reqSecuritiesLoginDTO = new ReqSecuritiesLoginDTO();
+        reqSecuritiesLoginDTO.setCode("9527");
+        reqSecuritiesLoginDTO.setCustomerId("");
+        reqSecuritiesLoginDTO.setInvitationId("123123123");
+        reqSecuritiesLoginDTO.setPhone("13400000000");
         webTestClient.post()
                 .uri("/securityes/securitiesLogin")
                 .header("jsession_id", sessionId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .syncBody(securitiesLoginDTO)//入参
+                .syncBody(reqSecuritiesLoginDTO)//入参
                 .exchange()
                 .expectStatus()
                 .isOk()

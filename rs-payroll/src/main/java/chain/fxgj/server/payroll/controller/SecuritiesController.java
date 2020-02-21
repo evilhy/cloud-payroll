@@ -6,6 +6,7 @@ import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqRewardDTO;
+import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.*;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
@@ -15,7 +16,6 @@ import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
-import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -53,17 +53,51 @@ public class SecuritiesController {
 
     /**
      * 登录校验
-     * @param code
-     * @param appPartner
      * @return
      */
     @GetMapping("/loginCheck")
     @TrackLog
-    public Mono<SecuritiesCustInfoDTO> loginCheck(@RequestParam("code") String code,
-        @RequestParam(value = "appPartner", required = true, defaultValue = "FXGJ") AppPartnerEnum appPartner) {
+    public Mono<SecuritiesCustInfoDTO> loginCheck(@RequestParam("openId") String openId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
 
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
+            String jsessionId = UUIDUtil.createUUID32();
+            //查询唯销是否已登录
+            SecuritiesRedisDTO securitiesRedisDTO = securitiesService.qrySecuritiesCustInfo(openId);
+            String phone = securitiesRedisDTO.getPhone();
+            //数据入缓存
+            WageUserPrincipal wechatInfoDetail = securitiesService.getWechatInfoDetail(jsessionId, openId, phone);
+
+            IsStatusEnum loginStatus = securitiesRedisDTO.getLoginStatus();
+            SecuritiesCustInfoDTO securitiesCustInfoDTO = new SecuritiesCustInfoDTO();
+            securitiesCustInfoDTO.setJsessionId(jsessionId);
+            securitiesCustInfoDTO.setPhone(phone);
+            securitiesCustInfoDTO.setLoginStatus(loginStatus.getCode());
+            securitiesCustInfoDTO.setLoginStatusVal(loginStatus.getDesc());
+
+            if (IsStatusEnum.NO.equals(loginStatus)) {
+                //todo 唯销没有值 ，再根据openId，查询本地Mysql 微信表，有数据则返回 jsessionId、手机号
+            }
+            return securitiesCustInfoDTO;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    /**
+     * 证券登录
+     *
+     * @param reqSecuritiesLoginDTO
+     */
+    @PostMapping("/securitiesLogin")
+    @TrackLog
+    public Mono<Boolean> securitiesLogin(@RequestBody ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal principal = WebContext.getCurrentUser();
+
+        AppPartnerEnum appPartner = reqSecuritiesLoginDTO.getAppPartner();
+        String code = reqSecuritiesLoginDTO.getWechatCode();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             //【一】根据code获取openId、accessToken
@@ -91,51 +125,15 @@ public class SecuritiesController {
                 }
                 headImgurl = userInfo.getHeadimgurl();
             }
-            String jsessionId = UUIDUtil.createUUID32();
-            //数据入缓存
-            WageUserPrincipal wechatInfoDetail = securitiesService.getWechatInfoDetail(jsessionId, openId, nickName, headImgurl);
-
-            //查询唯销是否已登录
-            SecuritiesRedisDTO securitiesRedisDTO = securitiesService.qrySecuritiesCustInfo(openId);
-
-            IsStatusEnum loginStatus = securitiesRedisDTO.getLoginStatus();
-            SecuritiesCustInfoDTO securitiesCustInfoDTO = new SecuritiesCustInfoDTO();
-            securitiesCustInfoDTO.setJsessionId(jsessionId);
-            securitiesCustInfoDTO.setPhone(securitiesRedisDTO.getPhone());
-            securitiesCustInfoDTO.setLoginStatus(loginStatus.getCode());
-            securitiesCustInfoDTO.setLoginStatusVal(loginStatus.getDesc());
-
-            if (IsStatusEnum.NO.equals(loginStatus)) {
-                //todo 唯销没有值 ，再根据openId，查询本地Mysql 微信表，有数据则返回 jsessionId、手机号
-
-            }
-            return securitiesCustInfoDTO;
-        }).subscribeOn(Schedulers.elastic());
-    }
-
-    /**
-     * 证券登录
-     *
-     * @param securitiesLoginDTO
-     */
-    @PostMapping("/securitiesLogin")
-    @TrackLog
-    public Mono<Boolean> securitiesLogin(@RequestBody SecuritiesLoginDTO securitiesLoginDTO) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal principal = WebContext.getCurrentUser();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
 
             //1.短信验证码校验是否通过
 
             //2.从缓存取数据入库
-            String openId = principal.getOpenId();
             String nickname = principal.getNickname();
             String headimgurl = principal.getHeadimgurl();
-            securitiesService.securitiesLogin(openId, nickname, headimgurl, securitiesLoginDTO);
+            boolean loginBoolean = securitiesService.securitiesLogin(openId, nickname, headimgurl, reqSecuritiesLoginDTO);
 
-            Boolean loginSuccess = true;
-            return loginSuccess;
+            return loginBoolean;
         }).subscribeOn(Schedulers.elastic());
     }
 

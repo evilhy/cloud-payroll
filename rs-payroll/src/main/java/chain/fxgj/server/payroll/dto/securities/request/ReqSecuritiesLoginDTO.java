@@ -1,5 +1,6 @@
-package chain.fxgj.server.payroll.dto.securities.response;
+package chain.fxgj.server.payroll.dto.securities.request;
 
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -15,7 +16,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class SecuritiesLoginDTO {
+public class ReqSecuritiesLoginDTO {
 
     /**
      * 手机号
@@ -35,6 +36,16 @@ public class SecuritiesLoginDTO {
     /**
      * 短信验证码
      */
-    private String code;
+    private String msgCode;
+
+    /**
+     * 微信code
+     */
+    private String wechatCode;
+
+    /**
+     * 渠道
+     */
+    private AppPartnerEnum appPartner;
 
 }
