@@ -1,7 +1,0 @@
-|===
-|Parameter|Description
-
-|`+phone+`
-|手机号
-
-|===

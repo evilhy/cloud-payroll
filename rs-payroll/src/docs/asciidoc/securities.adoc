@@ -35,6 +35,3 @@ include::{snippets}/securities/securityes_securitiesLogin/curl-request.adoc[]
 +
 include::{snippets}/securityes/securityes_securitiesLogin/http-response.adoc[]
 
-
-
-

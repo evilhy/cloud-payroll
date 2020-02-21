@@ -1,4 +1,4 @@
 [source,options="nowrap"]
 ----
-
+{"phone":"13400000000","customerId":"","invitationId":"123123123","code":"9527"}
 ----

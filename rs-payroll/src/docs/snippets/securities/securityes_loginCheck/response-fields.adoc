@@ -9,4 +9,12 @@
 |`+String+`
 |手机号
 
+|`+loginStatus+`
+|`+Integer+`
+|loginStatus (0未登录，1已登录)
+
+|`+loginStatusVal+`
+|`+String+`
+|loginStatus (0未登录，1已登录)
+
 |===

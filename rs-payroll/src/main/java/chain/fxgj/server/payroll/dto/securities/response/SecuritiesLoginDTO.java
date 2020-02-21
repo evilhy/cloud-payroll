@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 /**
- * 客户信息
+ * 证券活动登录入参
  */
 @Getter
 @Setter
@@ -15,23 +15,26 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class SecuritiesCustInfoDTO {
-    /**
-     * 凭证
-     */
-    private String jsessionId;
+public class SecuritiesLoginDTO {
+
     /**
      * 手机号
      */
     private String phone;
 
     /**
-     * loginStatus (0未登录，1已登录)
+     * 客户经理id
      */
-    private Integer loginStatus;
+    private String customerId;
+
     /**
-     * loginStatus (0未登录，1已登录)
+     * 推荐人id
      */
-    private String loginStatusVal;
+    private String invitationId;
+
+    /**
+     * 短信验证码
+     */
+    private String code;
 
 }

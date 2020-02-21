@@ -6,6 +6,8 @@ import chain.fxgj.server.payroll.dto.request.ReqMiniInfo;
 import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.response.ResMiniUserInfo;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesCustInfoDTO;
+import chain.fxgj.server.payroll.dto.securities.response.SecuritiesLoginDTO;
+import chain.fxgj.server.payroll.dto.tfinance.IntentRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.*;
@@ -101,15 +103,22 @@ public class SecuritiesControllerTest {
     @Test
     public void securitiesLogin() throws Exception {
         String sessionId = "321321321";
-        webTestClient.get()
-                .uri("/securityes/securitiesLogin?phone={phone}","13400000000")
+        SecuritiesLoginDTO securitiesLoginDTO = new SecuritiesLoginDTO();
+        securitiesLoginDTO.setCode("9527");
+        securitiesLoginDTO.setCustomerId("");
+        securitiesLoginDTO.setInvitationId("123123123");
+        securitiesLoginDTO.setPhone("13400000000");
+        webTestClient.post()
+                .uri("/securityes/securitiesLogin")
                 .header("jsession_id", sessionId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .syncBody(securitiesLoginDTO)//入参
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .expectBody(String.class)//返回是什么类型的对象
-                .consumeWith(document("securityes_securitiesLogin",
-                        relaxedRequestParameters(parameterWithName("phone").description("手机号"))));//出参对象描述
+                .expectBody()//返回是什么类型的对象
+                .consumeWith(document("securityes_securitiesLogin"));
+//                        relaxedRequestFields(JavaDocReader.javaDoc(IntentRequestDTO.class))));
     }
 
     /**

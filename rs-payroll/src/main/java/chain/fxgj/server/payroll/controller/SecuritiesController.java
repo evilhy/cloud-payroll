@@ -3,11 +3,9 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.server.payroll.dto.securities.request.ReqRewardDTO;
-import chain.fxgj.server.payroll.dto.securities.response.SecuritiesBeInvitedDTO;
-import chain.fxgj.server.payroll.dto.securities.response.SecuritiesCustInfoDTO;
-import chain.fxgj.server.payroll.dto.securities.response.SecuritiesInvestmentRewardDTO;
-import chain.fxgj.server.payroll.dto.securities.response.SecuritiesOpenRewardDTO;
+import chain.fxgj.server.payroll.dto.securities.response.*;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -86,53 +84,56 @@ public class SecuritiesController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             //【一】根据code获取openId、accessToken
-            WechatGroupEnum wechatGroup = WechatGroupEnum.valueOf(appPartner.name());
-            log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
-            AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(wechatGroup, code);
-            log.info("accessTokenDTO:[{}]", JacksonUtil.objectToJson(accessTokenDTO));
-            String openId = accessTokenDTO.getOpenid();
-            String accessToken = accessTokenDTO.getAccessToken();
-            if (chain.utils.commons.StringUtils.isEmpty(openId)) {
-                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.AUTH_ERR.getErrorMsg());
-            }
-            //【二】根据 openId、accessToken 获取用户信息
-            UserInfoDTO userInfo = wechatRedisService.getUserInfo(accessToken, openId);
-            String nickName = userInfo.getNickname();
-            String headImgurl = userInfo.getHeadimgurl();
-            log.info("userInfo:[{}]", JacksonUtil.objectToJson(userInfo));
-            if (null == userInfo || chain.utils.commons.StringUtils.isEmpty(userInfo.getNickname())) {
-                log.info("根据openId、accessToken获取用户信息失败");
-            } else {
-                try {
-                    nickName = URLEncoder.encode(userInfo.getNickname(), "UTF-8");
-                } catch (Exception e) {
-                    log.info("获取昵称出现异常！");
-                }
-                headImgurl = userInfo.getHeadimgurl();
-            }
+//            WechatGroupEnum wechatGroup = WechatGroupEnum.valueOf(appPartner.name());
+//            log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
+//            AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(wechatGroup, code);
+//            log.info("accessTokenDTO:[{}]", JacksonUtil.objectToJson(accessTokenDTO));
+//            String openId = accessTokenDTO.getOpenid();
+//            String accessToken = accessTokenDTO.getAccessToken();
+//            if (chain.utils.commons.StringUtils.isEmpty(openId)) {
+//                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.AUTH_ERR.getErrorMsg());
+//            }
+//            //【二】根据 openId、accessToken 获取用户信息
+//            UserInfoDTO userInfo = wechatRedisService.getUserInfo(accessToken, openId);
+//            String nickName = userInfo.getNickname();
+//            String headImgurl = userInfo.getHeadimgurl();
+//            log.info("userInfo:[{}]", JacksonUtil.objectToJson(userInfo));
+//            if (null == userInfo || chain.utils.commons.StringUtils.isEmpty(userInfo.getNickname())) {
+//                log.info("根据openId、accessToken获取用户信息失败");
+//            } else {
+//                try {
+//                    nickName = URLEncoder.encode(userInfo.getNickname(), "UTF-8");
+//                } catch (Exception e) {
+//                    log.info("获取昵称出现异常！");
+//                }
+//                headImgurl = userInfo.getHeadimgurl();
+//            }
             //todo 根据openId查询唯销用户信息，有值则组装数据，入缓存，并返回给前端
             //唯销没有值 ，查询本地Mysql 微信表，有数据则返回 jsessionId、手机号
             SecuritiesCustInfoDTO securitiesCustInfoDTO = new SecuritiesCustInfoDTO();
             securitiesCustInfoDTO.setJsessionId("123123");
             securitiesCustInfoDTO.setPhone("13400000000");
+            securitiesCustInfoDTO.setLoginStatus(IsStatusEnum.YES.getCode());
+            securitiesCustInfoDTO.setLoginStatusVal(IsStatusEnum.YES.getDesc());
             return securitiesCustInfoDTO;
         }).subscribeOn(Schedulers.elastic());
     }
 
     /**
      * 证券登录
-     * @return
+     *
+     * @param securitiesLoginDTO
      */
-    @GetMapping("/securitiesLogin")
+    @PostMapping("/securitiesLogin")
     @TrackLog
-    public Mono<Boolean> securitiesLogin(@RequestParam("phone") String phone) {
+    public Mono<Boolean> securitiesLogin(@RequestBody SecuritiesLoginDTO securitiesLoginDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             //从缓存取数据入库
-            Boolean b = true;
-            return b;
+            Boolean loginSuccess = true;
+            return loginSuccess;
         }).subscribeOn(Schedulers.elastic());
     }
 
