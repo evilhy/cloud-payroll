@@ -1,4 +1,4 @@
-package chain.fxgj.server.payroll.dto.securities;
+package chain.fxgj.server.payroll.dto.securities.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -14,14 +14,16 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class SecuritiesCustInfoDTO {
+public class ReqRewardDTO {
+
     /**
-     * 凭证
+     * 客户id
      */
-    private String jsessionId;
+    private String custId;
+
     /**
-     * 手机号
+     * 经理id
      */
-    private String phone;
+    private String customerId;
 
 }

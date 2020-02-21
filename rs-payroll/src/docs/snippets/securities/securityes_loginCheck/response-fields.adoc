@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+jsessionId+`
+|`+String+`
+|凭证
+
+|`+phone+`
+|`+String+`
+|手机号
+
+|===

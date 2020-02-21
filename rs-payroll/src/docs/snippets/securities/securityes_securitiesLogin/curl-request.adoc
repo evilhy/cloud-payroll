@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/securityes/securitiesLogin?phone=13400000000' -i -X GET \
+    -H 'jsession_id: 321321321'
+----

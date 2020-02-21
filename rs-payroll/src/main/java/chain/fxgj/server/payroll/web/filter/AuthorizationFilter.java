@@ -46,7 +46,8 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/unAuth",
             "/sync",
             "/virus",
-            "/mini"
+            "/mini",
+            "/securityes"
     };
 
     @Autowired

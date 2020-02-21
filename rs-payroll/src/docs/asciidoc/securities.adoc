@@ -1,0 +1,40 @@
+:snippets: ../snippets/wechat
+== 证券开户活动
+
+=== 登录检查
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/securities/securityes_loginCheck/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/securities/securityes_loginCheck/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/securities/securityes_loginCheck/curl-request.adoc[]
+* Response:
++
+include::{snippets}/securities/securityes_loginCheck/http-response.adoc[]
+
+=== 登录
+==== 接口定义
+* Query Parameters:
++
+include::{snippets}/securities/securityes_securitiesLogin/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/securities/securityes_securitiesLogin/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/securities/securityes_securitiesLogin/curl-request.adoc[]
+* Response:
++
+include::{snippets}/securityes/securityes_securitiesLogin/http-response.adoc[]
+
+
+
+

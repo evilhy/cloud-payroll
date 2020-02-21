@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/securityes/securitiesLogin?phone=13400000000' \
+    'jsession_id:321321321'
+----

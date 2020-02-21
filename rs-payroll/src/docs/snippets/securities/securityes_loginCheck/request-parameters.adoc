@@ -1,0 +1,10 @@
+|===
+|Parameter|Description
+
+|`+code+`
+|code
+
+|`+appPartner+`
+|渠道
+
+|===
