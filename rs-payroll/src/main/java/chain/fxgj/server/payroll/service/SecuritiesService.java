@@ -4,6 +4,8 @@ import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.feign.dto.response.WageDetailInfoDTO;
 import chain.fxgj.feign.dto.response.WageRes100703;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
+import chain.fxgj.server.payroll.dto.securities.response.SecuritiesLoginDTO;
+import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.payroll.dto.response.PayrollRes100703DTO;
 import chain.payroll.dto.response.PayrollWageDetailDTO;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
@@ -22,8 +24,21 @@ public interface SecuritiesService {
      *
      * @return
      */
-//    @Cacheable(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
-    WageUserPrincipal getWechatInfoDetail(String jsessionId);
+    @Cacheable(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
+    WageUserPrincipal getWechatInfoDetail(String jsessionId, String openId, String nickName, String headImgurl);
 
-    void pictureCheck();
+    /**
+     * 根据openId查询是证券活动否登录
+     * @param openId
+     */
+    SecuritiesRedisDTO qrySecuritiesCustInfo(String openId);
+
+    /**
+     *
+     * @param
+     * @return
+     */
+    void securitiesLogin(String openId, String  nickname, String  headimgurl, SecuritiesLoginDTO securitiesLoginDTO);
+
+
 }
