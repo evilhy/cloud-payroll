@@ -5,6 +5,7 @@ import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.fxgj.server.payroll.service.SecuritiesService;
+import chain.utils.commons.JacksonUtil;
 import chain.wisales.client.feign.SecuritiesActivityFeignService;
 import chain.wisales.core.dto.securities.SecuritiesCustInfoDTO;
 import chain.wisales.core.dto.securities.SecuritiesLoginDTO;
@@ -50,17 +51,21 @@ public class SecuritiesServiceImpl implements SecuritiesService {
         return null;
     }
 
+    /**
+     * 调用唯销数据入库
+     * @param securitiesRedisDTO
+     * @return
+     */
     @Override
     public String securitiesLogin(SecuritiesRedisDTO securitiesRedisDTO) {
-        //todo 调用唯销数据入库
-
+        log.info("securitiesLogin.securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
         SecuritiesLoginDTO securitiesLoginDTO = new SecuritiesLoginDTO();
         securitiesLoginDTO.setOpenId(securitiesRedisDTO.getOpenId());
         securitiesLoginDTO.setPhoneNo(securitiesRedisDTO.getPhone());
         securitiesLoginDTO.setUserNickName(securitiesRedisDTO.getNickname());
         securitiesLoginDTO.setUserLogo(securitiesRedisDTO.getHeadimgurl());
         securitiesLoginDTO.setReferrerId(securitiesRedisDTO.getInvitationId());
-
+        log.info("securitiesLogin.securitiesLoginDTO:[{}]", JacksonUtil.objectToJson(securitiesLoginDTO));
         String custId = securitiesActivityFeignService.login(securitiesLoginDTO);
         return custId;
     }

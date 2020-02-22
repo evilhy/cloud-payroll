@@ -122,6 +122,7 @@ public class SecuritiesController {
     public Mono<String> securitiesLogin(@RequestBody ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         log.info("securitiesLogin.reqSecuritiesLoginDTO:[{}]", JacksonUtil.objectToJson(reqSecuritiesLoginDTO));
+        String phone = reqSecuritiesLoginDTO.getPhone();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
@@ -129,7 +130,7 @@ public class SecuritiesController {
             WageReqPhone wageReqPhone = new WageReqPhone();
             wageReqPhone.setCode(reqSecuritiesLoginDTO.getMsgCode());
             wageReqPhone.setCodeId(reqSecuritiesLoginDTO.getMsgCodeId());
-            wageReqPhone.setPhone(reqSecuritiesLoginDTO.getPhone());
+            wageReqPhone.setPhone(phone);
             String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
@@ -138,6 +139,7 @@ public class SecuritiesController {
             //2.从缓存取数据入库
             String jsessionId = reqSecuritiesLoginDTO.getJsessionId();
             SecuritiesRedisDTO securitiesRedisDTO = securitiesService.qrySecuritiesRedis(jsessionId);
+            securitiesRedisDTO.setPhone(phone);
             String custId = securitiesService.securitiesLogin(securitiesRedisDTO);
 
             return custId;
