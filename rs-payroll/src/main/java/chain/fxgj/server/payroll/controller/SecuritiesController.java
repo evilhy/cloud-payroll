@@ -261,7 +261,6 @@ public class SecuritiesController {
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            //todo 拖拽式滑块图形验证
 
             return principal.getCustId();
         }).subscribeOn(Schedulers.elastic());
