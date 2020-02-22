@@ -281,6 +281,7 @@ public class SecuritiesController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             CaptchaDTO captcha = captchaFeignClient.captcha();
+            log.info("captcha:[{}]", JacksonUtil.objectToJson(captcha));
             return captcha;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -296,6 +297,7 @@ public class SecuritiesController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            log.info("imageCodeId:[{}], code:[{}]", imageCodeId, code);
             captchaFeignClient.validate(imageCodeId, code);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
