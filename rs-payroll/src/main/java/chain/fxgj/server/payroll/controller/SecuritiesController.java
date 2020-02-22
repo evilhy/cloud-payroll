@@ -4,6 +4,7 @@ import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
+import chain.fxgj.feign.client.InsideFeignService;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqRewardDTO;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
@@ -49,7 +50,8 @@ public class SecuritiesController {
     SecuritiesService securitiesService;
     @Autowired
     WechatRedisService wechatRedisService;
-
+    @Autowired
+    InsideFeignService insideFeignService;
 
     /**
      * 登录校验
@@ -127,7 +129,14 @@ public class SecuritiesController {
             }
 
             //1.短信验证码校验是否通过
-
+//            WageReqPhone wageReqPhone = new WageReqPhone();
+//            wageReqPhone.setCode(reqSecuritiesLoginDTO.getMsgCode());
+//            wageReqPhone.setCodeId(reqSecuritiesLoginDTO.getCodeId());
+//            wageReqPhone.setPhone(reqSecuritiesLoginDTO.getPhone());
+//            String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
+//            if (!StringUtils.equals("0000", retStr)) {
+//                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
+//            }
             //2.从缓存取数据入库
             String nickname = principal.getNickname();
             String headimgurl = principal.getHeadimgurl();

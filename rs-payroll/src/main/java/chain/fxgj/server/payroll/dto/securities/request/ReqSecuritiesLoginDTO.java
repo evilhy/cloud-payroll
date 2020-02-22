@@ -39,6 +39,11 @@ public class ReqSecuritiesLoginDTO {
     private String msgCode;
 
     /**
+     * 短信验证码id
+     */
+    private String msgCodeId;
+
+    /**
      * 微信code
      */
     private String wechatCode;

@@ -21,7 +21,7 @@ public class SecuritiesServiceImpl implements SecuritiesService {
 
     @Override
     public SecuritiesRedisDTO qrySecuritiesCustInfo(String openId) {
-
+        log.info("qrySecuritiesCustInfo.openId:[{}]", openId);
         SecuritiesCustInfoDTO securitiesCustInfoDTO = securitiesActivityFeignService.loginCheck(openId);
         SecuritiesRedisDTO securitiesRedisDTO = new SecuritiesRedisDTO();
         securitiesRedisDTO.setLoginStatus(securitiesCustInfoDTO.getLoginStatus()?IsStatusEnum.YES:IsStatusEnum.NO);
