@@ -4,11 +4,9 @@ import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
-import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.feign.client.InsideFeignService;
 import chain.fxgj.feign.dto.request.WageReqPhone;
-import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqRewardDTO;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.*;
@@ -16,6 +14,8 @@ import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.pub.client.feign.CaptchaFeignClient;
+import chain.pub.common.dto.captcha.CaptchaDTO;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
@@ -33,7 +33,6 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +55,8 @@ public class SecuritiesController {
     WechatRedisService wechatRedisService;
     @Autowired
     InsideFeignService insideFeignService;
+    @Autowired
+    CaptchaFeignClient captchaFeignClient;
 
     /**
      * 登录校验
@@ -267,4 +268,37 @@ public class SecuritiesController {
             return principal.getCustId();
         }).subscribeOn(Schedulers.elastic());
     }
+
+    /**
+     * 生成验证返回图片base64
+     *
+     * @return
+     */
+    @GetMapping("/imageCaptcha")
+    @TrackLog
+    public Mono<CaptchaDTO> imageCaptcha() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            CaptchaDTO captcha = captchaFeignClient.captcha();
+            return captcha;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    /**
+     * 验证验证码是否正确
+     *
+     * @return
+     */
+    @GetMapping("/imageValidate")
+    @TrackLog
+    public Mono<Void> imageValidate(@RequestParam("imageCodeId") String imageCodeId, @RequestParam("code") String code) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            captchaFeignClient.validate(imageCodeId, code);
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
+    }
+
 }
