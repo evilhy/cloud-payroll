@@ -1,10 +1,13 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
+import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
+import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.feign.client.InsideFeignService;
+import chain.fxgj.feign.dto.request.WageReqPhone;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqRewardDTO;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
@@ -17,6 +20,7 @@ import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
+import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -97,7 +101,7 @@ public class SecuritiesController {
     public Mono<Boolean> securitiesLogin(@RequestBody ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
-
+        log.info("securitiesLogin.reqSecuritiesLoginDTO:[{}]", JacksonUtil.objectToJson(reqSecuritiesLoginDTO));
         AppPartnerEnum appPartner = reqSecuritiesLoginDTO.getAppPartner();
         String code = reqSecuritiesLoginDTO.getWechatCode();
         return Mono.fromCallable(() -> {
@@ -129,14 +133,14 @@ public class SecuritiesController {
             }
 
             //1.短信验证码校验是否通过
-//            WageReqPhone wageReqPhone = new WageReqPhone();
-//            wageReqPhone.setCode(reqSecuritiesLoginDTO.getMsgCode());
-//            wageReqPhone.setCodeId(reqSecuritiesLoginDTO.getCodeId());
-//            wageReqPhone.setPhone(reqSecuritiesLoginDTO.getPhone());
-//            String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
-//            if (!StringUtils.equals("0000", retStr)) {
-//                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
-//            }
+            WageReqPhone wageReqPhone = new WageReqPhone();
+            wageReqPhone.setCode(reqSecuritiesLoginDTO.getMsgCode());
+            wageReqPhone.setCodeId(reqSecuritiesLoginDTO.getMsgCodeId());
+            wageReqPhone.setPhone(reqSecuritiesLoginDTO.getPhone());
+            String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
+            if (!StringUtils.equals("0000", retStr)) {
+                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
+            }
             //2.从缓存取数据入库
             String nickname = principal.getNickname();
             String headimgurl = principal.getHeadimgurl();
