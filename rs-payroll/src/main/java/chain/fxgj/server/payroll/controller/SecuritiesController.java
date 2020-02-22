@@ -249,4 +249,21 @@ public class SecuritiesController {
         }).subscribeOn(Schedulers.elastic());
     }
 
+    /**
+     * 查询分享携带信息
+     *
+     * @return
+     */
+    @GetMapping("/shareInfo")
+    @TrackLog
+    public Mono<String> shareInfo() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal principal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            //todo 拖拽式滑块图形验证
+
+            return principal.getCustId();
+        }).subscribeOn(Schedulers.elastic());
+    }
 }
