@@ -97,6 +97,9 @@ public class SecuritiesController {
                 }
                 securitiesRedisDTO.setNickname(nickName);
                 securitiesRedisDTO.setHeadimgurl(userInfo.getHeadimgurl());
+                securitiesRedisDTO.setSex(String.valueOf(userInfo.getSex()));
+                securitiesRedisDTO.setCountry(userInfo.getCountry());
+                securitiesRedisDTO.setCity(userInfo.getCity());
                 //更新缓存
                 securitiesService.upSecuritiesRedis(jsessionId, securitiesRedisDTO);
                 //todo 唯销没有值 ，再根据openId，查询本地Mysql 微信表，有数据则返回 jsessionId、手机号
@@ -112,7 +115,7 @@ public class SecuritiesController {
      */
     @PostMapping("/securitiesLogin")
     @TrackLog
-    public Mono<String> securitiesLogin(@RequestBody ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
+    public Mono<ResSecuritiesLoginDTO> securitiesLogin(@RequestBody ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         log.info("securitiesLogin.reqSecuritiesLoginDTO:[{}]", JacksonUtil.objectToJson(reqSecuritiesLoginDTO));
         String phone = reqSecuritiesLoginDTO.getPhone();
@@ -141,7 +144,10 @@ public class SecuritiesController {
             securitiesRedisDTO.setCustomerId(customerId);
             String custId = securitiesService.securitiesLogin(securitiesRedisDTO);
 
-            return custId;
+            ResSecuritiesLoginDTO resSecuritiesLoginDTO = new ResSecuritiesLoginDTO();
+            resSecuritiesLoginDTO.setCustId(custId);
+            resSecuritiesLoginDTO.setLoginStatus(1);
+            return resSecuritiesLoginDTO;
         }).subscribeOn(Schedulers.elastic());
     }
 

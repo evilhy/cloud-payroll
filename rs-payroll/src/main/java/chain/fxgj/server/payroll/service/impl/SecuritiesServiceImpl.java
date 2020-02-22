@@ -65,6 +65,10 @@ public class SecuritiesServiceImpl implements SecuritiesService {
         securitiesLoginDTO.setUserLogo(securitiesRedisDTO.getHeadimgurl());
         securitiesLoginDTO.setReferrerId(securitiesRedisDTO.getInvitationId());
         securitiesLoginDTO.setManagerId(securitiesRedisDTO.getCustomerId());
+        securitiesLoginDTO.setSex(securitiesRedisDTO.getSex());
+        securitiesLoginDTO.setCity(securitiesRedisDTO.getCity());
+        securitiesLoginDTO.setCountry(securitiesRedisDTO.getCountry());
+
         log.info("securitiesLogin.securitiesLoginDTO:[{}]", JacksonUtil.objectToJson(securitiesLoginDTO));
         String custId = securitiesActivityFeignService.login(securitiesLoginDTO);
         return custId;

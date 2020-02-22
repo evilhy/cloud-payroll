@@ -78,5 +78,17 @@ public class SecuritiesRedisDTO {
      * 微信用户表id
      */
     private String wxUserId;
+    /**
+     * 性别
+     */
+    private String sex;
+    /**
+     * 区域
+     */
+    private String country;
+    /**
+     * 城市
+     */
+    private String city;
 
 }
