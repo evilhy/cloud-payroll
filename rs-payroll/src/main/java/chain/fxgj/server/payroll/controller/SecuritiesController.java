@@ -90,20 +90,12 @@ public class SecuritiesController {
                 //【二】根据 openId、accessToken 获取用户信息
                 UserInfoDTO userInfo = wechatRedisService.getUserInfo(accessToken, openId);
                 String nickName = userInfo.getNickname();
-                String headImgurl = userInfo.getHeadimgurl();
                 log.info("userInfo:[{}]", JacksonUtil.objectToJson(userInfo));
-                if (null == userInfo || chain.utils.commons.StringUtils.isEmpty(userInfo.getNickname())) {
+                if (null == userInfo || chain.utils.commons.StringUtils.isEmpty(nickName)) {
                     log.info("根据openId、accessToken获取用户信息失败");
-                } else {
-                    try {
-                        nickName = URLEncoder.encode(userInfo.getNickname(), "UTF-8");
-                    } catch (Exception e) {
-                        log.info("获取昵称出现异常！");
-                    }
-                    headImgurl = userInfo.getHeadimgurl();
                 }
                 securitiesRedisDTO.setNickname(nickName);
-                securitiesRedisDTO.setHeadimgurl(headImgurl);
+                securitiesRedisDTO.setHeadimgurl(userInfo.getHeadimgurl());
                 //更新缓存
                 securitiesService.upSecuritiesRedis(jsessionId, securitiesRedisDTO);
                 //todo 唯销没有值 ，再根据openId，查询本地Mysql 微信表，有数据则返回 jsessionId、手机号
