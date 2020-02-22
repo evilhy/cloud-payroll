@@ -23,20 +23,19 @@ public class SecuritiesServiceImpl implements SecuritiesService {
     @Override
     public SecuritiesRedisDTO qrySecuritiesCustInfo(String jsessionId, String openId) {
         log.info("qrySecuritiesCustInfo.jsessionId[{}], openId:[{}]", jsessionId, openId);
+
         SecuritiesCustInfoDTO securitiesCustInfoDTO = securitiesActivityFeignService.loginCheck(openId);
+
         SecuritiesRedisDTO securitiesRedisDTO = new SecuritiesRedisDTO();
         securitiesRedisDTO.setLoginStatus(securitiesCustInfoDTO.getLoginStatus()?1:0);
         securitiesRedisDTO.setLoginStatusVal(securitiesCustInfoDTO.getLoginStatus()?"已登录":"未登录");
         securitiesRedisDTO.setPhone(securitiesCustInfoDTO.getPhoneNo());
-        securitiesRedisDTO.setCustId(securitiesRedisDTO.getCustId());
-        securitiesRedisDTO.setHeadimgurl(securitiesRedisDTO.getHeadimgurl());
-        securitiesRedisDTO.setNickname(securitiesRedisDTO.getNickname());
+        securitiesRedisDTO.setCustId(securitiesCustInfoDTO.getCustId());
+        securitiesRedisDTO.setHeadimgurl(securitiesCustInfoDTO.getUserLogo());
+        securitiesRedisDTO.setNickname(securitiesCustInfoDTO.getUserNickName());
         securitiesRedisDTO.setOpenId(openId);
         securitiesRedisDTO.setJsessionId(jsessionId);
-        securitiesRedisDTO.setCustActivityParticId(securitiesRedisDTO.getCustActivityParticId());
-        securitiesRedisDTO.setCustomerId(securitiesRedisDTO.getCustomerId());
-        securitiesRedisDTO.setInvitationId(securitiesRedisDTO.getInvitationId());
-        securitiesRedisDTO.setWxUserId(securitiesRedisDTO.getWxUserId());
+        securitiesRedisDTO.setCustActivityParticId(securitiesCustInfoDTO.getCustActivityParticId());
         return securitiesRedisDTO;
     }
 
@@ -65,6 +64,7 @@ public class SecuritiesServiceImpl implements SecuritiesService {
         securitiesLoginDTO.setUserNickName(securitiesRedisDTO.getNickname());
         securitiesLoginDTO.setUserLogo(securitiesRedisDTO.getHeadimgurl());
         securitiesLoginDTO.setReferrerId(securitiesRedisDTO.getInvitationId());
+        securitiesLoginDTO.setManagerId(securitiesRedisDTO.getCustomerId());
         log.info("securitiesLogin.securitiesLoginDTO:[{}]", JacksonUtil.objectToJson(securitiesLoginDTO));
         String custId = securitiesActivityFeignService.login(securitiesLoginDTO);
         return custId;

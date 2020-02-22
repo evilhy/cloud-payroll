@@ -68,6 +68,8 @@ public class SecuritiesController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            String jsessionId = UUIDUtil.createUUID32();
+
             //【一】根据code获取 openId、accessToken
             WechatGroupEnum wechatGroup = WechatGroupEnum.FXGJ;
             log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
@@ -79,11 +81,10 @@ public class SecuritiesController {
                 throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.AUTH_ERR.getErrorMsg());
             }
 
-            //用openId去唯销查，是否登录
-            String jsessionId = UUIDUtil.createUUID32();
-            //查询唯销是否已登录
+            //用openId查询唯销是否已登录，同时放入redis
             SecuritiesRedisDTO securitiesRedisDTO = securitiesService.qrySecuritiesCustInfo(jsessionId, openId);
             log.info("securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
+
             Integer loginStatus = securitiesRedisDTO.getLoginStatus();
             if (loginStatus == 0) {
                 //未登录
@@ -131,7 +132,13 @@ public class SecuritiesController {
             //2.从缓存取数据入库
             String jsessionId = reqSecuritiesLoginDTO.getJsessionId();
             SecuritiesRedisDTO securitiesRedisDTO = securitiesService.qrySecuritiesRedis(jsessionId);
+
+            //3.唯销入库
             securitiesRedisDTO.setPhone(phone);
+            String customerId = reqSecuritiesLoginDTO.getCustomerId();
+            String invitationId = reqSecuritiesLoginDTO.getInvitationId();
+            securitiesRedisDTO.setInvitationId(invitationId);
+            securitiesRedisDTO.setCustomerId(customerId);
             String custId = securitiesService.securitiesLogin(securitiesRedisDTO);
 
             return custId;
