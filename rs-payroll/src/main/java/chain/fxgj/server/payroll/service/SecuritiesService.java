@@ -4,6 +4,7 @@ import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -29,7 +30,7 @@ public interface SecuritiesService {
      * 查询缓存信息
      * @param jsessionId
      */
-    @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
+    @Cacheable(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
     SecuritiesRedisDTO qrySecuritiesRedis(String jsessionId);
 
     /**
