@@ -29,9 +29,20 @@ public class SecuritiesCustInfoDTO {
      * loginStatus (0未登录，1已登录)
      */
     private Integer loginStatus;
+
     /**
      * loginStatus (0未登录，1已登录)
      */
     private String loginStatusVal;
+
+    /**
+     * 用户id
+     */
+    private String custId;
+
+    /**
+     * 用户openId
+     */
+    private String openId;
 
 }

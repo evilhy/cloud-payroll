@@ -4,6 +4,8 @@ import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 证券登录缓存数据
  */
@@ -53,8 +55,28 @@ public class SecuritiesRedisDTO {
     private String headimgurl;
 
     /**
-     * 是否登录(0否，1是)
+     * loginStatus (0未登录，1已登录)
      */
-    private IsStatusEnum loginStatus;
+    private Integer loginStatus;
+
+    /**
+     * loginStatus (0未登录，1已登录)
+     */
+    private String loginStatusVal;
+
+    /**
+     * 客户ID YYYYMMDD+7位序列
+     */
+    private String custId;
+
+    /**
+     * 客户参与活动id
+     */
+    private String custActivityParticId;
+
+    /**
+     * 微信用户表id
+     */
+    private String wxUserId;
 
 }

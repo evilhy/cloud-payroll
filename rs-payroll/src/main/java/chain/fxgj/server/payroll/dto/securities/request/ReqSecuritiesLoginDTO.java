@@ -19,6 +19,11 @@ import lombok.*;
 public class ReqSecuritiesLoginDTO {
 
     /**
+     * jsessionId
+     */
+    private String jsessionId;
+
+    /**
      * 手机号
      */
     private String phone;
@@ -43,9 +48,5 @@ public class ReqSecuritiesLoginDTO {
      */
     private String msgCodeId;
 
-    /**
-     * 微信code
-     */
-    private String wechatCode;
 
 }

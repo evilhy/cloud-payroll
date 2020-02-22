@@ -63,31 +63,52 @@ public class SecuritiesController {
      */
     @GetMapping("/loginCheck")
     @TrackLog
-    public Mono<SecuritiesCustInfoDTO> loginCheck(@RequestParam("openId") String openId) {
+    public Mono<SecuritiesRedisDTO> loginCheck(@RequestParam("code") String code) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal principal = WebContext.getCurrentUser();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            //【一】根据code获取 openId、accessToken
+            WechatGroupEnum wechatGroup = WechatGroupEnum.FXGJ;
+            log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
+            AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(wechatGroup, code);
+            log.info("accessTokenDTO:[{}]", JacksonUtil.objectToJson(accessTokenDTO));
+            String openId = accessTokenDTO.getOpenid();
+            String accessToken = accessTokenDTO.getAccessToken();
+            if (chain.utils.commons.StringUtils.isEmpty(openId)) {
+                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.AUTH_ERR.getErrorMsg());
+            }
 
+            //用openId去唯销查，是否登录
             String jsessionId = UUIDUtil.createUUID32();
             //查询唯销是否已登录
-            SecuritiesRedisDTO securitiesRedisDTO = securitiesService.qrySecuritiesCustInfo(openId);
-            String phone = securitiesRedisDTO.getPhone();
-            //数据入缓存
-            WageUserPrincipal wechatInfoDetail = securitiesService.getWechatInfoDetail(jsessionId, openId, phone);
-
-            IsStatusEnum loginStatus = securitiesRedisDTO.getLoginStatus();
-            SecuritiesCustInfoDTO securitiesCustInfoDTO = new SecuritiesCustInfoDTO();
-            securitiesCustInfoDTO.setJsessionId(jsessionId);
-            securitiesCustInfoDTO.setPhone(phone);
-            securitiesCustInfoDTO.setLoginStatus(loginStatus.getCode());
-            securitiesCustInfoDTO.setLoginStatusVal(loginStatus.getDesc());
-
-            if (IsStatusEnum.NO.equals(loginStatus)) {
+            SecuritiesRedisDTO securitiesRedisDTO = securitiesService.qrySecuritiesCustInfo(jsessionId, openId);
+            log.info("securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
+            Integer loginStatus = securitiesRedisDTO.getLoginStatus();
+            if (loginStatus == 0) {
+                //未登录
+                //【二】根据 openId、accessToken 获取用户信息
+                UserInfoDTO userInfo = wechatRedisService.getUserInfo(accessToken, openId);
+                String nickName = userInfo.getNickname();
+                String headImgurl = userInfo.getHeadimgurl();
+                log.info("userInfo:[{}]", JacksonUtil.objectToJson(userInfo));
+                if (null == userInfo || chain.utils.commons.StringUtils.isEmpty(userInfo.getNickname())) {
+                    log.info("根据openId、accessToken获取用户信息失败");
+                } else {
+                    try {
+                        nickName = URLEncoder.encode(userInfo.getNickname(), "UTF-8");
+                    } catch (Exception e) {
+                        log.info("获取昵称出现异常！");
+                    }
+                    headImgurl = userInfo.getHeadimgurl();
+                }
+                securitiesRedisDTO.setNickname(nickName);
+                securitiesRedisDTO.setHeadimgurl(headImgurl);
+                //更新缓存
+                securitiesService.upSecuritiesRedis(jsessionId, securitiesRedisDTO);
                 //todo 唯销没有值 ，再根据openId，查询本地Mysql 微信表，有数据则返回 jsessionId、手机号
             }
-            return securitiesCustInfoDTO;
+            return securitiesRedisDTO;
         }).subscribeOn(Schedulers.elastic());
     }
 
@@ -98,38 +119,11 @@ public class SecuritiesController {
      */
     @PostMapping("/securitiesLogin")
     @TrackLog
-    public Mono<Boolean> securitiesLogin(@RequestBody ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
+    public Mono<String> securitiesLogin(@RequestBody ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal principal = WebContext.getCurrentUser();
         log.info("securitiesLogin.reqSecuritiesLoginDTO:[{}]", JacksonUtil.objectToJson(reqSecuritiesLoginDTO));
-        String code = reqSecuritiesLoginDTO.getWechatCode();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            //【一】根据code获取openId、accessToken
-            WechatGroupEnum wechatGroup = WechatGroupEnum.FXGJ;
-            log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
-            AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(wechatGroup, code);
-            log.info("accessTokenDTO:[{}]", JacksonUtil.objectToJson(accessTokenDTO));
-            String openId = accessTokenDTO.getOpenid();
-            String accessToken = accessTokenDTO.getAccessToken();
-            if (chain.utils.commons.StringUtils.isEmpty(openId)) {
-                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.AUTH_ERR.getErrorMsg());
-            }
-            //【二】根据 openId、accessToken 获取用户信息
-            UserInfoDTO userInfo = wechatRedisService.getUserInfo(accessToken, openId);
-            String nickName = userInfo.getNickname();
-            String headImgurl = userInfo.getHeadimgurl();
-            log.info("userInfo:[{}]", JacksonUtil.objectToJson(userInfo));
-            if (null == userInfo || chain.utils.commons.StringUtils.isEmpty(userInfo.getNickname())) {
-                log.info("根据openId、accessToken获取用户信息失败");
-            } else {
-                try {
-                    nickName = URLEncoder.encode(userInfo.getNickname(), "UTF-8");
-                } catch (Exception e) {
-                    log.info("获取昵称出现异常！");
-                }
-                headImgurl = userInfo.getHeadimgurl();
-            }
 
             //1.短信验证码校验是否通过
             WageReqPhone wageReqPhone = new WageReqPhone();
@@ -140,12 +134,13 @@ public class SecuritiesController {
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
             }
-            //2.从缓存取数据入库
-            String nickname = principal.getNickname();
-            String headimgurl = principal.getHeadimgurl();
-            boolean loginBoolean = securitiesService.securitiesLogin(openId, nickname, headimgurl, reqSecuritiesLoginDTO);
 
-            return loginBoolean;
+            //2.从缓存取数据入库
+            String jsessionId = reqSecuritiesLoginDTO.getJsessionId();
+            SecuritiesRedisDTO securitiesRedisDTO = securitiesService.qrySecuritiesRedis(jsessionId);
+            String custId = securitiesService.securitiesLogin(securitiesRedisDTO);
+
+            return custId;
         }).subscribeOn(Schedulers.elastic());
     }
 

@@ -101,7 +101,7 @@ public class SecuritiesControllerTest {
     public void securitiesLogin() throws Exception {
         String sessionId = "321321321";
         ReqSecuritiesLoginDTO reqSecuritiesLoginDTO = new ReqSecuritiesLoginDTO();
-        reqSecuritiesLoginDTO.setCode("9527");
+        reqSecuritiesLoginDTO.setMsgCode("123");
         reqSecuritiesLoginDTO.setCustomerId("");
         reqSecuritiesLoginDTO.setInvitationId("123123123");
         reqSecuritiesLoginDTO.setPhone("13400000000");
