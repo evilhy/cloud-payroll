@@ -102,12 +102,11 @@ public class SecuritiesController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         log.info("securitiesLogin.reqSecuritiesLoginDTO:[{}]", JacksonUtil.objectToJson(reqSecuritiesLoginDTO));
-        AppPartnerEnum appPartner = reqSecuritiesLoginDTO.getAppPartner();
         String code = reqSecuritiesLoginDTO.getWechatCode();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             //【一】根据code获取openId、accessToken
-            WechatGroupEnum wechatGroup = WechatGroupEnum.FXGJ;//WechatGroupEnum.valueOf(appPartner.name());
+            WechatGroupEnum wechatGroup = WechatGroupEnum.FXGJ;
             log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
             AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(wechatGroup, code);
             log.info("accessTokenDTO:[{}]", JacksonUtil.objectToJson(accessTokenDTO));

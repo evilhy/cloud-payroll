@@ -48,9 +48,4 @@ public class ReqSecuritiesLoginDTO {
      */
     private String wechatCode;
 
-    /**
-     * 渠道
-     */
-    private AppPartnerEnum appPartner;
-
 }
