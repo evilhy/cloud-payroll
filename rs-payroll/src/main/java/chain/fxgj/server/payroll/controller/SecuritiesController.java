@@ -172,7 +172,7 @@ public class SecuritiesController {
             MDC.setContextMap(mdcContext);
             String custIdOrManagerId = "";
             List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = new ArrayList<>();
-
+            log.info("cust:[{}], manager:[{}]", custId, managerId);
             if (StringUtils.isNotEmpty(managerId) || StringUtils.isNotEmpty(custId)) {
                 if (StringUtils.isNotEmpty(managerId)) {
                     custIdOrManagerId = managerId;
