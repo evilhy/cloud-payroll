@@ -6,6 +6,7 @@ import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.utils.commons.JacksonUtil;
+import chain.utils.commons.StringUtils;
 import chain.wisales.client.feign.SecuritiesActivityFeignService;
 import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
 import chain.wisales.core.constant.dictEnum.StandardEnum;
@@ -36,13 +37,28 @@ public class SecuritiesServiceImpl implements SecuritiesService {
         SecuritiesRedisDTO securitiesRedisDTO = new SecuritiesRedisDTO();
         securitiesRedisDTO.setLoginStatus(securitiesCustInfoDTO.getLoginStatus()?1:0);
         securitiesRedisDTO.setLoginStatusVal(securitiesCustInfoDTO.getLoginStatus()?"已登录":"未登录");
-        securitiesRedisDTO.setPhone(securitiesCustInfoDTO.getPhoneNo());
-        securitiesRedisDTO.setCustId(securitiesCustInfoDTO.getCustId());
-        securitiesRedisDTO.setHeadimgurl(securitiesCustInfoDTO.getUserLogo());
-        securitiesRedisDTO.setNickname(securitiesCustInfoDTO.getUserNickName());
         securitiesRedisDTO.setOpenId(openId);
         securitiesRedisDTO.setJsessionId(jsessionId);
-        securitiesRedisDTO.setCustActivityParticId(securitiesCustInfoDTO.getCustActivityParticId());
+        securitiesRedisDTO.setCustomerId("");
+        securitiesRedisDTO.setInvitationId("");
+        String phoneNo = securitiesCustInfoDTO.getPhoneNo();
+        securitiesRedisDTO.setPhone(StringUtils.isEmpty(phoneNo)?"": phoneNo);
+
+        String custId = securitiesCustInfoDTO.getCustId();
+        securitiesRedisDTO.setCustId(StringUtils.isEmpty(custId)?"": custId);
+
+        String userLogo = securitiesCustInfoDTO.getUserLogo();
+        securitiesRedisDTO.setHeadimgurl(StringUtils.isEmpty(userLogo)?"": userLogo);
+
+        String userNickName = securitiesCustInfoDTO.getUserNickName();
+        securitiesRedisDTO.setNickname(StringUtils.isEmpty(userNickName)?"": userNickName);
+
+        String custActivityParticId = securitiesCustInfoDTO.getCustActivityParticId();
+        securitiesRedisDTO.setCustActivityParticId(StringUtils.isEmpty(custActivityParticId)?"": custActivityParticId);
+
+        String wxUserId = securitiesCustInfoDTO.getWxUserId();
+        securitiesRedisDTO.setWxUserId(StringUtils.isEmpty(wxUserId)?"": wxUserId);
+
         return securitiesRedisDTO;
     }
 

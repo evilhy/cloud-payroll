@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.controller;
 
+import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
@@ -157,18 +158,34 @@ public class SecuritiesController {
 
     /**
      * 邀请奖励列表查询
-     * @param custIdOrManagerId
+     * @param managerId
+     * @param custId
      * @return
      */
     @GetMapping("/qryInvitationAward")
     @TrackLog
-    public Mono<List<SecuritiesInvitationAwardDTO>> qryInvitationAward(@RequestParam String custIdOrManagerId) {
-
+    public Mono<List<SecuritiesInvitationAwardDTO>> qryInvitationAward(
+            @RequestHeader(value = " managerId", required = false) String  managerId,
+            @RequestHeader(value = " custId", required = false) String  custId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            String custIdOrManagerId = "";
+            List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = new ArrayList<>();
+
+            if (StringUtils.isNotEmpty(managerId) || StringUtils.isNotEmpty(custId)) {
+                if (StringUtils.isNotEmpty(managerId)) {
+                    custIdOrManagerId = managerId;
+                } else {
+                    custIdOrManagerId = custId;
+                }
+            } else {
+                log.info("请求头managerId和custId都没有值，无法查询");
+                throw new ParamsIllegalException(new ErrorMsg("", "查询入参无值，无法查询"));
+            }
+
             log.info("custIdOrManagerId:[{}]", custIdOrManagerId);
-            List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = securitiesService.qryInvitationAward(custIdOrManagerId);
+            securitiesInvitationAwardDTOList = securitiesService.qryInvitationAward(custIdOrManagerId);
             log.info("securitiesInvitationAwardDTOList:[{}]", JacksonUtil.objectToJson(securitiesInvitationAwardDTOList));
             return securitiesInvitationAwardDTOList;
 
