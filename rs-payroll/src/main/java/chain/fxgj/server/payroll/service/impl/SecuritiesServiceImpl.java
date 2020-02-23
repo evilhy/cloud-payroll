@@ -84,20 +84,8 @@ public class SecuritiesServiceImpl implements SecuritiesService {
     @Override
     public List<SecuritiesInvitationAwardDTO> qryInvitationAward(String custIdOrManagerId) {
 
-//        List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = securitiesActivityFeignService.qryInvitationAward(custIdOrManagerId);
+        List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = securitiesActivityFeignService.qryInvitationAward(custIdOrManagerId);
 
-        List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            SecuritiesInvitationAwardDTO securitiesInvitationAwardDTO = new SecuritiesInvitationAwardDTO();
-            securitiesInvitationAwardDTO.setCustId("20200223002075"+i);
-            securitiesInvitationAwardDTO.setCustActivityParticId("5e51d507e6f6b154a91c472"+i);
-            securitiesInvitationAwardDTO.setGoldenBean(BigDecimal.ZERO);
-            securitiesInvitationAwardDTO.setPhoneNo("1340000000"+i);
-            securitiesInvitationAwardDTO.setSecuritiesPlatform(SecuritiesPlatformEnum.NO);
-            securitiesInvitationAwardDTO.setStandard(StandardEnum.SUBSTANDARD);
-            securitiesInvitationAwardDTOList.add(securitiesInvitationAwardDTO);
-        }
         return securitiesInvitationAwardDTOList;
     }
 }

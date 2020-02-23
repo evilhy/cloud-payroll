@@ -162,24 +162,14 @@ public class SecuritiesController {
      */
     @GetMapping("/qryInvitationAward")
     @TrackLog
-    public Mono<List<SecInvAwardDTO>> qryInvitationAward(@RequestParam String custIdOrManagerId) {
+    public Mono<List<SecuritiesInvitationAwardDTO>> qryInvitationAward(@RequestParam String custIdOrManagerId) {
 
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            List<SecuritiesInvitationAwardDTO> securitiesLoginDTOList = securitiesService.qryInvitationAward(custIdOrManagerId);
-            List<SecInvAwardDTO> securitiesInvitationAwardDTOList = new ArrayList<>();
-
-            for (int i = 0; i < 3; i++) {
-                SecInvAwardDTO securitiesInvitationAwardDTO = new SecInvAwardDTO();
-                securitiesInvitationAwardDTO.setCustId("20200223002075"+i);
-                securitiesInvitationAwardDTO.setCustActivityParticId("5e51d507e6f6b154a91c472"+i);
-                securitiesInvitationAwardDTO.setGoldenBean(BigDecimal.ZERO);
-                securitiesInvitationAwardDTO.setPhoneNo("1340000000"+i);
-                securitiesInvitationAwardDTO.setSecuritiesPlatform(SecuritiesPlatformEnum.NO);
-                securitiesInvitationAwardDTO.setStandard(StandardEnum.SUBSTANDARD);
-                securitiesInvitationAwardDTOList.add(securitiesInvitationAwardDTO);
-            }
+            log.info("custIdOrManagerId:[{}]", custIdOrManagerId);
+            List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = securitiesService.qryInvitationAward(custIdOrManagerId);
+            log.info("securitiesInvitationAwardDTOList:[{}]", JacksonUtil.objectToJson(securitiesInvitationAwardDTOList));
             return securitiesInvitationAwardDTOList;
 
         }).subscribeOn(Schedulers.elastic());
