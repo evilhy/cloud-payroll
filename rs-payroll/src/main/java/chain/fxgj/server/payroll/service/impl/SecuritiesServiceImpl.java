@@ -7,11 +7,18 @@ import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.utils.commons.JacksonUtil;
 import chain.wisales.client.feign.SecuritiesActivityFeignService;
+import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
+import chain.wisales.core.constant.dictEnum.StandardEnum;
 import chain.wisales.core.dto.securities.SecuritiesCustInfoDTO;
+import chain.wisales.core.dto.securities.SecuritiesInvitationAwardDTO;
 import chain.wisales.core.dto.securities.SecuritiesLoginDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -74,22 +81,23 @@ public class SecuritiesServiceImpl implements SecuritiesService {
         return custId;
     }
 
-
-
-
-
-
-
     @Override
-    public WageUserPrincipal getWechatInfoDetail(String jsessionId, String openId, String phone) {
+    public List<SecuritiesInvitationAwardDTO> qryInvitationAward(String custIdOrManagerId) {
 
-        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
-        wageUserPrincipal.setOpenId(openId);
-        wageUserPrincipal.setPhone(phone);
-//        wageUserPrincipal.setNickname(nickName);
-//        wageUserPrincipal.setHeadimgurl(headImgurl);
-        return wageUserPrincipal;
+//        List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = securitiesActivityFeignService.qryInvitationAward(custIdOrManagerId);
+
+        List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            SecuritiesInvitationAwardDTO securitiesInvitationAwardDTO = new SecuritiesInvitationAwardDTO();
+            securitiesInvitationAwardDTO.setCustId("20200223002075"+i);
+            securitiesInvitationAwardDTO.setCustActivityParticId("5e51d507e6f6b154a91c472"+i);
+            securitiesInvitationAwardDTO.setGoldenBean(BigDecimal.ZERO);
+            securitiesInvitationAwardDTO.setPhoneNo("1340000000"+i);
+            securitiesInvitationAwardDTO.setSecuritiesPlatform(SecuritiesPlatformEnum.NO);
+            securitiesInvitationAwardDTO.setStandard(StandardEnum.SUBSTANDARD);
+            securitiesInvitationAwardDTOList.add(securitiesInvitationAwardDTO);
+        }
+        return securitiesInvitationAwardDTOList;
     }
-
-
 }

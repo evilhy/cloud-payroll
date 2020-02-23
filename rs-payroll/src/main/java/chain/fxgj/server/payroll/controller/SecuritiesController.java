@@ -22,6 +22,9 @@ import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
+import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
+import chain.wisales.core.constant.dictEnum.StandardEnum;
+import chain.wisales.core.dto.securities.SecuritiesInvitationAwardDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +155,40 @@ public class SecuritiesController {
         }).subscribeOn(Schedulers.elastic());
     }
 
+    /**
+     * 邀请奖励列表查询
+     * @param custIdOrManagerId
+     * @return
+     */
+    @GetMapping("/qryInvitationAward")
+    @TrackLog
+    public Mono<List<SecInvAwardDTO>> qryInvitationAward(@RequestParam String custIdOrManagerId) {
+
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+//            List<SecuritiesInvitationAwardDTO> securitiesLoginDTOList = securitiesService.qryInvitationAward(custIdOrManagerId);
+            List<SecInvAwardDTO> securitiesInvitationAwardDTOList = new ArrayList<>();
+
+            for (int i = 0; i < 3; i++) {
+                SecInvAwardDTO securitiesInvitationAwardDTO = new SecInvAwardDTO();
+                securitiesInvitationAwardDTO.setCustId("20200223002075"+i);
+                securitiesInvitationAwardDTO.setCustActivityParticId("5e51d507e6f6b154a91c472"+i);
+                securitiesInvitationAwardDTO.setGoldenBean(BigDecimal.ZERO);
+                securitiesInvitationAwardDTO.setPhoneNo("1340000000"+i);
+                securitiesInvitationAwardDTO.setSecuritiesPlatform(SecuritiesPlatformEnum.NO);
+                securitiesInvitationAwardDTO.setStandard(StandardEnum.SUBSTANDARD);
+                securitiesInvitationAwardDTOList.add(securitiesInvitationAwardDTO);
+            }
+            return securitiesInvitationAwardDTOList;
+
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+
+
+
+    //----以下未开发
     /**
      * 查询金豆个数
      * @return

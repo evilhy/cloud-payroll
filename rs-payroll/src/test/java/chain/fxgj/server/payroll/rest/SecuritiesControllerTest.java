@@ -3,8 +3,10 @@ package chain.fxgj.server.payroll.rest;
 import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.dto.base.WeixinJsapiDTO;
 import chain.fxgj.server.payroll.dto.response.Res100705;
+import chain.fxgj.server.payroll.dto.securities.response.SecInvAwardDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesCustInfoDTO;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
+import chain.wisales.core.dto.securities.SecuritiesInvitationAwardDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.*;
@@ -117,6 +119,29 @@ public class SecuritiesControllerTest {
                 .consumeWith(document("securityes_securitiesLogin"));
 //                        relaxedRequestFields(JavaDocReader.javaDoc(IntentRequestDTO.class))));
     }
+
+
+    /**
+     * Junit ok
+     * 邀请奖励列表查询
+     *
+     * @throws Exception
+     */
+    @Test
+    public void qryInvitationAward() throws Exception {
+        webTestClient.get()
+                .uri("/securityes/qryInvitationAward?custIdOrManagerId={custIdOrManagerId}",
+                        "202002230020757")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(String.class)//返回是什么类型的对象
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("securityes_qryInvitationAward",
+                                relaxedRequestParameters(parameterWithName("custIdOrManagerId").description("客户或经理id")),
+                        relaxedResponseFields(JavaDocReader.javaDoc(SecInvAwardDTO.class))));//出参对象描述
+    }
+
 
     /**
      * Junit 获取code再待测试

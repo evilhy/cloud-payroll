@@ -3,9 +3,12 @@ package chain.fxgj.server.payroll.service;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
+import chain.wisales.core.dto.securities.SecuritiesInvitationAwardDTO;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional
 public interface SecuritiesService {
@@ -40,24 +43,11 @@ public interface SecuritiesService {
      */
     String securitiesLogin(SecuritiesRedisDTO securitiesRedisDTO);
 
-
-
-
-
-
-
-
-
     /**
-     * 获取微信绑定信息 WageUserPrincipal 接收
-     *
+     * 邀请奖励列表查询
+     * @param custIdOrManagerId
      * @return
      */
-    @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
-    WageUserPrincipal getWechatInfoDetail(String jsessionId, String openId, String phone);
-
-
-
-
+    List<SecuritiesInvitationAwardDTO> qryInvitationAward(String custIdOrManagerId);
 
 }
