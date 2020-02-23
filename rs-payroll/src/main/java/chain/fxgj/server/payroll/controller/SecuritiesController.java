@@ -158,34 +158,18 @@ public class SecuritiesController {
 
     /**
      * 邀请奖励列表查询
-     * @param managerId
-     * @param custId
+     * @param custIdOrManagerId
      * @return
      */
     @GetMapping("/qryInvitationAward")
     @TrackLog
-    public Mono<List<SecuritiesInvitationAwardDTO>> qryInvitationAward(
-            @RequestHeader(value = " managerId", required = false) String  managerId,
-            @RequestHeader(value = " custId", required = false) String  custId) {
+    public Mono<List<SecuritiesInvitationAwardDTO>> qryInvitationAward(@RequestParam String custIdOrManagerId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            String custIdOrManagerId = "";
-            List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = new ArrayList<>();
-            log.info("cust:[{}], manager:[{}]", custId, managerId);
-            if (StringUtils.isNotEmpty(managerId) || StringUtils.isNotEmpty(custId)) {
-                if (StringUtils.isNotEmpty(managerId)) {
-                    custIdOrManagerId = managerId;
-                } else {
-                    custIdOrManagerId = custId;
-                }
-            } else {
-                log.info("请求头managerId和custId都没有值，无法查询");
-                throw new ParamsIllegalException(new ErrorMsg("", "查询入参无值，无法查询"));
-            }
 
             log.info("custIdOrManagerId:[{}]", custIdOrManagerId);
-            securitiesInvitationAwardDTOList = securitiesService.qryInvitationAward(custIdOrManagerId);
+            List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = securitiesService.qryInvitationAward(custIdOrManagerId);
             log.info("securitiesInvitationAwardDTOList:[{}]", JacksonUtil.objectToJson(securitiesInvitationAwardDTOList));
             return securitiesInvitationAwardDTOList;
 
