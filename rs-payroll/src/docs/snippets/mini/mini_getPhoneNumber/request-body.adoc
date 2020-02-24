@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"signature":null,"timestamp":null,"encryptedData":null,"jsessionId":"123123"}
+----

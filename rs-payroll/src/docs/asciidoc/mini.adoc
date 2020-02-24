@@ -1,0 +1,40 @@
+:snippets: ../snippets/wechat
+== 小程序
+
+=== 获取用户信息
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/mini/mini_miniUserInfo/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/mini/mini_miniUserInfo/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/mini/mini_miniUserInfo/curl-request.adoc[]
+* Response:
++
+include::{snippets}/mini/mini_miniUserInfo/http-response.adoc[]
+
+=== 获取手机号
+==== 接口定义
+* Query Parameters:
++
+include::{snippets}/mini/mini_getPhoneNumber/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/mini/mini_getPhoneNumber/response-body.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/mini/mini_getPhoneNumber/curl-request.adoc[]
+* Response:
++
+include::{snippets}/mini/mini_getPhoneNumber/http-response.adoc[]
+
+
+
+

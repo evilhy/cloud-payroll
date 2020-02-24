@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ echo '{"signature":null,"timestamp":null,"encryptedData":null,"jsessionId":"123123"}' | http POST 'http://localhost:8080/mini/getPhoneNumber' \
+    'Content-Type:application/json'
+----

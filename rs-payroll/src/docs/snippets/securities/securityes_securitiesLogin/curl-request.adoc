@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/securityes/securitiesLogin' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'jsession_id: 321321321' \
+    -d '{"phone":"13400000000","customerId":"","invitationId":"123123123","code":"9527"}'
+----
