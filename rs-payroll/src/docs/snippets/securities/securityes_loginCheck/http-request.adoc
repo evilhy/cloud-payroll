@@ -1,0 +1,6 @@
+[source,http,options="nowrap"]
+----
+GET /securityes/loginCheck?code=b1610e49e63a692c5543f9dc000058ec75b4aeb7&appPartner=FXGJ HTTP/1.1
+Host: localhost:8080
+
+----

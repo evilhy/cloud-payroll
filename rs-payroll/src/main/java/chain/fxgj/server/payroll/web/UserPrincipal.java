@@ -54,6 +54,10 @@ public class UserPrincipal implements Principal {
      */
     private String openId;
     /**
+     * 用户客户id
+     */
+    private String custId;
+    /**
      * 用户 微信openId
      */
     private String uid;

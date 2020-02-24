@@ -6,6 +6,7 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
 import chain.wisales.client.feign.WelfareActivityFeignService;
 import chain.wisales.core.constant.dictEnum.AreaEnum;
+import chain.wisales.core.constant.dictEnum.IsStatusEnum;
 import chain.wisales.core.dto.PageDTO;
 import chain.wisales.core.dto.fxgj.welfare.*;
 import lombok.extern.slf4j.Slf4j;
@@ -121,7 +122,9 @@ public class WisalesController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = welfareActivityFeignService.baseList(pageNum, limit, goodsNo, goodsName, activityId, fItemCatId, sItemCatId, tItemCatId, minAmt, maxAmt, pickFlag);
+            //todo 待解决
+//            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = new WelfareGoodsInfoAllResDTO();
+            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = welfareActivityFeignService.baseList(pageNum, limit, goodsNo, goodsName, activityId, fItemCatId, sItemCatId, tItemCatId, minAmt, maxAmt, pickFlag, IsStatusEnum.YES.name());
             return welfareGoodsInfoAllResDTO;
         }).subscribeOn(Schedulers.elastic());
     }

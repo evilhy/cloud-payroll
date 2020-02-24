@@ -63,10 +63,10 @@ dependencyManagement {
     }
 }
 dependencies {
-    compile("chain:pub-client:1.1.5")
+    compile("chain:pub-client:1.1.6")
     compile('chain:wage-client:1.0.10')
     compile('chain:payroll-client:1.0.37')
-    compile 'chain.wisales:wisales-client:1.0.0'
+    compile 'chain.wisales:wisales-client:1.0.2.70'
 
     compile('chain:utils-jpa:1.0.4')
     compile('chain:utils-poi:2.0.2')

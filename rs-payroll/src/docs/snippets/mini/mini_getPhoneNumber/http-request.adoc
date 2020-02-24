@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+POST /mini/getPhoneNumber HTTP/1.1
+Content-Type: application/json
+Content-Length: 78
+Host: localhost:8080
+
+{"signature":null,"timestamp":null,"encryptedData":null,"jsessionId":"123123"}
+----
