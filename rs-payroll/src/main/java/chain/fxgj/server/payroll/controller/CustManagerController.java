@@ -6,6 +6,7 @@ import chain.fxgj.feign.dto.custmanager.WageManagerInfoDTO;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.utils.commons.JacksonUtil;
 import chain.wage.manager.core.dto.dataquery.OpeningTipsDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -88,6 +89,7 @@ public class CustManagerController {
         String idNumber = currentUser.getIdNumber();
         log.info("openingTips.idNumber:[{}]", idNumber);
         OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber);
+        log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
         return openingTipsDTO;
     }
 
