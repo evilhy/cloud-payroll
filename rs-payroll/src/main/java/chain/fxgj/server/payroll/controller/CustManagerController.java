@@ -6,15 +6,13 @@ import chain.fxgj.feign.dto.custmanager.WageManagerInfoDTO;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.wage.manager.core.dto.dataquery.OpeningTipsDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -72,4 +70,23 @@ public class CustManagerController {
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
+
+    /**
+     *
+     * 客户经理入口，弹窗提示
+     *
+     * 查询员工所属企业，
+     * 1.是否有客户经理
+     * 2.银行卡所属银行，本行、他行
+     *
+     * @param idNumber 身份证号
+     * @return
+     */
+    @GetMapping("/openingTips")
+    public OpeningTipsDTO openingTips(@RequestParam("idNumber") String idNumber) {
+        log.info("openingTips.idNumber:[{}]", idNumber);
+        OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber);
+        return openingTipsDTO;
+    }
+
 }
