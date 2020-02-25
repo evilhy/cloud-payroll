@@ -79,11 +79,13 @@ public class CustManagerController {
      * 1.是否有客户经理
      * 2.银行卡所属银行，本行、他行
      *
-     * @param idNumber 身份证号
      * @return
      */
     @GetMapping("/openingTips")
-    public OpeningTipsDTO openingTips(@RequestParam("idNumber") String idNumber) {
+    public OpeningTipsDTO openingTips() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String idNumber = currentUser.getIdNumber();
         log.info("openingTips.idNumber:[{}]", idNumber);
         OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber);
         return openingTipsDTO;
