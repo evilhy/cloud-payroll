@@ -10,9 +10,7 @@ import chain.utils.commons.StringUtils;
 import chain.wisales.client.feign.SecuritiesActivityFeignService;
 import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
 import chain.wisales.core.constant.dictEnum.StandardEnum;
-import chain.wisales.core.dto.securities.SecuritiesCustInfoDTO;
-import chain.wisales.core.dto.securities.SecuritiesInvitationAwardDTO;
-import chain.wisales.core.dto.securities.SecuritiesLoginDTO;
+import chain.wisales.core.dto.securities.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -103,5 +101,29 @@ public class SecuritiesServiceImpl implements SecuritiesService {
         List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = securitiesActivityFeignService.qryInvitationAward(custIdOrManagerId);
 
         return securitiesInvitationAwardDTOList;
+    }
+
+    @Override
+    public BigDecimal qryGoldenBean(String custId) {
+        BigDecimal goldenBean = securitiesActivityFeignService.qryGoldenBean(custId);
+        return goldenBean;
+    }
+
+    @Override
+    public List<SecuritiesDataSynTimeDTO> qryDataSynTimeList() {
+        List<SecuritiesDataSynTimeDTO> securitiesDataSynTimeDTOList = securitiesActivityFeignService.qryDataSynTimeList();
+        return securitiesDataSynTimeDTOList;
+    }
+
+    @Override
+    public List<SecuritiesOpenRewardDTO> qryOpenRewardList(String custId) {
+        List<SecuritiesOpenRewardDTO> securitiesOpenRewardDTOList = securitiesActivityFeignService.qryOpenRewardList(custId);
+        return securitiesOpenRewardDTOList;
+    }
+
+    @Override
+    public List<SecuritiesRewardResDTO> qryInvestmentRewardList(SecuritiesRewardReqDTO securitiesRewardReqDTO) {
+        List<SecuritiesRewardResDTO> securitiesRewardResDTOList = securitiesActivityFeignService.qryInvestmentRewardList(securitiesRewardReqDTO);
+        return securitiesRewardResDTOList;
     }
 }

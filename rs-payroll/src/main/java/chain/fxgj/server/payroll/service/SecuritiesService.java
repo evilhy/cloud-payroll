@@ -3,11 +3,12 @@ package chain.fxgj.server.payroll.service;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
-import chain.wisales.core.dto.securities.SecuritiesInvitationAwardDTO;
+import chain.wisales.core.dto.securities.*;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Transactional
@@ -49,5 +50,28 @@ public interface SecuritiesService {
      * @return
      */
     List<SecuritiesInvitationAwardDTO> qryInvitationAward(String custIdOrManagerId);
+
+    /**
+     * 查询金豆个数
+     * @param custId
+     */
+    BigDecimal qryGoldenBean(String custId);
+
+    /**
+     * 查询数据同步时间列表(每个公司的数据同步时间)
+     */
+    List<SecuritiesDataSynTimeDTO> qryDataSynTimeList();
+
+    /**
+     * 查询数据同步时间列表(每个公司的数据同步时间)
+     */
+    List<SecuritiesOpenRewardDTO> qryOpenRewardList(String custId);
+
+    /**
+     * 投资奖励列表List
+     * @param securitiesRewardReqDTO
+     * @return
+     */
+    List<SecuritiesRewardResDTO> qryInvestmentRewardList(SecuritiesRewardReqDTO securitiesRewardReqDTO);
 
 }

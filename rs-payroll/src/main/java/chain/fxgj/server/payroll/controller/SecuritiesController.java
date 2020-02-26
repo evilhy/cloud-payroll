@@ -8,6 +8,7 @@ import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.feign.client.InsideFeignService;
 import chain.fxgj.feign.dto.request.WageReqPhone;
+import chain.fxgj.feign.dto.response.WageNewestWageLogDTO;
 import chain.fxgj.server.payroll.dto.securities.request.ReqRewardDTO;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.*;
@@ -25,7 +26,7 @@ import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
 import chain.wisales.core.constant.dictEnum.StandardEnum;
-import chain.wisales.core.dto.securities.SecuritiesInvitationAwardDTO;
+import chain.wisales.core.dto.securities.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,9 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 /**
  * 证券开户活动
@@ -176,22 +177,18 @@ public class SecuritiesController {
         }).subscribeOn(Schedulers.elastic());
     }
 
-
-
-
-    //----以下未开发
     /**
      * 查询金豆个数
      * @return
      */
     @GetMapping("/qryGoldenBean")
     @TrackLog
-    public Mono<BigDecimal> qryGoldenBean(@RequestParam(value = "custId") AppPartnerEnum custId) {
+    public Mono<BigDecimal> qryGoldenBean(@RequestParam(value = "custId") String custId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            BigDecimal goldenBean = BigDecimal.ZERO;
+            BigDecimal goldenBean = securitiesService.qryGoldenBean(custId);
             return goldenBean;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -202,13 +199,25 @@ public class SecuritiesController {
      */
     @GetMapping("/qryDataSynTime")
     @TrackLog
-    public Mono<Long> qryDataSynTime(@RequestParam(value = "custId") AppPartnerEnum custId) {
+    public Mono<Long> qryDataSynTime() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            long dataSynTime = 10000000000L;
-            return dataSynTime;
+            List<SecuritiesDataSynTimeDTO> securitiesDataSynTimeDTOList = securitiesService.qryDataSynTimeList();
+
+            //取最新的数据更新时间
+            Collections.sort(securitiesDataSynTimeDTOList, new Comparator<SecuritiesDataSynTimeDTO>() {
+                @Override
+                public int compare(SecuritiesDataSynTimeDTO o1, SecuritiesDataSynTimeDTO o2) {
+                    return o2.getDataSynTime().compareTo(o1.getDataSynTime());
+                }
+            });
+
+            SecuritiesDataSynTimeDTO securitiesDataSynTimeDTO = securitiesDataSynTimeDTOList.get(0);
+            LocalDateTime dataSynTime = securitiesDataSynTimeDTO.getDataSynTime();
+            Long dataSynTimeLong = dataSynTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            return dataSynTimeLong;
         }).subscribeOn(Schedulers.elastic());
     }
 
@@ -223,60 +232,24 @@ public class SecuritiesController {
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            List<SecuritiesOpenRewardDTO> list = new ArrayList<>();
-            return list;
+            List<SecuritiesOpenRewardDTO> securitiesOpenRewardDTOList = securitiesService.qryOpenRewardList(custId);
+            return securitiesOpenRewardDTOList;
         }).subscribeOn(Schedulers.elastic());
     }
-    /**
-     * 查询被邀请人列表
-     * @return
-     */
-    @GetMapping("/qryBeInvitedList")
-    @TrackLog
-    public Mono<List<SecuritiesBeInvitedDTO>> qryBeInvitedList(@RequestParam(value = "custId") String custId) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal principal = WebContext.getCurrentUser();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            List<SecuritiesBeInvitedDTO> list = new ArrayList<>();
-            SecuritiesBeInvitedDTO securitiesBeInvitedDTO = new SecuritiesBeInvitedDTO();
-            list.add(securitiesBeInvitedDTO);
-            return list;
-        }).subscribeOn(Schedulers.elastic());
-    }
+
     /**
      * 投资奖励列表
      * @return
      */
     @PostMapping("/qryInvestmentRewardList")
     @TrackLog
-    public Mono<List<SecuritiesInvestmentRewardDTO>> qryBeInvitedList(@RequestBody ReqRewardDTO reqRewardDTO) {
+    public Mono<List<SecuritiesRewardResDTO>> qryBeInvitedList(@RequestBody SecuritiesRewardReqDTO securitiesRewardReqDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            List<SecuritiesInvestmentRewardDTO> list = new ArrayList<>();
-            SecuritiesInvestmentRewardDTO securitiesInvestmentRewardDTO = new SecuritiesInvestmentRewardDTO();
-            list.add(securitiesInvestmentRewardDTO);
-            return list;
-        }).subscribeOn(Schedulers.elastic());
-    }
-
-    /**
-     * 拖拽式滑块图形验证
-     *
-     * @return
-     */
-    @GetMapping("/pictureCheck")
-    @TrackLog
-    public Mono<String> pictureCheck() {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal principal = WebContext.getCurrentUser();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            //todo 拖拽式滑块图形验证
-
-            return "";
+            List<SecuritiesRewardResDTO> securitiesRewardResDTOList = securitiesService.qryInvestmentRewardList(securitiesRewardReqDTO);
+            return securitiesRewardResDTOList;
         }).subscribeOn(Schedulers.elastic());
     }
 
