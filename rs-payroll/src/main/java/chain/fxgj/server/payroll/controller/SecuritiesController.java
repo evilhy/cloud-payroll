@@ -243,7 +243,7 @@ public class SecuritiesController {
      */
     @PostMapping("/qryInvestmentRewardList")
     @TrackLog
-    public Mono<List<SecuritiesRewardResDTO>> qryBeInvitedList(@RequestBody SecuritiesRewardReqDTO securitiesRewardReqDTO) {
+    public Mono<List<SecuritiesRewardResDTO>> qryInvestmentRewardList(@RequestBody SecuritiesRewardReqDTO securitiesRewardReqDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {

@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/securityes/qryGoldenBean?custId=123123123123'
+----

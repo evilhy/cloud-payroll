@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+custId+`
+|客户id
+
+|===

@@ -3,10 +3,9 @@ package chain.fxgj.server.payroll.rest;
 import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.dto.base.WeixinJsapiDTO;
 import chain.fxgj.server.payroll.dto.response.Res100705;
+import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecInvAwardDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesCustInfoDTO;
-import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
-import chain.wisales.core.dto.securities.SecuritiesInvitationAwardDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.*;
@@ -25,7 +24,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.Duration;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.relaxedRequestParameters;
@@ -186,4 +184,54 @@ public class SecuritiesControllerTest {
                         relaxedResponseFields(JavaDocReader.javaDoc(WeixinJsapiDTO.class))));
     }
 
+//    @Test
+//    public void qryGoldenBean() throws Exception {
+//        webTestClient.get().uri("/securityes/qryGoldenBean?custId={custId}", "123123123123")
+//                .exchange()
+//                .expectStatus()
+//                .isOk()
+//                .expectBody()
+//                .consumeWith(document("securityes_qryGoldenBean",
+//                        relaxedRequestParameters(parameterWithName("custId").description("客户id"))));
+//    }
+//
+//    @Test
+//    public void qryDataSynTime() throws Exception {
+//        webTestClient.get().uri("/securityes/qryDataSynTime")
+//                .exchange()
+//                .expectStatus()
+//                .isOk()
+//                .expectBody()
+//                .consumeWith(document("securityes_qryDataSynTime"));
+//    }
+//
+//    @Test
+//    public void qryOpenRewardList() throws Exception {
+//
+//        webTestClient.get().uri("/securityes/qryOpenRewardList?custId={custId}", "1231231231234")
+//                .exchange()
+//                .expectStatus()
+//                .isOk()
+//                .expectBody()
+//                .consumeWith(document("securityes_qryOpenRewardList",
+//                        relaxedRequestParameters(parameterWithName("custId").description("客户id")),
+//                        relaxedResponseFields().andWithPrefix("List.[]",JavaDocReader.javaDoc(SecuritiesOpenRewardDTO1.class))));
+//    }
+//
+//    @Test
+//    public void qryInvestmentRewardList() throws Exception {
+//        SecuritiesRewardReqDTO1 securitiesRewardReqDTO1 = SecuritiesRewardReqDTO1.builder()
+//                .custId("123123123")
+//                .managerId("")
+//                .build();
+//        webTestClient.post().uri("/securityes/qryInvestmentRewardList")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .syncBody(securitiesRewardReqDTO1)
+//                .exchange()
+//                .expectStatus().isOk()
+//                .expectBody()
+//                .consumeWith(document("securityes_qryInvestmentRewardList",
+//                        relaxedRequestParameters(parameterWithName("custId").description("客户id")),
+//                        relaxedResponseFields().andWithPrefix("List.[]", JavaDocReader.javaDoc(SecuritiesRewardResDTO1.class))));
+//    }
 }
