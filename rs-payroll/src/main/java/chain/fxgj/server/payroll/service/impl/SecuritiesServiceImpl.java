@@ -10,6 +10,7 @@ import chain.utils.commons.StringUtils;
 import chain.wisales.client.feign.SecuritiesActivityFeignService;
 import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
 import chain.wisales.core.constant.dictEnum.StandardEnum;
+import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,8 +105,8 @@ public class SecuritiesServiceImpl implements SecuritiesService {
     }
 
     @Override
-    public BigDecimal qryGoldenBean(String custId) {
-        BigDecimal goldenBean = securitiesActivityFeignService.qryGoldenBean(custId);
+    public BigDecimal qryGoldenBean(String custId, UserTypeEnum userType) {
+        BigDecimal goldenBean = securitiesActivityFeignService.qryGoldenBean(custId, userType);
         return goldenBean;
     }
 

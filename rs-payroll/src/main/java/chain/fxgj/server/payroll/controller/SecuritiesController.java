@@ -1,17 +1,14 @@
 package chain.fxgj.server.payroll.controller;
 
-import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.feign.client.InsideFeignService;
 import chain.fxgj.feign.dto.request.WageReqPhone;
-import chain.fxgj.feign.dto.response.WageNewestWageLogDTO;
-import chain.fxgj.server.payroll.dto.securities.request.ReqRewardDTO;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
-import chain.fxgj.server.payroll.dto.securities.response.*;
+import chain.fxgj.server.payroll.dto.securities.response.ResSecuritiesLoginDTO;
+import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -24,8 +21,7 @@ import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
-import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
-import chain.wisales.core.constant.dictEnum.StandardEnum;
+import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -40,7 +36,10 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 证券开户活动
@@ -183,12 +182,13 @@ public class SecuritiesController {
      */
     @GetMapping("/qryGoldenBean")
     @TrackLog
-    public Mono<BigDecimal> qryGoldenBean(@RequestParam(value = "custId") String custId) {
+    public Mono<BigDecimal> qryGoldenBean(@RequestParam(value = "custId") String custId,
+                                          @RequestParam UserTypeEnum userType) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            BigDecimal goldenBean = securitiesService.qryGoldenBean(custId);
+            BigDecimal goldenBean = securitiesService.qryGoldenBean(custId, userType);
             return goldenBean;
         }).subscribeOn(Schedulers.elastic());
     }

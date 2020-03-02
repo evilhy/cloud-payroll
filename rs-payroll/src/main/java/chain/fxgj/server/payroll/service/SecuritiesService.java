@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.service;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
+import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -55,7 +56,7 @@ public interface SecuritiesService {
      * 查询金豆个数
      * @param custId
      */
-    BigDecimal qryGoldenBean(String custId);
+    BigDecimal qryGoldenBean(String custId, UserTypeEnum userType);
 
     /**
      * 查询数据同步时间列表(每个公司的数据同步时间)
