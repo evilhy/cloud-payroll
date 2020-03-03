@@ -183,12 +183,20 @@ public class SecuritiesController {
     @GetMapping("/qryGoldenBean")
     @TrackLog
     public Mono<BigDecimal> qryGoldenBean(@RequestParam(value = "custId") String custId,
-                                          @RequestParam UserTypeEnum userType) {
+                                          @RequestParam(value = "userType") String userType) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            BigDecimal goldenBean = securitiesService.qryGoldenBean(custId, userType);
+            UserTypeEnum userTypeEnum = null;
+            if (StringUtils.equals("0", userType)) {
+                userTypeEnum = UserTypeEnum.NORMAL;
+            } else if (StringUtils.equals("1", userType)) {
+                userTypeEnum = UserTypeEnum.MANAGER;
+            }else {
+                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("无效类型！"));
+            }
+            BigDecimal goldenBean = securitiesService.qryGoldenBean(custId, userTypeEnum);
             return goldenBean;
         }).subscribeOn(Schedulers.elastic());
     }
