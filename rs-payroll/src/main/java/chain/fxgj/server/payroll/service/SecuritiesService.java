@@ -70,9 +70,9 @@ public interface SecuritiesService {
 
     /**
      * 投资奖励列表List
-     * @param securitiesRewardReqDTO
+     * @param custId
      * @return
      */
-    List<SecuritiesRewardResDTO> qryInvestmentRewardList(SecuritiesRewardReqDTO securitiesRewardReqDTO);
+    List<SecuritiesRewardResDTO> qryInvestmentRewardList(String custId);
 
 }

@@ -123,8 +123,8 @@ public class SecuritiesServiceImpl implements SecuritiesService {
     }
 
     @Override
-    public List<SecuritiesRewardResDTO> qryInvestmentRewardList(SecuritiesRewardReqDTO securitiesRewardReqDTO) {
-        List<SecuritiesRewardResDTO> securitiesRewardResDTOList = securitiesActivityFeignService.qryInvestmentRewardList(securitiesRewardReqDTO);
+    public List<SecuritiesRewardResDTO> qryInvestmentRewardList(String custId) {
+        List<SecuritiesRewardResDTO> securitiesRewardResDTOList = securitiesActivityFeignService.qryInvestmentRewardList(custId);
         return securitiesRewardResDTOList;
     }
 }
