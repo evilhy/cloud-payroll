@@ -250,7 +250,7 @@ public class SecuritiesController {
      * 投资奖励列表
      * @return
      */
-    @PostMapping("/qryInvestmentRewardList")
+    @GetMapping("/qryInvestmentRewardList")
     @TrackLog
     public Mono<List<SecuritiesRewardResDTO>> qryInvestmentRewardList(@RequestParam String custId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
