@@ -223,9 +223,10 @@ public class SecuritiesController {
             });
 
             SecuritiesDataSynTimeDTO securitiesDataSynTimeDTO = securitiesDataSynTimeDTOList.get(0);
-            LocalDateTime dataSynTime = securitiesDataSynTimeDTO.getDataSynTime();
-            Long dataSynTimeLong = dataSynTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-            return dataSynTimeLong;
+            Long dataSynTime = securitiesDataSynTimeDTO.getDataSynTime();
+            // LocalDateTime 转 Long
+//            Long dataSynTimeLong = dataSynTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            return dataSynTime;
         }).subscribeOn(Schedulers.elastic());
     }
 
