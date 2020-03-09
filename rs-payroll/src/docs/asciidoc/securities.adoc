@@ -33,7 +33,7 @@ include::{snippets}/securities/securityes_securitiesLogin/response-body.adoc[]
 include::{snippets}/securities/securityes_securitiesLogin/curl-request.adoc[]
 * Response:
 +
-include::{snippets}/securityes/securityes_securitiesLogin/http-response.adoc[]
+include::{snippets}/securities/securityes_securitiesLogin/response-body.adoc[]
 
 
 === 邀请奖励列表查询
@@ -52,3 +52,66 @@ include::{snippets}/securities/securityes_qryInvitationAward/curl-request.adoc[]
 * Response:
 +
 include::{snippets}/securities/securityes_qryInvitationAward/http-response.adoc[]
+
+=== 查询金豆个数
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/securities/securityes_qryGoldenBean/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/securities/securityes_qryGoldenBean/http-response.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/securities/securityes_qryGoldenBean/curl-request.adoc[]
+* Response:
++
+include::{snippets}/securities/securityes_qryGoldenBean/http-response.adoc[]
+
+=== 查询证券公司数据更新时间
+==== 接口定义
+* Path Parameters:
+
+==== 示例
+* Request:
++
+include::{snippets}/securities/securityes_qryDataSynTime/curl-request.adoc[]
+* Response:
++
+include::{snippets}/securities/securityes_qryDataSynTime/http-response.adoc[]
+
+=== 查询开户奖励列表
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/securities/securityes_qryOpenRewardList/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/securities/securityes_qryOpenRewardList/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/securities/securityes_qryOpenRewardList/curl-request.adoc[]
+* Response:
++
+include::{snippets}/securities/securityes_qryOpenRewardList/http-response.adoc[]
+
+=== 投资奖励列表
+==== 接口定义
+* Query Parameters:
++
+include::{snippets}/securities/securityes_qryInvestmentRewardList/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/securities/securityes_qryInvestmentRewardList/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/securities/securityes_qryInvestmentRewardList/curl-request.adoc[]
+* Response:
++
+include::{snippets}/securities/securityes_qryInvestmentRewardList/http-response.adoc[]
