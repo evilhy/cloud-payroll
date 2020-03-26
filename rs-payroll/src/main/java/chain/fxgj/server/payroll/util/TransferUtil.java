@@ -7,6 +7,7 @@ import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,7 +75,7 @@ public class TransferUtil {
             userPrincipal.setDataAuths(wageUserPrincipal.getDataAuths());
             userPrincipal.setEntId(wageUserPrincipal.getEntId());
             List<chain.fxgj.feign.dto.ent.EntInfoDTO> entInfoDTOS = wageUserPrincipal.getEntInfoDTOS();
-            List<EntInfoDTO> entInfoDTOSList = userPrincipal.getEntInfoDTOS();
+            List<EntInfoDTO> entInfoDTOSList = new ArrayList<>();
             if (null != entInfoDTOS && entInfoDTOS.size()>0) {
                 for (chain.fxgj.feign.dto.ent.EntInfoDTO entInfoDTO : entInfoDTOS) {
                     EntInfoDTO entInfoDTO1 = new EntInfoDTO();
