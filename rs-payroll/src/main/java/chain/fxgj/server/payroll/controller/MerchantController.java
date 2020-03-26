@@ -269,6 +269,7 @@ public class MerchantController {
             res100705.setJsessionId(jsessionId);
             WageEmployeeWechatInfoDTO paramWetchatDto=new WageEmployeeWechatInfoDTO();
             BeanUtils.copyProperties(employeeWechatInfo,paramWetchatDto);
+            paramWetchatDto.setAppPartner(employeeWechatInfo.getAppPartner().getCode());
             log.info("copyProperties.paramWetchatDto:[{}]", JacksonUtil.objectToJson(paramWetchatDto));
             WageEmployeeWechatInfoDTO wechatInfoDTO=employeeFeignService.findEmployeeWetchatInfo(paramWetchatDto);
             if (wechatInfoDTO != null) {
