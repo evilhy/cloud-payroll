@@ -1,0 +1,104 @@
+server:
+  port: 7148
+
+spring:
+  aop:
+    proxyTargetClass: true
+  devtools:
+    restart:
+      enabled: false
+  redis:
+    database: 1
+    host: 127.0.0.1
+    port: 6380
+    password:
+    timeout: 1s
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 50
+        max-wait: -1ms
+        min-idle: 0
+  data:
+    mongodb:
+      uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
+  #链路跟踪
+  zipkin:
+    base-url: http://localhost:7178
+payroll:
+  #调用inside地址
+  inside-url: http://127.0.0.1:7124/rest/
+  #产品图片
+  img-url: https://sitwxp.cardpu.com/
+
+encrypt:
+  salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
+  passwd: MvEpyqjedb4Hvai3vnFakmYxQsebEVCe84RNcVxw79USzc85FPAmbA9NuPxqfGsMh5pPuyzL
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ["*"]
+
+
+# mongodb 日志记录
+logcss:
+  sysId: rs-payroll
+  activateMongodb: true
+  pool-size: 2
+  mongodb:
+    uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
+  maxEntitySize: 500
+  headerReqId: reqid
+  headerLogToken: logtoken
+  headerSessionId: jsessionid
+
+
+merchants:
+  merchant:
+    # 分组id
+    - appid: wx0345ad9614fe9567
+      #appsecret
+      appsecret: 05f6b8b23b0decd0c6af48e9f59bfdb9
+      #分组名称
+      name: 中人联微信对接
+      #接入平台编号  值是唯一 【取 AppPartnerEnum 枚举值】
+      merchantCode: ZRL
+      #请求地扯
+      url: http://www.baidu.com
+      #重定向工资条地址
+      #accessUrl: https://wxp.cardpu.com/fx-payroll/#/token?accessToken=tww9WR8f
+      accessUrl:  https://sitwxp.cardpu.com/fx-payroll/#/token?accessToken=ACCESSTOKEN
+      #rsa 公钥 -> 平台自已
+      rsaPublicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCGYHGGPlZvE4DE7ExTBMDNwJlDKXBiQYaprvxGZ+rf7YqJhxO08UnecTHKpPdA0KGe6vMwgT58AN3Cj1WsytIQ6Y2ybiqSwlpjlFQaNb3jiiE4gnSMkMvxxzRaHQ+Y10Qtfil47wqVq2TCKMMWrgSfMNINoTbSEp10FFbhbVrxpQIDAQAB
+      #rsa 私钥 -> 平台自已
+      rsaPrivateKey: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIZgcYY+Vm8TgMTsTFMEwM3AmUMpcGJBhqmu/EZn6t/tiomHE7TxSd5xMcqk90DQoZ7q8zCBPnwA3cKPVazK0hDpjbJuKpLCWmOUVBo1veOKITiCdIyQy/HHNFodD5jXRC1+KXjvCpWrZMIowxauBJ8w0g2hNtISnXQUVuFtWvGlAgMBAAECgYAjwCzz5kngq3Oq8KMtwyn4k7Ey6Sd5PK2zH1cG9EbM5Mni5QkdLsTUZZE1tMYDfH5DZYbl9LzHCQP262OD4UIZz2mhotBzT6UaZPhdMNsHzNojIwQa+syHTBgFMe39AuDyyes+0pG4rAlolPDMuywgb5yIK+1eMvPiW8nXZvg9AQJBAPOInM/ybSt7iqzL0Am9GOsOsvBXAlKxzUvEAdPi7YcFn5pmHTVQeymeDj+qlMYm56lB14UcTakEdwL/5SYLRXUCQQCNQWJAwDDdKcFw6vtH5WoDh4KeDGupLCQ89g1RpLoZtwq0oe46VexC59EfhG1Kz9zTi2YVrfRnc+lH5WpTLgVxAkEAqENOnXrRpQaB5SwY/HGT4uzQA7EKYNqKjvvJi32yQeVHxiUhrzGBN1sGW0Tf8Bz3WQGuCEFrAwmbtQ3bZLLK9QJAXU6yc2lBHebGNCvUfyKJC/nIi1RTDbXt3iL+m06/69qghL9umTRG089DsZkNhNyX11l+vpVhG7FSiL5/pKCC0QJAMHErhJK0pHG1e64bVbMQNhTPBPlt7WwMMkNU7iewNglPAwUzzeTHbf0wAHfHSo2vpz4BKrKRU6F2HxMOyzaTnQ==df723820
+      #rsa 公钥 -> 合作平台
+      paraRsaPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwofGjqSENb4lkQS3hkfAs95775WC9SrOnHZhTdjTJPn29G7y/Ex+9fluDnT1xuELcEtf1vbMSVQBFBdV8g2vqKCp25eeexxBZ8iBKGQ3PJPNCIh1SOD7tYV6iHKsjM3ZceS4r/yYPU07AD6EQC9hb1CmhpaEac3y6C0C5gXc0U9m5aSbWqt+ySSyYkhTajZSq5VhEgqvesgi50yx7Ks7iSktCe9kEte5xlWsF//RmPDIUlNYk5YdlnOx6cXQr0XOYEIlQ5GqUoNDAbLtABrKzyW+oNczG/WEEhBaI0YT3wZWhIfF/cRSV/NokvlQa3bZ8t3dkkBKxvIf+1Rzq2qNlQIDAQAB
+      #备注说明
+      remarks:
+         # 请求前端页面： https://wxp.cardpu.com/fx-payroll/#/token?accessToken=tww9WR8f
+         # 请求后端接口获取token ：https://sitwx.cardpu.com/merchant/callback?accessToken=tww9WR8f
+      #查询 数据权限   【 取 FundLiquidationEnum  枚举值 】
+      dataAuths:
+        - HXB
+
+#设置feign调用超时时间
+ribbon:
+  ReadTimeout: 30000
+  ConnectTimeout: 30000
+
+#禁用feign熔断
+feign:
+  hystrix:
+    enabled: false
+
+#熔断超时时间设置
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 120000
