@@ -3,7 +3,7 @@ spring:
     name: payroll
   cloud:
     consul:
-      host: 127.0.0.1
+      host: 10.68.184.147
       port: 8500
       discovery:
         # consul 健康检测频率
@@ -13,6 +13,8 @@ spring:
         service-name: ${spring.application.name}
         instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}  #实例ID
         prefer-ip-address: true
+        # 健康检查失败多长时间后，取消注册
+        health-check-critical-timeout: 3s
   main:
     allow-bean-definition-overriding: true
 
