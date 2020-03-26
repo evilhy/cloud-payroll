@@ -60,9 +60,9 @@ merchants:
       #appsecret
       appsecret: 05f6b8b23b0decd0c6af48e9f59bfdb9
       #分组名称
-      name: 中人联微信对接
+      name: 辽宁振兴银行
       #接入平台编号  值是唯一 【取 AppPartnerEnum 枚举值】
-      merchantCode: ZRL
+      merchantCode: NEWUP
       #请求地扯
       url: http://www.baidu.com
       #重定向工资条地址

@@ -53,6 +53,10 @@ public class MerchantDTO {
      */
     private String uid;
     /**
+     * openId
+     */
+    private String openId;
+    /**
      * 用户微信昵称
      */
     private String nickname;
@@ -80,6 +84,7 @@ public class MerchantDTO {
                     .idNumber(RSAEncrypt.decrypt(StringUtils.trimToEmpty(merchantDTO.getIdNumber()), decrypt))
                     .phone(RSAEncrypt.decrypt(StringUtils.trimToEmpty(merchantDTO.getPhone()), decrypt))
                     .uid(RSAEncrypt.decrypt(StringUtils.trimToEmpty(merchantDTO.getUid()), decrypt))
+                    .openId(RSAEncrypt.decrypt(StringUtils.trimToEmpty(merchantDTO.getOpenId()), decrypt))
                     .headimgurl(StringUtils.trimToEmpty(merchantDTO.getHeadimgurl()))
                     .build();
         } catch (Exception e) {
@@ -128,7 +133,7 @@ public class MerchantDTO {
                 .idNumber(this.idNumber)
                 .phone(phone)
                 .uid(uid)
-                .openId(uid)
+                .openId(openId)
                 .nickname(this.nickname)
                 .headimgurl(this.headimgurl)
                 .appPartner(this.appPartner)

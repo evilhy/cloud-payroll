@@ -37,6 +37,9 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -90,6 +93,9 @@ public class MerchantController {
     public Mono<MerchantAccessDTO> getAccessUrl(@RequestHeader(value = "signature", required = true) String signature,
                                                 @RequestHeader(value = "appid", required = true) String appid,
                                                 @RequestHeader(value = "version", defaultValue = "1.0") String version,
+                                                @RequestHeader(value = "clientSn", required = true) String clientSn,
+                                                @RequestHeader(value = "clientDate", required = true) String clientDate,
+                                                @RequestHeader(value = "clientTime", required = true) String clientTime,
                                                 @RequestBody MerchantDTO merchantDTO,
                                                 ServerHttpResponse response
     ) throws Exception {
@@ -209,6 +215,16 @@ public class MerchantController {
 
             response.getHeaders().set("signature", retureSignature);
             log.info("返回签名：{}", retureSignature);
+            LocalDateTime now = LocalDateTime.now();
+
+            response.getHeaders().set("version", RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey()));
+            response.getHeaders().set("clientSn",UUIDUtil.createUUID32());
+
+            String yyyyMMdd = "" + now.getYear() + now.getMonthValue() + now.getDayOfMonth();
+            response.getHeaders().set("clientDate", yyyyMMdd);
+
+            long timeStamp = now.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            response.getHeaders().set("clientTime", String.valueOf(timeStamp));
 
             return merchantAccess;
         }).subscribeOn(Schedulers.elastic());

@@ -22,6 +22,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
 
 /**
@@ -62,6 +64,7 @@ public class BaseRSTest {
         //将自定义的序列化配置应用到webTestCliend
         builderCustomizer.customize(builder);
         this.webTestClient = builder.baseUrl("http://localhost:8080/")
+                .responseTimeout(Duration.ofSeconds(10000))
                 .filter(documentationConfiguration(restDocumentation))
                 .build();
     }
