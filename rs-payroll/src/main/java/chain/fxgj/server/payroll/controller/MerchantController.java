@@ -123,7 +123,7 @@ public class MerchantController {
         BeanUtils.copyProperties(merchantDecrypt,singMerchantDTO);
         //openId不参与签名，所以要过滤掉
         singMerchantDTO.setOpenId(null);
-        String checkSignature = MerchantDTO.signature(merchantDecrypt, merchantHeadDecrypt);
+        String checkSignature = MerchantDTO.signature(singMerchantDTO, merchantHeadDecrypt);
 
         //3、对比签名信息
         Base64 base64 = new Base64();
@@ -167,6 +167,7 @@ public class MerchantController {
                 wechatInfoDTO.setUid(employeeWechatInfo.getUid());
                 wechatInfoDTO.setOpenId(employeeWechatInfo.getOpenId());
                 wechatInfoDTO.setRegisterType(RegisterTypeEnum.UUID.getCode());
+                log.info("wechatInfoDTO入库:[{}]", JacksonUtil.objectToJson(wechatInfoDTO));
                 employeeFeignService.saveEmployeeWetchatInfo(wechatInfoDTO);
             } else {
                 log.info("认证绑定信息表【不存在】！");
@@ -179,7 +180,7 @@ public class MerchantController {
                 WageEmpInfoDTO empInfoDTO=employeeFeignService.findEmployeeInfo(wageEmpInfoDTO);
                 //EmployeeInfo emp = merchantService.findEmployeeInfo(employeeInfo);
                 if (empInfoDTO != null) {
-                    log.info("员工信息表中【存在】！");
+                    log.info("员工信息表中【存在】！入库:[{}]", JacksonUtil.objectToJson(paramWetchatDto));
                     wechatInfoDTO = employeeFeignService.saveEmployeeWetchatInfo(paramWetchatDto);
                 } else {
                     log.info("员工信息表中【不存在】！信息未认证");
