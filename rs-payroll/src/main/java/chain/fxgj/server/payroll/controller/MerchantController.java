@@ -155,6 +155,7 @@ public class MerchantController {
             WageEmployeeWechatInfoDTO paramWetchatDto=new WageEmployeeWechatInfoDTO();
             BeanUtils.copyProperties(employeeWechatInfo,paramWetchatDto);
             paramWetchatDto.setAppPartner(merchant.getMerchantCode().getCode());
+            paramWetchatDto.setRegisterType(RegisterTypeEnum.UUID.getCode());
             WageEmployeeWechatInfoDTO wechatInfoDTO=employeeFeignService.findEmployeeWetchatInfo(paramWetchatDto);
             //EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
             if (wechatInfoDTO != null) {  //认证绑定信息表已经存在，则说明已经绑定成功
