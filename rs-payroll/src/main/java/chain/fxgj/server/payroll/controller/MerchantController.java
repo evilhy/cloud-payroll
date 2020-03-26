@@ -40,6 +40,7 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -185,7 +186,7 @@ public class MerchantController {
 
 
             String accessToken = UUIDUtil.createUUID8();
-
+            log.info("accessToken:[{}]", accessToken);
             String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + accessToken;
             merchantDecrypt.setDataAuths(merchant.getDataAuths());
             String emp = JacksonUtil.objectToJson(merchantDecrypt);
@@ -220,8 +221,7 @@ public class MerchantController {
             response.getHeaders().set("version", RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey()));
             response.getHeaders().set("clientSn",UUIDUtil.createUUID32());
 
-            String yyyyMMdd = "" + now.getYear() + now.getMonthValue() + now.getDayOfMonth();
-            response.getHeaders().set("clientDate", yyyyMMdd);
+            response.getHeaders().set("clientDate", new SimpleDateFormat("yyyyMMdd").format(new Date()));
 
             long timeStamp = now.toInstant(ZoneOffset.of("+8")).toEpochMilli();
             response.getHeaders().set("clientTime", String.valueOf(timeStamp));

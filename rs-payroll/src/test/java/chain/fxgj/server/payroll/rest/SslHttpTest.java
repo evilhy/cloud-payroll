@@ -151,8 +151,10 @@ public class SslHttpTest {
 
             LocalDateTime now = LocalDateTime.now();
             String clientDate = "" + now.getYear() + now.getMonthValue() + now.getDayOfMonth();
+            log.info("clientDate:[{}]", clientDate);
+            log.info("yyyyMMdd1:[{}]", new SimpleDateFormat("yyyyMMdd").format(new Date()));
             long clientTime = now.toInstant(ZoneOffset.of("+8")).toEpochMilli();
-
+            log.info("clientTime:[{}]", clientTime);
             //方式一：post请求
             HttpPost httpPost = new HttpPost(requestUrl);
             httpPost.setEntity(postingString);
