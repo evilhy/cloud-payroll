@@ -30,7 +30,7 @@ public class TransferUtil {
             wageUserPrincipal.setDataAuths(userPrincipal.getDataAuths());
             wageUserPrincipal.setEntId(userPrincipal.getEntId());
             List<EntInfoDTO> entInfoDTOS = userPrincipal.getEntInfoDTOS();
-            List<chain.fxgj.feign.dto.ent.EntInfoDTO> entInfoDTOSList = wageUserPrincipal.getEntInfoDTOS();
+            List<chain.fxgj.feign.dto.ent.EntInfoDTO> entInfoDTOSList = new ArrayList<>();
             if (null != entInfoDTOS && entInfoDTOS.size() > 0) {
                 for (EntInfoDTO entInfoDTO : entInfoDTOS) {
                     chain.fxgj.feign.dto.ent.EntInfoDTO feiginEntInfoDto = new chain.fxgj.feign.dto.ent.EntInfoDTO();
