@@ -9,7 +9,7 @@ spring:
       enabled: false
   redis:
     database: 1
-    host: 127.0.0.1
+    host: 10.5.0.182
     port: 6380
     password:
     timeout: 1s
@@ -21,15 +21,15 @@ spring:
         min-idle: 0
   data:
     mongodb:
-      uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
+      uri: mongodb://fxgjlogs:123456@10.5.0.182:27017/fxgjlogs
   #链路跟踪
   zipkin:
     base-url: http://localhost:7178
 payroll:
   #调用inside地址
-  inside-url: http://127.0.0.1:7124/rest/
+  inside-url: http://10.68.236.24:7124/rest/
   #产品图片
-  img-url: https://sitwxp.cardpu.com/
+  img-url: http://10.5.0.101/
 
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
@@ -48,7 +48,7 @@ logcss:
   activateMongodb: true
   pool-size: 2
   mongodb:
-    uri: mongodb://fxgjlogs:Kayak20181026@localhost:27017/fxgjlogs
+    uri: mongodb://fxgjlogs:123456@10.5.0.182:27017/fxgjlogs
   maxEntitySize: 500
   headerReqId: reqid
   headerLogToken: logtoken
@@ -69,7 +69,7 @@ merchants:
       url: http://www.baidu.com
       #重定向工资条地址
       #accessUrl: https://wxp.cardpu.com/fx-payroll/#/token?accessToken=tww9WR8f
-      accessUrl:  https://sitwxp.cardpu.com/fx-payroll/#/token?accessToken=ACCESSTOKEN
+      accessUrl:  http://10.5.0.101:30121/fx-payroll/#/token?accessToken=ACCESSTOKEN
       #rsa 公钥 -> 平台自已
       rsaPublicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCGYHGGPlZvE4DE7ExTBMDNwJlDKXBiQYaprvxGZ+rf7YqJhxO08UnecTHKpPdA0KGe6vMwgT58AN3Cj1WsytIQ6Y2ybiqSwlpjlFQaNb3jiiE4gnSMkMvxxzRaHQ+Y10Qtfil47wqVq2TCKMMWrgSfMNINoTbSEp10FFbhbVrxpQIDAQAB
       #rsa 私钥 -> 平台自已
