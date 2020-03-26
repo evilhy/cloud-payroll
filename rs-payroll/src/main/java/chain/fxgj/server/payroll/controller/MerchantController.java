@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.RegisterTypeEnum;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.core.common.service.EmployeeEncrytorService;
@@ -270,7 +271,8 @@ public class MerchantController {
             res100705.setJsessionId(jsessionId);
             WageEmployeeWechatInfoDTO paramWetchatDto=new WageEmployeeWechatInfoDTO();
             BeanUtils.copyProperties(employeeWechatInfo,paramWetchatDto);
-            paramWetchatDto.setAppPartner(employeeWechatInfo.getAppPartner().getCode());
+            paramWetchatDto.setAppPartner(AppPartnerEnum.NEWUP.getCode());
+            paramWetchatDto.setRegisterType(RegisterTypeEnum.UUID.getCode());
             log.info("copyProperties.paramWetchatDto:[{}]", JacksonUtil.objectToJson(paramWetchatDto));
             WageEmployeeWechatInfoDTO wechatInfoDTO=employeeFeignService.findEmployeeWetchatInfo(paramWetchatDto);
             if (wechatInfoDTO != null) {
