@@ -164,6 +164,7 @@ public class MerchantController {
                 wechatInfoDTO.setUid(employeeWechatInfo.getUid());
                 wechatInfoDTO.setOpenId(employeeWechatInfo.getOpenId());
                 wechatInfoDTO.setRegisterType(RegisterTypeEnum.UUID.getCode());
+                wechatInfoDTO.setAppPartner(merchant.getMerchantCode().getCode());
                 log.info("wechatInfoDTO入库:[{}]", JacksonUtil.objectToJson(wechatInfoDTO));
                 employeeFeignService.saveEmployeeWetchatInfo(wechatInfoDTO);
             } else {

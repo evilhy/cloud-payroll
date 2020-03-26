@@ -58,7 +58,7 @@ public class SslHttpTest {
         String idNumber = "342622196504011319";
         String phone = "13899997777";
         String uid = "9871234";
-        String openId = "oFnSLv9Bit13_hICqbpUfGojGVgY";
+        String openId = "oFnSLvyxBArqJtYqd3-xU6H7Xr08";
         String nickname = "用户微信昵称";
         String headimgurl = "http://wwww.baidu.com";
 
