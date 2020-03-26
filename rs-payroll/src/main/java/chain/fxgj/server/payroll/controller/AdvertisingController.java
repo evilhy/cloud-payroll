@@ -44,6 +44,7 @@ public class AdvertisingController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         //根据合作方获取一行渠道
         String apppartner = MDC.get(PayrollConstants.APPPARTNER);
+        log.info("rotation.apppartner:[{}]", apppartner);
         AppPartnerEnum appPartner = AppPartnerEnum.values()[Integer.valueOf(apppartner)];
         FundLiquidationEnum liquidation = appPartner.getLiquidation();
 
