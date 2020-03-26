@@ -119,6 +119,10 @@ public class MerchantController {
         MerchantDTO merchantDecrypt = MerchantDTO.decrypt(merchantDTO, merchant.getRsaPrivateKey());
 
         //2、生成签名信息
+        MerchantDTO singMerchantDTO = MerchantDTO.builder().build();
+        BeanUtils.copyProperties(merchantDecrypt,singMerchantDTO);
+        //openId不参与签名，所以要过滤掉
+        singMerchantDTO.setOpenId(null);
         String checkSignature = MerchantDTO.signature(merchantDecrypt, merchantHeadDecrypt);
 
         //3、对比签名信息

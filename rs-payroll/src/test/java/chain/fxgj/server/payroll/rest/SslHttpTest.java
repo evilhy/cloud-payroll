@@ -68,7 +68,6 @@ public class SslHttpTest {
                 .idNumber(idNumber)
                 .phone(phone)
                 .uid(uid)
-                .openId(openId)
                 .nickname(nickname)
                 .headimgurl(headimgurl)
                 .build();
