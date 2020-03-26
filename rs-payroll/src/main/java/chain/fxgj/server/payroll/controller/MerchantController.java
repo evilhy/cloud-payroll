@@ -249,6 +249,7 @@ public class MerchantController {
         Object value = redisTemplate.opsForValue().get(redisKey);
 
         if (value == null) {
+            log.error("根据:[{}]未查询到缓存值", redisKey);
             throw new ParamsIllegalException(ErrorConstant.MERCHANT_06.getErrorMsg());
         }
 
@@ -256,7 +257,9 @@ public class MerchantController {
         MerchantDTO merchantDecrypt = JacksonUtil.jsonToBean((String) value, MerchantDTO.class);
 
         EmployeeWechatInfo employeeWechatInfo = merchantDecrypt.conver();
+        log.info("employeeWechatInfo.getIdNumber():[{}]", employeeWechatInfo.getIdNumber());
         employeeWechatInfo.setIdNumber(employeeEncrytorService.encryptIdNumber(employeeWechatInfo.getIdNumber()));
+        log.info("employeeWechatInfo.encryptIdNumber:[{}]", JacksonUtil.objectToJson(employeeWechatInfo));
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -266,6 +269,7 @@ public class MerchantController {
             res100705.setJsessionId(jsessionId);
             WageEmployeeWechatInfoDTO paramWetchatDto=new WageEmployeeWechatInfoDTO();
             BeanUtils.copyProperties(employeeWechatInfo,paramWetchatDto);
+            log.info("copyProperties.paramWetchatDto:[{}]", JacksonUtil.objectToJson(paramWetchatDto));
             WageEmployeeWechatInfoDTO wechatInfoDTO=employeeFeignService.findEmployeeWetchatInfo(paramWetchatDto);
             if (wechatInfoDTO != null) {
                 WageRes100705 wageRes100705=merchantFeignService.wxCallback(accessToken);
@@ -275,6 +279,7 @@ public class MerchantController {
             } else {
                 log.info("用户信息不存在！");
             }
+            log.info("wxCallback.res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
         }).subscribeOn(Schedulers.elastic());
 

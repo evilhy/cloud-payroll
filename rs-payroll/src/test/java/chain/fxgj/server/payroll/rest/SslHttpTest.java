@@ -53,14 +53,14 @@ public class SslHttpTest {
                 .version(version)
                 .build();
 
-        String name = "王方玉";
+        String name = "王方";
         String idType = "01";
-        String idNumber = "342622196504011319";
-        String phone = "13899997777";
+        String idNumber = "14212219891008530X";
+        String phone = "16666666666";
         String uid = "9871234";
         String openId = "oFnSLvyxBArqJtYqd3-xU6H7Xr08";
         String nickname = "用户微信昵称";
-        String headimgurl = "http://wwww.baidu.com";
+        String headimgurl = "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLGZicQDuRPCCcFEFEN72qnAgVGJ99JMmegLMTknEpaSGbVzo2aweUSCkC0reicqhpZOWABEoTqahmA/132";
 
         MerchantDTO merchantDTO = MerchantDTO.builder()
                 .name(name)
