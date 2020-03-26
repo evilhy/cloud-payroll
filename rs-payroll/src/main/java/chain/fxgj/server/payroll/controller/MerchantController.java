@@ -160,7 +160,7 @@ public class MerchantController {
                 wechatInfoDTO.setNickname(employeeWechatInfo.getNickname());
                 wechatInfoDTO.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
                 wechatInfoDTO.setUid(employeeWechatInfo.getUid());
-                wechatInfoDTO.setOpenId(employeeWechatInfo.getUid());
+                wechatInfoDTO.setOpenId(employeeWechatInfo.getOpenId());
                 wechatInfoDTO.setRegisterType(RegisterTypeEnum.UUID.getCode());
                 employeeFeignService.saveEmployeeWetchatInfo(wechatInfoDTO);
             } else {
