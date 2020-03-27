@@ -195,6 +195,7 @@ public class MerchantController {
             log.info("accessToken:[{}]", accessToken);
             String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + accessToken;
             merchantDecrypt.setDataAuths(merchant.getDataAuths());
+            merchantDecrypt.setAppPartner(merchant.getMerchantCode());
             String emp = JacksonUtil.objectToJson(merchantDecrypt);
             redisTemplate.opsForValue().set(redisKey, emp, PayrollConstants.MERCHANT_EXPIRESIN, TimeUnit.SECONDS);
 
@@ -280,8 +281,6 @@ public class MerchantController {
                 WageRes100705 wageRes100705=merchantFeignService.wxCallback(accessToken);
                 if (res100705!=null){
                     BeanUtils.copyProperties(wageRes100705,res100705);
-                    //todo 这里先固定返回 AppPartnerEnum.NEWUP
-                    res100705.setApppartner(AppPartnerEnum.NEWUP);
                 }
             } else {
                 log.info("用户信息不存在！");
