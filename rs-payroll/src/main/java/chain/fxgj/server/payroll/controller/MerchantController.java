@@ -209,7 +209,6 @@ public class MerchantController {
                     .build();
             MerchantAccessDTO merchantAccess = MerchantAccessDTO.encryption(merchantAccessDTO, merchant.getParaRsaPublicKey());
 
-
             String retureSignature = MerchantAccessDTO.signature(merchantAccess, merchantHeadDTO);
             //String result = java.net.URLDecoder.decode(en ,"UTF-8");
 
@@ -233,7 +232,7 @@ public class MerchantController {
 
             long timeStamp = now.toInstant(ZoneOffset.of("+8")).toEpochMilli();
             response.getHeaders().set("clientTime", String.valueOf(timeStamp));
-
+            log.info("merchantAccess:[{}]", JacksonUtil.objectToJson(merchantAccess));
             return merchantAccess;
         }).subscribeOn(Schedulers.elastic());
 
