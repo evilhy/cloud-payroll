@@ -53,7 +53,7 @@ public class SslHttpTest {
                 .version(version)
                 .build();
 
-        String name = "王方";
+        String name = "彭银";
         String idType = "01";
         String idNumber = "14212219891008530X";
         String phone = "16666666666";

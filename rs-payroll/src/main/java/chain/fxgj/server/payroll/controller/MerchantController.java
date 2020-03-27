@@ -196,6 +196,7 @@ public class MerchantController {
             String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + accessToken;
             merchantDecrypt.setDataAuths(merchant.getDataAuths());
             merchantDecrypt.setAppPartner(merchant.getMerchantCode());
+            merchantDecrypt.setRegisterType(RegisterTypeEnum.UUID);
             String emp = JacksonUtil.objectToJson(merchantDecrypt);
             redisTemplate.opsForValue().set(redisKey, emp, PayrollConstants.MERCHANT_EXPIRESIN, TimeUnit.SECONDS);
 
