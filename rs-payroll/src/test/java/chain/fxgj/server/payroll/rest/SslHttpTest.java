@@ -54,6 +54,14 @@ public class SslHttpTest {
             String de = RSAEncrypt.decrypt(en, priKey);
             log.info("de:[{}]", de);
 
+
+//            String retUrl = "fctPEfZot+tgdveDpiN+KE+WhqWV/yUOL3adJzbqDd/fNEAa7P5dLJ4hJW3C+N9tC1nRVIr1p1CvntKfLZHA9k4PIY1Vtfy8epjJr1hdQH9EatII2E9KQKltmzMhum5HoCJs858c4NtCdD09f0E7A5xy60qiLg8cvf9gMhDXrSFAw3UBhN1bDOqpDh0dLD4UoAqWBSQo/PzHVXQDEUYySsbNil4WCmoLsfUi81mfc1nVHmzJq0Bzl61GIUkK7jDQAquI4e/yX9JWGBY1Fo8WCdHz2z3YRcmaWSdcvjnuDwwKxOYRA3o8jPsIMW1zBk1vAOFaTK4ZHeC3mD3JcFHepQ=";
+            String retUrl = "na+MvvFyc0hSBNigcC8i0hddo8IgqPU0pr051YSGL4Bjj5XoSwbKPm1hUy/hejXa+Wiar/uCBMyV6ZdNnIRP1t98wNI1p/aNJUPn/C7OStCbeA5YlmBktd2urxgKAuFYk21eISn2Lk7LUfqErOUmlReK2yiymlu4fIwKROcQOPwGK7+G09/thOlz/uMu44OUGmE+GtkxQOLD6fbu3zmlwdhLiHIxjpulS2tcIPuSGLPwnBBMOpBYLGxLmJhbGtscs7IVoR6NcckZkoEZ47pVBAdcIPZEE5TUySjohgmIpY1oc7KN6M3Uis0bfcavuIRnXnplTjxeVqndVyoW/jVtsA==";
+            String decrypt = RSAEncrypt.decrypt(retUrl, priKey);
+            log.info("decrypt:[{}]", decrypt);
+
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
