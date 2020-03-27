@@ -102,7 +102,8 @@ public class MerchantController {
                                                 ServerHttpResponse response
     ) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
+        log.info("getAccess.version:[{}]", version);
+        log.info("getAccess.merchantDTO:[{}]", JacksonUtil.objectToJson(merchantDTO));
         //【1】根据appid -->  取配置文件里商户信息
         MerchantsProperties.Merchant merchant = this.getMerchant(StringUtils.trimToEmpty(appid));
 
