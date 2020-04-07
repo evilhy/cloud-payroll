@@ -58,7 +58,8 @@ logcss:
 merchants:
   merchant:
     # 分组id
-    - appid: wx0345ad9614fe9567
+#    - appid: wx0345ad9614fe9567
+    - appid: wx0345ad9614fe12345
       #appsecret
       appsecret: 05f6b8b23b0decd0c6af48e9f59bfdb9
       #分组名称
