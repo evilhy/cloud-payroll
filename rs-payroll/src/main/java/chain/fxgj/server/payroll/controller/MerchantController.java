@@ -121,7 +121,7 @@ public class MerchantController {
         MerchantDTO merchantDecrypt = MerchantDTO.decrypt(merchantDTO, merchant.getRsaPrivateKey());
 
         //2、生成签名信息
-        String checkSignature = null;//MerchantDTO.signature(merchantDecrypt, merchantHeadDecrypt);
+        String checkSignature = MerchantDTO.signature(merchantDecrypt, merchantHeadDecrypt);
 
         //3、对比签名信息
         Base64 base64 = new Base64();
