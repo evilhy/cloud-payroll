@@ -48,9 +48,6 @@ public class MerchantAccessDTO {
             String url = merchantAccess.getAccessUrl().replaceAll("ACCESSTOKEN", merchantAccessDTO.getAccessToken());
             url = RSAEncrypt.encrypt(url, encryption);
             merchantAccess.setAccessUrl(url);
-            if (true) {
-                throw new Exception();
-            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new ParamsIllegalException(ErrorConstant.MERCHANT_04.getErrorMsg());
