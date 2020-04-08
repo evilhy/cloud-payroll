@@ -250,7 +250,7 @@ public class MerchantController {
         String token = StringUtils.trimToEmpty(accessToken);
 
         String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + token;
-        Object value = null;//redisTemplate.opsForValue().get(redisKey);
+        Object value = redisTemplate.opsForValue().get(redisKey);
 
         if (value == null) {
             log.error("根据:[{}]未查询到缓存值", redisKey);
