@@ -126,9 +126,6 @@ public class MerchantDTO {
         String signature = null;
         try {
             signature = Sha1.SHA1(signatureMap);
-            if (true) {
-                throw new DigestException();
-            }
         } catch (DigestException e) {
             e.printStackTrace();
             throw new ParamsIllegalException(ErrorConstant.MERCHANT_05.getErrorMsg());
