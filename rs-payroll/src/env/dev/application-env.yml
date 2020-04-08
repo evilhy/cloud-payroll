@@ -80,7 +80,7 @@ merchants:
          # 请求后端接口获取token ：https://sitwx.cardpu.com/merchant/callback?accessToken=tww9WR8f
       #查询 数据权限   【 取 FundLiquidationEnum  枚举值 】
       dataAuths:
-        - HXB
+        - NEWUP
 
 #设置feign调用超时时间
 ribbon:
