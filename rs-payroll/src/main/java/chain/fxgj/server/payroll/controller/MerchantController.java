@@ -211,12 +211,12 @@ public class MerchantController {
             log.info("merchantHeadDecrypt.getVersion():[{}]", merchantHeadDecrypt.getVersion());
 //            String encryptLog = RSAEncrypt.encrypt(merchantHeadDTO.getVersion(), merchant.getParaRsaPublicKey());
 //            log.info("encryptLog:[{}]", encryptLog);
-            merchantHeadDTO.setVersion(RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey()));
+            String encryptVersion = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
             log.info("accessUrl:[{}]", merchantAccess.getAccessUrl());
-            log.info("version:[{}]", merchantHeadDTO.getVersion());
+            log.info("version:[{}]", encryptVersion);
             log.info("appid:[{}]", merchantHeadDTO.getAppid());
-
-            String retureSignature = MerchantAccessDTO.signature(merchantAccess, merchantHeadDTO);
+//            String retureSignature = MerchantAccessDTO.signature(merchantAccess, merchantHeadDTO);
+            String retureSignature = MerchantAccessDTO.signatureSHA( merchantAccess.getAccessUrl(), encryptVersion, merchantHeadDTO.getAppid());
             //String result = java.net.URLDecoder.decode(en ,"UTF-8");
 
             log.info("retureSignature 返回签名：{}", retureSignature);
