@@ -58,7 +58,6 @@ public class MerchantAccessDTO {
     public static String signature(MerchantAccessDTO merchantAccessDTO, MerchantHeadDTO merchantHeadDTO) throws DigestException {
         LinkedHashMap<String, Object> signatureMap = new LinkedHashMap<>();
         signatureMap.put("accessUrl", merchantAccessDTO.accessUrl);
-
         signatureMap.put("version", merchantHeadDTO.getVersion());
         signatureMap.put("appid", merchantHeadDTO.getAppid());
 
