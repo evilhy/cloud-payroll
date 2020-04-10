@@ -208,18 +208,14 @@ public class MerchantController {
                     .accessUrl(merchant.getAccessUrl())
                     .build();
             MerchantAccessDTO merchantAccess = MerchantAccessDTO.encryption(merchantAccessDTO, merchant.getParaRsaPublicKey());
-            log.info("merchantHeadDecrypt.getVersion():[{}]", merchantHeadDecrypt.getVersion());
-//            String encryptLog = RSAEncrypt.encrypt(merchantHeadDTO.getVersion(), merchant.getParaRsaPublicKey());
-//            log.info("encryptLog:[{}]", encryptLog);
-            String encryptVersion = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
-            log.info("accessUrl:[{}]", merchantAccess.getAccessUrl());
-            log.info("version:[{}]", encryptVersion);
-            log.info("appid:[{}]", merchantHeadDTO.getAppid());
-//            String retureSignature = MerchantAccessDTO.signature(merchantAccess, merchantHeadDTO);
-            String retureSignature = MerchantAccessDTO.signatureSHA( merchantAccess.getAccessUrl(), encryptVersion, merchantHeadDTO.getAppid());
-            //String result = java.net.URLDecoder.decode(en ,"UTF-8");
 
-            log.info("retureSignature 返回签名：{}", retureSignature);
+            String encryptVersion = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
+            log.info("encryptAccessUrl:[{}]", merchantAccess.getAccessUrl());
+            log.info("encryptVersion:[{}]", encryptVersion);
+            log.info("appid:[{}]", merchant.getAppid());
+            String retureSignature = MerchantAccessDTO.signatureSHA( merchantAccess.getAccessUrl(), encryptVersion, merchant.getAppid());
+            log.info("accessUrl.version.appid签名：{}", retureSignature);
+
             //公钥加密
             retureSignature = RSAEncrypt.encrypt(retureSignature, merchant.getParaRsaPublicKey());
             log.info("==>retureSignature签名使用公钥再加密 ={}", retureSignature);
@@ -229,9 +225,10 @@ public class MerchantController {
             log.info("==>retureSignature base64 ={}", retureSignature);
 
             response.getHeaders().set("signature", retureSignature);
-            log.info("返回签名：{}", retureSignature);
+            log.info("headers.signature返回签名：{}", retureSignature);
             LocalDateTime now = LocalDateTime.now();
-
+            String encryptLog = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
+            log.info("encryptLog:[{}]", encryptLog);
             response.getHeaders().set("version", RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey()));
             response.getHeaders().set("clientSn",UUIDUtil.createUUID32());
 
