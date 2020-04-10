@@ -208,14 +208,14 @@ public class MerchantController {
                     .accessUrl(merchant.getAccessUrl())
                     .build();
             MerchantAccessDTO merchantAccess = MerchantAccessDTO.encryption(merchantAccessDTO, merchant.getParaRsaPublicKey());
-
+            log.info("merchantAccess:[{}]", JacksonUtil.objectToJson(merchantAccess));
             String retureSignature = MerchantAccessDTO.signature(merchantAccess, merchantHeadDTO);
             //String result = java.net.URLDecoder.decode(en ,"UTF-8");
 
             log.info("retureSignature 返回签名：{}", retureSignature);
             //公钥加密
             retureSignature = RSAEncrypt.encrypt(retureSignature, merchant.getParaRsaPublicKey());
-            log.info("==>retureSignature 使用公钥加密 ={}", retureSignature);
+            log.info("==>retureSignature签名使用公钥再加密 ={}", retureSignature);
 
             //signature base64
             retureSignature = base64.encodeToString(retureSignature.getBytes("UTF-8"));
