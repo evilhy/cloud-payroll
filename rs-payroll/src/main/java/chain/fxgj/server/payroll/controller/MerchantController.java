@@ -208,9 +208,12 @@ public class MerchantController {
                     .accessUrl(merchant.getAccessUrl())
                     .build();
             MerchantAccessDTO merchantAccess = MerchantAccessDTO.encryption(merchantAccessDTO, merchant.getParaRsaPublicKey());
+            log.info("merchantHeadDecrypt.getVersion():[{}]", merchantHeadDecrypt.getVersion());
+            merchantHeadDTO.setVersion(RSAEncrypt.encrypt(merchantHeadDecrypt.getVersion(), merchant.getParaRsaPublicKey()));
             log.info("accessUrl:[{}]", merchantAccess.getAccessUrl());
             log.info("version:[{}]", merchantHeadDTO.getVersion());
             log.info("appid:[{}]", merchantHeadDTO.getAppid());
+
             String retureSignature = MerchantAccessDTO.signature(merchantAccess, merchantHeadDTO);
             //String result = java.net.URLDecoder.decode(en ,"UTF-8");
 
