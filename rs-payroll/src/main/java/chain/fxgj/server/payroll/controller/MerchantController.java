@@ -210,6 +210,10 @@ public class MerchantController {
             MerchantAccessDTO merchantAccess = MerchantAccessDTO.encryption(merchantAccessDTO, merchant.getParaRsaPublicKey());
 
             String encryptVersion = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
+            String encryptVersion1 = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
+            String encryptVersion2 = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
+            log.info("encryptVersion1:[{}]", encryptVersion1);
+            log.info("encryptVersion2:[{}]", encryptVersion2);
             log.info("encryptAccessUrl:[{}]", merchantAccess.getAccessUrl());
             log.info("encryptVersion:[{}]", encryptVersion);
             log.info("appid:[{}]", merchant.getAppid());
