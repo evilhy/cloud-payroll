@@ -3,7 +3,7 @@ spring:
     name: payroll
   cloud:
     consul:
-      host: 10.68.184.147
+      host: 10.5.0.103
       port: 8500
       discovery:
         # consul 健康检测频率
