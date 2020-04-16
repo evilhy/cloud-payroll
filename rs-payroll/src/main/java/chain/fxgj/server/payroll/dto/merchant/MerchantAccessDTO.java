@@ -58,9 +58,19 @@ public class MerchantAccessDTO {
     public static String signature(MerchantAccessDTO merchantAccessDTO, MerchantHeadDTO merchantHeadDTO) throws DigestException {
         LinkedHashMap<String, Object> signatureMap = new LinkedHashMap<>();
         signatureMap.put("accessUrl", merchantAccessDTO.accessUrl);
-
         signatureMap.put("version", merchantHeadDTO.getVersion());
         signatureMap.put("appid", merchantHeadDTO.getAppid());
+
+        String signature = Sha1.SHA1(signatureMap);
+        return signature;
+    }
+
+
+    public static String signatureSHA(String accessUrl, String version, String appid) throws DigestException {
+        LinkedHashMap<String, Object> signatureMap = new LinkedHashMap<>();
+        signatureMap.put("accessUrl", accessUrl);
+        signatureMap.put("version", version);
+        signatureMap.put("appid", appid);
 
         String signature = Sha1.SHA1(signatureMap);
         return signature;

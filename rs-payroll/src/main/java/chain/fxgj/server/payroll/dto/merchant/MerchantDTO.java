@@ -4,6 +4,7 @@ import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.CertTypeEnum;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
+import chain.fxgj.core.common.constant.DictEnums.RegisterTypeEnum;
 import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
@@ -13,6 +14,10 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.DigestException;
@@ -53,6 +58,10 @@ public class MerchantDTO {
      */
     private String uid;
     /**
+     * openId
+     */
+    private String openId;
+    /**
      * 用户微信昵称
      */
     private String nickname;
@@ -68,7 +77,10 @@ public class MerchantDTO {
      * 数据权限
      */
     private List<FundLiquidationEnum> dataAuths;
-
+    /**
+     * 注册类型
+     */
+    private RegisterTypeEnum registerType;
 
 
     public static MerchantDTO decrypt(MerchantDTO merchantDTO, String decrypt) {
@@ -80,6 +92,7 @@ public class MerchantDTO {
                     .idNumber(RSAEncrypt.decrypt(StringUtils.trimToEmpty(merchantDTO.getIdNumber()), decrypt))
                     .phone(RSAEncrypt.decrypt(StringUtils.trimToEmpty(merchantDTO.getPhone()), decrypt))
                     .uid(RSAEncrypt.decrypt(StringUtils.trimToEmpty(merchantDTO.getUid()), decrypt))
+                    .openId(RSAEncrypt.decrypt(StringUtils.trimToEmpty(merchantDTO.getOpenId()), decrypt))
                     .headimgurl(StringUtils.trimToEmpty(merchantDTO.getHeadimgurl()))
                     .build();
         } catch (Exception e) {
@@ -128,7 +141,7 @@ public class MerchantDTO {
                 .idNumber(this.idNumber)
                 .phone(phone)
                 .uid(uid)
-                .openId(uid)
+                .openId(openId)
                 .nickname(this.nickname)
                 .headimgurl(this.headimgurl)
                 .appPartner(this.appPartner)

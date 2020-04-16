@@ -36,6 +36,8 @@ buildscript {
 plugins {
     id 'net.ltgt.apt' version '0.10'
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" apply false
+    //测试类报错 CreateProcess error=206, 文件名或扩展名太长。本地调试使用。请勿提交！
+//    id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
 }
 allprojects {
     apply plugin: 'maven'
@@ -109,6 +111,7 @@ subprojects {
     dependencies {
         //compile('chain:cloud-common:1.0.13')
        // compile("chain.fxgj:fxgj-common:1.0.21.1")
+        compile("chain.fxgj:fxgj-base:1.0.48")
         compile 'org.projectlombok:lombok:1.18.2'
         compile('chain:css-log:2.1.4')
         compile('chain:utils-commons:1.0.6')
