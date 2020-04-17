@@ -15,7 +15,7 @@ import javax.annotation.security.PermitAll;
 import java.util.Map;
 
 /**
- * 小程序
+ * 小程序// todo zhuchangjian 确定可以删除，稍后整理
  */
 @RestController
 @RequestMapping("/mini")
