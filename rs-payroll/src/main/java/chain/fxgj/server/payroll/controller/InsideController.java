@@ -69,7 +69,8 @@ public class InsideController {
 
             WageRes100302 wageRes100302 = insideFeignService.sendCode(wageIndexDTO);
             Res100302 res100302 = new Res100302();
-            BeanUtils.copyProperties(wageRes100302, res100302);
+            res100302.setCodeId(wageRes100302.getCodeId());
+            log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
             return res100302;
         }).subscribeOn(Schedulers.elastic());
     }
