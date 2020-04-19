@@ -161,11 +161,11 @@ public class CallInsideServiceImpl implements CallInsideService {
                 .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
                 .header("clientIp",clientIp)
                 .post(Entity.entity(msgCodeLogRequestDTO, MediaType.APPLICATION_JSON_TYPE));
-        MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
         if (response.getStatus() != 200) {
             ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
             throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrorCode(), errorDTO.getErrorMsg()));
         }
+        MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
         Res100302 res100302 = new Res100302();
         res100302.setCodeId(responeDTO.getCodeId());
         res100302.setCode(responeDTO.getCode());
