@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.service.impl;
 
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
+import chain.css.exception.ServiceHandleException;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
@@ -163,7 +164,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
         if (response.getStatus() != 200) {
             ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
-            throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrorCode(), errorDTO.getErrorMsg()));
+            throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(errorDTO.getErrorMsg()));
         }
         Res100302 res100302 = new Res100302();
         res100302.setCodeId(responeDTO.getCodeId());
