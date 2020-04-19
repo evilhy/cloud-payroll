@@ -3,7 +3,10 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
+import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
+import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
 import chain.fxgj.feign.client.InsideFeignService;
 import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.request.*;
@@ -11,6 +14,7 @@ import chain.fxgj.feign.dto.response.WageRes100302;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.response.Res100302;
+import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
@@ -24,14 +28,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
+import javax.ws.rs.core.Context;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -48,6 +50,8 @@ public class InsideController {
     Executor executor;
     @Autowired
     private SynTimerFeignService wageSynFeignService;
+    @Autowired
+    CallInsideServiceImpl callInsideService;
 
 
     /**
@@ -59,17 +63,30 @@ public class InsideController {
     @PostMapping("/sendCode")
     @TrackLog
     @PermitAll
-    public Mono<Res100302> sendCode(@RequestBody Req100302 req100302) {
+    public Mono<Res100302> sendCode(@RequestBody Req100302 req100302, @RequestHeader(value = "X-Real-IP", required = false) String clientIp) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
+        log.info("sendCode.req100302:[{}]", JacksonUtil.objectToJson(req100302));
+        log.info("sendCode.X-Real-IP:[{}]", clientIp);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageReq100302 wageIndexDTO = new WageReq100302();
-            wageIndexDTO.setPhone(req100302.getPhone());
+//            WageReq100302 wageIndexDTO = new WageReq100302();
+//            wageIndexDTO.setPhone(req100302.getPhone());
+//
+//            WageRes100302 wageRes100302 = insideFeignService.sendCode(wageIndexDTO);
+//            Res100302 res100302 = new Res100302();
+//            res100302.setCodeId(wageRes100302.getCodeId());
+//            log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
 
-            WageRes100302 wageRes100302 = insideFeignService.sendCode(wageIndexDTO);
+            //需要加ip，所以直接调用inside发送短信，不调用cloud-wage-manager，上面的注释
+            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
+            dto.setSystemId(0);
+            dto.setCheckType(1);
+            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+            dto.setMsgMedium(req100302.getPhone());
+            dto.setValidTime(120);
+            MsgCodeLogResponeDTO msgCodeLogResponeDTO = callInsideService.sendCode(dto, clientIp);
             Res100302 res100302 = new Res100302();
-            res100302.setCodeId(wageRes100302.getCodeId());
+            res100302.setCodeId(msgCodeLogResponeDTO.getCodeId());
             log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
             return res100302;
         }).subscribeOn(Schedulers.elastic());
