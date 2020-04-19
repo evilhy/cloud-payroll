@@ -29,8 +29,6 @@ public class WebContextFilter implements WebFilter, Ordered {
 
     private static final String REQ = "req-id";
 
-    private static final String X_REAL_IP = "X-Real-IP";
-
     public WebContextFilter() {
         log.info("Loaded WebFilter [WebContextFilter]");
     }
@@ -75,9 +73,6 @@ public class WebContextFilter implements WebFilter, Ordered {
         //log.info("{}", exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR).toString());
         exchange.getAttributes().put(START_TIME, System.currentTimeMillis());
         exchange.getAttributes().put(REQ, reqId);
-        //feign 请求头中增加 X-Real-IP
-        String xTealIp = exchange.getRequest().getHeaders().getFirst(X_REAL_IP);
-        exchange.getAttributes().put(X_REAL_IP, xTealIp);
         String finalReqId = reqId;
         //将现在的request 变成 change对象
         ServerHttpRequest host = exchange.getRequest().mutate().header(REQ, reqId).build();
