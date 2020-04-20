@@ -54,7 +54,7 @@ public interface CallInsideService {
      * @param msgCodeLogRequestDTO
      * @return
      */
-    MsgCodeLogResponeDTO sendCode(MsgCodeLogRequestDTO msgCodeLogRequestDTO);
+    MsgCodeLogResponeDTO sendCode(MsgCodeLogRequestDTO msgCodeLogRequestDTO, String clientIp);
 
 
     void checkPhoneCode(String phone, String code);

@@ -29,7 +29,7 @@ public class MsgModelInfoController {
     private MsgModuleInfoFeignService msgModuleInfoFeignService;
 
     /**
-     * 查询账户信息
+     * 查询账户信息 todo zhuchangjian 确认下此接口是否有用
      *
      * @param id
      * @return

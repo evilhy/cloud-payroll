@@ -315,7 +315,7 @@ public class WechatController {
     }
 
     /**
-     * 工资条推送
+     * 工资条推送 todo zhuchangjian 确认是否再用
      */
     @GetMapping("/wagePush")
     @TrackLog

@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.service.impl;
 
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
+import chain.css.exception.ServiceHandleException;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
@@ -154,13 +155,17 @@ public class CallInsideServiceImpl implements CallInsideService {
     }
 
     @Override
-    public MsgCodeLogResponeDTO sendCode(MsgCodeLogRequestDTO msgCodeLogRequestDTO) {
+    public MsgCodeLogResponeDTO sendCode(MsgCodeLogRequestDTO msgCodeLogRequestDTO, String clientIp) {
         WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCode");
         Response response = webTarget.request()
                 .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header("clientIp",clientIp)
                 .post(Entity.entity(msgCodeLogRequestDTO, MediaType.APPLICATION_JSON_TYPE));
+        if (response.getStatus() != 200) {
+            ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
+            throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrorCode(), errorDTO.getErrorMsg()));
+        }
         MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
-
         Res100302 res100302 = new Res100302();
         res100302.setCodeId(responeDTO.getCodeId());
         res100302.setCode(responeDTO.getCode());
