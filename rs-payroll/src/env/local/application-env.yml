@@ -27,7 +27,7 @@ spring:
     base-url: http://localhost:7178
 payroll:
   #调用inside地址
-  inside-url: http://10.68.236.24:7124/rest/
+  inside-url: http://10.5.0.101:30090/rest/
   #产品图片
   img-url: http://10.5.0.101/
 
