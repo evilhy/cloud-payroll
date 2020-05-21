@@ -26,10 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -154,7 +151,8 @@ public class PayRollController {
      * @param idNumber 身份证号
      * @return
      */
-    @GetMapping("/entEmp")
+//    @GetMapping("/entEmp")
+    @PostMapping("/entEmp")
     @TrackLog
     public Mono<Res100701> entEmp(@RequestParam("idNumber") String idNumber) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
