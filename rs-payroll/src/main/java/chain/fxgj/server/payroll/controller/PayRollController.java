@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.controller;
 
+import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
@@ -9,6 +10,7 @@ import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.CheckCardDTO;
 import chain.fxgj.feign.dto.response.*;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
+import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.util.TransferUtil;
@@ -152,12 +154,40 @@ public class PayRollController {
      * @return
      */
 //    @GetMapping("/entEmp")
+//    @TrackLog
+//    public Mono<Res100701> entEmp(@RequestParam("idNumber") String idNumber) {
+//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+//        UserPrincipal principal = WebContext.getCurrentUser();
+//
+//        return Mono.fromCallable(() -> {
+//            MDC.setContextMap(mdcContext);
+//            WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
+//            Res100701 res100701=null;
+//            log.info("调用wageMangerFeignService.entEmp(idNumber,wageUserPrincipal)开始");
+//            WageRes100701 wageRes100701=wageMangerFeignService.entEmp(idNumber,wageUserPrincipal);
+//            log.info("wageRes100701:[{}]",JacksonUtil.objectToJson(wageRes100701));
+//            if (wageRes100701!=null){
+//                res100701=new Res100701();
+//                BeanUtils.copyProperties(wageRes100701,res100701);
+//            }
+//            return res100701;
+//        }).subscribeOn(Schedulers.elastic());
+//    }
+
+    /**
+     * 根据身份账号返回手机和公司列表
+     *
+     * @return
+     */
     @PostMapping("/entEmp")
     @TrackLog
-    public Mono<Res100701> entEmp(@RequestParam("idNumber") String idNumber) {
+    public Mono<Res100701> entEmp(@RequestBody EntEmpDTO entEmpDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
-
+        String idNumber = entEmpDTO.getIdNumber();
+        if (StringUtils.isBlank(idNumber)) {
+            throw new ParamsIllegalException(new ErrorMsg("9999", "请输入身份证!"));
+        }
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
