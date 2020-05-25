@@ -48,7 +48,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/virus",
             "/mini",
             "/securityes",
-            "//wechat/wxCallback"
+            "/wechat/wxCallback"
     };
 
     @Autowired
