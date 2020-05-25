@@ -168,7 +168,6 @@ public class CallInsideServiceImpl implements CallInsideService {
         MsgCodeLogResponeDTO responeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
         Res100302 res100302 = new Res100302();
         res100302.setCodeId(responeDTO.getCodeId());
-        res100302.setCode(responeDTO.getCode());
         return responeDTO;
     }
 
