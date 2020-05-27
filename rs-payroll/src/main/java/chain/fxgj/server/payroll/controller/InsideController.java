@@ -14,6 +14,7 @@ import chain.fxgj.feign.dto.response.WageRes100302;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.response.Res100302;
+import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -52,9 +53,11 @@ public class InsideController {
     private SynTimerFeignService wageSynFeignService;
     @Autowired
     CallInsideServiceImpl callInsideService;
+    @Autowired
+    private EmpWechatService empWechatService;
 
 
-    /**
+    /** 注释原因：数据脱敏，可能没有手机号，需要通过jsessionId查询手机号，注意类型的使用
      * 发送短信验证码
      *
      * @param req100302
@@ -91,6 +94,66 @@ public class InsideController {
             return res100302;
         }).subscribeOn(Schedulers.elastic());
     }
+
+    //    /**
+//     * 发送短信验证码
+//     * busyType 说明
+//     * 0 明文传输手机号(此时手机号必填)
+//     * 1 微信绑定手机号验证(上手的手机号可以为空，根据jsessionId 找到绑定的手机号)
+//     * 2 通过企业绑定的手机
+//     * @return
+//     */
+//    @PostMapping("/sendCode")
+//    @TrackLog
+//    @PermitAll
+//    public Mono<Res100302> sendCode(@RequestBody SendCodeReqDTO sendCodeReqDTO, @RequestHeader(value = "X-Real-IP", required = false) String clientIp,
+//            @RequestHeader(value = "jsession-id", required = false) String jsessionId) {
+//
+//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+//        log.info("sendCode.sendCodeReqDTO:[{}]", JacksonUtil.objectToJson(sendCodeReqDTO));
+//        log.info("sendCode.X-Real-IP:[{}]", clientIp);
+//
+//        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+//        return Mono.fromCallable(() -> {
+//            MDC.setContextMap(mdcContext);
+//            String busiType = sendCodeReqDTO.getBusiType();
+//            String phone = "";
+//            if (StringUtils.equals("0", busiType)) {//0 明文传输手机号(此时手机号必填)
+//                phone = sendCodeReqDTO.getPhone();
+//                if (StringUtils.isBlank(phone)) {
+//                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("请填写手机号"));
+//                }
+//            } else if (StringUtils.equals("1", busiType)) {//1 微信绑定手机号验证(手机号为空，根据jsessionId 找到绑定的手机号)
+//                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+//                if (null == wechatInfoDetail) {
+//                    log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
+//                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败"));
+//                }
+//                phone = wechatInfoDetail.getPhone();
+//                if (StringUtils.isBlank(phone)) {
+//                    log.error("缓存中无手机信息sendCode.wechatInfoDetail:[{}]", JacksonUtil.objectToJson(wechatInfoDetail));
+//                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
+//                }
+//            } else if (StringUtils.equals("2", busiType)) {//2 通过企业绑定的手机
+//
+//            } else {
+//                log.error("业务类型不存在busiType:[{}]", sendCodeReqDTO.getBusiType());
+//                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败"));
+//            }
+//            //需要加ip，所以直接调用inside发送短信，不调用cloud-wage-manager，上面的注释
+//            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
+//            dto.setSystemId(0);
+//            dto.setCheckType(1);
+//            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+//            dto.setMsgMedium(phone);
+//            dto.setValidTime(120);
+//            MsgCodeLogResponeDTO msgCodeLogResponeDTO = callInsideService.sendCode(dto, clientIp);
+//            Res100302 res100302 = new Res100302();
+//            res100302.setCodeId(msgCodeLogResponeDTO.getCodeId());
+//            log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
+//            return res100302;
+//        }).subscribeOn(Schedulers.elastic());
+//    }
 
     /**
      * 员工回执

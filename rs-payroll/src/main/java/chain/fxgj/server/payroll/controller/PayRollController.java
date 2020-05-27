@@ -649,7 +649,11 @@ public class PayRollController {
             if (wageEmpInfoDTO!=null){
                 empInfoDTO=new EmpInfoDTO();
                 BeanUtils.copyProperties(wageEmpInfoDTO,empInfoDTO);
+                //身份证、手机号脱敏
+//                empInfoDTO.setIdNumber(empInfoDTO.getIdNumberStar());
+//                empInfoDTO.setPhone(empInfoDTO.getPhoneStar());
             }
+            log.info("emp.empInfoDTO.ret:[{}]", JacksonUtil.objectToJson(empInfoDTO));
             return empInfoDTO;
         }).subscribeOn(Schedulers.elastic());
 
