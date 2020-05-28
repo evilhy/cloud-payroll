@@ -3,10 +3,14 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
+import chain.feign.hxinside.ent.service.EmployeeInfoServiceFeign;
 import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
+import chain.fxgj.ent.core.dto.request.EmployeeQueryRequest;
+import chain.fxgj.ent.core.dto.response.EmployeeInfoRes;
+import chain.fxgj.ent.core.dto.response.employee.EmployeeInfoQueIdsDTO;
 import chain.fxgj.feign.client.InsideFeignService;
 import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.request.*;
@@ -21,6 +25,7 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.dto.response.PayrollUserPrincipalDTO;
 import chain.utils.commons.JacksonUtil;
+import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +41,7 @@ import reactor.core.scheduler.Schedulers;
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.core.Context;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 @RestController
@@ -55,97 +60,39 @@ public class InsideController {
     CallInsideServiceImpl callInsideService;
     @Autowired
     private EmpWechatService empWechatService;
+    @Autowired
+    EmployeeInfoServiceFeign employeeInfoServiceFeign;
 
 
-    /** 注释原因：数据脱敏，可能没有手机号，需要通过jsessionId查询手机号，注意类型的使用
-     * 发送短信验证码
-     *
-     * @param req100302
-     * @return
-     */
-    @PostMapping("/sendCode")
-    @TrackLog
-    @PermitAll
-    public Mono<Res100302> sendCode(@RequestBody Req100302 req100302, @RequestHeader(value = "X-Real-IP", required = false) String clientIp) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        log.info("sendCode.req100302:[{}]", JacksonUtil.objectToJson(req100302));
-        log.info("sendCode.X-Real-IP:[{}]", clientIp);
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-//            WageReq100302 wageIndexDTO = new WageReq100302();
-//            wageIndexDTO.setPhone(req100302.getPhone());
-//
-//            WageRes100302 wageRes100302 = insideFeignService.sendCode(wageIndexDTO);
-//            Res100302 res100302 = new Res100302();
-//            res100302.setCodeId(wageRes100302.getCodeId());
-//            log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
-
-            //需要加ip，所以直接调用inside发送短信，不调用cloud-wage-manager，上面的注释
-            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
-            dto.setSystemId(0);
-            dto.setCheckType(1);
-            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-            dto.setMsgMedium(req100302.getPhone());
-            dto.setValidTime(120);
-            MsgCodeLogResponeDTO msgCodeLogResponeDTO = callInsideService.sendCode(dto, clientIp);
-            Res100302 res100302 = new Res100302();
-            res100302.setCodeId(msgCodeLogResponeDTO.getCodeId());
-            log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
-            return res100302;
-        }).subscribeOn(Schedulers.elastic());
-    }
-
-    //    /**
+//    /** 注释原因：数据脱敏，可能没有手机号，需要通过jsessionId查询手机号，注意类型的使用
 //     * 发送短信验证码
-//     * busyType 说明
-//     * 0 明文传输手机号(此时手机号必填)
-//     * 1 微信绑定手机号验证(上手的手机号可以为空，根据jsessionId 找到绑定的手机号)
-//     * 2 通过企业绑定的手机
+//     *
+//     * @param req100302
 //     * @return
 //     */
 //    @PostMapping("/sendCode")
 //    @TrackLog
 //    @PermitAll
-//    public Mono<Res100302> sendCode(@RequestBody SendCodeReqDTO sendCodeReqDTO, @RequestHeader(value = "X-Real-IP", required = false) String clientIp,
-//            @RequestHeader(value = "jsession-id", required = false) String jsessionId) {
-//
+//    public Mono<Res100302> sendCode(@RequestBody Req100302 req100302, @RequestHeader(value = "X-Real-IP", required = false) String clientIp) {
 //        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//        log.info("sendCode.sendCodeReqDTO:[{}]", JacksonUtil.objectToJson(sendCodeReqDTO));
+//        log.info("sendCode.req100302:[{}]", JacksonUtil.objectToJson(req100302));
 //        log.info("sendCode.X-Real-IP:[{}]", clientIp);
-//
-//        UserPrincipal userPrincipal = WebContext.getCurrentUser();
 //        return Mono.fromCallable(() -> {
 //            MDC.setContextMap(mdcContext);
-//            String busiType = sendCodeReqDTO.getBusiType();
-//            String phone = "";
-//            if (StringUtils.equals("0", busiType)) {//0 明文传输手机号(此时手机号必填)
-//                phone = sendCodeReqDTO.getPhone();
-//                if (StringUtils.isBlank(phone)) {
-//                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("请填写手机号"));
-//                }
-//            } else if (StringUtils.equals("1", busiType)) {//1 微信绑定手机号验证(手机号为空，根据jsessionId 找到绑定的手机号)
-//                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
-//                if (null == wechatInfoDetail) {
-//                    log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
-//                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败"));
-//                }
-//                phone = wechatInfoDetail.getPhone();
-//                if (StringUtils.isBlank(phone)) {
-//                    log.error("缓存中无手机信息sendCode.wechatInfoDetail:[{}]", JacksonUtil.objectToJson(wechatInfoDetail));
-//                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
-//                }
-//            } else if (StringUtils.equals("2", busiType)) {//2 通过企业绑定的手机
+////            WageReq100302 wageIndexDTO = new WageReq100302();
+////            wageIndexDTO.setPhone(req100302.getPhone());
+////
+////            WageRes100302 wageRes100302 = insideFeignService.sendCode(wageIndexDTO);
+////            Res100302 res100302 = new Res100302();
+////            res100302.setCodeId(wageRes100302.getCodeId());
+////            log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
 //
-//            } else {
-//                log.error("业务类型不存在busiType:[{}]", sendCodeReqDTO.getBusiType());
-//                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败"));
-//            }
 //            //需要加ip，所以直接调用inside发送短信，不调用cloud-wage-manager，上面的注释
 //            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
 //            dto.setSystemId(0);
 //            dto.setCheckType(1);
 //            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-//            dto.setMsgMedium(phone);
+//            dto.setMsgMedium(req100302.getPhone());
 //            dto.setValidTime(120);
 //            MsgCodeLogResponeDTO msgCodeLogResponeDTO = callInsideService.sendCode(dto, clientIp);
 //            Res100302 res100302 = new Res100302();
@@ -154,6 +101,91 @@ public class InsideController {
 //            return res100302;
 //        }).subscribeOn(Schedulers.elastic());
 //    }
+
+    /**
+     * 发送短信验证码
+     * busyType 说明
+     * 0 明文传输手机号(此时手机号必填)
+     * 1 微信绑定手机号验证(上手的手机号可以为空，根据jsessionId 找到绑定的手机号)
+     * 2 通过企业绑定的手机
+     * @return
+     */
+    @PostMapping("/sendCode")
+    @TrackLog
+    @PermitAll
+    public Mono<Res100302> sendCode(@RequestBody SendCodeReqDTO sendCodeReqDTO, @RequestHeader(value = "X-Real-IP", required = false) String clientIp,
+            @RequestHeader(value = "jsession-id", required = false) String jsessionId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        log.info("sendCode.sendCodeReqDTO:[{}]", JacksonUtil.objectToJson(sendCodeReqDTO));
+        log.info("sendCode.X-Real-IP:[{}]", clientIp);
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            String busiType = sendCodeReqDTO.getBusiType();
+            String phone = "";
+            if (StringUtils.equals("0", busiType)) {//0 明文传输手机号(此时手机号必填)
+                phone = sendCodeReqDTO.getPhone();
+                if (StringUtils.isBlank(phone)) {
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("请填写手机号"));
+                }
+            } else if (StringUtils.equals("1", busiType)) {//1 微信绑定手机号验证(手机号为空，根据jsessionId 找到绑定的手机号)
+                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                if (null == wechatInfoDetail) {
+                    log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败"));
+                }
+                phone = wechatInfoDetail.getPhone();
+                if (StringUtils.isBlank(phone)) {
+                    log.error("缓存中无手机信息sendCode.wechatInfoDetail:[{}]", JacksonUtil.objectToJson(wechatInfoDetail));
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
+                }
+            } else if (StringUtils.equals("2", busiType)) {//2 通过企业绑定的手机
+                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                if (null == wechatInfoDetail) {
+                    log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!!"));
+                }
+                String idNumber = wechatInfoDetail.getIdNumber();
+                if (StringUtils.isBlank(idNumber)) {
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!!!"));
+                }
+                List<String> groups = new ArrayList<>();
+                String groupId = sendCodeReqDTO.getGroupId();
+                groups.add(groupId);
+                EmployeeQueryRequest employeeQueryRequest = EmployeeQueryRequest.builder()
+                        .groupIds(groups)
+                        .idNumber(idNumber)
+                        .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal, DelStatusEnum.delete)))
+                        .build();
+                List<EmployeeInfoRes> employeeInfoRes = employeeInfoServiceFeign.empInfoList(employeeQueryRequest);
+                if (null != employeeInfoRes && employeeInfoRes.size() == 1) {
+                    EmployeeInfoRes employeeInfoRes1 = employeeInfoRes.get(0);
+                    phone = employeeInfoRes1.getPhone();
+                }else {
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败，请联系客服"));
+                }
+            } else {
+                log.error("业务类型不存在busiType:[{}]", sendCodeReqDTO.getBusiType());
+                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败，请联系客服!"));
+            }
+            log.info("sendCode.phone:[{}]", phone);
+            if (StringUtils.isBlank(phone)) {
+                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("企业员工无手机号，短信发送失败"));
+            }
+            //需要加ip，所以直接调用inside发送短信，不调用cloud-wage-manager，上面的注释
+            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
+            dto.setSystemId(0);
+            dto.setCheckType(1);
+            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+            dto.setMsgMedium(phone);
+            dto.setValidTime(120);
+            MsgCodeLogResponeDTO msgCodeLogResponeDTO = callInsideService.sendCode(dto, clientIp);
+            Res100302 res100302 = new Res100302();
+            res100302.setCodeId(msgCodeLogResponeDTO.getCodeId());
+            log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
+            return res100302;
+        }).subscribeOn(Schedulers.elastic());
+    }
 
     /**
      * 员工回执

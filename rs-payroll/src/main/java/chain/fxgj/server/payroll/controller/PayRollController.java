@@ -13,6 +13,7 @@ import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
@@ -650,8 +651,8 @@ public class PayRollController {
                 empInfoDTO=new EmpInfoDTO();
                 BeanUtils.copyProperties(wageEmpInfoDTO,empInfoDTO);
                 //身份证、手机号脱敏
-//                empInfoDTO.setIdNumber(empInfoDTO.getIdNumberStar());
-//                empInfoDTO.setPhone(empInfoDTO.getPhoneStar());
+                empInfoDTO.setIdNumber(empInfoDTO.getIdNumberStar());
+                empInfoDTO.setPhone(empInfoDTO.getPhoneStar());
             }
             log.info("emp.empInfoDTO.ret:[{}]", JacksonUtil.objectToJson(empInfoDTO));
             return empInfoDTO;
@@ -781,6 +782,9 @@ public class PayRollController {
                 for (WageEmployeeListBean welb:wageEmployeeListBeanList){
                     EmployeeListBean eb=new EmployeeListBean();
                     BeanUtils.copyProperties(welb,eb);
+                    //身份证、手机号脱敏
+                    eb.setIdNumber(SensitiveInfoUtils.idCardNumDefined(eb.getIdNumber()));
+                    eb.setPhone(SensitiveInfoUtils.mobilePhonePrefix(eb.getPhone()));
                     list.add(eb);
                 }
             }

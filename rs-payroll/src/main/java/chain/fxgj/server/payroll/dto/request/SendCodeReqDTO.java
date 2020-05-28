@@ -26,5 +26,9 @@ public class SendCodeReqDTO {
      * 2 通过企业绑定的手机
      */
     private String busiType;
+    /**
+     * 机构id
+     */
+    private String groupId;
 
 }

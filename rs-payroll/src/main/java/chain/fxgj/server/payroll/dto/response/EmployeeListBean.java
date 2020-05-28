@@ -43,5 +43,8 @@ public class EmployeeListBean {
      * 企业编号
      */
     private String entId;
-
+    /**
+     * 机构id
+     */
+    private String groupId;
 }
