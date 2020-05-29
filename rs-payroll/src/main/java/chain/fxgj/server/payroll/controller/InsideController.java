@@ -141,6 +141,7 @@ public class InsideController {
                 }
             } else if (StringUtils.equals("2", busiType)) {//2 通过企业绑定的手机
                 WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                log.info("sedCode.wechatInfoDetail:[{}]", JacksonUtil.objectToJson(wechatInfoDetail));
                 if (null == wechatInfoDetail) {
                     log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!!"));
@@ -158,18 +159,19 @@ public class InsideController {
                     log.error("groupId:[{}]", groupId);
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
                 }
-                //校验入参groupId，是不是在缓存中
-                boolean tab = true;
-                for (String group_id : groupIds) {
-                    if (StringUtils.equals(groupId, group_id)) {
-                        //在缓存groups中能匹配到入参传进来的groupId，设置成false，不跑一次
-                        tab = false;
-                    }
-                }
-                if (tab) {
-                    log.error("在缓存中未匹配到对应的groupId:[{}]", groupId);
-                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
-                }
+//                注释原因：是不是在缓存中 缓存中的无groups，需要查看
+//                //校验入参groupId，
+//                boolean tab = true;
+//                for (String group_id : groupIds) {
+//                    if (StringUtils.equals(groupId, group_id)) {
+//                        //在缓存groups中能匹配到入参传进来的groupId，设置成false，不跑一次
+//                        tab = false;
+//                    }
+//                }
+//                if (tab) {
+//                    log.error("在缓存中未匹配到对应的groupId:[{}]", groupId);
+//                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
+//                }
                 groups.add(groupId);
                 EmployeeQueryRequest employeeQueryRequest = EmployeeQueryRequest.builder()
                         .entId(entId)
