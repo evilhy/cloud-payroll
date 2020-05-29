@@ -654,7 +654,7 @@ public class PayRollController {
                 empInfoDTO.setIdNumber(empInfoDTO.getIdNumberStar());
                 empInfoDTO.setPhone(empInfoDTO.getPhoneStar());
             }
-            log.info("emp.empInfoDTO.ret:[{}]", JacksonUtil.objectToJson(empInfoDTO));
+            log.info("返回脱敏数据emp.empInfoDTO.ret:[{}]", JacksonUtil.objectToJson(empInfoDTO));
             return empInfoDTO;
         }).subscribeOn(Schedulers.elastic());
 
@@ -788,6 +788,7 @@ public class PayRollController {
                     list.add(eb);
                 }
             }
+            log.info("返回脱敏数据entPhone.list:[{}]",list);
             return list;
         }).subscribeOn(Schedulers.elastic());
     }

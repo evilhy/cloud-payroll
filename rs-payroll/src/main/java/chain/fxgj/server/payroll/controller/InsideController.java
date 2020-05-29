@@ -146,13 +146,33 @@ public class InsideController {
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!!"));
                 }
                 String idNumber = wechatInfoDetail.getIdNumber();
-                if (StringUtils.isBlank(idNumber)) {
+                String entId = wechatInfoDetail.getEntId();
+                String[] groupIds = wechatInfoDetail.getGroupIds();
+                if (StringUtils.isBlank(idNumber) || StringUtils.isBlank(entId)) {
+                    log.error("idNumber:[{}], entId:[{}]", idNumber, entId);
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!!!"));
                 }
                 List<String> groups = new ArrayList<>();
                 String groupId = sendCodeReqDTO.getGroupId();
+                if (StringUtils.isBlank(groupId)) {
+                    log.error("groupId:[{}]", groupId);
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
+                }
+                //校验入参groupId，是不是在缓存中
+                boolean tab = true;
+                for (String group_id : groupIds) {
+                    if (StringUtils.equals(groupId, group_id)) {
+                        //在缓存groups中能匹配到入参传进来的groupId，设置成false，不跑一次
+                        tab = false;
+                    }
+                }
+                if (tab) {
+                    log.error("在缓存中未匹配到对应的groupId:[{}]", groupId);
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
+                }
                 groups.add(groupId);
                 EmployeeQueryRequest employeeQueryRequest = EmployeeQueryRequest.builder()
+                        .entId(entId)
                         .groupIds(groups)
                         .idNumber(idNumber)
                         .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal, DelStatusEnum.delete)))
@@ -423,13 +443,33 @@ public class InsideController {
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!!"));
                 }
                 String idNumber = wechatInfoDetail.getIdNumber();
-                if (StringUtils.isBlank(idNumber)) {
+                String entId = wechatInfoDetail.getEntId();
+                String[] groupIds = wechatInfoDetail.getGroupIds();
+                if (StringUtils.isBlank(idNumber) || StringUtils.isBlank(entId)) {
+                    log.error("idNumber:[{}], entId:[{}]", idNumber, entId);
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!!!"));
                 }
                 List<String> groups = new ArrayList<>();
                 String groupId = reqPhone.getGroupId();
+                if (StringUtils.isBlank(groupId)) {
+                    log.error("groupId:[{}]", groupId);
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!"));
+                }
+                //校验入参groupId，是不是在缓存中
+                boolean tab = true;
+                for (String group_id : groupIds) {
+                    if (StringUtils.equals(groupId, group_id)) {
+                        //在缓存groups中能匹配到入参传进来的groupId，设置成false，不跑一次
+                        tab = false;
+                    }
+                }
+                if (tab) {
+                    log.error("在缓存中未匹配到对应的groupId:[{}]", groupId);
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!"));
+                }
                 groups.add(groupId);
                 EmployeeQueryRequest employeeQueryRequest = EmployeeQueryRequest.builder()
+                        .entId(entId)
                         .groupIds(groups)
                         .idNumber(idNumber)
                         .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal, DelStatusEnum.delete)))
