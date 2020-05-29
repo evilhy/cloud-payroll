@@ -686,11 +686,12 @@ public class PayRollController {
                    EmpEntDTO empEntDTO=new EmpEntDTO();
                    BeanUtils.copyProperties(wageEmpEntDTO,empEntDTO);
 
-                   //脱敏处理
+                   //脱敏处理卡
                    for (BankCard card : empEntDTO.getCards()) {
                        card.setCardNo(SensitiveInfoUtils.bankCard(card.getCardNo()));
                        card.setOldCardNo(SensitiveInfoUtils.bankCard(card.getOldCardNo()));
                    }
+                   //脱敏处理
                    for (Res100708 item : empEntDTO.getItems()) {
                        item.setPhoneStar(SensitiveInfoUtils.bankCard(item.getPhoneStar()));
                        item.setIdNumberStar(SensitiveInfoUtils.bankCard(item.getIdNumberStar()));
