@@ -156,7 +156,6 @@ public class InsideController {
                 List<String> groups = new ArrayList<>();
                 String groupId = sendCodeReqDTO.getGroupId();
                 if (StringUtils.isBlank(groupId)) {
-                    log.error("groupId:[{}]", groupId);
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
                 }
 //                注释原因：是不是在缓存中 缓存中的无groups，需要查看
@@ -177,8 +176,9 @@ public class InsideController {
                         .entId(entId)
                         .groupIds(groups)
                         .idNumber(idNumber)
-                        .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal, DelStatusEnum.delete)))
+                        .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal)))
                         .build();
+                log.info("sendCode.employeeQueryRequest[{}]", JacksonUtil.objectToJson(employeeQueryRequest));
                 List<EmployeeInfoRes> employeeInfoRes = employeeInfoServiceFeign.empInfoList(employeeQueryRequest);
                 if (null != employeeInfoRes && employeeInfoRes.size() == 1) {
                     EmployeeInfoRes employeeInfoRes1 = employeeInfoRes.get(0);
@@ -417,7 +417,7 @@ public class InsideController {
     @TrackLog
     public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone, @RequestHeader(value = "jsession-id", required = false) String jsessionId) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        log.info("checkPhoneCode.reqPhone:[{}]", reqPhone);
+        log.info("checkPhoneCode.reqPhone:[{}]", JacksonUtil.objectToJson(reqPhone));
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             String busiType = reqPhone.getBusiType();
@@ -457,25 +457,26 @@ public class InsideController {
                     log.error("groupId:[{}]", groupId);
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!"));
                 }
-                //校验入参groupId，是不是在缓存中
-                boolean tab = true;
-                for (String group_id : groupIds) {
-                    if (StringUtils.equals(groupId, group_id)) {
-                        //在缓存groups中能匹配到入参传进来的groupId，设置成false，不跑一次
-                        tab = false;
-                    }
-                }
-                if (tab) {
-                    log.error("在缓存中未匹配到对应的groupId:[{}]", groupId);
-                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!"));
-                }
+//                //校验入参groupId，是不是在缓存中
+//                boolean tab = true;
+//                for (String group_id : groupIds) {
+//                    if (StringUtils.equals(groupId, group_id)) {
+//                        //在缓存groups中能匹配到入参传进来的groupId，设置成false，不跑一次
+//                        tab = false;
+//                    }
+//                }
+//                if (tab) {
+//                    log.error("在缓存中未匹配到对应的groupId:[{}]", groupId);
+//                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!"));
+//                }
                 groups.add(groupId);
                 EmployeeQueryRequest employeeQueryRequest = EmployeeQueryRequest.builder()
                         .entId(entId)
                         .groupIds(groups)
                         .idNumber(idNumber)
-                        .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal, DelStatusEnum.delete)))
+                        .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal)))
                         .build();
+                log.info("sendCode.employeeQueryRequest[{}]", JacksonUtil.objectToJson(employeeQueryRequest));
                 List<EmployeeInfoRes> employeeInfoRes = employeeInfoServiceFeign.empInfoList(employeeQueryRequest);
                 if (null != employeeInfoRes && employeeInfoRes.size() == 1) {
                     EmployeeInfoRes employeeInfoRes1 = employeeInfoRes.get(0);

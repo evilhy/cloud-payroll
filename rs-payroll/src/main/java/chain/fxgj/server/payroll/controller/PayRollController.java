@@ -12,6 +12,7 @@ import chain.fxgj.feign.dto.response.*;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
 import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.dto.response.BankCard;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.util.TransferUtil;
@@ -684,6 +685,20 @@ public class PayRollController {
                for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
                    EmpEntDTO empEntDTO=new EmpEntDTO();
                    BeanUtils.copyProperties(wageEmpEntDTO,empEntDTO);
+
+                   //脱敏处理
+                   for (BankCard card : empEntDTO.getCards()) {
+                       card.setCardNo(SensitiveInfoUtils.bankCard(card.getCardNo()));
+                       card.setOldCardNo(SensitiveInfoUtils.bankCard(card.getOldCardNo()));
+                   }
+                   for (Res100708 item : empEntDTO.getItems()) {
+                       item.setPhoneStar(SensitiveInfoUtils.bankCard(item.getPhoneStar()));
+                       item.setIdNumberStar(SensitiveInfoUtils.bankCard(item.getIdNumberStar()));
+                       for (Res100708.BankCardListBean bankCardListBean : item.getBankCardList()) {
+                           bankCardListBean.setBankCard(SensitiveInfoUtils.bankCard(bankCardListBean.getBankCard()));
+                       }
+                   }
+
                    list.add(empEntDTO);
                }
             }
