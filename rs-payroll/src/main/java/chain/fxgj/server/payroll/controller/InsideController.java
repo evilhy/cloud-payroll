@@ -359,6 +359,31 @@ public class InsideController {
         }).subscribeOn(Schedulers.elastic()).then();
     }
 
+//    /** 注释原因：数据脱敏后，无法获取手机号，现增加busiType区分场景获取手机号,上线成功后的下个版本可删除
+//     * 验证手机验证码
+//     *
+//     * @param reqPhone
+//     * @return
+//     * @throws Exception
+//     */
+//    @PostMapping("/checkPhoneCode")
+//    @TrackLog
+//    public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone) throws Exception {
+//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+//
+//        return Mono.fromCallable(() -> {
+//            MDC.setContextMap(mdcContext);
+//
+//            WageReqPhone wageReqPhone = new WageReqPhone();
+//            BeanUtils.copyProperties(reqPhone, wageReqPhone);
+//
+//            String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
+//            if (!StringUtils.equals("0000", retStr)) {
+//                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
+//            }
+//            return null;
+//        }).subscribeOn(Schedulers.elastic()).then();
+//    }
     /**
      * 验证手机验证码
      *
@@ -368,14 +393,66 @@ public class InsideController {
      */
     @PostMapping("/checkPhoneCode")
     @TrackLog
-    public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone) throws Exception {
+    public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone, @RequestHeader(value = "jsession-id", required = false) String jsessionId) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-
+            String busiType = reqPhone.getBusiType();
+            String phone = "";
+            if (StringUtils.equals("0", busiType)) {//0 明文传输手机号(此时手机号必填)
+                phone = reqPhone.getPhone();
+                if (StringUtils.isBlank(phone)) {
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("请填写手机号"));
+                }
+            } else if (StringUtils.equals("1", busiType)) {//1 微信绑定手机号验证(手机号为空，根据jsessionId 找到绑定的手机号)
+                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                if (null == wechatInfoDetail) {
+                    log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败"));
+                }
+                phone = wechatInfoDetail.getPhone();
+                if (StringUtils.isBlank(phone)) {
+                    log.error("缓存中无手机信息sendCode.wechatInfoDetail:[{}]", JacksonUtil.objectToJson(wechatInfoDetail));
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!"));
+                }
+            } else if (StringUtils.equals("2", busiType)) {//2 通过企业绑定的手机
+                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                if (null == wechatInfoDetail) {
+                    log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!!"));
+                }
+                String idNumber = wechatInfoDetail.getIdNumber();
+                if (StringUtils.isBlank(idNumber)) {
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!!!"));
+                }
+                List<String> groups = new ArrayList<>();
+                String groupId = reqPhone.getGroupId();
+                groups.add(groupId);
+                EmployeeQueryRequest employeeQueryRequest = EmployeeQueryRequest.builder()
+                        .groupIds(groups)
+                        .idNumber(idNumber)
+                        .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal, DelStatusEnum.delete)))
+                        .build();
+                List<EmployeeInfoRes> employeeInfoRes = employeeInfoServiceFeign.empInfoList(employeeQueryRequest);
+                if (null != employeeInfoRes && employeeInfoRes.size() == 1) {
+                    EmployeeInfoRes employeeInfoRes1 = employeeInfoRes.get(0);
+                    phone = employeeInfoRes1.getPhone();
+                }else {
+                    throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败，请联系客服"));
+                }
+            } else {
+                log.error("业务类型不存在busiType:[{}]", busiType);
+                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败，请联系客服!"));
+            }
+            log.info("checkPhoneCode.phone:[{}]", phone);
+            if (StringUtils.isBlank(phone)) {
+                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("企业员工无手机号，短信验证失败"));
+            }
             WageReqPhone wageReqPhone = new WageReqPhone();
-            BeanUtils.copyProperties(reqPhone, wageReqPhone);
+            wageReqPhone.setCode(reqPhone.getCode());
+            wageReqPhone.setCodeId(reqPhone.getCodeId());
+            wageReqPhone.setPhone(phone);
 
             String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
             if (!StringUtils.equals("0000", retStr)) {
