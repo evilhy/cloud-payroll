@@ -686,18 +686,31 @@ public class PayRollController {
                    EmpEntDTO empEntDTO=new EmpEntDTO();
                    BeanUtils.copyProperties(wageEmpEntDTO,empEntDTO);
 
-                   //脱敏处理卡
-                   for (BankCard card : empEntDTO.getCards()) {
-                       card.setCardNo(SensitiveInfoUtils.bankCard(card.getCardNo()));
-                       card.setOldCardNo(SensitiveInfoUtils.bankCard(card.getOldCardNo()));
-                   }
                    //脱敏处理
-                   for (Res100708 item : empEntDTO.getItems()) {
-                       item.setPhoneStar(SensitiveInfoUtils.bankCard(item.getPhoneStar()));
-                       item.setIdNumberStar(SensitiveInfoUtils.bankCard(item.getIdNumberStar()));
-                       for (Res100708.BankCardListBean bankCardListBean : item.getBankCardList()) {
-                           bankCardListBean.setBankCard(SensitiveInfoUtils.bankCard(bankCardListBean.getBankCard()));
+                   List<BankCard> cardList = empEntDTO.getCards();
+                   List<BankCard> cardListNew = new ArrayList<>();
+                   if (null != cardList && cardList.size() > 0) {
+                       for (BankCard bankCard : cardList) {
+                           BankCard bankCard1 = new BankCard();
+                           BeanUtils.copyProperties(bankCard, bankCard1);
+                           bankCard1.setCardNo(SensitiveInfoUtils.bankCard(bankCard.getCardNo()));
+                           bankCard1.setOldCardNo(SensitiveInfoUtils.bankCard(bankCard.getOldCardNo()));
+                           cardListNew.add(bankCard1);
                        }
+                       empEntDTO.setCards(cardListNew);
+                   }
+
+                   List<Res100708> itemList = empEntDTO.getItems();
+                   List<Res100708> itemListNew = new ArrayList<>();
+                   if (null != itemList && itemList.size() > 0) {
+                       for (Res100708 res100708 : itemList) {
+                           Res100708 res1007081 = new Res100708();
+                           BeanUtils.copyProperties(res100708, res1007081);
+                           res1007081.setPhoneStar(SensitiveInfoUtils.bankCard(res100708.getPhoneStar()));
+                           res1007081.setIdNumberStar(SensitiveInfoUtils.bankCard(res100708.getIdNumberStar()));
+                           itemListNew.add(res1007081);
+                       }
+                       empEntDTO.setItems(itemListNew);
                    }
 
                    list.add(empEntDTO);
