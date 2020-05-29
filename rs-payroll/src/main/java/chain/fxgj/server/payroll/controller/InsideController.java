@@ -180,6 +180,7 @@ public class InsideController {
                         .build();
                 log.info("sendCode.employeeQueryRequest[{}]", JacksonUtil.objectToJson(employeeQueryRequest));
                 List<EmployeeInfoRes> employeeInfoRes = employeeInfoServiceFeign.empInfoList(employeeQueryRequest);
+                log.info("employeeInfoRes.size():[{}]", employeeInfoRes.size());
                 if (null != employeeInfoRes && employeeInfoRes.size() == 1) {
                     EmployeeInfoRes employeeInfoRes1 = employeeInfoRes.get(0);
                     phone = employeeInfoRes1.getPhone();
