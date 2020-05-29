@@ -395,7 +395,7 @@ public class InsideController {
     @TrackLog
     public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone, @RequestHeader(value = "jsession-id", required = false) String jsessionId) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
+        log.info("checkPhoneCode.reqPhone:[{}]", reqPhone);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             String busiType = reqPhone.getBusiType();
@@ -445,7 +445,7 @@ public class InsideController {
                 log.error("业务类型不存在busiType:[{}]", busiType);
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败，请联系客服!"));
             }
-            log.info("checkPhoneCode.phone:[{}]", phone);
+
             if (StringUtils.isBlank(phone)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("企业员工无手机号，短信验证失败"));
             }
@@ -453,6 +453,7 @@ public class InsideController {
             wageReqPhone.setCode(reqPhone.getCode());
             wageReqPhone.setCodeId(reqPhone.getCodeId());
             wageReqPhone.setPhone(phone);
+            log.info("checkPhoneCode.wageReqPhone:[{}]", JacksonUtil.objectToJson(wageReqPhone));
 
             String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
             if (!StringUtils.equals("0000", retStr)) {
