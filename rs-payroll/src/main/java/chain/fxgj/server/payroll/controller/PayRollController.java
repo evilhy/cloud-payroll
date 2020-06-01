@@ -861,7 +861,7 @@ public class PayRollController {
                     list.add(eb);
                 }
             }
-            log.info("返回脱敏数据entPhone.list:[{}]",list);
+            log.info("返回脱敏数据entPhone.list:[{}]",JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
