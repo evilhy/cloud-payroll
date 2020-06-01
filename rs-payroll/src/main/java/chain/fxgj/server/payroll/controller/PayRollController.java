@@ -11,9 +11,11 @@ import chain.fxgj.feign.dto.CheckCardDTO;
 import chain.fxgj.feign.dto.response.*;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
+import chain.fxgj.server.payroll.dto.request.ReqPhone;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.dto.response.BankCard;
 import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -831,7 +833,8 @@ public class PayRollController {
      */
     @GetMapping("/entPhone")
     @TrackLog
-    public Mono<List<EmployeeListBean>> entPhone() {
+    public Mono<List<EmployeeListBean>> entPhone(@RequestHeader(value = "salt", required = false) String salt,
+        @RequestHeader(value = "passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
@@ -848,9 +851,13 @@ public class PayRollController {
                 for (WageEmployeeListBean welb:wageEmployeeListBeanList){
                     EmployeeListBean eb=new EmployeeListBean();
                     BeanUtils.copyProperties(welb,eb);
-                    //身份证、手机号脱敏
-                    eb.setIdNumber(SensitiveInfoUtils.idCardNumDefined(eb.getIdNumber()));
-                    eb.setPhone(SensitiveInfoUtils.mobilePhonePrefix(eb.getPhone()));
+                    //身份证、手机号加密处理
+                    String idNumberEncrypt = EncrytorUtils.encryptField(eb.getIdNumber(), salt, passwd);
+                    String mobileEncrypt = EncrytorUtils.encryptField(eb.getPhone(), salt, passwd);
+                    eb.setIdNumber(idNumberEncrypt);
+                    eb.setPhone(mobileEncrypt);
+                    eb.setSalt(salt);
+                    eb.setPassword(passwd);
                     list.add(eb);
                 }
             }
