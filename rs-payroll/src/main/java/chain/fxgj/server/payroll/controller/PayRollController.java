@@ -857,7 +857,7 @@ public class PayRollController {
                     eb.setIdNumber(idNumberEncrypt);
                     eb.setPhone(mobileEncrypt);
                     eb.setSalt(salt);
-                    eb.setPassword(passwd);
+                    eb.setPasswd(passwd);
                     list.add(eb);
                 }
             }

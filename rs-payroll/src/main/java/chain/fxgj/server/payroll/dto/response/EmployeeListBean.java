@@ -56,6 +56,6 @@ public class EmployeeListBean {
     /**
      * password
      */
-    private String password;
+    private String passwd;
 
 }
