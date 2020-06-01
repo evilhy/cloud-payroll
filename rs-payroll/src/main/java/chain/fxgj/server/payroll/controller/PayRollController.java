@@ -833,8 +833,8 @@ public class PayRollController {
      */
     @GetMapping("/entPhone")
     @TrackLog
-    public Mono<List<EmployeeListBean>> entPhone(@RequestHeader(value = "salt", required = false) String salt,
-        @RequestHeader(value = "passwd", required = false) String passwd) {
+    public Mono<List<EmployeeListBean>> entPhone(@RequestHeader(value = "encry-salt", required = false) String salt,
+        @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
