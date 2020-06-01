@@ -185,7 +185,8 @@ public class PayRollController {
      */
     @PostMapping("/entEmp")
     @TrackLog
-    public Mono<Res100701> entEmp(@RequestBody EntEmpDTO entEmpDTO) {
+    public Mono<Res100701> entEmp(@RequestBody EntEmpDTO entEmpDTO, @RequestHeader(value = "encry-salt", required = false) String salt,
+        @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNumber = entEmpDTO.getIdNumber();
@@ -202,7 +203,30 @@ public class PayRollController {
             if (wageRes100701!=null){
                 res100701=new Res100701();
                 BeanUtils.copyProperties(wageRes100701,res100701);
+                List<EmployeeListBean> employeeListBeanList = new ArrayList<>();
+                List<WageEmployeeListBean> wageEmployeeListBeanList = wageRes100701.getEmployeeList();
+                if (null != wageEmployeeListBeanList && wageEmployeeListBeanList.size() > 0) {
+                    for (WageEmployeeListBean wageEmployeeListBean : wageEmployeeListBeanList) {
+
+                        EmployeeListBean employeeListBean = new EmployeeListBean();
+                        employeeListBean.setEmployeeName(EncrytorUtils.encryptField(wageEmployeeListBean.getEmployeeName(), salt, passwd));
+                        employeeListBean.setEntId(EncrytorUtils.encryptField(wageEmployeeListBean.getEntId(), salt, passwd));
+                        employeeListBean.setEntName(EncrytorUtils.encryptField(wageEmployeeListBean.getEntName(), salt, passwd));
+                        employeeListBean.setIdNumber(EncrytorUtils.encryptField(wageEmployeeListBean.getIdNumber(), salt, passwd));
+                        employeeListBean.setPhone(EncrytorUtils.encryptField(wageEmployeeListBean.getPhone(), salt, passwd));
+
+                        employeeListBean.setSalt(salt);
+                        employeeListBean.setPasswd(passwd);
+                        employeeListBean.setPhoneStar(wageEmployeeListBean.getPhoneStar());
+                        employeeListBean.setSex(wageEmployeeListBean.getSex());
+
+                        employeeListBeanList.add(employeeListBean);
+                    }
+                }
+                res100701.setEmployeeList(employeeListBeanList);
+
             }
+            log.info("entEmp.res100701:[{}]", JacksonUtil.objectToJson(res100701));
             return res100701;
         }).subscribeOn(Schedulers.elastic());
     }

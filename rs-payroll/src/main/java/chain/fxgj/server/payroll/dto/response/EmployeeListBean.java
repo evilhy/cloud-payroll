@@ -44,11 +44,6 @@ public class EmployeeListBean {
      */
     private String entId;
     /**
-     * 机构id
-     */
-    private String groupId;
-
-    /**
      * salt
      */
     private String salt;
