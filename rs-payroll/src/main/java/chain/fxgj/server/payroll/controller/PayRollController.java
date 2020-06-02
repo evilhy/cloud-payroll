@@ -817,7 +817,7 @@ public class PayRollController {
                     list.add(entDTO);
                 }
             }
-            log.info("list.size():[{}]",list.size());
+            log.info("加密返回empCard.list:[{}]",JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -843,6 +843,9 @@ public class PayRollController {
                 for (WageEmpCardLogDTO wageEmpCardLogDTO:wageEmpCardLogList){
                     EmpCardLogDTO logDTO=new EmpCardLogDTO();
                     BeanUtils.copyProperties(wageEmpCardLogDTO,logDTO);
+                    //脱敏处理
+                    logDTO.setCardNo(SensitiveInfoUtils.bankCard(logDTO.getCardNo()));
+                    logDTO.setCardNoOld(SensitiveInfoUtils.bankCard(logDTO.getCardNoOld()));
                     list.add(logDTO);
                 }
             }
@@ -934,5 +937,85 @@ public class PayRollController {
             }
         };
         executor.execute(syncData);
+    }
+
+    /**
+     * 数据转换
+     * @return
+     */
+    private List<EmpEntDTO> transfalWageEmpEntDto(List<WageEmpEntDTO> wageEmpEntDTOList){
+        List<EmpEntDTO> empEntDTOList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
+            empEntDTOList = new ArrayList<>();
+            for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
+                EmpEntDTO empEntDTO=new EmpEntDTO();
+                //脱敏处理
+                empEntDTO.setEntName(wageEmpEntDTO.getEntName());
+                empEntDTO.setShortEntName(wageEmpEntDTO.getShortEntName());
+
+                List<chain.fxgj.feign.dto.response.BankCard> cardList = wageEmpEntDTO.getCards();
+                List<BankCard> cardListNew = new ArrayList<>();
+                if (null != cardList && cardList.size() > 0) {
+                    for (chain.fxgj.feign.dto.response.BankCard bankCard : cardList) {
+                        BankCard bankCard1 = new BankCard();
+                        List<WageBankCardGroup> bankCardGroupList = bankCard.getBankCardGroups();
+                        List<BankCardGroup> bankCardGroupList1 = new ArrayList<>();
+                        if (null != bankCardGroupList && bankCardGroupList.size() > 0) {
+                            for (WageBankCardGroup bankCardGroup : bankCardGroupList) {
+                                BankCardGroup bankCardGroup1 = new BankCardGroup();
+                                bankCardGroup1.setGroupId(bankCardGroup.getGroupId());
+                                bankCardGroup1.setId(bankCardGroup.getId());
+                                bankCardGroup1.setShortGroupName(bankCardGroup.getShortGroupName());
+                                bankCardGroupList1.add(bankCardGroup1);
+                            }
+                        }
+                        bankCard1.setBankCardGroups(bankCardGroupList1);
+                        bankCard1.setCardNo(SensitiveInfoUtils.bankCard(bankCard.getCardNo()));
+                        bankCard1.setCardUpdStatus(bankCard.getCardUpdStatus());
+                        bankCard1.setCardUpdStatusVal(bankCard.getCardUpdStatusVal());
+                        bankCard1.setIsNew(bankCard.getIsNew());
+                        bankCard1.setIssuerName(bankCard.getIssuerName());
+                        bankCard1.setOldCardNo(SensitiveInfoUtils.bankCard(bankCard.getOldCardNo()));
+                        bankCard1.setUpdDesc(bankCard.getUpdDesc());
+                        cardListNew.add(bankCard1);
+                    }
+                    empEntDTO.setCards(cardListNew);
+                }
+
+                List<WageRes100708> itemList = wageEmpEntDTO.getItems();
+                List<Res100708> itemListNew = new ArrayList<>();
+                if (null != itemList && itemList.size() > 0) {
+                    for (WageRes100708 wageRes100708 : itemList) {
+                        Res100708 res100708 = new Res100708();
+                        List<WageRes100708.BankCardListBean> bankCardList = wageRes100708.getBankCardList();
+                        List<Res100708.BankCardListBean> bankCardListBeans = new ArrayList<>();
+                        if (null != bankCardList && bankCardList.size() > 0) {
+                            for (WageRes100708.BankCardListBean bankCardListBean : bankCardList) {
+                                Res100708.BankCardListBean bankCardListBean1 = new Res100708.BankCardListBean();
+                                bankCardListBean1.setBankCard(SensitiveInfoUtils.bankCard(bankCardListBean.getBankCard())); //加密处理
+                                bankCardListBean1.setBankName(bankCardListBean.getBankName());
+                                bankCardListBeans.add(bankCardListBean1);
+                            }
+                        }
+                        res100708.setBankCardList(bankCardListBeans);
+                        res100708.setEmployeeId(wageRes100708.getEmployeeId());
+                        res100708.setEmployeeName(wageRes100708.getEmployeeName());
+                        res100708.setEmployeeNo(wageRes100708.getEmployeeNo());
+                        res100708.setEntryDate(wageRes100708.getEntryDate());
+                        res100708.setGroupName(wageRes100708.getGroupName());
+                        res100708.setIdNumberStar(SensitiveInfoUtils.idCardNumDefinedPrefix(wageRes100708.getIdNumberStar(), 3));
+                        res100708.setInServiceStatus(wageRes100708.getInServiceStatus());
+                        res100708.setInServiceStatusVal(wageRes100708.getInServiceStatusVal());
+                        res100708.setPhoneStar(SensitiveInfoUtils.mobilePhonePrefix(wageRes100708.getPhoneStar()));
+                        res100708.setPosition(wageRes100708.getPosition());
+                        itemListNew.add(res100708);
+                    }
+                    empEntDTO.setItems(itemListNew);
+                }
+                empEntDTOList.add(empEntDTO);
+            }
+        }
+        log.info("transfalWageEmpEntDto.empEntDTOList:[{}]", JacksonUtil.objectToJson(empEntDTOList));
+        return empEntDTOList;
     }
 }
