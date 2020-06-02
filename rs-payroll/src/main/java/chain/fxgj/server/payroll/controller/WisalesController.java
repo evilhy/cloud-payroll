@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
@@ -12,6 +13,7 @@ import chain.wisales.core.dto.fxgj.welfare.*;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.slf4j.MDC;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.lang.Nullable;
@@ -22,6 +24,7 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -230,6 +233,23 @@ public class WisalesController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             PageDTO<WelfareCustAddressInfoDTO> custAddress = welfareActivityFeignService.getCustAddress(idNum);
+
+            List<WelfareCustAddressInfoDTO> welfareCustAddressInfoDTOList = custAddress.getContent();
+            List<WelfareCustAddressInfoDTO> welfareCustAddressInfoDTONewList = new ArrayList<>();
+            if (null != welfareCustAddressInfoDTOList && welfareCustAddressInfoDTOList.size() > 0) {
+                for (WelfareCustAddressInfoDTO welfareCustAddressInfoDTO : welfareCustAddressInfoDTOList) {
+                    WelfareCustAddressInfoDTO welfareCustAddressInfoDTONew = new WelfareCustAddressInfoDTO();
+                    BeanUtils.copyProperties(welfareCustAddressInfoDTO, welfareCustAddressInfoDTONew);
+                    //脱敏
+                    welfareCustAddressInfoDTONew.setReceivePhone(SensitiveInfoUtils.mobilePhonePrefix(welfareCustAddressInfoDTO.getReceivePhone()));
+                    welfareCustAddressInfoDTONew.setCustName(SensitiveInfoUtils.chineseName(welfareCustAddressInfoDTO.getCustName()));
+                    //todo 地址如何处理
+                    welfareCustAddressInfoDTONewList.add(welfareCustAddressInfoDTONew);
+                }
+                custAddress.setContent(welfareCustAddressInfoDTONewList);
+            }
+            log.info("查询客户收货地址:[{}]", JacksonUtil.objectToJson(welfareCustAddressInfoDTONewList));
+
             return custAddress;
         }).subscribeOn(Schedulers.elastic());
     }
