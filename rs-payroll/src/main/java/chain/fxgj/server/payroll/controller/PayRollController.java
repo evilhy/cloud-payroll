@@ -790,7 +790,8 @@ public class PayRollController {
      */
     @GetMapping("/empCard")
     @TrackLog
-    public Mono<List<EmpEntDTO>> empCard() {
+    public Mono<List<EmpEntDTO>> empCard(@RequestHeader(value = "encry-salt", required = false) String salt,
+                                         @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
@@ -811,11 +812,13 @@ public class PayRollController {
             log.info("调用wageMangerFeignService.empCard(wageUserPrincipal)开始");
             List<WageEmpEntDTO> wageEmpEntDTOList=wageMangerFeignService.empCard(wageUserPrincipal);
             if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
-                for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
-                    EmpEntDTO entDTO=new EmpEntDTO();
-                    BeanUtils.copyProperties(wageEmpEntDTO,entDTO);
-                    list.add(entDTO);
-                }
+//                for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
+//                    EmpEntDTO entDTO=new EmpEntDTO();
+//                    BeanUtils.copyProperties(wageEmpEntDTO,entDTO);
+//                    list.add(entDTO);
+//                }
+                //数据转换及加密处理
+                list = transfalWageEmpEntDto(wageEmpEntDTOList, salt, passwd);
             }
             log.info("加密返回empCard.list:[{}]",JacksonUtil.objectToJson(list));
             return list;
@@ -849,6 +852,7 @@ public class PayRollController {
                     list.add(logDTO);
                 }
             }
+            log.info("脱敏数据empCardLog.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -940,10 +944,10 @@ public class PayRollController {
     }
 
     /**
-     * 数据转换
+     * 数据转换及加密处理
      * @return
      */
-    private List<EmpEntDTO> transfalWageEmpEntDto(List<WageEmpEntDTO> wageEmpEntDTOList){
+    private List<EmpEntDTO> transfalWageEmpEntDto(List<WageEmpEntDTO> wageEmpEntDTOList, String salt, String passwd){
         List<EmpEntDTO> empEntDTOList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
             empEntDTOList = new ArrayList<>();
@@ -970,12 +974,12 @@ public class PayRollController {
                             }
                         }
                         bankCard1.setBankCardGroups(bankCardGroupList1);
-                        bankCard1.setCardNo(SensitiveInfoUtils.bankCard(bankCard.getCardNo()));
+                        bankCard1.setCardNo(EncrytorUtils.encryptField(bankCard.getCardNo(), salt, passwd));
                         bankCard1.setCardUpdStatus(bankCard.getCardUpdStatus());
                         bankCard1.setCardUpdStatusVal(bankCard.getCardUpdStatusVal());
                         bankCard1.setIsNew(bankCard.getIsNew());
                         bankCard1.setIssuerName(bankCard.getIssuerName());
-                        bankCard1.setOldCardNo(SensitiveInfoUtils.bankCard(bankCard.getOldCardNo()));
+                        bankCard1.setOldCardNo(EncrytorUtils.encryptField(bankCard.getOldCardNo(), salt, passwd));
                         bankCard1.setUpdDesc(bankCard.getUpdDesc());
                         cardListNew.add(bankCard1);
                     }
@@ -992,7 +996,7 @@ public class PayRollController {
                         if (null != bankCardList && bankCardList.size() > 0) {
                             for (WageRes100708.BankCardListBean bankCardListBean : bankCardList) {
                                 Res100708.BankCardListBean bankCardListBean1 = new Res100708.BankCardListBean();
-                                bankCardListBean1.setBankCard(SensitiveInfoUtils.bankCard(bankCardListBean.getBankCard())); //加密处理
+                                bankCardListBean1.setBankCard(EncrytorUtils.encryptField(bankCardListBean.getBankCard(), salt, passwd));
                                 bankCardListBean1.setBankName(bankCardListBean.getBankName());
                                 bankCardListBeans.add(bankCardListBean1);
                             }
@@ -1003,14 +1007,16 @@ public class PayRollController {
                         res100708.setEmployeeNo(wageRes100708.getEmployeeNo());
                         res100708.setEntryDate(wageRes100708.getEntryDate());
                         res100708.setGroupName(wageRes100708.getGroupName());
-                        res100708.setIdNumberStar(SensitiveInfoUtils.idCardNumDefinedPrefix(wageRes100708.getIdNumberStar(), 3));
+                        res100708.setIdNumberStar(EncrytorUtils.encryptField(wageRes100708.getIdNumberStar(), salt, passwd));
                         res100708.setInServiceStatus(wageRes100708.getInServiceStatus());
                         res100708.setInServiceStatusVal(wageRes100708.getInServiceStatusVal());
-                        res100708.setPhoneStar(SensitiveInfoUtils.mobilePhonePrefix(wageRes100708.getPhoneStar()));
+                        res100708.setPhoneStar(EncrytorUtils.encryptField(wageRes100708.getPhoneStar(), salt, passwd));
                         res100708.setPosition(wageRes100708.getPosition());
                         itemListNew.add(res100708);
                     }
                     empEntDTO.setItems(itemListNew);
+                    empEntDTO.setSalt(salt);
+                    empEntDTO.setPasswd(passwd);
                 }
                 empEntDTOList.add(empEntDTO);
             }
