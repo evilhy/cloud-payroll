@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 /**
- * 手机验证码
+ * Req100302
  */
 @Getter
 @Setter
@@ -14,15 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ReqPhone {
-    /**
-     * 信息ID
-     */
-    private String codeId;
-    /**
-     * 验证码
-     */
-    private String code;
+public class SendCodeReqDTO {
     /**
      * 手机号
      */

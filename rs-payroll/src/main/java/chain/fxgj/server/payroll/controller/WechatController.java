@@ -221,7 +221,7 @@ public class WechatController {
     /**
      * 微信回调接口
      */
-    @GetMapping("/wxCallback")
+//    @GetMapping("/wxCallback") //注释原因：Get方式改为了Post方式，详见 WechatIndexController.wxCallback
     @TrackLog
     @PermitAll
     public Mono<Res100705> wxCallback(@RequestParam("code") String code,

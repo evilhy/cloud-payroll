@@ -43,5 +43,14 @@ public class EmployeeListBean {
      * 企业编号
      */
     private String entId;
+    /**
+     * salt
+     */
+    private String salt;
+
+    /**
+     * password
+     */
+    private String passwd;
 
 }
