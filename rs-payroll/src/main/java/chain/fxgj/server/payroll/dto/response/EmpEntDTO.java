@@ -34,4 +34,13 @@ public class EmpEntDTO {
      */
     private List<BankCard> cards;
 
+    /**
+     * salt
+     */
+    private String salt;
+
+    /**
+     * password
+     */
+    private String passwd;
 }
