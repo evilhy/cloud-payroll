@@ -88,11 +88,17 @@ merchants:
 ribbon:
   ReadTimeout: 30000
   ConnectTimeout: 30000
+  maxAutoRetries: 0
 
 #禁用feign熔断
 feign:
   hystrix:
     enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 20000
+        readTimeout: 20000
 
 #熔断超时时间设置
 hystrix:
@@ -102,3 +108,5 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 120000
+      timeout:
+        enabled: false
