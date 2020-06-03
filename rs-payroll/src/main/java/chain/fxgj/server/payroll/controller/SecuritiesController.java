@@ -112,8 +112,7 @@ public class SecuritiesController {
                 //todo 唯销没有值 ，再根据openId，查询本地Mysql 微信表，有数据则返回 jsessionId、手机号
             }
             // 手机号加密返回
-//            securitiesRedisDTO.setPhone(SensitiveInfoUtils.mobilePhonePrefix(securitiesRedisDTO.getPhone()));
-            securitiesRedisDTO.setPhone(EncrytorUtils.encryptField("13407101520", salt, passwd));
+            securitiesRedisDTO.setPhone(EncrytorUtils.encryptField(securitiesRedisDTO.getPhone(), salt, passwd));
             securitiesRedisDTO.setSalt(salt);
             securitiesRedisDTO.setPasswd(passwd);
             log.info("loginCheck.securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
