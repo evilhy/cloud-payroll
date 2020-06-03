@@ -91,4 +91,14 @@ public class SecuritiesRedisDTO {
      */
     private String city;
 
+    /**
+     * salt
+     */
+    private String salt;
+
+    /**
+     * password
+     */
+    private String passwd;
+
 }
