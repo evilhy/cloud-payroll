@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.server.payroll.dto.wisales.PayrllWelfareCustAddressInfoDTO;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -273,21 +274,26 @@ public class WisalesController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WelfareCustAddressInfoDTO custAddressById = welfareActivityFeignService.getCustAddressById(idNum, addressId);
-            if (null != custAddressById) {
-                custAddressById.setCustName(EncrytorUtils.encryptField(custAddressById.getCustName(), salt, passwd));
-                custAddressById.setPhoneNo(EncrytorUtils.encryptField(custAddressById.getPhoneNo(), salt, passwd));
-                custAddressById.setReceiveName(EncrytorUtils.encryptField(custAddressById.getReceiveName(), salt, passwd));
-                custAddressById.setReceivePhone(EncrytorUtils.encryptField(custAddressById.getReceivePhone(), salt, passwd));
-                custAddressById.setProvince(EncrytorUtils.encryptField(custAddressById.getProvince(), salt, passwd));
-                custAddressById.setProvinceCode(EncrytorUtils.encryptField(custAddressById.getProvinceCode(), salt, passwd));
-                custAddressById.setCity(EncrytorUtils.encryptField(custAddressById.getCity(), salt, passwd));
-                custAddressById.setCityCode(EncrytorUtils.encryptField(custAddressById.getCityCode(), salt, passwd));
-                custAddressById.setCounty(EncrytorUtils.encryptField(custAddressById.getCounty(), salt, passwd));
-                custAddressById.setCountyCode(EncrytorUtils.encryptField(custAddressById.getCountyCode(), salt, passwd));
-                custAddressById.setTown(EncrytorUtils.encryptField(custAddressById.getTown(), salt, passwd));
-                custAddressById.setTownCode(EncrytorUtils.encryptField(custAddressById.getTownCode(), salt, passwd));
-                custAddressById.setAddress(EncrytorUtils.encryptField(custAddressById.getAddress(), salt, passwd));
-                custAddressById.setIdNumber(EncrytorUtils.encryptField(custAddressById.getIdNumber(), salt, passwd));
+            PayrllWelfareCustAddressInfoDTO payrllWelfareCustAddressInfoDTO = new PayrllWelfareCustAddressInfoDTO();
+            BeanUtils.copyProperties(custAddressById, payrllWelfareCustAddressInfoDTO);
+            if (null != payrllWelfareCustAddressInfoDTO) {
+                payrllWelfareCustAddressInfoDTO.setCustName(EncrytorUtils.encryptField(custAddressById.getCustName(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setPhoneNo(EncrytorUtils.encryptField(custAddressById.getPhoneNo(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setReceiveName(EncrytorUtils.encryptField(custAddressById.getReceiveName(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setReceivePhone(EncrytorUtils.encryptField(custAddressById.getReceivePhone(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setProvince(EncrytorUtils.encryptField(custAddressById.getProvince(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setProvinceCode(EncrytorUtils.encryptField(custAddressById.getProvinceCode(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setCity(EncrytorUtils.encryptField(custAddressById.getCity(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setCityCode(EncrytorUtils.encryptField(custAddressById.getCityCode(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setCounty(EncrytorUtils.encryptField(custAddressById.getCounty(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setCountyCode(EncrytorUtils.encryptField(custAddressById.getCountyCode(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setTown(EncrytorUtils.encryptField(custAddressById.getTown(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setTownCode(EncrytorUtils.encryptField(custAddressById.getTownCode(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setAddress(EncrytorUtils.encryptField(custAddressById.getAddress(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setIdNumber(EncrytorUtils.encryptField(custAddressById.getIdNumber(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setSalt(salt);
+                payrllWelfareCustAddressInfoDTO.setPasswd(passwd);
+
             }
             log.info("getCustAddressById.custAddressById:[{}]", JacksonUtil.objectToJson(custAddressById));
             return custAddressById;
