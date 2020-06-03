@@ -11,6 +11,7 @@ import chain.fxgj.server.payroll.dto.securities.response.ResSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
@@ -112,7 +113,7 @@ public class SecuritiesController {
             }
             // 手机号加密返回
 //            securitiesRedisDTO.setPhone(SensitiveInfoUtils.mobilePhonePrefix(securitiesRedisDTO.getPhone()));
-            securitiesRedisDTO.setPhone(SensitiveInfoUtils.mobilePhonePrefix("13407101520"));
+            securitiesRedisDTO.setPhone(SensitiveInfoUtils.mobilePhonePrefix(EncrytorUtils.encryptField("13407101520", salt, passwd)));
             securitiesRedisDTO.setSalt(salt);
             securitiesRedisDTO.setPasswd(passwd);
             log.info("loginCheck.securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
