@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
@@ -241,9 +242,11 @@ public class WisalesController {
                     WelfareCustAddressInfoDTO welfareCustAddressInfoDTONew = new WelfareCustAddressInfoDTO();
                     BeanUtils.copyProperties(welfareCustAddressInfoDTO, welfareCustAddressInfoDTONew);
                     //脱敏
-                    welfareCustAddressInfoDTONew.setReceivePhone(SensitiveInfoUtils.mobilePhonePrefix(welfareCustAddressInfoDTO.getReceivePhone()));
                     welfareCustAddressInfoDTONew.setCustName(SensitiveInfoUtils.chineseName(welfareCustAddressInfoDTO.getCustName()));
-                    //todo 地址如何处理
+                    welfareCustAddressInfoDTONew.setPhoneNo(SensitiveInfoUtils.mobilePhonePrefix(welfareCustAddressInfoDTONew.getPhoneNo()));
+                    welfareCustAddressInfoDTONew.setReceiveName(SensitiveInfoUtils.chineseName(welfareCustAddressInfoDTONew.getReceiveName()));
+                    welfareCustAddressInfoDTONew.setReceivePhone(SensitiveInfoUtils.mobilePhonePrefix(welfareCustAddressInfoDTO.getReceivePhone()));
+                    welfareCustAddressInfoDTONew.setAddress(SensitiveInfoUtils.chineseName(welfareCustAddressInfoDTO.getAddress()));
                     welfareCustAddressInfoDTONewList.add(welfareCustAddressInfoDTONew);
                 }
                 custAddress.setContent(welfareCustAddressInfoDTONewList);
@@ -262,13 +265,31 @@ public class WisalesController {
      */
     @GetMapping("welfareCust/address/getById")
     public Mono<WelfareCustAddressInfoDTO> getCustAddressById(@RequestParam(required = false) String idNumber,
-                                                              @RequestParam String addressId){
+        @RequestParam String addressId, @RequestHeader(value = "encry-salt", required = false) String salt,
+        @RequestHeader(value = "encry-passwd", required = false) String passwd){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WelfareCustAddressInfoDTO custAddressById = welfareActivityFeignService.getCustAddressById(idNum, addressId);
+            if (null != custAddressById) {
+                custAddressById.setCustName(EncrytorUtils.encryptField(custAddressById.getCustName(), salt, passwd));
+                custAddressById.setPhoneNo(EncrytorUtils.encryptField(custAddressById.getPhoneNo(), salt, passwd));
+                custAddressById.setReceiveName(EncrytorUtils.encryptField(custAddressById.getReceiveName(), salt, passwd));
+                custAddressById.setReceivePhone(EncrytorUtils.encryptField(custAddressById.getReceivePhone(), salt, passwd));
+                custAddressById.setProvince(EncrytorUtils.encryptField(custAddressById.getProvince(), salt, passwd));
+                custAddressById.setProvinceCode(EncrytorUtils.encryptField(custAddressById.getProvinceCode(), salt, passwd));
+                custAddressById.setCity(EncrytorUtils.encryptField(custAddressById.getCity(), salt, passwd));
+                custAddressById.setCityCode(EncrytorUtils.encryptField(custAddressById.getCityCode(), salt, passwd));
+                custAddressById.setCounty(EncrytorUtils.encryptField(custAddressById.getCounty(), salt, passwd));
+                custAddressById.setCountyCode(EncrytorUtils.encryptField(custAddressById.getCountyCode(), salt, passwd));
+                custAddressById.setTown(EncrytorUtils.encryptField(custAddressById.getTown(), salt, passwd));
+                custAddressById.setTownCode(EncrytorUtils.encryptField(custAddressById.getTownCode(), salt, passwd));
+                custAddressById.setAddress(EncrytorUtils.encryptField(custAddressById.getAddress(), salt, passwd));
+                custAddressById.setIdNumber(EncrytorUtils.encryptField(custAddressById.getIdNumber(), salt, passwd));
+            }
+            log.info("getCustAddressById.custAddressById:[{}]", JacksonUtil.objectToJson(custAddressById));
             return custAddressById;
         }).subscribeOn(Schedulers.elastic());
     }
