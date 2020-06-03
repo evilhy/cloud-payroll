@@ -113,7 +113,7 @@ public class SecuritiesController {
             }
             // 手机号加密返回
 //            securitiesRedisDTO.setPhone(SensitiveInfoUtils.mobilePhonePrefix(securitiesRedisDTO.getPhone()));
-            securitiesRedisDTO.setPhone(SensitiveInfoUtils.mobilePhonePrefix(EncrytorUtils.encryptField("13407101520", salt, passwd)));
+            securitiesRedisDTO.setPhone(EncrytorUtils.encryptField("13407101520", salt, passwd));
             securitiesRedisDTO.setSalt(salt);
             securitiesRedisDTO.setPasswd(passwd);
             log.info("loginCheck.securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
