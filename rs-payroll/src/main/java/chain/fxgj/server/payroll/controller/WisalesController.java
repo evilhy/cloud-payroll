@@ -232,9 +232,11 @@ public class WisalesController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
+        String phone = principal.getPhone();
+        log.info("getCustAddress.idNum:[{}], phone:[{}]", idNum, phone);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            PageDTO<WelfareCustAddressInfoDTO> custAddress = welfareActivityFeignService.getCustAddress(idNum);
+            PageDTO<WelfareCustAddressInfoDTO> custAddress = welfareActivityFeignService.getCustAddress(idNum, phone);
 
             List<WelfareCustAddressInfoDTO> welfareCustAddressInfoDTOList = custAddress.getContent();
             List<WelfareCustAddressInfoDTO> welfareCustAddressInfoDTONewList = new ArrayList<>();
