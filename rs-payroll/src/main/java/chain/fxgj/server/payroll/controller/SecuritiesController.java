@@ -11,6 +11,8 @@ import chain.fxgj.server.payroll.dto.securities.response.ResSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
+import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.pub.client.feign.CaptchaFeignClient;
@@ -25,6 +27,7 @@ import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
@@ -36,10 +39,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 证券开户活动
@@ -68,7 +68,9 @@ public class SecuritiesController {
      */
     @GetMapping("/loginCheck")
     @TrackLog
-    public Mono<SecuritiesRedisDTO> loginCheck(@RequestParam("code") String code) {
+    public Mono<SecuritiesRedisDTO> loginCheck(@RequestParam("code") String code,
+        @RequestHeader(value = "encry-salt", required = false) String salt,
+        @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
@@ -109,6 +111,11 @@ public class SecuritiesController {
                 securitiesService.upSecuritiesRedis(jsessionId, securitiesRedisDTO);
                 //todo 唯销没有值 ，再根据openId，查询本地Mysql 微信表，有数据则返回 jsessionId、手机号
             }
+            // 手机号加密返回
+            securitiesRedisDTO.setPhone(EncrytorUtils.encryptField(securitiesRedisDTO.getPhone(), salt, passwd));
+            securitiesRedisDTO.setSalt(salt);
+            securitiesRedisDTO.setPasswd(passwd);
+            log.info("loginCheck.securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
             return securitiesRedisDTO;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -171,8 +178,18 @@ public class SecuritiesController {
             log.info("custIdOrManagerId:[{}]", custIdOrManagerId);
             List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTOList = securitiesService.qryInvitationAward(custIdOrManagerId);
             log.info("securitiesInvitationAwardDTOList:[{}]", JacksonUtil.objectToJson(securitiesInvitationAwardDTOList));
-            return securitiesInvitationAwardDTOList;
-
+            //手机号脱敏返回
+            List<SecuritiesInvitationAwardDTO> securitiesInvitationAwardDTONewList = new ArrayList<>();
+            if (null != securitiesInvitationAwardDTOList && securitiesInvitationAwardDTOList.size() > 0) {
+                for (SecuritiesInvitationAwardDTO securitiesInvitationAwardDTO : securitiesInvitationAwardDTOList) {
+                    SecuritiesInvitationAwardDTO securitiesInvitationAwardDTONew = new SecuritiesInvitationAwardDTO();
+                    BeanUtils.copyProperties(securitiesInvitationAwardDTO, securitiesInvitationAwardDTONew);
+                    securitiesInvitationAwardDTONew.setPhoneNo(SensitiveInfoUtils.mobilePhonePrefix(securitiesInvitationAwardDTONew.getPhoneNo()));
+                    securitiesInvitationAwardDTONewList.add(securitiesInvitationAwardDTONew);
+                }
+            }
+            log.info("qryInvitationAward.securitiesInvitationAwardDTONewList:[{}]", JacksonUtil.objectToJson(securitiesInvitationAwardDTONewList));
+            return securitiesInvitationAwardDTONewList;
         }).subscribeOn(Schedulers.elastic());
     }
 
