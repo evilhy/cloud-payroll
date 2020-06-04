@@ -1,6 +1,9 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.server.payroll.dto.wisales.PayrllWelfareCustAddressInfoDTO;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
+import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
@@ -12,6 +15,7 @@ import chain.wisales.core.dto.fxgj.welfare.*;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.slf4j.MDC;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.lang.Nullable;
@@ -22,6 +26,7 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -227,9 +232,30 @@ public class WisalesController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
+        String phone = principal.getPhone();
+        log.info("getCustAddress.idNum:[{}], phone:[{}]", idNum, phone);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            PageDTO<WelfareCustAddressInfoDTO> custAddress = welfareActivityFeignService.getCustAddress(idNum);
+            PageDTO<WelfareCustAddressInfoDTO> custAddress = welfareActivityFeignService.getCustAddress(idNum, phone);
+
+            List<WelfareCustAddressInfoDTO> welfareCustAddressInfoDTOList = custAddress.getContent();
+            List<WelfareCustAddressInfoDTO> welfareCustAddressInfoDTONewList = new ArrayList<>();
+            if (null != welfareCustAddressInfoDTOList && welfareCustAddressInfoDTOList.size() > 0) {
+                for (WelfareCustAddressInfoDTO welfareCustAddressInfoDTO : welfareCustAddressInfoDTOList) {
+                    WelfareCustAddressInfoDTO welfareCustAddressInfoDTONew = new WelfareCustAddressInfoDTO();
+                    BeanUtils.copyProperties(welfareCustAddressInfoDTO, welfareCustAddressInfoDTONew);
+                    //脱敏
+                    welfareCustAddressInfoDTONew.setCustName(SensitiveInfoUtils.chineseName(welfareCustAddressInfoDTO.getCustName()));
+                    welfareCustAddressInfoDTONew.setPhoneNo(SensitiveInfoUtils.mobilePhonePrefix(welfareCustAddressInfoDTONew.getPhoneNo()));
+                    welfareCustAddressInfoDTONew.setReceiveName(SensitiveInfoUtils.chineseName(welfareCustAddressInfoDTONew.getReceiveName()));
+                    welfareCustAddressInfoDTONew.setReceivePhone(SensitiveInfoUtils.mobilePhonePrefix(welfareCustAddressInfoDTO.getReceivePhone()));
+                    welfareCustAddressInfoDTONew.setAddress(SensitiveInfoUtils.chineseName(welfareCustAddressInfoDTO.getAddress()));
+                    welfareCustAddressInfoDTONewList.add(welfareCustAddressInfoDTONew);
+                }
+                custAddress.setContent(welfareCustAddressInfoDTONewList);
+            }
+            log.info("查询客户收货地址:[{}]", JacksonUtil.objectToJson(welfareCustAddressInfoDTONewList));
+
             return custAddress;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -242,13 +268,36 @@ public class WisalesController {
      */
     @GetMapping("welfareCust/address/getById")
     public Mono<WelfareCustAddressInfoDTO> getCustAddressById(@RequestParam(required = false) String idNumber,
-                                                              @RequestParam String addressId){
+        @RequestParam String addressId, @RequestHeader(value = "encry-salt", required = false) String salt,
+        @RequestHeader(value = "encry-passwd", required = false) String passwd){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             WelfareCustAddressInfoDTO custAddressById = welfareActivityFeignService.getCustAddressById(idNum, addressId);
+            PayrllWelfareCustAddressInfoDTO payrllWelfareCustAddressInfoDTO = new PayrllWelfareCustAddressInfoDTO();
+            BeanUtils.copyProperties(custAddressById, payrllWelfareCustAddressInfoDTO);
+            if (null != payrllWelfareCustAddressInfoDTO) {
+                payrllWelfareCustAddressInfoDTO.setCustName(EncrytorUtils.encryptField(custAddressById.getCustName(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setPhoneNo(EncrytorUtils.encryptField(custAddressById.getPhoneNo(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setReceiveName(EncrytorUtils.encryptField(custAddressById.getReceiveName(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setReceivePhone(EncrytorUtils.encryptField(custAddressById.getReceivePhone(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setProvince(EncrytorUtils.encryptField(custAddressById.getProvince(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setProvinceCode(EncrytorUtils.encryptField(custAddressById.getProvinceCode(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setCity(EncrytorUtils.encryptField(custAddressById.getCity(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setCityCode(EncrytorUtils.encryptField(custAddressById.getCityCode(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setCounty(EncrytorUtils.encryptField(custAddressById.getCounty(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setCountyCode(EncrytorUtils.encryptField(custAddressById.getCountyCode(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setTown(EncrytorUtils.encryptField(custAddressById.getTown(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setTownCode(EncrytorUtils.encryptField(custAddressById.getTownCode(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setAddress(EncrytorUtils.encryptField(custAddressById.getAddress(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setIdNumber(EncrytorUtils.encryptField(custAddressById.getIdNumber(), salt, passwd));
+                payrllWelfareCustAddressInfoDTO.setSalt(salt);
+                payrllWelfareCustAddressInfoDTO.setPasswd(passwd);
+
+            }
+            log.info("getCustAddressById.custAddressById:[{}]", JacksonUtil.objectToJson(custAddressById));
             return custAddressById;
         }).subscribeOn(Schedulers.elastic());
     }
