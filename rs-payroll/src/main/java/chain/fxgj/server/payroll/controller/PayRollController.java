@@ -5,6 +5,7 @@ import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
+import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.CheckCardDTO;
@@ -642,6 +643,7 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         String pwd = checkPwdDTO.getPwd();
         UserPrincipal principal = WebContext.getCurrentUser();
+        String sessionId = principal.getSessionId();
         WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -652,6 +654,14 @@ public class PayRollController {
             boolean bool = wageMangerFeignService.checkPwd(pwd,wageUserPrincipal);
             if (!bool){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
+            }
+            try {
+                //密码校验通过之后，缓存中登记一条记录，之后的几分钟只能不再输入密码，key：sessionId
+                String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + sessionId;
+                redisTemplate.opsForValue().set(redisKey, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("免密入缓存失败:[{}]", e.getMessage());
             }
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
@@ -1073,5 +1083,33 @@ public class PayRollController {
         return empEntDTOList;
     }
 
+
+    /**
+     * 校验是否免密
+     *
+     * @return true 免密，false 需要输入密码
+     */
+    @PostMapping("/checkFreePassword")
+    @TrackLog
+    public Mono<Boolean> entEmp() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal principal = WebContext.getCurrentUser();
+        String sessionId = principal.getSessionId();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            if (StringUtils.isBlank(sessionId)) {
+                log.info("sessionId未空，直接返回false，需要输入密码");
+                return false;
+            }
+            String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + sessionId;
+            Object value = redisTemplate.opsForValue().get(redisKey);
+            if (value == null) {
+                log.info("根据sessionId:[{}]未查询到登录记录", sessionId);
+                return false;
+            }
+            log.info("根据sessionId:[{}]查询到登录记录,value:[{}]", sessionId, value);
+            return true;
+        }).subscribeOn(Schedulers.elastic());
+    }
 
 }
