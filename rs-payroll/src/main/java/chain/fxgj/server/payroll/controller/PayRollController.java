@@ -1091,7 +1091,7 @@ public class PayRollController {
      */
     @PostMapping("/checkFreePassword")
     @TrackLog
-    public Mono<Boolean> entEmp() {
+    public Mono<Boolean> checkFreePassword() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String sessionId = principal.getSessionId();
