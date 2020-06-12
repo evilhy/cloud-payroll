@@ -1095,19 +1095,20 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String sessionId = principal.getSessionId();
+        String idNumberEncrytor = principal.getIdNumberEncrytor();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            if (StringUtils.isBlank(sessionId)) {
+            if (StringUtils.isBlank(idNumberEncrytor)) {
                 log.info("sessionId未空，直接返回false，需要输入密码");
                 return false;
             }
-            String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + sessionId;
+            String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
             Object value = redisTemplate.opsForValue().get(redisKey);
             if (value == null) {
-                log.info("根据sessionId:[{}]未查询到登录记录", sessionId);
+                log.info("根据idNumberEncrytor:[{}]未查询到登录记录", idNumberEncrytor);
                 return false;
             }
-            log.info("根据sessionId:[{}]查询到登录记录,value:[{}]", sessionId, value);
+            log.info("根据idNumberEncrytor:[{}]查询到登录记录,value:[{}]", idNumberEncrytor, value);
             return true;
         }).subscribeOn(Schedulers.elastic());
     }
