@@ -644,6 +644,7 @@ public class PayRollController {
         String pwd = checkPwdDTO.getPwd();
         UserPrincipal principal = WebContext.getCurrentUser();
         String sessionId = principal.getSessionId();
+        String idNumberEncrytor = principal.getIdNumberEncrytor();
         WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -657,7 +658,8 @@ public class PayRollController {
             }
             try {
                 //密码校验通过之后，缓存中登记一条记录，之后的几分钟只能不再输入密码，key：sessionId
-                String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + sessionId;
+                String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
+                log.info("checkPwd.redisKey:[{}]", redisKey);
                 redisTemplate.opsForValue().set(redisKey, true);
             } catch (Exception e) {
                 e.printStackTrace();
