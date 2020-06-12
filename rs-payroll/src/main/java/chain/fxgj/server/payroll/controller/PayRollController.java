@@ -1099,7 +1099,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             if (StringUtils.isBlank(idNumberEncrytor)) {
-                log.info("sessionId未空，直接返回false，需要输入密码");
+                log.info("idNumberEncrytor空，直接返回false，需要输入密码");
                 return false;
             }
             String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
