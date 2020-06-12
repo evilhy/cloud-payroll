@@ -1089,7 +1089,7 @@ public class PayRollController {
      *
      * @return true 免密，false 需要输入密码
      */
-    @PostMapping("/checkFreePassword")
+    @GetMapping("/checkFreePassword")
     @TrackLog
     public Mono<Boolean> checkFreePassword() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
