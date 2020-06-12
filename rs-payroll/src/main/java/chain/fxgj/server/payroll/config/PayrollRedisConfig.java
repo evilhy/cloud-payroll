@@ -78,7 +78,7 @@ public class PayrollRedisConfig {
         configMap.put("weixinOauth2AccessToken", cacheConfiguration.entryTtl(Duration.ofSeconds(7200)));
         configMap.put("weixinOauth2AccessTokenOpenid", cacheConfiguration.entryTtl(Duration.ofSeconds(7200)));
         configMap.put("empInfos", cacheConfiguration.entryTtl(Duration.ofMinutes(2)));
-        configMap.put("checkFreePassword", cacheConfiguration.entryTtl(Duration.ofMinutes(5)));;
+        configMap.put("checkFreePassword", cacheConfiguration.entryTtl(Duration.ofMinutes(1)));;
 
         log.debug("自定义RedisCacheManager加载完成");
         return RedisCacheManager
