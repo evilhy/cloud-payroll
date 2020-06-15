@@ -6,6 +6,7 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
+import chain.fxgj.core.common.service.EmployeeEncrytorService;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.CheckCardDTO;
@@ -73,7 +74,8 @@ public class PayRollController {
     private SynTimerFeignService wageSynFeignService;
     @Autowired
     private WechatRedisService wechatRedisService;
-
+    @Autowired
+    EmployeeEncrytorService employeeEncrytorService;
     /**
      * 服务当前时间
      *
@@ -666,6 +668,15 @@ public class PayRollController {
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("免密入缓存失败:[{}]", e.getMessage());
+            }
+            try {
+//                解密调试
+                String idNumberSource = "362528198804120037";
+                log.info("idNumberSource:[{}]", idNumberSource);
+                String idNumberM = employeeEncrytorService.encryptIdNumber(idNumberSource);
+                log.info("idNumberM:[{}]", idNumberM);
+            } catch (Exception e) {
+
             }
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
