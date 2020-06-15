@@ -5,11 +5,13 @@ import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
+import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.CheckCardDTO;
 import chain.fxgj.feign.dto.response.*;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
+import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
 import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
 import chain.fxgj.server.payroll.dto.request.ReqPhone;
 import chain.fxgj.server.payroll.dto.response.*;
@@ -47,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 工资条
@@ -602,18 +605,47 @@ public class PayRollController {
         }).subscribeOn(Schedulers.elastic());
     }
 
+//    /**
+//     * 验证密码 (Get方式修改成Post方式请求，下个版本删除此方法
+//     *
+//     * @param pwd 查询密码
+//     * @return
+//     */
+//    @GetMapping("/checkPwd")
+//    @TrackLog
+//    @Deprecated
+//    public Mono<Void> checkPwd(@RequestParam("pwd") String pwd) {
+//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+//
+//        UserPrincipal principal = WebContext.getCurrentUser();
+//        WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
+//        return Mono.fromCallable(() -> {
+//            MDC.setContextMap(mdcContext);
+//            if (StringUtils.isEmpty(pwd)) {
+//                throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
+//            }
+//            log.info("调用wageMangerFeignService.checkPwd(pwd,wageUserPrincipal)开始");
+//            boolean bool = wageMangerFeignService.checkPwd(pwd,wageUserPrincipal);
+//            if (!bool){
+//                throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
+//            }
+//            return null;
+//        }).subscribeOn(Schedulers.elastic()).then();
+//    }
+
     /**
-     * 验证密码
+     * 验证密码(Get方式修改成Post方式请求
      *
-     * @param pwd 查询密码
      * @return
      */
-    @GetMapping("/checkPwd")
+    @PostMapping("/checkPwd")
     @TrackLog
-    public Mono<Void> checkPwd(@RequestParam("pwd") String pwd) {
+    public Mono<Void> checkPwd(@RequestBody CheckPwdDTO checkPwdDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
+        String pwd = checkPwdDTO.getPwd();
         UserPrincipal principal = WebContext.getCurrentUser();
+        String sessionId = principal.getSessionId();
+        String idNumberEncrytor = principal.getIdNumberEncrytor();
         WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -625,28 +657,57 @@ public class PayRollController {
             if (!bool){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
+            try {
+                //密码校验通过之后，缓存中登记一条记录，之后的几分钟只能不再输入密码，key：sessionId
+                String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
+                log.info("checkPwd.redisKey:[{}]", redisKey);
+                redisTemplate.opsForValue().set(redisKey, true, 5, TimeUnit.MINUTES);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("免密入缓存失败:[{}]", e.getMessage());
+            }
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
 
+//    /**
+//     * 验证银行卡后六位【@】(Get方式修改成Post方式请求，下个版本删除此方法
+//     *
+//     * @param idNumber 身份证号
+//     * @param cardNo   银行卡后6位
+//     * @return
+//     */
+//    @GetMapping("/checkCard")
+//    @TrackLog
+//    @Deprecated
+//    public Mono<Void> checkCard(@RequestParam("idNumber") String idNumber,
+//                                @RequestParam("cardNo") String cardNo) {
+//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+//        return Mono.fromCallable(() -> {
+//            MDC.setContextMap(mdcContext);
+//            log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");
+//            CheckCardDTO checkCardDTO = new CheckCardDTO();
+//            checkCardDTO.setIdNumber(idNumber);
+//            checkCardDTO.setCardNo(cardNo);
+//            boolean bool=wageMangerFeignService.checkCard(checkCardDTO);
+//            if (!bool){
+//                throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
+//            }
+//            return null;
+//        }).subscribeOn(Schedulers.elastic()).then();
+//    }
     /**
-     * 验证银行卡后六位【@】
+     * 验证银行卡后六位【@】 (Get方式修改成Post方式请求
      *
-     * @param idNumber 身份证号
-     * @param cardNo   银行卡后6位
      * @return
      */
-    @GetMapping("/checkCard")
+    @PostMapping("/checkCard")
     @TrackLog
-    public Mono<Void> checkCard(@RequestParam("idNumber") String idNumber,
-                                @RequestParam("cardNo") String cardNo) {
+    public Mono<Void> checkCard(@RequestBody CheckCardDTO checkCardDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");
-            CheckCardDTO checkCardDTO = new CheckCardDTO();
-            checkCardDTO.setIdNumber(idNumber);
-            checkCardDTO.setCardNo(cardNo);
             boolean bool=wageMangerFeignService.checkCard(checkCardDTO);
             if (!bool){
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
@@ -1024,4 +1085,35 @@ public class PayRollController {
         log.info("transfalWageEmpEntDto.empEntDTOList:[{}]", JacksonUtil.objectToJson(empEntDTOList));
         return empEntDTOList;
     }
+
+
+    /**
+     * 校验是否免密
+     *
+     * @return true 免密，false 需要输入密码
+     */
+    @GetMapping("/checkFreePassword")
+    @TrackLog
+    public Mono<Boolean> checkFreePassword() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal principal = WebContext.getCurrentUser();
+        String sessionId = principal.getSessionId();
+        String idNumberEncrytor = principal.getIdNumberEncrytor();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            if (StringUtils.isBlank(idNumberEncrytor)) {
+                log.info("idNumberEncrytor空，直接返回false，需要输入密码");
+                return false;
+            }
+            String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
+            Object value = redisTemplate.opsForValue().get(redisKey);
+            if (value == null) {
+                log.info("根据idNumberEncrytor:[{}]未查询到登录记录", idNumberEncrytor);
+                return false;
+            }
+            log.info("根据idNumberEncrytor:[{}]查询到登录记录,value:[{}]", idNumberEncrytor, value);
+            return true;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
 }
