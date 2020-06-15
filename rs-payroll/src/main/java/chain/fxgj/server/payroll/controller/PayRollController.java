@@ -661,7 +661,8 @@ public class PayRollController {
                 //密码校验通过之后，缓存中登记一条记录，之后的几分钟只能不再输入密码，key：sessionId
                 String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
                 log.info("checkPwd.redisKey:[{}]", redisKey);
-                redisTemplate.opsForValue().set(redisKey, true, 5, TimeUnit.MINUTES);
+//                redisTemplate.opsForValue().set(redisKey, true, 5, TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set(redisKey, true, 30, TimeUnit.SECONDS);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("免密入缓存失败:[{}]", e.getMessage());
