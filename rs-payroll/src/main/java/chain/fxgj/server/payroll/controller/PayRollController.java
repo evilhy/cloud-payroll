@@ -605,33 +605,33 @@ public class PayRollController {
         }).subscribeOn(Schedulers.elastic());
     }
 
-    /**
-     * 验证密码 (Get方式修改成Post方式请求，下个版本删除此方法
-     *
-     * @param pwd 查询密码
-     * @return
-     */
-    @GetMapping("/checkPwd")
-    @TrackLog
-    @Deprecated
-    public Mono<Void> checkPwd(@RequestParam("pwd") String pwd) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
-        UserPrincipal principal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            if (StringUtils.isEmpty(pwd)) {
-                throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
-            }
-            log.info("调用wageMangerFeignService.checkPwd(pwd,wageUserPrincipal)开始");
-            boolean bool = wageMangerFeignService.checkPwd(pwd,wageUserPrincipal);
-            if (!bool){
-                throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
-            }
-            return null;
-        }).subscribeOn(Schedulers.elastic()).then();
-    }
+//    /**
+//     * 验证密码 (Get方式修改成Post方式请求，下个版本删除此方法
+//     *
+//     * @param pwd 查询密码
+//     * @return
+//     */
+//    @GetMapping("/checkPwd")
+//    @TrackLog
+//    @Deprecated
+//    public Mono<Void> checkPwd(@RequestParam("pwd") String pwd) {
+//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+//
+//        UserPrincipal principal = WebContext.getCurrentUser();
+//        WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
+//        return Mono.fromCallable(() -> {
+//            MDC.setContextMap(mdcContext);
+//            if (StringUtils.isEmpty(pwd)) {
+//                throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
+//            }
+//            log.info("调用wageMangerFeignService.checkPwd(pwd,wageUserPrincipal)开始");
+//            boolean bool = wageMangerFeignService.checkPwd(pwd,wageUserPrincipal);
+//            if (!bool){
+//                throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
+//            }
+//            return null;
+//        }).subscribeOn(Schedulers.elastic()).then();
+//    }
 
     /**
      * 验证密码(Get方式修改成Post方式请求
@@ -670,32 +670,32 @@ public class PayRollController {
         }).subscribeOn(Schedulers.elastic()).then();
     }
 
-    /**
-     * 验证银行卡后六位【@】(Get方式修改成Post方式请求，下个版本删除此方法
-     *
-     * @param idNumber 身份证号
-     * @param cardNo   银行卡后6位
-     * @return
-     */
-    @GetMapping("/checkCard")
-    @TrackLog
-    @Deprecated
-    public Mono<Void> checkCard(@RequestParam("idNumber") String idNumber,
-                                @RequestParam("cardNo") String cardNo) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");
-            CheckCardDTO checkCardDTO = new CheckCardDTO();
-            checkCardDTO.setIdNumber(idNumber);
-            checkCardDTO.setCardNo(cardNo);
-            boolean bool=wageMangerFeignService.checkCard(checkCardDTO);
-            if (!bool){
-                throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
-            }
-            return null;
-        }).subscribeOn(Schedulers.elastic()).then();
-    }
+//    /**
+//     * 验证银行卡后六位【@】(Get方式修改成Post方式请求，下个版本删除此方法
+//     *
+//     * @param idNumber 身份证号
+//     * @param cardNo   银行卡后6位
+//     * @return
+//     */
+//    @GetMapping("/checkCard")
+//    @TrackLog
+//    @Deprecated
+//    public Mono<Void> checkCard(@RequestParam("idNumber") String idNumber,
+//                                @RequestParam("cardNo") String cardNo) {
+//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+//        return Mono.fromCallable(() -> {
+//            MDC.setContextMap(mdcContext);
+//            log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");
+//            CheckCardDTO checkCardDTO = new CheckCardDTO();
+//            checkCardDTO.setIdNumber(idNumber);
+//            checkCardDTO.setCardNo(cardNo);
+//            boolean bool=wageMangerFeignService.checkCard(checkCardDTO);
+//            if (!bool){
+//                throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
+//            }
+//            return null;
+//        }).subscribeOn(Schedulers.elastic()).then();
+//    }
     /**
      * 验证银行卡后六位【@】 (Get方式修改成Post方式请求
      *
