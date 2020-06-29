@@ -104,7 +104,7 @@ public class WechatIndexController {
             res100705.setHeadimgurl(headImgurl);
             //加密处理
             res100705.setBindStatus(EncrytorUtils.encryptField(res100705.getBindStatus(), salt, passwd));
-            res100705.setPhone(EncrytorUtils.encryptField(res100705.getPhone(), salt, passwd));
+            res100705.setPhone("");
             res100705.setSalt(salt);
             res100705.setPasswd(passwd);
             log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
