@@ -9,6 +9,7 @@ import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.wechat.WechatCallBackDTO;
 import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
@@ -44,7 +45,9 @@ public class WechatIndexController {
     @PostMapping("/wxCallback")
     @TrackLog
     @PermitAll
-    public Mono<Res100705> wxCallback(@RequestBody WechatCallBackDTO wechatCallBackDTO) throws Exception {
+    public Mono<Res100705> wxCallback(@RequestHeader(value = "encry-salt", required = false) String salt,
+                                      @RequestHeader(value = "encry-passwd", required = false) String passwd,
+                                      @RequestBody WechatCallBackDTO wechatCallBackDTO) throws Exception {
         String code = wechatCallBackDTO.getCode();
         AppPartnerEnum appPartner = wechatCallBackDTO.getAppPartner();
         MDC.put("apppartner_desc", appPartner.getDesc());
@@ -99,6 +102,11 @@ public class WechatIndexController {
                 res100705.setPhone(wageUserPrincipal.getPhone());
             }
             res100705.setHeadimgurl(headImgurl);
+            //加密处理
+            res100705.setBindStatus(EncrytorUtils.encryptField(res100705.getBindStatus(), salt, passwd));
+            res100705.setPhone(EncrytorUtils.encryptField(res100705.getPhone(), salt, passwd));
+            res100705.setSalt(salt);
+            res100705.setPasswd(passwd);
             log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
         }).subscribeOn(Schedulers.elastic());
