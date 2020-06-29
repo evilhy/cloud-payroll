@@ -56,6 +56,15 @@ public class Res100705 {
      */
     private String apppartnerDesc;
 
+    /**
+     * salt
+     */
+    private String salt;
+
+    /**
+     * password
+     */
+    private String passwd;
 
 
 
