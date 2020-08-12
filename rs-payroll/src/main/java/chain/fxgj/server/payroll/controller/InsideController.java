@@ -23,7 +23,6 @@ import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
-import chain.payroll.dto.response.PayrollUserPrincipalDTO;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import feign.FeignException;

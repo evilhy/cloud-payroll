@@ -1,7 +1,7 @@
 package chain.fxgj.server.payroll.service;
 
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
-import chain.payroll.dto.response.wechat.EmployeeWechatDTO;
+import core.dto.response.wechat.EmployeeWechatDTO;
 
 
 /**
