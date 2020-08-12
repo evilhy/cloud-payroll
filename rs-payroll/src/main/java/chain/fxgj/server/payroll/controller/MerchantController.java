@@ -285,7 +285,7 @@ public class MerchantController {
                 WageRes100705 wageRes100705=merchantFeignService.wxCallback(accessToken);
                 if (res100705!=null){
                     BeanUtils.copyProperties(wageRes100705,res100705);
-                    res100705.setApppartner(AppPartnerEnum.values()[wageRes100705.getApppartner()]);
+                    res100705.setApppartner(chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.values()[wageRes100705.getApppartner()]);
                 }
             } else {
                 log.info("用户信息不存在！");

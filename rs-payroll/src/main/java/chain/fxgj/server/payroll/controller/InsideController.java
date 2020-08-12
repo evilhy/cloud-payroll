@@ -23,8 +23,12 @@ import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.payroll.client.feign.InsideFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import core.dto.request.CacheReqPhone;
+import core.dto.request.CacheUpdPhoneRequestDTO;
+import core.dto.wechat.CacheUserPrincipal;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +65,8 @@ public class InsideController {
     private EmpWechatService empWechatService;
     @Autowired
     EmployeeInfoServiceFeign employeeInfoServiceFeign;
-
+    @Autowired
+    InsideFeignController insideFeignController;
 
 //    /** 注释原因：数据脱敏，可能没有手机号，需要通过jsessionId查询手机号，注意类型的使用
 //     * 发送短信验证码
@@ -128,7 +133,7 @@ public class InsideController {
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("请填写手机号"));
                 }
             } else if (StringUtils.equals("1", busiType)) {//1 微信绑定手机号验证(手机号为空，根据jsessionId 找到绑定的手机号)
-                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
                 if (null == wechatInfoDetail) {
                     log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败"));
@@ -139,7 +144,7 @@ public class InsideController {
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败!"));
                 }
             } else if (StringUtils.equals("2", busiType)) {//2 通过企业绑定的手机
-                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
                 log.info("sedCode.wechatInfoDetail:[{}]", JacksonUtil.objectToJson(wechatInfoDetail));
                 if (null == wechatInfoDetail) {
                     log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
@@ -428,7 +433,7 @@ public class InsideController {
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("请填写手机号"));
                 }
             } else if (StringUtils.equals("1", busiType)) {//1 微信绑定手机号验证(手机号为空，根据jsessionId 找到绑定的手机号)
-                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
                 if (null == wechatInfoDetail) {
                     log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败"));
@@ -439,7 +444,7 @@ public class InsideController {
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!"));
                 }
             } else if (StringUtils.equals("2", busiType)) {//2 通过企业绑定的手机
-                WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
                 if (null == wechatInfoDetail) {
                     log.error("根据jsessionId:[{}]未查询到数据", jsessionId);
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败!!"));
@@ -521,16 +526,15 @@ public class InsideController {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageReqPhone wageReqPhone = new WageReqPhone();
+            CacheReqPhone wageReqPhone = new CacheReqPhone();
             BeanUtils.copyProperties(reqPhone, wageReqPhone);
 
-            WageUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
+            CacheUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
+            CacheUpdPhoneRequestDTO cacheUpdPhoneRequestDTO = new CacheUpdPhoneRequestDTO();
+            cacheUpdPhoneRequestDTO.setCacheReqPhone(wageReqPhone);
+            cacheUpdPhoneRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
+            insideFeignController.updPhone(cacheUpdPhoneRequestDTO);
 
-            WageUpdPhoneRequestDTO wageUpdPhoneRequestDTO = new WageUpdPhoneRequestDTO();
-            wageUpdPhoneRequestDTO.setWageReqPhone(wageReqPhone);
-            wageUpdPhoneRequestDTO.setWageUserPrincipal(wageUserPrincipal);
-
-            insideFeignService.updPhone(wageUpdPhoneRequestDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }

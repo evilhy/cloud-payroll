@@ -8,6 +8,7 @@ import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.feign.dto.wechat.WageRegisteWechatPayrollDTO;
 import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.payroll.client.feign.WechatFeignController;
 import chain.pub.client.feign.WechatFeignClient;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
@@ -15,6 +16,8 @@ import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import core.dto.response.PayrollRes100703DTO;
 import core.dto.response.PayrollWageDetailDTO;
+import core.dto.wechat.CacheRegisteWechatPayrollDTO;
+import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,8 @@ public class WechatRedisServiceImpl implements WechatRedisService {
     WechatFeignClient wechatFeignClient;
     @Autowired
     private WechatFeignService wechatFeignService;
+    @Autowired
+    WechatFeignController wechatFeignController;
 
     @Override
     public PayrollRes100703DTO wageListByMongo(String idNumber, String groupId, String year, String type) {
@@ -66,17 +71,17 @@ public class WechatRedisServiceImpl implements WechatRedisService {
     }
 
     @Override
-    public WageUserPrincipal registeWechatPayroll(String jsessionId, String openId, String nickName, String headImg, String headImgurl, AppPartnerEnum appPartner) throws Exception {
+    public CacheUserPrincipal registeWechatPayroll(String jsessionId, String openId, String nickName, String headImg, String headImgurl, chain.utils.fxgj.constant.DictEnums.AppPartnerEnum appPartner) throws Exception {
 
-        WageRegisteWechatPayrollDTO wageRegisteWechatPayrollDTO = new WageRegisteWechatPayrollDTO();
-        wageRegisteWechatPayrollDTO.setJsessionId(jsessionId);
-        wageRegisteWechatPayrollDTO.setOpenId(openId);
-        wageRegisteWechatPayrollDTO.setNickName(nickName);
-        wageRegisteWechatPayrollDTO.setHeadImgurl(headImgurl);
-        wageRegisteWechatPayrollDTO.setAppPartnerEnum(appPartner);
-        log.info("wageRegisteWechatPayrollDTO:[{}]", JacksonUtil.objectToJson(wageRegisteWechatPayrollDTO));
-        WageUserPrincipal wageUserPrincipal = wechatFeignService.registeWechatPayroll(wageRegisteWechatPayrollDTO);
-        log.info("wageUserPrincipal:[{}]", JacksonUtil.objectToJson(wageUserPrincipal));
-        return wageUserPrincipal;
+        CacheRegisteWechatPayrollDTO cacheRegisteWechatPayrollDTO = new CacheRegisteWechatPayrollDTO();
+        cacheRegisteWechatPayrollDTO.setJsessionId(jsessionId);
+        cacheRegisteWechatPayrollDTO.setOpenId(openId);
+        cacheRegisteWechatPayrollDTO.setNickName(nickName);
+        cacheRegisteWechatPayrollDTO.setHeadImgurl(headImgurl);
+        cacheRegisteWechatPayrollDTO.setAppPartnerEnum(appPartner);
+        log.info("wageRegisteWechatPayrollDTO:[{}]", JacksonUtil.objectToJson(cacheRegisteWechatPayrollDTO));
+        CacheUserPrincipal cacheUserPrincipal = wechatFeignController.registeWechatPayroll(cacheRegisteWechatPayrollDTO);
+        log.info("wageUserPrincipal:[{}]", JacksonUtil.objectToJson(cacheUserPrincipal));
+        return cacheUserPrincipal;
     }
 }

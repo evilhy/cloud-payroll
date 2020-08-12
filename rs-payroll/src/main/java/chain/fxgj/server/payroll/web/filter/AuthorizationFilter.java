@@ -8,6 +8,7 @@ import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         log.info("[{}]需要验证jsessionId", requestUrl);
         //todo 需要找出 哪里入的redis
 //        UserPrincipal principal = empWechatService.getWechatInfo(jsessionId);
-        WageUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+        CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
         UserPrincipal principal = TransferUtil.WageUserPrincipalToUserPrincipal(wechatInfoDetail);
         if (principal == null) {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());

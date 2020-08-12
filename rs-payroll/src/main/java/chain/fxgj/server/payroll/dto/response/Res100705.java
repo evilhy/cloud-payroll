@@ -50,7 +50,7 @@ public class Res100705 {
     /**
      * 合作方编号
      */
-    private AppPartnerEnum apppartner;
+    private chain.utils.fxgj.constant.DictEnums.AppPartnerEnum apppartner;
     /**
      * 合作方描述
      */

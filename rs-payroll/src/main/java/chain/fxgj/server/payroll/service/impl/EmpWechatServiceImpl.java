@@ -1,7 +1,7 @@
 package chain.fxgj.server.payroll.service.impl;
 
-import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.service.EmpWechatService;
+import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class EmpWechatServiceImpl implements EmpWechatService {
 
     @Override
-    public WageUserPrincipal getWechatInfoDetail(String jsessionId) {
+    public CacheUserPrincipal getWechatInfoDetail(String jsessionId) {
         return null;
     }
 }

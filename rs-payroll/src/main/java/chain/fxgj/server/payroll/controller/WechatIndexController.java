@@ -10,12 +10,14 @@ import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.wechat.WechatCallBackDTO;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
+import chain.payroll.client.feign.WechatFeignController;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
+import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,7 @@ public class WechatIndexController {
                                       @RequestHeader(value = "encry-passwd", required = false) String passwd,
                                       @RequestBody WechatCallBackDTO wechatCallBackDTO) throws Exception {
         String code = wechatCallBackDTO.getCode();
-        AppPartnerEnum appPartner = wechatCallBackDTO.getAppPartner();
+        chain.utils.fxgj.constant.DictEnums.AppPartnerEnum appPartner = wechatCallBackDTO.getAppPartner();
         MDC.put("apppartner_desc", appPartner.getDesc());
         MDC.put("apppartner", appPartner.getCode().toString());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
@@ -93,13 +95,13 @@ public class WechatIndexController {
             }
 
             //【三】用户登录工资条
-            WageUserPrincipal wageUserPrincipal = wechatRedisService.registeWechatPayroll(jsessionId, openId, nickName, headImgurl, "", appPartner);
-            if (StringUtils.isNotBlank(wageUserPrincipal.getIdNumber())) {
+            CacheUserPrincipal cacheUserPrincipal = wechatRedisService.registeWechatPayroll(jsessionId, openId, nickName, headImgurl, "", appPartner);
+            if (StringUtils.isNotBlank(cacheUserPrincipal.getIdNumber())) {
                 res100705.setBindStatus("1");
-                res100705.setIdNumber(wageUserPrincipal.getIdNumberEncrytor());
-                res100705.setIfPwd(StringUtils.isEmpty(StringUtils.trimToEmpty(wageUserPrincipal.getQueryPwd())) ? IsStatusEnum.NO.getCode() : IsStatusEnum.YES.getCode());
-                res100705.setName(wageUserPrincipal.getName());
-                res100705.setPhone(wageUserPrincipal.getPhone());
+                res100705.setIdNumber(cacheUserPrincipal.getIdNumberEncrytor());
+                res100705.setIfPwd(StringUtils.isEmpty(StringUtils.trimToEmpty(cacheUserPrincipal.getQueryPwd())) ? IsStatusEnum.NO.getCode() : IsStatusEnum.YES.getCode());
+                res100705.setName(cacheUserPrincipal.getName());
+                res100705.setPhone(cacheUserPrincipal.getPhone());
             }
             res100705.setHeadimgurl(headImgurl);
             //加密处理

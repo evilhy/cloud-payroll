@@ -4,6 +4,7 @@ import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.base.*;
+import core.dto.wechat.WeixinJsapiDTO;
 import org.springframework.cache.annotation.Cacheable;
 
 public interface CallInsideService {

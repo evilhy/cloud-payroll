@@ -35,7 +35,7 @@ public class WechatCallBackDTO {
      * 清算通道
      */
     @NotNull
-    private AppPartnerEnum appPartner = AppPartnerEnum.FXGJ;
+    private chain.utils.fxgj.constant.DictEnums.AppPartnerEnum appPartner = chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.FXGJ;
 
     /**
      * 规则(暂未使用)

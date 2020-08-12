@@ -9,6 +9,7 @@ import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import core.dto.response.PayrollRes100703DTO;
 import core.dto.response.PayrollWageDetailDTO;
+import core.dto.wechat.CacheUserPrincipal;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,7 +81,7 @@ public interface WechatRedisService {
      * 工资条登录
      */
     @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
-    WageUserPrincipal registeWechatPayroll(String jsessionId, String openId, String nickName, String headImgurl, String idNumber, AppPartnerEnum appPartner) throws Exception;
+    CacheUserPrincipal registeWechatPayroll(String jsessionId, String openId, String nickName, String headImgurl, String idNumber, chain.utils.fxgj.constant.DictEnums.AppPartnerEnum appPartner) throws Exception;
 
 
 

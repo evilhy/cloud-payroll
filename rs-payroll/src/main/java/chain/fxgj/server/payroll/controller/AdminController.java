@@ -53,7 +53,7 @@ public class AdminController {
     @PermitAll
     public Mono<HandPasswordDTO> queryHandPassword() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String wechatId = WebContext.getCurrentUser().getWechatId();
+        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("=====> /admin/queryHandPassword 查询用户是否开启手势密码 wechatId:{}", wechatId);
@@ -72,7 +72,7 @@ public class AdminController {
     @PermitAll
     public Mono<Void> closeHandPassword() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String wechatId = WebContext.getCurrentUser().getWechatId();
+        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("=====> /admin/closeHandPassword 关闭手势密码 wechatId:{}", wechatId);
@@ -94,7 +94,7 @@ public class AdminController {
     public Mono<Void> checkPassword(@RequestParam("password") String password,
                                     @RequestParam("type") String type) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String wechatId = WebContext.getCurrentUser().getWechatId();
+        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("=====> /admin/checkPassword 校验密码 wechatId:{}, password:{}，type{}", wechatId, password, type);
@@ -119,7 +119,7 @@ public class AdminController {
                                    @RequestParam("oldPassword") String oldPassword,
                                    @RequestParam("type") String type) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String wechatId = WebContext.getCurrentUser().getWechatId();
+        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("=====> /admin/savePassword 添加密码 wechatId:{}，oldPassword:{}, password:{}，type{}", wechatId, oldPassword, password, type);
@@ -151,7 +151,7 @@ public class AdminController {
                             @RequestParam("type") String type) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
-        String wechatId = currentUser.getWechatId();
+        String wechatId = String.valueOf(currentUser.getWechatId());
         String idNumberEncrytor = currentUser.getIdNumberEncrytor();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);

@@ -1,11 +1,11 @@
 package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.server.payroll.JavaDocReader;
-import chain.fxgj.server.payroll.dto.base.WeixinJsapiDTO;
 import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecInvAwardDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesCustInfoDTO;
+import core.dto.wechat.WeixinJsapiDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.*;

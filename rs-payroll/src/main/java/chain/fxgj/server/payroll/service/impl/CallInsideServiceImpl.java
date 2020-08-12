@@ -14,6 +14,7 @@ import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.response.Res100302;
+import core.dto.wechat.WeixinJsapiDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;

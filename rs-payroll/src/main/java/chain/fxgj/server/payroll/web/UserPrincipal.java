@@ -4,6 +4,7 @@ import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import lombok.*;
+import org.bson.types.ObjectId;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -65,7 +66,7 @@ public class UserPrincipal implements Principal {
      * 合作商平台标识
      */
     @Builder.Default
-    private AppPartnerEnum appPartner = AppPartnerEnum.FXGJ;
+    private chain.utils.fxgj.constant.DictEnums.AppPartnerEnum appPartner = chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.FXGJ;
     /**
      * 用户身份证号码（明文）
      */
@@ -89,7 +90,7 @@ public class UserPrincipal implements Principal {
     /**
      * 用户绑定微信表 唯一标识
      */
-    private String wechatId;
+    private ObjectId wechatId;
     /**
      * 用户查询密码
      */
@@ -138,7 +139,7 @@ public class UserPrincipal implements Principal {
     /**
      * 数据权限
      */
-    private List<FundLiquidationEnum>  dataAuths;
+    private List<chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum>  dataAuths;
 
 
     public UserPrincipal(String name, String sessionId, LocalDateTime sessionTimeOut, String[] roles) {
