@@ -147,8 +147,8 @@ public class AdminController {
     @GetMapping("/login")
     @TrackLog
     @PermitAll
-    public Mono<Void> savePassword(@RequestParam("password") String password,
-                                   @RequestParam("type") String type) {
+    public Mono<Void> login(@RequestParam("password") String password,
+                            @RequestParam("type") String type) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String wechatId = currentUser.getWechatId();
