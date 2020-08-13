@@ -334,16 +334,16 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
-        BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
+        PayrollUserPrincipalDTO build = PayrollUserPrincipalDTO.builder().build();
+        BeanUtils.copyProperties(userPrincipal, build);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             EmpInfoDTO empInfoDTO = null;
-            log.info("调用wageMangerFeignService.emp(wageUserPrincipal)开始");
-            WageEmpInfoDTO wageEmpInfoDTO = wageMangerFeignService.emp(wageUserPrincipal);
-            if (wageEmpInfoDTO != null) {
+            log.info("调用PayrollFeignController.emp(wageUserPrincipal)开始");
+            PayrollEmpInfoDTO emp = payrollFeignController.emp(build);
+            if (emp != null) {
                 empInfoDTO = new EmpInfoDTO();
-                BeanUtils.copyProperties(wageEmpInfoDTO, empInfoDTO);
+                BeanUtils.copyProperties(emp, empInfoDTO);
                 //身份证、手机号脱敏
                 empInfoDTO.setIdNumber(empInfoDTO.getIdNumberStar());
                 empInfoDTO.setPhone(empInfoDTO.getPhoneStar());
@@ -361,6 +361,7 @@ public class PayRollController {
      */
     @GetMapping("/empEnt")
     @TrackLog
+    @Deprecated
     public Mono<List<EmpEntDTO>> empEnt() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 

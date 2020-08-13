@@ -29,6 +29,7 @@ import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import core.dto.request.BaseReqDTO;
 import core.dto.request.CacheReqPhone;
 import core.dto.request.CacheUpdPhoneRequestDTO;
+import core.dto.request.UpdBankCardDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
@@ -523,26 +524,11 @@ public class InsideController {
             if (!updBankCardDTO.getCardNo().matches(regex)) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());
             }
-
-            WageUpdBankCardDTO wageUpdBankCardDTO = new WageUpdBankCardDTO();
-            BeanUtils.copyProperties(updBankCardDTO, wageUpdBankCardDTO);
-
-            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
-            BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
-
-            WageUpdBankCardRequestDTO wageUpdBankCardRequestDTO = new WageUpdBankCardRequestDTO();
-            wageUpdBankCardRequestDTO.setWageUpdBankCardDTO(wageUpdBankCardDTO);
-            wageUpdBankCardRequestDTO.setWageUserPrincipal(wageUserPrincipal);
-            String retStr ="";
-            try{
-                retStr = insideFeignService.updBankCard(wageUpdBankCardRequestDTO);
-            }catch (FeignException ex){
-                return ex.getMessage();
-            }
-
-            return retStr;
+            return insideFeignController.updBankCard(updBankCardDTO);
         }).subscribeOn(Schedulers.elastic());
     }
+
+
     public void mysqlDataSynToMongo(String idNumber, String groupId, String year, String type, UserPrincipal principal){
         WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
         BeanUtils.copyProperties(principal,wageUserPrincipal);
