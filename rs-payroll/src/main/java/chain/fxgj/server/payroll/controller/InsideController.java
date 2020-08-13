@@ -26,6 +26,7 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.InsideFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import core.dto.request.BaseReqDTO;
 import core.dto.request.CacheReqPhone;
 import core.dto.request.CacheUpdPhoneRequestDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -547,4 +548,30 @@ public class InsideController {
         BeanUtils.copyProperties(principal,wageUserPrincipal);
         wageSynFeignService.pushSyncDataToCache(idNumber,groupId,year,type,wageUserPrincipal);
     }
+
+    /**
+     * 查询员工企业列表(切库新增接口)
+     *
+     * @param baseReqDTO
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/empEntList")
+    @TrackLog
+    public Mono<String> empEntList(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        String idNumber = baseReqDTO.getIdNumber();
+        if (StringUtils.isBlank(idNumber)) {
+//            throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
+        }
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            BaseReqDTO baseReqDTO1 = new BaseReqDTO();
+            baseReqDTO1.setIdNumber(userPrincipal.getIdNumber());
+            insideFeignController.empEntList(baseReqDTO1);
+            return "";
+        }).subscribeOn(Schedulers.elastic());
+    }
+
 }
