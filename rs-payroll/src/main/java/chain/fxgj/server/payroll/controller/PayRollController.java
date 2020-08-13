@@ -723,6 +723,7 @@ public class PayRollController {
         PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
         BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         String idNumber = principal.getIdNumber();
+        String entId = principal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Res100703 res100703 = new Res100703();
@@ -733,6 +734,7 @@ public class PayRollController {
                 payrollRes100703ReqDTO.setType(type);
                 payrollRes100703ReqDTO.setIdNumber(idNumber);
                 payrollRes100703ReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
+                payrollRes100703ReqDTO.setEntId(entId);
                 log.info("开始调用wageList时间:[{}]", LocalDateTime.now());
                 log.info("groupId:[{}]，year:[{}]，type:[{}]，idNumber:[{}]", groupId, year, type, idNumber);
                 PayrollRes100703DTO source = payrollFeignController.wageList(payrollRes100703ReqDTO);
