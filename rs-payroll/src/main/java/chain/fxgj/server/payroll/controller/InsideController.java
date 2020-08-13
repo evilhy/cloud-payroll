@@ -68,44 +68,6 @@ public class InsideController {
     @Autowired
     InsideFeignController insideFeignController;
 
-//    /** 注释原因：数据脱敏，可能没有手机号，需要通过jsessionId查询手机号，注意类型的使用
-//     * 发送短信验证码
-//     *
-//     * @param req100302
-//     * @return
-//     */
-//    @PostMapping("/sendCode")
-//    @TrackLog
-//    @PermitAll
-//    public Mono<Res100302> sendCode(@RequestBody Req100302 req100302, @RequestHeader(value = "X-Real-IP", required = false) String clientIp) {
-//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//        log.info("sendCode.req100302:[{}]", JacksonUtil.objectToJson(req100302));
-//        log.info("sendCode.X-Real-IP:[{}]", clientIp);
-//        return Mono.fromCallable(() -> {
-//            MDC.setContextMap(mdcContext);
-////            WageReq100302 wageIndexDTO = new WageReq100302();
-////            wageIndexDTO.setPhone(req100302.getPhone());
-////
-////            WageRes100302 wageRes100302 = insideFeignService.sendCode(wageIndexDTO);
-////            Res100302 res100302 = new Res100302();
-////            res100302.setCodeId(wageRes100302.getCodeId());
-////            log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
-//
-//            //需要加ip，所以直接调用inside发送短信，不调用cloud-wage-manager，上面的注释
-//            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
-//            dto.setSystemId(0);
-//            dto.setCheckType(1);
-//            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-//            dto.setMsgMedium(req100302.getPhone());
-//            dto.setValidTime(120);
-//            MsgCodeLogResponeDTO msgCodeLogResponeDTO = callInsideService.sendCode(dto, clientIp);
-//            Res100302 res100302 = new Res100302();
-//            res100302.setCodeId(msgCodeLogResponeDTO.getCodeId());
-//            log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
-//            return res100302;
-//        }).subscribeOn(Schedulers.elastic());
-//    }
-
     /**
      * 发送短信验证码
      * busyType 说明
