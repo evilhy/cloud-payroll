@@ -3,20 +3,17 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.feign.client.PayRollFeignService;
-import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.feign.dto.CheckCardDTO;
 import chain.fxgj.feign.dto.response.*;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
 import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
-import chain.fxgj.server.payroll.dto.request.ReqPhone;
-import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.dto.response.BankCard;
-import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.service.PayRollService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.util.TransferUtil;
@@ -41,9 +38,6 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
-import javax.inject.Inject;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -70,6 +64,9 @@ public class PayRollController {
     Executor executor;
     @Autowired
     private PayRollFeignService wageMangerFeignService;
+
+    @Autowired
+    PayRollService payRollService;
 
     /**
      * 服务当前时间
@@ -106,7 +103,7 @@ public class PayRollController {
             Integer isNew = 0;
             if (null != wageIndexDTO) {
                 WageNewestWageLogDTO wageNewestWageLogDTO = wageIndexDTO.getBean();
-                BeanUtils.copyProperties(wageNewestWageLogDTO,newestWageLogDTO);
+                BeanUtils.copyProperties(wageNewestWageLogDTO, newestWageLogDTO);
                 isNew = wageIndexDTO.getIsNew();
             }
             IndexDTO indexDTO = new IndexDTO();
@@ -127,25 +124,27 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal principal = WebContext.getCurrentUser();
+        String entId = principal.getEntId();
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 //            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
 //            BeanUtils.copyProperties(principal,wageUserPrincipal);
-            CacheUserPrincipal wageUserPrincipal=TransferUtil.userPrincipalToWageUserPrincipal(principal);
-
-            log.info("调用wageMangerFeignService.groupList(wageUserPrincipal)开始");
-            List<WageNewestWageLogDTO> wageNewestWageLogDTOS = null;//wageMangerFeignService.groupList(wageUserPrincipal);
-            log.info("groupList--->{}",wageNewestWageLogDTOS.size());
-            List<NewestWageLogDTO> list=null;
-            if (!CollectionUtils.isEmpty(wageNewestWageLogDTOS)){
-                list=new ArrayList<>();
-                for (WageNewestWageLogDTO wageLogDTO:wageNewestWageLogDTOS){
-                    NewestWageLogDTO dto=new NewestWageLogDTO();
-                    BeanUtils.copyProperties(wageLogDTO,dto);
-                    list.add(dto);
-                }
-            }
+//            CacheUserPrincipal wageUserPrincipal=TransferUtil.userPrincipalToWageUserPrincipal(principal);
+//
+//            log.info("调用wageMangerFeignService.groupList(wageUserPrincipal)开始");
+//            List<WageNewestWageLogDTO> wageNewestWageLogDTOS = null;//wageMangerFeignService.groupList(wageUserPrincipal);
+//            log.info("groupList--->{}",wageNewestWageLogDTOS.size());
+//            List<NewestWageLogDTO> list=null;
+//            if (!CollectionUtils.isEmpty(wageNewestWageLogDTOS)){
+//                list=new ArrayList<>();
+//                for (WageNewestWageLogDTO wageLogDTO:wageNewestWageLogDTOS){
+//                    NewestWageLogDTO dto=new NewestWageLogDTO();
+//                    BeanUtils.copyProperties(wageLogDTO,dto);
+//                    list.add(dto);
+//                }
+//            }
+            List<NewestWageLogDTO> list = payRollService.groupList(entId, null, idNumber);
             log.info("NewestWageLogDTOList:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
@@ -159,7 +158,7 @@ public class PayRollController {
     @PostMapping("/entEmp")
     @TrackLog
     public Mono<Res100701> entEmp(@RequestBody EntEmpDTO entEmpDTO, @RequestHeader(value = "encry-salt", required = false) String salt,
-        @RequestHeader(value = "encry-passwd", required = false) String passwd) {
+                                  @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNumber = entEmpDTO.getIdNumber();
@@ -169,13 +168,13 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             CacheUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
-            Res100701 res100701=null;
+            Res100701 res100701 = null;
             log.info("调用wageMangerFeignService.entEmp(idNumber,wageUserPrincipal)开始");
             PayrollRes100701DTO wageRes100701 = payrollFeignController.entEmp(idNumber, wageUserPrincipal);
-            log.info("wageRes100701:[{}]",JacksonUtil.objectToJson(wageRes100701));
-            if (wageRes100701!=null){
-                res100701=new Res100701();
-                BeanUtils.copyProperties(wageRes100701,res100701);
+            log.info("wageRes100701:[{}]", JacksonUtil.objectToJson(wageRes100701));
+            if (wageRes100701 != null) {
+                res100701 = new Res100701();
+                BeanUtils.copyProperties(wageRes100701, res100701);
                 List<EmployeeListBean> employeeListBeanList = new ArrayList<>();
                 List<PayrollEmployeeListDTO> wageEmployeeListBeanList = wageRes100701.getEmployeeList();
                 if (null != wageEmployeeListBeanList && wageEmployeeListBeanList.size() > 0) {
@@ -217,17 +216,17 @@ public class PayRollController {
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(principal,wageUserPrincipal);
+            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            BeanUtils.copyProperties(principal, wageUserPrincipal);
             log.info("调用wageMangerFeignService.empInfo(wageUserPrincipal)开始");
-            List<WageRes100708> wageRes100708List=wageMangerFeignService.empInfo(wageUserPrincipal);
-            log.info("wageRes100708List-->{}",wageRes100708List.size());
-            List<Res100708> res100708=null;
-            if (!CollectionUtils.isEmpty(wageRes100708List)){
-                res100708=new ArrayList<>();
-                for (WageRes100708 res1007081:wageRes100708List){
-                    Res100708 res=new Res100708();
-                    BeanUtils.copyProperties(res1007081,res);
+            List<WageRes100708> wageRes100708List = wageMangerFeignService.empInfo(wageUserPrincipal);
+            log.info("wageRes100708List-->{}", wageRes100708List.size());
+            List<Res100708> res100708 = null;
+            if (!CollectionUtils.isEmpty(wageRes100708List)) {
+                res100708 = new ArrayList<>();
+                for (WageRes100708 res1007081 : wageRes100708List) {
+                    Res100708 res = new Res100708();
+                    BeanUtils.copyProperties(res1007081, res);
                     res100708.add(res);
                 }
             }
@@ -246,19 +245,19 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         String idNumber = WebContext.getCurrentUser().getIdNumber();
         UserPrincipal principal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-        BeanUtils.copyProperties(principal,wageUserPrincipal);
+        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+        BeanUtils.copyProperties(principal, wageUserPrincipal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            List<GroupInvoiceDTO> list=null;
+            List<GroupInvoiceDTO> list = null;
             log.info("调用wageMangerFeignService.invoice(wageUserPrincipal)开始");
-            List<WageGroupInvoiceDTO> wageGroupInvoiceDTOList=wageMangerFeignService.invoice(wageUserPrincipal);
-           log.info("invoice-->{}",wageGroupInvoiceDTOList);
-            if (!CollectionUtils.isEmpty(wageGroupInvoiceDTOList)){
-                list=new ArrayList<>();
-                for (WageGroupInvoiceDTO wageGroupInvoiceDTO:wageGroupInvoiceDTOList){
-                    GroupInvoiceDTO groupInvoiceDTO=new GroupInvoiceDTO();
-                    BeanUtils.copyProperties(wageGroupInvoiceDTO,groupInvoiceDTO);
+            List<WageGroupInvoiceDTO> wageGroupInvoiceDTOList = wageMangerFeignService.invoice(wageUserPrincipal);
+            log.info("invoice-->{}", wageGroupInvoiceDTOList);
+            if (!CollectionUtils.isEmpty(wageGroupInvoiceDTOList)) {
+                list = new ArrayList<>();
+                for (WageGroupInvoiceDTO wageGroupInvoiceDTO : wageGroupInvoiceDTOList) {
+                    GroupInvoiceDTO groupInvoiceDTO = new GroupInvoiceDTO();
+                    BeanUtils.copyProperties(wageGroupInvoiceDTO, groupInvoiceDTO);
                     list.add(groupInvoiceDTO);
                 }
             }
@@ -287,7 +286,7 @@ public class PayRollController {
             }
             log.info("调用wageMangerFeignService.checkPwd(pwd,wageUserPrincipal)开始");
             boolean bool = payrollFeignController.checkPwd(pwd, cacheUserPrincipal);
-            if (!bool){
+            if (!bool) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_007.getErrorMsg());
             }
             try {
@@ -315,8 +314,8 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");
-            boolean bool=wageMangerFeignService.checkCard(checkCardDTO);
-            if (!bool){
+            boolean bool = wageMangerFeignService.checkCard(checkCardDTO);
+            if (!bool) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
             }
             return null;
@@ -335,16 +334,16 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-        BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
+        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+        BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            EmpInfoDTO empInfoDTO=null;
+            EmpInfoDTO empInfoDTO = null;
             log.info("调用wageMangerFeignService.emp(wageUserPrincipal)开始");
-            WageEmpInfoDTO wageEmpInfoDTO=wageMangerFeignService.emp(wageUserPrincipal);
-            if (wageEmpInfoDTO!=null){
-                empInfoDTO=new EmpInfoDTO();
-                BeanUtils.copyProperties(wageEmpInfoDTO,empInfoDTO);
+            WageEmpInfoDTO wageEmpInfoDTO = wageMangerFeignService.emp(wageUserPrincipal);
+            if (wageEmpInfoDTO != null) {
+                empInfoDTO = new EmpInfoDTO();
+                BeanUtils.copyProperties(wageEmpInfoDTO, empInfoDTO);
                 //身份证、手机号脱敏
                 empInfoDTO.setIdNumber(empInfoDTO.getIdNumberStar());
                 empInfoDTO.setPhone(empInfoDTO.getPhoneStar());
@@ -366,85 +365,85 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-        BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
+        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+        BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            List<EmpEntDTO> list=null;
+            List<EmpEntDTO> list = null;
             log.info("调用wageMangerFeignService.empEnt(wageUserPrincipal)开始");
-            List<WageEmpEntDTO> wageEmpEntDTOList=wageMangerFeignService.empEnt(wageUserPrincipal);
-            log.info("empEnt---->{}",wageEmpEntDTOList);
-            if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
-                list=new ArrayList<>();
-               for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
-                   EmpEntDTO empEntDTO=new EmpEntDTO();
+            List<WageEmpEntDTO> wageEmpEntDTOList = wageMangerFeignService.empEnt(wageUserPrincipal);
+            log.info("empEnt---->{}", wageEmpEntDTOList);
+            if (!CollectionUtils.isEmpty(wageEmpEntDTOList)) {
+                list = new ArrayList<>();
+                for (WageEmpEntDTO wageEmpEntDTO : wageEmpEntDTOList) {
+                    EmpEntDTO empEntDTO = new EmpEntDTO();
 //                   BeanUtils.copyProperties(wageEmpEntDTO,empEntDTO);
-                   //脱敏处理
-                   empEntDTO.setEntName(wageEmpEntDTO.getEntName());
-                   empEntDTO.setShortEntName(wageEmpEntDTO.getShortEntName());
+                    //脱敏处理
+                    empEntDTO.setEntName(wageEmpEntDTO.getEntName());
+                    empEntDTO.setShortEntName(wageEmpEntDTO.getShortEntName());
 
-                   List<chain.fxgj.feign.dto.response.BankCard> cardList = wageEmpEntDTO.getCards();
-                   List<BankCard> cardListNew = new ArrayList<>();
-                   if (null != cardList && cardList.size() > 0) {
-                       for (chain.fxgj.feign.dto.response.BankCard bankCard : cardList) {
-                           BankCard bankCard1 = new BankCard();
-                           List<WageBankCardGroup> bankCardGroupList = bankCard.getBankCardGroups();
-                           List<BankCardGroup> bankCardGroupList1 = new ArrayList<>();
-                           if (null != bankCardGroupList && bankCardGroupList.size() > 0) {
-                               for (WageBankCardGroup bankCardGroup : bankCardGroupList) {
-                                   BankCardGroup bankCardGroup1 = new BankCardGroup();
-                                   bankCardGroup1.setGroupId(bankCardGroup.getGroupId());
-                                   bankCardGroup1.setId(bankCardGroup.getId());
-                                   bankCardGroup1.setShortGroupName(bankCardGroup.getShortGroupName());
-                                   bankCardGroupList1.add(bankCardGroup1);
-                               }
-                           }
-                           bankCard1.setBankCardGroups(bankCardGroupList1);
-                           bankCard1.setCardNo(SensitiveInfoUtils.bankCard(bankCard.getCardNo()));
-                           bankCard1.setCardUpdStatus(bankCard.getCardUpdStatus());
-                           bankCard1.setCardUpdStatusVal(bankCard.getCardUpdStatusVal());
-                           bankCard1.setIsNew(bankCard.getIsNew());
-                           bankCard1.setIssuerName(bankCard.getIssuerName());
-                           bankCard1.setOldCardNo(SensitiveInfoUtils.bankCard(bankCard.getOldCardNo()));
-                           bankCard1.setUpdDesc(bankCard.getUpdDesc());
-                           cardListNew.add(bankCard1);
-                       }
-                       empEntDTO.setCards(cardListNew);
-                   }
+                    List<chain.fxgj.feign.dto.response.BankCard> cardList = wageEmpEntDTO.getCards();
+                    List<BankCard> cardListNew = new ArrayList<>();
+                    if (null != cardList && cardList.size() > 0) {
+                        for (chain.fxgj.feign.dto.response.BankCard bankCard : cardList) {
+                            BankCard bankCard1 = new BankCard();
+                            List<WageBankCardGroup> bankCardGroupList = bankCard.getBankCardGroups();
+                            List<BankCardGroup> bankCardGroupList1 = new ArrayList<>();
+                            if (null != bankCardGroupList && bankCardGroupList.size() > 0) {
+                                for (WageBankCardGroup bankCardGroup : bankCardGroupList) {
+                                    BankCardGroup bankCardGroup1 = new BankCardGroup();
+                                    bankCardGroup1.setGroupId(bankCardGroup.getGroupId());
+                                    bankCardGroup1.setId(bankCardGroup.getId());
+                                    bankCardGroup1.setShortGroupName(bankCardGroup.getShortGroupName());
+                                    bankCardGroupList1.add(bankCardGroup1);
+                                }
+                            }
+                            bankCard1.setBankCardGroups(bankCardGroupList1);
+                            bankCard1.setCardNo(SensitiveInfoUtils.bankCard(bankCard.getCardNo()));
+                            bankCard1.setCardUpdStatus(bankCard.getCardUpdStatus());
+                            bankCard1.setCardUpdStatusVal(bankCard.getCardUpdStatusVal());
+                            bankCard1.setIsNew(bankCard.getIsNew());
+                            bankCard1.setIssuerName(bankCard.getIssuerName());
+                            bankCard1.setOldCardNo(SensitiveInfoUtils.bankCard(bankCard.getOldCardNo()));
+                            bankCard1.setUpdDesc(bankCard.getUpdDesc());
+                            cardListNew.add(bankCard1);
+                        }
+                        empEntDTO.setCards(cardListNew);
+                    }
 
-                   List<WageRes100708> itemList = wageEmpEntDTO.getItems();
-                   List<Res100708> itemListNew = new ArrayList<>();
-                   if (null != itemList && itemList.size() > 0) {
-                       for (WageRes100708 wageRes100708 : itemList) {
-                           Res100708 res100708 = new Res100708();
-                           List<WageRes100708.BankCardListBean> bankCardList = wageRes100708.getBankCardList();
-                           List<Res100708.BankCardListBean> bankCardListBeans = new ArrayList<>();
-                           if (null != bankCardList && bankCardList.size() > 0) {
-                               for (WageRes100708.BankCardListBean bankCardListBean : bankCardList) {
-                                   Res100708.BankCardListBean bankCardListBean1 = new Res100708.BankCardListBean();
-                                   bankCardListBean1.setBankCard(SensitiveInfoUtils.bankCard(bankCardListBean.getBankCard()));
-                                   bankCardListBean1.setBankName(bankCardListBean.getBankName());
-                                   bankCardListBeans.add(bankCardListBean1);
-                               }
-                           }
-                           res100708.setBankCardList(bankCardListBeans);
-                           res100708.setEmployeeId(wageRes100708.getEmployeeId());
-                           res100708.setEmployeeName(wageRes100708.getEmployeeName());
-                           res100708.setEmployeeNo(wageRes100708.getEmployeeNo());
-                           res100708.setEntryDate(wageRes100708.getEntryDate());
-                           res100708.setGroupName(wageRes100708.getGroupName());
-                           res100708.setIdNumberStar(SensitiveInfoUtils.idCardNumDefinedPrefix(wageRes100708.getIdNumberStar(), 3));
-                           res100708.setInServiceStatus(wageRes100708.getInServiceStatus());
-                           res100708.setInServiceStatusVal(wageRes100708.getInServiceStatusVal());
-                           res100708.setPhoneStar(SensitiveInfoUtils.mobilePhonePrefix(wageRes100708.getPhoneStar()));
-                           res100708.setPosition(wageRes100708.getPosition());
-                           itemListNew.add(res100708);
-                       }
-                       empEntDTO.setItems(itemListNew);
-                   }
+                    List<WageRes100708> itemList = wageEmpEntDTO.getItems();
+                    List<Res100708> itemListNew = new ArrayList<>();
+                    if (null != itemList && itemList.size() > 0) {
+                        for (WageRes100708 wageRes100708 : itemList) {
+                            Res100708 res100708 = new Res100708();
+                            List<WageRes100708.BankCardListBean> bankCardList = wageRes100708.getBankCardList();
+                            List<Res100708.BankCardListBean> bankCardListBeans = new ArrayList<>();
+                            if (null != bankCardList && bankCardList.size() > 0) {
+                                for (WageRes100708.BankCardListBean bankCardListBean : bankCardList) {
+                                    Res100708.BankCardListBean bankCardListBean1 = new Res100708.BankCardListBean();
+                                    bankCardListBean1.setBankCard(SensitiveInfoUtils.bankCard(bankCardListBean.getBankCard()));
+                                    bankCardListBean1.setBankName(bankCardListBean.getBankName());
+                                    bankCardListBeans.add(bankCardListBean1);
+                                }
+                            }
+                            res100708.setBankCardList(bankCardListBeans);
+                            res100708.setEmployeeId(wageRes100708.getEmployeeId());
+                            res100708.setEmployeeName(wageRes100708.getEmployeeName());
+                            res100708.setEmployeeNo(wageRes100708.getEmployeeNo());
+                            res100708.setEntryDate(wageRes100708.getEntryDate());
+                            res100708.setGroupName(wageRes100708.getGroupName());
+                            res100708.setIdNumberStar(SensitiveInfoUtils.idCardNumDefinedPrefix(wageRes100708.getIdNumberStar(), 3));
+                            res100708.setInServiceStatus(wageRes100708.getInServiceStatus());
+                            res100708.setInServiceStatusVal(wageRes100708.getInServiceStatusVal());
+                            res100708.setPhoneStar(SensitiveInfoUtils.mobilePhonePrefix(wageRes100708.getPhoneStar()));
+                            res100708.setPosition(wageRes100708.getPosition());
+                            itemListNew.add(res100708);
+                        }
+                        empEntDTO.setItems(itemListNew);
+                    }
 
-                   list.add(empEntDTO);
-               }
+                    list.add(empEntDTO);
+                }
             }
             log.info("empEnt.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
@@ -466,10 +465,10 @@ public class PayRollController {
         try {
             List<chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum> userPrincipalDataAuths = userPrincipal.getDataAuths();
             List<chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum> wageUserPrincipalDataAuths = wageUserPrincipal.getDataAuths();
-            log.info("userPrincipalDataAuths.size():[{}]",userPrincipalDataAuths.size());
-            log.info("wageUserPrincipalDataAuths.size():[{}]",wageUserPrincipalDataAuths.size());
+            log.info("userPrincipalDataAuths.size():[{}]", userPrincipalDataAuths.size());
+            log.info("wageUserPrincipalDataAuths.size():[{}]", wageUserPrincipalDataAuths.size());
             for (chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum userPrincipalDataAuth : userPrincipalDataAuths) {
-                log.info("userPrincipalDataAuth:[{}]",userPrincipalDataAuth.getDesc());
+                log.info("userPrincipalDataAuth:[{}]", userPrincipalDataAuth.getDesc());
             }
         } catch (Exception e) {
             log.info("日志打印报错");
@@ -479,7 +478,7 @@ public class PayRollController {
             List<EmpEntDTO> list = new ArrayList<>();
             log.info("调用wageMangerFeignService.empCard(wageUserPrincipal)开始");
             List<PayrollEmpEntDTO> wageEmpEntDTOList = payrollFeignController.empCard(wageUserPrincipal);
-            if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
+            if (!CollectionUtils.isEmpty(wageEmpEntDTOList)) {
 //                for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
 //                    EmpEntDTO entDTO=new EmpEntDTO();
 //                    BeanUtils.copyProperties(wageEmpEntDTO,entDTO);
@@ -488,7 +487,7 @@ public class PayRollController {
                 //数据转换及加密处理
                 list = transfalWageEmpEntDto(wageEmpEntDTOList, salt, passwd);
             }
-            log.info("加密返回empCard.list:[{}]",JacksonUtil.objectToJson(list));
+            log.info("加密返回empCard.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -505,15 +504,15 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            List<EmpCardLogDTO> list=null;
+            List<EmpCardLogDTO> list = null;
             log.info("调用wageMangerFeignService.empCardLog(ids)开始");
-            List<WageEmpCardLogDTO> wageEmpCardLogList=wageMangerFeignService.empCardLog(ids);
-            log.info("empCardLog--->{}",wageEmpCardLogList);
-            if (!CollectionUtils.isEmpty(wageEmpCardLogList)){
-                list=new ArrayList<>();
-                for (WageEmpCardLogDTO wageEmpCardLogDTO:wageEmpCardLogList){
-                    EmpCardLogDTO logDTO=new EmpCardLogDTO();
-                    BeanUtils.copyProperties(wageEmpCardLogDTO,logDTO);
+            List<WageEmpCardLogDTO> wageEmpCardLogList = wageMangerFeignService.empCardLog(ids);
+            log.info("empCardLog--->{}", wageEmpCardLogList);
+            if (!CollectionUtils.isEmpty(wageEmpCardLogList)) {
+                list = new ArrayList<>();
+                for (WageEmpCardLogDTO wageEmpCardLogDTO : wageEmpCardLogList) {
+                    EmpCardLogDTO logDTO = new EmpCardLogDTO();
+                    BeanUtils.copyProperties(wageEmpCardLogDTO, logDTO);
                     //脱敏处理
                     logDTO.setCardNo(SensitiveInfoUtils.bankCard(logDTO.getCardNo()));
                     logDTO.setCardNoOld(SensitiveInfoUtils.bankCard(logDTO.getCardNoOld()));
@@ -533,23 +532,23 @@ public class PayRollController {
     @GetMapping("/entPhone")
     @TrackLog
     public Mono<List<EmployeeListBean>> entPhone(@RequestHeader(value = "encry-salt", required = false) String salt,
-        @RequestHeader(value = "encry-passwd", required = false) String passwd) {
+                                                 @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-        BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
+        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+        BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            List<EmployeeListBean> list=null;
+            List<EmployeeListBean> list = null;
             log.info("调用wageMangerFeignService.entPhone(wageUserPrincipal)开始");
-            List<WageEmployeeListBean> wageEmployeeListBeanList=wageMangerFeignService.entPhone(wageUserPrincipal);
-            log.info("entPhone-->{}",wageEmployeeListBeanList);
-            if (!CollectionUtils.isEmpty(wageEmployeeListBeanList)){
-                list=new ArrayList<>();
-                for (WageEmployeeListBean welb:wageEmployeeListBeanList){
-                    EmployeeListBean eb=new EmployeeListBean();
-                    BeanUtils.copyProperties(welb,eb);
+            List<WageEmployeeListBean> wageEmployeeListBeanList = wageMangerFeignService.entPhone(wageUserPrincipal);
+            log.info("entPhone-->{}", wageEmployeeListBeanList);
+            if (!CollectionUtils.isEmpty(wageEmployeeListBeanList)) {
+                list = new ArrayList<>();
+                for (WageEmployeeListBean welb : wageEmployeeListBeanList) {
+                    EmployeeListBean eb = new EmployeeListBean();
+                    BeanUtils.copyProperties(welb, eb);
                     //身份证、手机号加密处理
                     String idNumberEncrypt = EncrytorUtils.encryptField(eb.getIdNumber(), salt, passwd);
                     String mobileEncrypt = EncrytorUtils.encryptField(eb.getPhone(), salt, passwd);
@@ -560,7 +559,7 @@ public class PayRollController {
                     list.add(eb);
                 }
             }
-            log.info("返回脱敏数据entPhone.list:[{}]",JacksonUtil.objectToJson(list));
+            log.info("返回脱敏数据entPhone.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -577,14 +576,14 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            List<EntUserDTO> list=null;
+            List<EntUserDTO> list = null;
             log.info("调用wageMangerFeignService.entUser(entId)开始");
-            List<WageEntUserDTO> wageEntUserDTOList=wageMangerFeignService.entUser(entId);
-            if (!CollectionUtils.isEmpty(wageEntUserDTOList)){
-                list=new ArrayList<>();
-                for (WageEntUserDTO wageEntUserDTO:wageEntUserDTOList){
-                    EntUserDTO entUserDTO=new EntUserDTO();
-                    BeanUtils.copyProperties(wageEntUserDTO,entUserDTO);
+            List<WageEntUserDTO> wageEntUserDTOList = wageMangerFeignService.entUser(entId);
+            if (!CollectionUtils.isEmpty(wageEntUserDTOList)) {
+                list = new ArrayList<>();
+                for (WageEntUserDTO wageEntUserDTO : wageEntUserDTOList) {
+                    EntUserDTO entUserDTO = new EntUserDTO();
+                    BeanUtils.copyProperties(wageEntUserDTO, entUserDTO);
                     list.add(entUserDTO);
                 }
             }
@@ -595,14 +594,15 @@ public class PayRollController {
 
     /**
      * 数据转换及加密处理
+     *
      * @return
      */
-    private List<EmpEntDTO> transfalWageEmpEntDto(List<PayrollEmpEntDTO> wageEmpEntDTOList, String salt, String passwd){
+    private List<EmpEntDTO> transfalWageEmpEntDto(List<PayrollEmpEntDTO> wageEmpEntDTOList, String salt, String passwd) {
         List<EmpEntDTO> empEntDTOList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(wageEmpEntDTOList)){
+        if (!CollectionUtils.isEmpty(wageEmpEntDTOList)) {
             empEntDTOList = new ArrayList<>();
-            for (PayrollEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
-                EmpEntDTO empEntDTO=new EmpEntDTO();
+            for (PayrollEmpEntDTO wageEmpEntDTO : wageEmpEntDTOList) {
+                EmpEntDTO empEntDTO = new EmpEntDTO();
                 //脱敏处理
                 empEntDTO.setEntName(wageEmpEntDTO.getEntName());
                 empEntDTO.setShortEntName(wageEmpEntDTO.getShortEntName());
@@ -717,7 +717,7 @@ public class PayRollController {
     public Mono<Res100703> wageList(@RequestParam("groupId") String groupId,
                                     @RequestParam("year") String year,
                                     @RequestParam("type") String type) {
-        log.info("调用wageList开始时间::[{}]",LocalDateTime.now());
+        log.info("调用wageList开始时间::[{}]", LocalDateTime.now());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
@@ -733,8 +733,8 @@ public class PayRollController {
                 payrollRes100703ReqDTO.setType(type);
                 payrollRes100703ReqDTO.setIdNumber(idNumber);
                 payrollRes100703ReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
-                log.info("开始调用wageList时间:[{}]",LocalDateTime.now());
-                log.info("groupId:[{}]，year:[{}]，type:[{}]，idNumber:[{}]",groupId, year, type, idNumber);
+                log.info("开始调用wageList时间:[{}]", LocalDateTime.now());
+                log.info("groupId:[{}]，year:[{}]，type:[{}]，idNumber:[{}]", groupId, year, type, idNumber);
                 PayrollRes100703DTO source = payrollFeignController.wageList(payrollRes100703ReqDTO);
                 if (null != source) {
                     res100703.setShouldTotalAmt(source.getShouldTotalAmt());
@@ -751,7 +751,7 @@ public class PayRollController {
                 e.printStackTrace();
                 log.error("wageList查询mongo异常:[{}]", e);
             }
-            log.info("调用wageList返回时间::[{}]",LocalDateTime.now());
+            log.info("调用wageList返回时间::[{}]", LocalDateTime.now());
             return res100703;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -767,7 +767,7 @@ public class PayRollController {
     @TrackLog
     public Mono<List<WageDetailDTO>> wageDetail(@RequestParam("wageSheetId") String wageSheetId,
                                                 @RequestParam("groupId") String groupId) {
-        log.info("调用wageDetail开始时间::[{}]",LocalDateTime.now());
+        log.info("调用wageDetail开始时间::[{}]", LocalDateTime.now());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNumber = principal.getIdNumber();
@@ -782,11 +782,11 @@ public class PayRollController {
                 payrollWageDetailReqDTO.setGroupId(groupId);
                 payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
                 payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
-                log.info("groupId:[{}]，idNumber:[{}]，wageSheetId:[{}]",groupId, idNumber,wageSheetId);
+                log.info("groupId:[{}]，idNumber:[{}]，wageSheetId:[{}]", groupId, idNumber, wageSheetId);
                 log.info("调用payrollFeignController.wageDetail(payrollWageDetailReqDTO)，查明细开始时间:[{}]", LocalDateTime.now());
                 List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
                 log.info("调用payrollFeignController.wageDetail(payrollWageDetailReqDTO)，查明细结束时间:[{}]", LocalDateTime.now());
-                log.info("source.size():[{}]",source.size());
+                log.info("source.size():[{}]", source.size());
                 if (null != list && list.size() > 0) {
                     for (PayrollWageDetailDTO payrollWageDetailDTO : source) {
                         WageDetailDTO wageDetailDTO = new WageDetailDTO();
@@ -838,14 +838,14 @@ public class PayRollController {
                         wageDetailDTO.setPayStatus(payrollWageDetailDTO.getPayStatus());
                         list.add(wageDetailDTO);
                     }
-                }else {
+                } else {
                     log.info("mongo.wageDetail查询数据为空,idNumber:[{}]", idNumber);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                log.info("查询mongo异常:[{}]",e);
+                log.info("查询mongo异常:[{}]", e);
             }
-            log.info("web.list:[{}]",JacksonUtil.objectToJson(list));
+            log.info("web.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
