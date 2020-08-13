@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.config.feign;
 
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ServiceHandleException;
+import chain.fxgj.server.payroll.dto.Error;
 import chain.utils.commons.JacksonUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

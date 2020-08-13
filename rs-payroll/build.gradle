@@ -66,11 +66,7 @@ dependencies {
     compile("chain:ids-client:1.1.6")
     compile("chain.fxgj:fxgj-ent-client:1.0.9")
     compile("chain:pub-client:1.1.6")
-    //切库版本(1.1.1 之后无数据同步)
     compile('chain:wage-client:1.1.2-SNAPSHOT')
-    compile('chain:payroll-client:1.1.2-SNAPSHOT')
-
-    compile('chain:wage-client:1.0.11')
     compile('chain:payroll-client:1.1.2-SNAPSHOT')
     compile 'chain.wisales:wisales-client:1.0.2.73'
 
@@ -114,6 +110,7 @@ dependencies {
     //compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
     //链路跟踪
     compile 'org.springframework.cloud:spring-cloud-starter-zipkin'
+    compile 'io.github.openfeign:feign-okhttp'
 }
 
 test {
