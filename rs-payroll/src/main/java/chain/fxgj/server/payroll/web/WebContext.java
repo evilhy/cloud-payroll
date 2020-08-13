@@ -1,6 +1,9 @@
 package chain.fxgj.server.payroll.web;
 
 import chain.fxgj.server.payroll.dto.base.HeaderDTO;
+import chain.utils.commons.StringUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 /**
  * @author chain
@@ -37,5 +40,16 @@ public class WebContext {
         currentHeader.set(header);
     }
 
-
+    public static PageRequest getPageRequest() {
+        if (StringUtils.isBlank(getCurrentHeader().getDirection()) ||
+                StringUtils.isBlank(getCurrentHeader().getSortField())) {
+            return PageRequest
+                    .of(getCurrentHeader().getPageNum() - 1, getCurrentHeader().getLimit());
+        } else {
+            return PageRequest
+                    .of(getCurrentHeader().getPageNum() - 1, getCurrentHeader().getLimit(), Sort
+                            .by(Sort.Direction.fromString(getCurrentHeader().getDirection()),
+                                    getCurrentHeader().getSortField()));
+        }
+    }
 }

@@ -4,6 +4,7 @@ import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
+import chain.fxgj.server.payroll.dto.base.HeaderDTO;
 import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -11,6 +12,7 @@ import chain.fxgj.server.payroll.web.WebContext;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -54,6 +56,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
 
     @Autowired
     private EmpWechatService empWechatService;
+
     public AuthorizationFilter(EmpWechatService empWechatService) {
         this.empWechatService = empWechatService;
     }
@@ -61,6 +64,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
+        String entId = exchange.getRequest().getHeaders().getFirst("entId");
         String jsessionId = exchange.getRequest().getHeaders().getFirst(PayrollConstants.JSESSIONID);
         String req_id = exchange.getRequest().getHeaders().getFirst("req-id");
         log.info("--------------->req_id:[{}]", req_id);
@@ -89,8 +93,38 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         if (LocalDateTime.now().isAfter(sessionTimeOut)) {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
         }
+        principal.setEntId(entId);
         WebContext.setCurrentUser(principal);
 
+        String pageNumStr = exchange.getRequest().getHeaders().getFirst("page-num");
+        String limitStr = exchange.getRequest().getHeaders().getFirst("limit");
+        String sortField = exchange.getRequest().getHeaders().getFirst("sort-field");
+        String direction = exchange.getRequest().getHeaders().getFirst("direction");
+        String liquidation = exchange.getRequest().getHeaders().getFirst("liquidation");
+        String version = exchange.getRequest().getHeaders().getFirst("version");
+        String subVersion = exchange.getRequest().getHeaders().getFirst("subVersion");
+        MDC.put("log_token", req_id);
+        MDC.put("jsessionId", jsessionId);
+        MDC.put("pageNum", pageNumStr);
+        MDC.put("limit", limitStr);
+        MDC.put("liquidation", liquidation);
+        MDC.put("sort-field", sortField);
+        MDC.put("direction", direction);
+        MDC.put("version", version);
+        MDC.put("subVersion", subVersion);
+        MDC.put("entId", entId);
+
+        HeaderDTO headerDTO = HeaderDTO.builder()
+                .limit(StringUtils.isBlank(limitStr) ? 30 : Integer.parseInt(limitStr))
+                .pageNum(StringUtils.isBlank(pageNumStr) ? 30 : Integer.parseInt(pageNumStr))
+                .direction(direction)
+                .sortField(sortField)
+                .jsessionId(jsessionId)
+                .liquidation(StringUtils.isBlank(liquidation) ? null : Integer.parseInt(liquidation))
+                .version(StringUtils.isBlank(version) ? null : Integer.parseInt(version))
+                .subVersion(StringUtils.isBlank(subVersion) ? null : Integer.parseInt(subVersion))
+                .build();
+        WebContext.setCurrentHeader(headerDTO);
         return chain.filter(exchange);
     }
 

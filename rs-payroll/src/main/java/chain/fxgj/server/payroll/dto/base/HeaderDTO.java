@@ -36,6 +36,38 @@ public class HeaderDTO {
      */
     String requestMethod;
 
+    /**
+     * 页码
+     */
+    @Builder.Default
+    Integer pageNum = 1;
+    /**
+     * 每页显示行数 (默认30)
+     */
+    @Builder.Default
+    Integer limit = 30;
+    /**
+     * 排序字段
+     */
+    String sortField;
+    /**
+     * 排序方式
+     */
+    @Builder.Default
+    String direction = "DESC";
+    /**
+     * 渠道
+     */
+    Integer liquidation;
+    /**
+     * 版本
+     */
+    Integer version;
+    /**
+     * 子版本
+     */
+    Integer subVersion;
+
     @Override
     public String toString() {
         return "HeaderDTO{" +
@@ -43,6 +75,13 @@ public class HeaderDTO {
                 ", remoteAddr='" + remoteAddr + '\'' +
                 ", requestUrl='" + requestUrl + '\'' +
                 ", requestMethod='" + requestMethod + '\'' +
+                ", pageNum='" + pageNum + '\'' +
+                ", limit='" + limit + '\'' +
+                ", sortField='" + sortField + '\'' +
+                ", direction='" + direction + '\'' +
+                ", liquidation='" + liquidation + '\'' +
+                ", version='" + version + '\'' +
+                ", subVersion='" + subVersion + '\'' +
                 '}';
     }
 }

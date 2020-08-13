@@ -41,7 +41,7 @@ public class NewestWageLogDTO {
      */
     private Long createDate;
     /**
-     * 状态
+     * 员工在职状态
      */
     private String inServiceStatus;
     /**
