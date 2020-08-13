@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 放薪钱包
  */
 @RestController
-@RequestMapping("/wechat")
+@RequestMapping("/wallet")
 @Slf4j
 public class WalletController {
 
