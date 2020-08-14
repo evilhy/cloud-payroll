@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.2.RELEASE'
+        springBootVersion = '2.1.5.RELEASE'
     }
     repositories {
         maven { url 'https://repo.spring.io/milestone' }
@@ -60,7 +60,7 @@ subprojects {
     targetCompatibility = 1.8
 
     ext {
-        springCloudVersion = 'Greenwich.RC2'
+        springCloudVersion = 'Greenwich.SR1'
         snippetsDir = file('build/generated-snippets')
     }
     gradle.projectsEvaluated {

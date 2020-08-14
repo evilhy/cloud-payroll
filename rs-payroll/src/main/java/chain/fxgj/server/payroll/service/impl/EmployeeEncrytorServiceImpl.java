@@ -2,7 +2,7 @@ package chain.fxgj.server.payroll.service.impl;
 
 import chain.css.exception.ServiceHandleException;
 import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.fxgj.core.common.service.EmployeeEncrytorService;
+import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.utils.commons.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;

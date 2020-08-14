@@ -1,7 +1,6 @@
 package chain.fxgj.server.payroll.web.filter;
 
 import chain.css.exception.ParamsIllegalException;
-import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.base.HeaderDTO;
@@ -103,7 +102,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         String liquidation = exchange.getRequest().getHeaders().getFirst("liquidation");
         String version = exchange.getRequest().getHeaders().getFirst("version");
         String subVersion = exchange.getRequest().getHeaders().getFirst("subVersion");
-        MDC.put("log_token", req_id);
+        MDC.put("log-token", req_id);
         MDC.put("jsessionId", jsessionId);
         MDC.put("pageNum", pageNumStr);
         MDC.put("limit", limitStr);

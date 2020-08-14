@@ -14,7 +14,7 @@ import reactor.core.Exceptions;
 import java.io.IOException;
 import static feign.FeignException.errorStatus;
 
-@Configuration
+//@Configuration
 @Slf4j
 public class FeignClientErrorDecoder implements ErrorDecoder {
 

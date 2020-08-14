@@ -9,11 +9,16 @@ import chain.fxgj.core.common.constant.ErrorConstant;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogCheckRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
+import chain.fxgj.server.payroll.constant.PayrollConstants;
+import chain.fxgj.server.payroll.dto.MsgCodeLogCheckRequestDTO;
+import chain.fxgj.server.payroll.dto.MsgCodeLogRequestDTO;
+import chain.fxgj.server.payroll.dto.MsgCodeLogResponeDTO;
 import chain.fxgj.server.payroll.dto.base.*;
 import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.response.Res100302;
+import chain.utils.fxgj.constant.DictEnums.MsgBuisTypeEnum;
 import core.dto.wechat.WeixinJsapiDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -159,7 +164,7 @@ public class CallInsideServiceImpl implements CallInsideService {
     public MsgCodeLogResponeDTO sendCode(MsgCodeLogRequestDTO msgCodeLogRequestDTO, String clientIp) {
         WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCode");
         Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(PayrollConstants.LOG_TOKEN, StringUtils.trimToEmpty(MDC.get(PayrollConstants.LOG_TOKEN)))
                 .header("clientIp",clientIp)
                 .post(Entity.entity(msgCodeLogRequestDTO, MediaType.APPLICATION_JSON_TYPE));
         if (response.getStatus() != 200) {
@@ -184,7 +189,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCodeCheck");
         log.info("====>管家url:{}", webTarget.getUri());
         Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(PayrollConstants.LOG_TOKEN, StringUtils.trimToEmpty(MDC.get(PayrollConstants.LOG_TOKEN)))
                 .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
         log.debug("====>{}", response.getStatus());
         if (response.getStatus() == 500) {
