@@ -10,13 +10,11 @@ import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
 import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
 import chain.fxgj.ent.core.dto.request.EmployeeQueryRequest;
 import chain.fxgj.ent.core.dto.response.EmployeeInfoRes;
-import chain.fxgj.ent.core.dto.response.employee.EmployeeInfoQueIdsDTO;
-import chain.fxgj.feign.client.InsideFeignService;
 import chain.fxgj.feign.client.SynTimerFeignService;
-import chain.fxgj.feign.dto.request.*;
-import chain.fxgj.feign.dto.response.WageRes100302;
 import chain.fxgj.feign.dto.web.WageUserPrincipal;
+import chain.fxgj.server.payroll.dto.request.ReadWageDTO;
 import chain.fxgj.server.payroll.dto.request.*;
+import chain.fxgj.server.payroll.dto.request.ReqPhone;
 import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
@@ -26,12 +24,9 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.InsideFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
-import core.dto.request.BaseReqDTO;
-import core.dto.request.CacheReqPhone;
-import core.dto.request.CacheUpdPhoneRequestDTO;
-import core.dto.request.UpdBankCardDTO;
+import core.dto.request.*;
+import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.wechat.CacheUserPrincipal;
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -44,7 +39,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
-import javax.ws.rs.core.Context;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Executor;
@@ -56,7 +50,7 @@ import java.util.concurrent.Executor;
 public class InsideController {
 
     @Autowired
-    InsideFeignService insideFeignService;
+    InsideFeignController insideFeignService;
     @Qualifier("applicationTaskExecutor")
     Executor executor;
     @Autowired
@@ -76,13 +70,14 @@ public class InsideController {
      * 0 明文传输手机号(此时手机号必填)
      * 1 微信绑定手机号验证(上手的手机号可以为空，根据jsessionId 找到绑定的手机号)
      * 2 通过企业绑定的手机
+     *
      * @return
      */
     @PostMapping("/sendCode")
     @TrackLog
     @PermitAll
     public Mono<Res100302> sendCode(@RequestBody SendCodeReqDTO sendCodeReqDTO, @RequestHeader(value = "X-Real-IP", required = false) String clientIp,
-            @RequestHeader(value = "jsession-id", required = false) String jsessionId) {
+                                    @RequestHeader(value = "jsession-id", required = false) String jsessionId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         log.info("sendCode.sendCodeReqDTO:[{}]", JacksonUtil.objectToJson(sendCodeReqDTO));
         log.info("sendCode.X-Real-IP:[{}]", clientIp);
@@ -152,7 +147,7 @@ public class InsideController {
                 if (null != employeeInfoRes && employeeInfoRes.size() == 1) {
                     EmployeeInfoRes employeeInfoRes1 = employeeInfoRes.get(0);
                     phone = employeeInfoRes1.getPhone();
-                }else {
+                } else {
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信发送失败，请联系客服"));
                 }
             } else {
@@ -192,15 +187,15 @@ public class InsideController {
         UserPrincipal principal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageResReceiptDTO wageResReceiptDTO = new WageResReceiptDTO();
+            PayrollResReceiptDTO wageResReceiptDTO = new PayrollResReceiptDTO();
             BeanUtils.copyProperties(resReceiptDTO, wageResReceiptDTO);
             WageRetReceiptDTO wageRetReceiptDTO = insideFeignService.receipt(wageResReceiptDTO);
             try {
-                log.info("同步数据receipt wageRetReceiptDTO:[{}]",JacksonUtil.objectToJson(wageRetReceiptDTO));
+                log.info("同步数据receipt wageRetReceiptDTO:[{}]", JacksonUtil.objectToJson(wageRetReceiptDTO));
                 String idNumber = wageRetReceiptDTO.getIdNumber();
                 String groupId = wageRetReceiptDTO.getGroupId();
                 LocalDateTime crtDateTime = wageRetReceiptDTO.getCrtDateTime();
-                mysqlDataSynToMongo(idNumber,groupId, String.valueOf(crtDateTime.getYear()), "",principal);
+                mysqlDataSynToMongo(idNumber, groupId, String.valueOf(crtDateTime.getYear()), "", principal);
             } catch (Exception e) {
                 log.info("回执后,同步数据失败:[{}]", e);
             }
@@ -222,7 +217,7 @@ public class InsideController {
         String idNumber = WebContext.getCurrentUser().getIdNumberEncrytor();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageReadWageDTO wageReadWageDTO = new WageReadWageDTO();
+            core.dto.request.ReadWageDTO wageReadWageDTO = new core.dto.request.ReadWageDTO();
             readWageDTO.setIdNumber(idNumber);
             BeanUtils.copyProperties(readWageDTO, wageReadWageDTO);
             log.info("wageReadWageDTO:[{}]", JacksonUtil.objectToJson(wageReadWageDTO));
@@ -246,15 +241,15 @@ public class InsideController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            WageReq100702 wageReq100702 = new WageReq100702();
+            CacheReq100702 wageReq100702 = new CacheReq100702();
             BeanUtils.copyProperties(req100702, wageReq100702);
 
-            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
-            WageBindRequestDTO wageBindRequestDTO = new WageBindRequestDTO();
-            wageBindRequestDTO.setWageReq100702(wageReq100702);
-            wageBindRequestDTO.setWageUserPrincipal(wageUserPrincipal);
+            CacheBindRequestDTO wageBindRequestDTO = new CacheBindRequestDTO();
+            wageBindRequestDTO.setCacheReq100702(wageReq100702);
+            wageBindRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
 
             insideFeignService.bandWX(wageBindRequestDTO);
             return null;
@@ -277,15 +272,15 @@ public class InsideController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            WageReq100701 wageReq100701 = new WageReq100701();
+            CacheReq100701 wageReq100701 = new CacheReq100701();
             BeanUtils.copyProperties(req100701, wageReq100701);
 
-            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
-            WageRzRequestDTO wageRzRequestDTO = new WageRzRequestDTO();
-            wageRzRequestDTO.setWageReq100701(wageReq100701);
-            wageRzRequestDTO.setWageUserPrincipal(wageUserPrincipal);
+            CacheRzRequestDTO wageRzRequestDTO = new CacheRzRequestDTO();
+            wageRzRequestDTO.setCacheReq100701(wageReq100701);
+            wageRzRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
             String retStr = insideFeignService.rz(wageRzRequestDTO);
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
@@ -311,7 +306,7 @@ public class InsideController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
             insideFeignService.setPwd(pwd, wageUserPrincipal);
@@ -334,17 +329,17 @@ public class InsideController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            WageUpdPwdDTO wageUpdPwdDTO = new WageUpdPwdDTO();
+            CacheUpdPwdDTO wageUpdPwdDTO = new CacheUpdPwdDTO();
             BeanUtils.copyProperties(updPwdDTO, wageUpdPwdDTO);
 
             UserPrincipal currentUser = WebContext.getCurrentUser();
-            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(currentUser, wageUserPrincipal);
 
-            WageUpPwdRequestDTO wageUpPwdRequestDTO = new WageUpPwdRequestDTO();
+            CacheUpPwdRequestDTO wageUpPwdRequestDTO = new CacheUpPwdRequestDTO();
             wageUpPwdRequestDTO.setQueryPwd(currentUser.getQueryPwd());
-            wageUpPwdRequestDTO.setWageUpdPwdDTO(wageUpdPwdDTO);
-            wageUpPwdRequestDTO.setWageUserPrincipal(wageUserPrincipal);
+            wageUpPwdRequestDTO.setCacheUpdPwdDTO(wageUpdPwdDTO);
+            wageUpPwdRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
             insideFeignService.updPwd(wageUpPwdRequestDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
@@ -375,6 +370,7 @@ public class InsideController {
 //            return null;
 //        }).subscribeOn(Schedulers.elastic()).then();
 //    }
+
     /**
      * 验证手机验证码
      *
@@ -450,7 +446,7 @@ public class InsideController {
                 if (null != employeeInfoRes && employeeInfoRes.size() == 1) {
                     EmployeeInfoRes employeeInfoRes1 = employeeInfoRes.get(0);
                     phone = employeeInfoRes1.getPhone();
-                }else {
+                } else {
                     throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("短信验证失败，请联系客服"));
                 }
             } else {
@@ -461,7 +457,7 @@ public class InsideController {
             if (StringUtils.isBlank(phone)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("企业员工无手机号，短信验证失败"));
             }
-            WageReqPhone wageReqPhone = new WageReqPhone();
+            core.dto.request.ReqPhone wageReqPhone = new core.dto.request.ReqPhone();
             wageReqPhone.setCode(reqPhone.getCode());
             wageReqPhone.setCodeId(reqPhone.getCodeId());
             wageReqPhone.setPhone(phone);
@@ -486,7 +482,7 @@ public class InsideController {
     @TrackLog
     public Mono<Void> updPhone(@RequestBody ReqPhone reqPhone) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        log.info("updPhone reqPhone:[{}]",JacksonUtil.objectToJson(reqPhone));
+        log.info("updPhone reqPhone:[{}]", JacksonUtil.objectToJson(reqPhone));
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -529,10 +525,10 @@ public class InsideController {
     }
 
 
-    public void mysqlDataSynToMongo(String idNumber, String groupId, String year, String type, UserPrincipal principal){
-        WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-        BeanUtils.copyProperties(principal,wageUserPrincipal);
-        wageSynFeignService.pushSyncDataToCache(idNumber,groupId,year,type,wageUserPrincipal);
+    public void mysqlDataSynToMongo(String idNumber, String groupId, String year, String type, UserPrincipal principal) {
+        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+        BeanUtils.copyProperties(principal, wageUserPrincipal);
+        wageSynFeignService.pushSyncDataToCache(idNumber, groupId, year, type, wageUserPrincipal);
     }
 
     /**
