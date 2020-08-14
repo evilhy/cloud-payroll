@@ -13,6 +13,11 @@ import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
 import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
 import chain.fxgj.server.payroll.dto.response.BankCard;
 import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.dto.response.EmployeeListBean;
+import chain.fxgj.server.payroll.dto.response.EntUserDTO;
+import chain.fxgj.server.payroll.dto.response.GroupInvoiceDTO;
+import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
+import chain.fxgj.server.payroll.dto.response.Res100701;
 import chain.fxgj.server.payroll.service.PayRollService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
@@ -170,15 +175,15 @@ public class PayRollController {
             CacheUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
             Res100701 res100701 = null;
             log.info("调用wageMangerFeignService.entEmp(idNumber,wageUserPrincipal)开始");
-            PayrollRes100701DTO wageRes100701 = payrollFeignController.entEmp(idNumber, wageUserPrincipal);
+            core.dto.response.Res100701 wageRes100701 = payrollFeignController.entEmp(idNumber, wageUserPrincipal);
             log.info("wageRes100701:[{}]", JacksonUtil.objectToJson(wageRes100701));
             if (wageRes100701 != null) {
                 res100701 = new Res100701();
                 BeanUtils.copyProperties(wageRes100701, res100701);
                 List<EmployeeListBean> employeeListBeanList = new ArrayList<>();
-                List<PayrollEmployeeListDTO> wageEmployeeListBeanList = wageRes100701.getEmployeeList();
+                List<core.dto.response.EmployeeListBean> wageEmployeeListBeanList = wageRes100701.getEmployeeList();
                 if (null != wageEmployeeListBeanList && wageEmployeeListBeanList.size() > 0) {
-                    for (PayrollEmployeeListDTO wageEmployeeListBean : wageEmployeeListBeanList) {
+                    for (core.dto.response.EmployeeListBean wageEmployeeListBean : wageEmployeeListBeanList) {
 
                         EmployeeListBean employeeListBean = new EmployeeListBean();
                         employeeListBean.setEmployeeName(EncrytorUtils.encryptField(wageEmployeeListBean.getEmployeeName(), salt, passwd));
@@ -334,7 +339,7 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        PayrollUserPrincipalDTO build = PayrollUserPrincipalDTO.builder().build();
+        CacheUserPrincipal build = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
         BeanUtils.copyProperties(userPrincipal, build);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
