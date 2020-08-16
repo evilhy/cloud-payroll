@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.rest;
 
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
