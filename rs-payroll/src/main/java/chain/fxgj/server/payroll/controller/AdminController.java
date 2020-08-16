@@ -112,7 +112,7 @@ public class AdminController {
      * @param type        密码类型 0：数字密码  1：手势密码
      * @return
      */
-    @GetMapping("/savePassword}")
+    @GetMapping("/savePassword")
     @TrackLog
     @PermitAll
     public Mono<Void> savePassword(@RequestParam("password") String password,
