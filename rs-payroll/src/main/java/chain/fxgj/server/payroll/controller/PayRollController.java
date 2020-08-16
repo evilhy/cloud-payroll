@@ -3,12 +3,9 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.fxgj.core.common.constant.FxgjDBConstant;
+import chain.fxgj.core.common.constant.PayrollDBConstant;
 import chain.fxgj.feign.client.PayRollFeignService;
-import chain.fxgj.feign.dto.CheckCardDTO;
-import chain.fxgj.feign.dto.response.*;
-import chain.fxgj.feign.dto.web.WageUserPrincipal;
+import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
 import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
 import chain.fxgj.server.payroll.dto.response.BankCard;
@@ -26,6 +23,9 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.PayrollFeignController;
 import chain.utils.commons.JacksonUtil;
+import chain.wage.manager.core.dto.CheckCardDTO;
+import chain.wage.manager.core.dto.response.*;
+import chain.wage.manager.core.dto.web.WageUserPrincipal;
 import core.dto.response.*;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -296,7 +296,7 @@ public class PayRollController {
             }
             try {
                 //密码校验通过之后，缓存中登记一条记录，之后的几分钟只能不再输入密码，key：sessionId
-                String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
+                String redisKey = PayrollDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
                 log.info("checkPwd.redisKey:[{}]", redisKey);
                 redisTemplate.opsForValue().set(redisKey, true, 5, TimeUnit.MINUTES);
             } catch (Exception e) {
@@ -360,7 +360,7 @@ public class PayRollController {
     }
 
     /**
-     * 员工企业【@】
+     * 员工企业【@】 todo 切库注释，需要调试
      *
      * @return
      */
@@ -376,82 +376,82 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EmpEntDTO> list = null;
-            log.info("调用wageMangerFeignService.empEnt(wageUserPrincipal)开始");
-            List<WageEmpEntDTO> wageEmpEntDTOList = wageMangerFeignService.empEnt(wageUserPrincipal);
-            log.info("empEnt---->{}", wageEmpEntDTOList);
-            if (!CollectionUtils.isEmpty(wageEmpEntDTOList)) {
-                list = new ArrayList<>();
-                for (WageEmpEntDTO wageEmpEntDTO : wageEmpEntDTOList) {
-                    EmpEntDTO empEntDTO = new EmpEntDTO();
-//                   BeanUtils.copyProperties(wageEmpEntDTO,empEntDTO);
-                    //脱敏处理
-                    empEntDTO.setEntName(wageEmpEntDTO.getEntName());
-                    empEntDTO.setShortEntName(wageEmpEntDTO.getShortEntName());
-
-                    List<chain.fxgj.feign.dto.response.BankCard> cardList = wageEmpEntDTO.getCards();
-                    List<BankCard> cardListNew = new ArrayList<>();
-                    if (null != cardList && cardList.size() > 0) {
-                        for (chain.fxgj.feign.dto.response.BankCard bankCard : cardList) {
-                            BankCard bankCard1 = new BankCard();
-                            List<WageBankCardGroup> bankCardGroupList = bankCard.getBankCardGroups();
-                            List<BankCardGroup> bankCardGroupList1 = new ArrayList<>();
-                            if (null != bankCardGroupList && bankCardGroupList.size() > 0) {
-                                for (WageBankCardGroup bankCardGroup : bankCardGroupList) {
-                                    BankCardGroup bankCardGroup1 = new BankCardGroup();
-                                    bankCardGroup1.setGroupId(bankCardGroup.getGroupId());
-                                    bankCardGroup1.setId(bankCardGroup.getId());
-                                    bankCardGroup1.setShortGroupName(bankCardGroup.getShortGroupName());
-                                    bankCardGroupList1.add(bankCardGroup1);
-                                }
-                            }
-                            bankCard1.setBankCardGroups(bankCardGroupList1);
-                            bankCard1.setCardNo(SensitiveInfoUtils.bankCard(bankCard.getCardNo()));
-                            bankCard1.setCardUpdStatus(bankCard.getCardUpdStatus());
-                            bankCard1.setCardUpdStatusVal(bankCard.getCardUpdStatusVal());
-                            bankCard1.setIsNew(bankCard.getIsNew());
-                            bankCard1.setIssuerName(bankCard.getIssuerName());
-                            bankCard1.setOldCardNo(SensitiveInfoUtils.bankCard(bankCard.getOldCardNo()));
-                            bankCard1.setUpdDesc(bankCard.getUpdDesc());
-                            cardListNew.add(bankCard1);
-                        }
-                        empEntDTO.setCards(cardListNew);
-                    }
-
-                    List<WageRes100708> itemList = wageEmpEntDTO.getItems();
-                    List<Res100708> itemListNew = new ArrayList<>();
-                    if (null != itemList && itemList.size() > 0) {
-                        for (WageRes100708 wageRes100708 : itemList) {
-                            Res100708 res100708 = new Res100708();
-                            List<WageRes100708.BankCardListBean> bankCardList = wageRes100708.getBankCardList();
-                            List<Res100708.BankCardListBean> bankCardListBeans = new ArrayList<>();
-                            if (null != bankCardList && bankCardList.size() > 0) {
-                                for (WageRes100708.BankCardListBean bankCardListBean : bankCardList) {
-                                    Res100708.BankCardListBean bankCardListBean1 = new Res100708.BankCardListBean();
-                                    bankCardListBean1.setBankCard(SensitiveInfoUtils.bankCard(bankCardListBean.getBankCard()));
-                                    bankCardListBean1.setBankName(bankCardListBean.getBankName());
-                                    bankCardListBeans.add(bankCardListBean1);
-                                }
-                            }
-                            res100708.setBankCardList(bankCardListBeans);
-                            res100708.setEmployeeId(wageRes100708.getEmployeeId());
-                            res100708.setEmployeeName(wageRes100708.getEmployeeName());
-                            res100708.setEmployeeNo(wageRes100708.getEmployeeNo());
-                            res100708.setEntryDate(wageRes100708.getEntryDate());
-                            res100708.setGroupName(wageRes100708.getGroupName());
-                            res100708.setIdNumberStar(SensitiveInfoUtils.idCardNumDefinedPrefix(wageRes100708.getIdNumberStar(), 3));
-                            res100708.setInServiceStatus(wageRes100708.getInServiceStatus());
-                            res100708.setInServiceStatusVal(wageRes100708.getInServiceStatusVal());
-                            res100708.setPhoneStar(SensitiveInfoUtils.mobilePhonePrefix(wageRes100708.getPhoneStar()));
-                            res100708.setPosition(wageRes100708.getPosition());
-                            itemListNew.add(res100708);
-                        }
-                        empEntDTO.setItems(itemListNew);
-                    }
-
-                    list.add(empEntDTO);
-                }
-            }
-            log.info("empEnt.list:[{}]", JacksonUtil.objectToJson(list));
+//            log.info("调用wageMangerFeignService.empEnt(wageUserPrincipal)开始");
+//            List<WageEmpEntDTO> wageEmpEntDTOList = wageMangerFeignService.empEnt(wageUserPrincipal);
+//            log.info("empEnt---->{}", wageEmpEntDTOList);
+//            if (!CollectionUtils.isEmpty(wageEmpEntDTOList)) {
+//                list = new ArrayList<>();
+//                for (WageEmpEntDTO wageEmpEntDTO : wageEmpEntDTOList) {
+//                    EmpEntDTO empEntDTO = new EmpEntDTO();
+////                   BeanUtils.copyProperties(wageEmpEntDTO,empEntDTO);
+//                    //脱敏处理
+//                    empEntDTO.setEntName(wageEmpEntDTO.getEntName());
+//                    empEntDTO.setShortEntName(wageEmpEntDTO.getShortEntName());
+//
+//                    List<chain.fxgj.feign.dto.response.BankCard> cardList = wageEmpEntDTO.getCards();
+//                    List<BankCard> cardListNew = new ArrayList<>();
+//                    if (null != cardList && cardList.size() > 0) {
+//                        for (chain.fxgj.feign.dto.response.BankCard bankCard : cardList) {
+//                            BankCard bankCard1 = new BankCard();
+//                            List<WageBankCardGroup> bankCardGroupList = bankCard.getBankCardGroups();
+//                            List<BankCardGroup> bankCardGroupList1 = new ArrayList<>();
+//                            if (null != bankCardGroupList && bankCardGroupList.size() > 0) {
+//                                for (WageBankCardGroup bankCardGroup : bankCardGroupList) {
+//                                    BankCardGroup bankCardGroup1 = new BankCardGroup();
+//                                    bankCardGroup1.setGroupId(bankCardGroup.getGroupId());
+//                                    bankCardGroup1.setId(bankCardGroup.getId());
+//                                    bankCardGroup1.setShortGroupName(bankCardGroup.getShortGroupName());
+//                                    bankCardGroupList1.add(bankCardGroup1);
+//                                }
+//                            }
+//                            bankCard1.setBankCardGroups(bankCardGroupList1);
+//                            bankCard1.setCardNo(SensitiveInfoUtils.bankCard(bankCard.getCardNo()));
+//                            bankCard1.setCardUpdStatus(bankCard.getCardUpdStatus());
+//                            bankCard1.setCardUpdStatusVal(bankCard.getCardUpdStatusVal());
+//                            bankCard1.setIsNew(bankCard.getIsNew());
+//                            bankCard1.setIssuerName(bankCard.getIssuerName());
+//                            bankCard1.setOldCardNo(SensitiveInfoUtils.bankCard(bankCard.getOldCardNo()));
+//                            bankCard1.setUpdDesc(bankCard.getUpdDesc());
+//                            cardListNew.add(bankCard1);
+//                        }
+//                        empEntDTO.setCards(cardListNew);
+//                    }
+//
+//                    List<WageRes100708> itemList = wageEmpEntDTO.getItems();
+//                    List<Res100708> itemListNew = new ArrayList<>();
+//                    if (null != itemList && itemList.size() > 0) {
+//                        for (WageRes100708 wageRes100708 : itemList) {
+//                            Res100708 res100708 = new Res100708();
+//                            List<WageRes100708.BankCardListBean> bankCardList = wageRes100708.getBankCardList();
+//                            List<Res100708.BankCardListBean> bankCardListBeans = new ArrayList<>();
+//                            if (null != bankCardList && bankCardList.size() > 0) {
+//                                for (WageRes100708.BankCardListBean bankCardListBean : bankCardList) {
+//                                    Res100708.BankCardListBean bankCardListBean1 = new Res100708.BankCardListBean();
+//                                    bankCardListBean1.setBankCard(SensitiveInfoUtils.bankCard(bankCardListBean.getBankCard()));
+//                                    bankCardListBean1.setBankName(bankCardListBean.getBankName());
+//                                    bankCardListBeans.add(bankCardListBean1);
+//                                }
+//                            }
+//                            res100708.setBankCardList(bankCardListBeans);
+//                            res100708.setEmployeeId(wageRes100708.getEmployeeId());
+//                            res100708.setEmployeeName(wageRes100708.getEmployeeName());
+//                            res100708.setEmployeeNo(wageRes100708.getEmployeeNo());
+//                            res100708.setEntryDate(wageRes100708.getEntryDate());
+//                            res100708.setGroupName(wageRes100708.getGroupName());
+//                            res100708.setIdNumberStar(SensitiveInfoUtils.idCardNumDefinedPrefix(wageRes100708.getIdNumberStar(), 3));
+//                            res100708.setInServiceStatus(wageRes100708.getInServiceStatus());
+//                            res100708.setInServiceStatusVal(wageRes100708.getInServiceStatusVal());
+//                            res100708.setPhoneStar(SensitiveInfoUtils.mobilePhonePrefix(wageRes100708.getPhoneStar()));
+//                            res100708.setPosition(wageRes100708.getPosition());
+//                            itemListNew.add(res100708);
+//                        }
+//                        empEntDTO.setItems(itemListNew);
+//                    }
+//
+//                    list.add(empEntDTO);
+//                }
+//            }
+//            log.info("empEnt.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -699,7 +699,7 @@ public class PayRollController {
                 log.info("idNumberEncrytor空，直接返回false，需要输入密码");
                 return false;
             }
-            String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
+            String redisKey = PayrollDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
             Object value = redisTemplate.opsForValue().get(redisKey);
             if (value == null) {
                 log.info("根据idNumberEncrytor:[{}]未查询到登录记录", idNumberEncrytor);

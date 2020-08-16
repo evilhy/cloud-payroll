@@ -1,12 +1,6 @@
 package chain.fxgj.server.payroll.service.impl;
 
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.feign.client.WechatFeignService;
-import chain.fxgj.feign.dto.response.WageDetailInfoDTO;
-import chain.fxgj.feign.dto.response.WageRes100703;
-import chain.fxgj.feign.dto.web.WageUserPrincipal;
-import chain.fxgj.feign.dto.wechat.WageRegisteWechatPayrollDTO;
-import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.payroll.client.feign.WechatFeignController;
 import chain.pub.client.feign.WechatFeignClient;
@@ -14,8 +8,10 @@ import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
+import chain.wage.manager.core.dto.response.WageRes100703;
 import core.dto.response.PayrollRes100703DTO;
 import core.dto.response.PayrollWageDetailDTO;
+import core.dto.sync.WageDetailInfoDTO;
 import core.dto.wechat.CacheRegisteWechatPayrollDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +27,6 @@ public class WechatRedisServiceImpl implements WechatRedisService {
 
     @Autowired
     WechatFeignClient wechatFeignClient;
-    @Autowired
-    private WechatFeignService wechatFeignService;
     @Autowired
     WechatFeignController wechatFeignController;
 

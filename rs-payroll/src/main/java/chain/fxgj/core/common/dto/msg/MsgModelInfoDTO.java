@@ -1,9 +1,5 @@
 package chain.fxgj.core.common.dto.msg;
 
-import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
-import chain.fxgj.core.common.constant.DictEnums.MsgCheckTypeEnum;
-import chain.fxgj.core.common.constant.DictEnums.SystemIdEnum;
-import chain.fxgj.core.jpa.model.MsgModelInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -55,31 +51,32 @@ public class MsgModelInfoDTO {
     private String templateId;
 
 
-    public MsgModelInfoDTO(MsgModelInfo msgModelInfo) {
-        if (msgModelInfo != null) {
-            this.id = msgModelInfo.getId();
-            this.systemId = msgModelInfo.getSystemId().getCode();
-            this.checkType = msgModelInfo.getCheckType().getCode();
-            this.busiType = msgModelInfo.getBusiType().getCode();
-            this.content = msgModelInfo.getContent();
-            this.title = msgModelInfo.getTitle();
-            this.templateId = msgModelInfo.getTemplateId();
-        }
-    }
-
-    public MsgModelInfo createsgModelInfo() {
-
-        MsgModelInfo msgModelInfo = new MsgModelInfo();
-
-        msgModelInfo.setSystemId(SystemIdEnum.values()[this.systemId]);
-        msgModelInfo.setCheckType(MsgCheckTypeEnum.values()[this.checkType]);
-        msgModelInfo.setBusiType(MsgBuisTypeEnum.values()[this.busiType]);
-        msgModelInfo.setTitle(this.title);
-        msgModelInfo.setContent(this.content);
-        msgModelInfo.setCrtDateTime(LocalDateTime.now());
-        msgModelInfo.setUpdDateTime(LocalDateTime.now());
-
-        return msgModelInfo;
-    }
+    // 切库注释
+//    public MsgModelInfoDTO(MsgModelInfo msgModelInfo) {
+//        if (msgModelInfo != null) {
+//            this.id = msgModelInfo.getId();
+//            this.systemId = msgModelInfo.getSystemId().getCode();
+//            this.checkType = msgModelInfo.getCheckType().getCode();
+//            this.busiType = msgModelInfo.getBusiType().getCode();
+//            this.content = msgModelInfo.getContent();
+//            this.title = msgModelInfo.getTitle();
+//            this.templateId = msgModelInfo.getTemplateId();
+//        }
+//    }
+//
+//    public MsgModelInfo createsgModelInfo() {
+//
+//        MsgModelInfo msgModelInfo = new MsgModelInfo();
+//
+//        msgModelInfo.setSystemId(SystemIdEnum.values()[this.systemId]);
+//        msgModelInfo.setCheckType(MsgCheckTypeEnum.values()[this.checkType]);
+//        msgModelInfo.setBusiType(MsgBuisTypeEnum.values()[this.busiType]);
+//        msgModelInfo.setTitle(this.title);
+//        msgModelInfo.setContent(this.content);
+//        msgModelInfo.setCrtDateTime(LocalDateTime.now());
+//        msgModelInfo.setUpdDateTime(LocalDateTime.now());
+//
+//        return msgModelInfo;
+//    }
 
 }

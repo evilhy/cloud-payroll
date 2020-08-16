@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.dto.response;
 
-import chain.fxgj.core.jpa.model.EntGroupInvoiceInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -62,16 +61,17 @@ public class GroupInvoiceDTO {
     String flag;
 
 
-    public GroupInvoiceDTO(EntGroupInvoiceInfo entGroupInvoiceInfo) {
-        this.id = entGroupInvoiceInfo.getId();
-        this.groupName = entGroupInvoiceInfo.getGroupName();
-        this.groupTaxNo = entGroupInvoiceInfo.getGroupTaxNo();
-        this.groupAddress = entGroupInvoiceInfo.getGroupAddress();
-        this.openBankAccount = entGroupInvoiceInfo.getOpenBankAccount();
-        this.openBankName = entGroupInvoiceInfo.getOpenBankName();
-        this.groupPhone = entGroupInvoiceInfo.getGroupPhone();
-        this.groupPhonePrefix = entGroupInvoiceInfo.getGroupPhonePrefix();
-    }
+    // 切库注释 ent_group_invoice_info") //机构发票表
+//    public GroupInvoiceDTO(EntGroupInvoiceInfo entGroupInvoiceInfo) {
+//        this.id = entGroupInvoiceInfo.getId();
+//        this.groupName = entGroupInvoiceInfo.getGroupName();
+//        this.groupTaxNo = entGroupInvoiceInfo.getGroupTaxNo();
+//        this.groupAddress = entGroupInvoiceInfo.getGroupAddress();
+//        this.openBankAccount = entGroupInvoiceInfo.getOpenBankAccount();
+//        this.openBankName = entGroupInvoiceInfo.getOpenBankName();
+//        this.groupPhone = entGroupInvoiceInfo.getGroupPhone();
+//        this.groupPhonePrefix = entGroupInvoiceInfo.getGroupPhonePrefix();
+//    }
 
 
 }

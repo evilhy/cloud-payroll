@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.dto.securities.response;
 
-import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 

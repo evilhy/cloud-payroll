@@ -3,16 +3,9 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
-import chain.fxgj.core.common.constant.DictEnums.RegisterTypeEnum;
-import chain.fxgj.core.common.constant.FxgjDBConstant;
-import chain.fxgj.core.jpa.model.EmployeeInfo;
-import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
+import chain.fxgj.core.common.constant.PayrollDBConstant;
 import chain.fxgj.feign.client.EmployeeFeignService;
 import chain.fxgj.feign.client.MerchantFeignService;
-import chain.fxgj.feign.dto.response.WageEmpInfoDTO;
-import chain.fxgj.feign.dto.response.WageEmployeeWechatInfoDTO;
-import chain.fxgj.feign.dto.response.WageRes100705;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
@@ -25,6 +18,11 @@ import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
+import chain.utils.fxgj.constant.DictEnums.RegisterTypeEnum;
+import chain.wage.manager.core.dto.response.WageEmpInfoDTO;
+import chain.wage.manager.core.dto.response.WageEmployeeWechatInfoDTO;
+import chain.wage.manager.core.dto.response.WageRes100705;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.MDC;
@@ -47,7 +45,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 工资条  对外输出接口
+ * 工资条  对外输出接口 todo 切库待调试
  */
 @RestController
 @Validated
@@ -141,31 +139,26 @@ public class MerchantController {
             MDC.setContextMap(mdcContext);
 
             //4、生成访问信息
-            EmployeeWechatInfo employeeWechatInfo = merchantDecrypt.conver();
+            String idNumber = employeeEncrytorService.encryptIdNumber(merchantDecrypt.getIdNumber().toUpperCase());
+            String phone = employeeEncrytorService.encryptPhone(merchantDecrypt.getPhone());
+            WageEmployeeWechatInfoDTO paramWetchatDto = new WageEmployeeWechatInfoDTO();
 
-            String idNumber = employeeEncrytorService.encryptIdNumber(employeeWechatInfo.getIdNumber().toUpperCase());
-
-            String phone = employeeEncrytorService.encryptPhone(employeeWechatInfo.getPhone());
-            log.info("手机号phone:{}", phone);
-
-            employeeWechatInfo.setIdNumber(idNumber);
-            employeeWechatInfo.setPhone(phone);
-            employeeWechatInfo.setRegisterType(RegisterTypeEnum.UUID);
-
-            //employeeWechatInfo.setAppPartner(AppPartnerEnum.values()[Integer.valueOf(merchant.getMerchantCode())]);
-            employeeWechatInfo.setAppPartner(merchant.getMerchantCode());
-            WageEmployeeWechatInfoDTO paramWetchatDto=new WageEmployeeWechatInfoDTO();
-            BeanUtils.copyProperties(employeeWechatInfo,paramWetchatDto);
+            paramWetchatDto.setHeadimgurl(merchantDecrypt.getHeadimgurl());
+            paramWetchatDto.setUid(merchantDecrypt.getUid());
+            paramWetchatDto.setOpenId(merchantDecrypt.getOpenId());
+            paramWetchatDto.setNickname(merchantDecrypt.getNickname());
+            paramWetchatDto.setIdNumber(idNumber);
+            paramWetchatDto.setPhone(phone);
             paramWetchatDto.setAppPartner(merchant.getMerchantCode().getCode());
             paramWetchatDto.setRegisterType(RegisterTypeEnum.UUID.getCode());
             WageEmployeeWechatInfoDTO wechatInfoDTO=employeeFeignService.findEmployeeWetchatInfo(paramWetchatDto);
             //EmployeeWechatInfo employeeWechat = merchantService.findMerchant(employeeWechatInfo);
             if (wechatInfoDTO != null) {  //认证绑定信息表已经存在，则说明已经绑定成功
                 log.info("认证绑定信息表【存在】，则说明已经绑定成功！");
-                wechatInfoDTO.setNickname(employeeWechatInfo.getNickname());
-                wechatInfoDTO.setHeadimgurl(employeeWechatInfo.getHeadimgurl());
-                wechatInfoDTO.setUid(employeeWechatInfo.getUid());
-                wechatInfoDTO.setOpenId(employeeWechatInfo.getOpenId());
+                wechatInfoDTO.setNickname(paramWetchatDto.getNickname());
+                wechatInfoDTO.setHeadimgurl(paramWetchatDto.getHeadimgurl());
+                wechatInfoDTO.setUid(paramWetchatDto.getUid());
+                wechatInfoDTO.setOpenId(paramWetchatDto.getOpenId());
                 wechatInfoDTO.setRegisterType(RegisterTypeEnum.UUID.getCode());
                 wechatInfoDTO.setAppPartner(merchant.getMerchantCode().getCode());
                 log.info("wechatInfoDTO入库:[{}]", JacksonUtil.objectToJson(wechatInfoDTO));
@@ -173,13 +166,10 @@ public class MerchantController {
             } else {
                 log.info("认证绑定信息表【不存在】！");
                 //查询用户信息
-                EmployeeInfo employeeInfo = new EmployeeInfo();
-                employeeInfo.setIdNumber(merchantDecrypt.getIdNumber()); //员工证件号
-                employeeInfo.setEmployeeName(merchantDecrypt.getName());//员工姓名
                 WageEmpInfoDTO wageEmpInfoDTO=new WageEmpInfoDTO();
-                BeanUtils.copyProperties(employeeInfo,wageEmpInfoDTO);
+                wageEmpInfoDTO.setIdNumber(merchantDecrypt.getIdNumber());
+                wageEmpInfoDTO.setName(merchantDecrypt.getName());
                 WageEmpInfoDTO empInfoDTO=employeeFeignService.findEmployeeInfo(wageEmpInfoDTO);
-                //EmployeeInfo emp = merchantService.findEmployeeInfo(employeeInfo);
                 if (empInfoDTO != null) {
                     log.info("员工信息表中【存在】！入库:[{}]", JacksonUtil.objectToJson(paramWetchatDto));
                     wechatInfoDTO = employeeFeignService.saveEmployeeWetchatInfo(paramWetchatDto);
@@ -193,7 +183,7 @@ public class MerchantController {
 
             String accessToken = UUIDUtil.createUUID8();
             log.info("accessToken:[{}]", accessToken);
-            String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + accessToken;
+            String redisKey = PayrollDBConstant.PREFIX + ":merchant:" + accessToken;
             merchantDecrypt.setDataAuths(merchant.getDataAuths());
             merchantDecrypt.setAppPartner(merchant.getMerchantCode());
             merchantDecrypt.setRegisterType(RegisterTypeEnum.UUID);
@@ -253,7 +243,7 @@ public class MerchantController {
 
         String token = StringUtils.trimToEmpty(accessToken);
 
-        String redisKey = FxgjDBConstant.PREFIX + ":merchant:" + token;
+        String redisKey = PayrollDBConstant.PREFIX + ":merchant:" + token;
         Object value = redisTemplate.opsForValue().get(redisKey);
 
         if (value == null) {
@@ -261,13 +251,7 @@ public class MerchantController {
             throw new ParamsIllegalException(ErrorConstant.MERCHANT_06.getErrorMsg());
         }
 
-
         MerchantDTO merchantDecrypt = JacksonUtil.jsonToBean((String) value, MerchantDTO.class);
-
-        EmployeeWechatInfo employeeWechatInfo = merchantDecrypt.conver();
-        log.info("employeeWechatInfo.getIdNumber():[{}]", employeeWechatInfo.getIdNumber());
-        employeeWechatInfo.setIdNumber(employeeEncrytorService.encryptIdNumber(employeeWechatInfo.getIdNumber()));
-        log.info("employeeWechatInfo.encryptIdNumber:[{}]", JacksonUtil.objectToJson(employeeWechatInfo));
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -276,7 +260,9 @@ public class MerchantController {
             log.info("set之前打印jsessionId:[{}]", jsessionId);
             res100705.setJsessionId(jsessionId);
             WageEmployeeWechatInfoDTO paramWetchatDto=new WageEmployeeWechatInfoDTO();
-            BeanUtils.copyProperties(employeeWechatInfo,paramWetchatDto);
+//            paramWetchatDto.set... todo
+//            BeanUtils.copyProperties(employeeWechatInfo,paramWetchatDto);
+            paramWetchatDto.setIdNumber(employeeEncrytorService.encryptIdNumber(merchantDecrypt.getIdNumber()));
             paramWetchatDto.setAppPartner(AppPartnerEnum.NEWUP.getCode());
             paramWetchatDto.setRegisterType(RegisterTypeEnum.UUID.getCode());
             log.info("copyProperties.paramWetchatDto:[{}]", JacksonUtil.objectToJson(paramWetchatDto));
@@ -293,7 +279,6 @@ public class MerchantController {
             log.info("wxCallback.res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
         }).subscribeOn(Schedulers.elastic());
-
     }
 
 

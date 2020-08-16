@@ -1,7 +1,5 @@
 package chain.fxgj.server.payroll.service.impl;
 
-import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
-import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.fxgj.server.payroll.service.SecuritiesService;

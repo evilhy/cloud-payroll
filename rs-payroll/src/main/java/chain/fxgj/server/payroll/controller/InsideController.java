@@ -6,8 +6,9 @@ import chain.css.log.annotation.TrackLog;
 import chain.feign.hxinside.ent.service.EmployeeInfoServiceFeign;
 import chain.fxgj.ent.core.dto.request.EmployeeQueryRequest;
 import chain.fxgj.ent.core.dto.response.EmployeeInfoRes;
-import chain.fxgj.feign.client.SynTimerFeignService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
+import chain.fxgj.server.payroll.dto.MsgCodeLogRequestDTO;
+import chain.fxgj.server.payroll.dto.MsgCodeLogResponeDTO;
 import chain.fxgj.server.payroll.dto.request.ReadWageDTO;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.request.ReqPhone;
@@ -20,6 +21,7 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.InsideFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.MsgBuisTypeEnum;
 import core.dto.request.*;
 import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -49,8 +51,6 @@ public class InsideController {
     InsideFeignController insideFeignService;
     @Qualifier("applicationTaskExecutor")
     Executor executor;
-    @Autowired
-    private SynTimerFeignService wageSynFeignService;
     @Autowired
     CallInsideServiceImpl callInsideService;
     @Autowired
@@ -191,7 +191,8 @@ public class InsideController {
                 String idNumber = wageRetReceiptDTO.getIdNumber();
                 String groupId = wageRetReceiptDTO.getGroupId();
                 LocalDateTime crtDateTime = wageRetReceiptDTO.getCrtDateTime();
-                mysqlDataSynToMongo(idNumber, groupId, String.valueOf(crtDateTime.getYear()), "", principal);
+                //切库注释
+//                mysqlDataSynToMongo(idNumber, groupId, String.valueOf(crtDateTime.getYear()), "", principal);
             } catch (Exception e) {
                 log.info("回执后,同步数据失败:[{}]", e);
             }
@@ -520,12 +521,12 @@ public class InsideController {
         }).subscribeOn(Schedulers.elastic());
     }
 
-
-    public void mysqlDataSynToMongo(String idNumber, String groupId, String year, String type, UserPrincipal principal) {
-        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
-        BeanUtils.copyProperties(principal, wageUserPrincipal);
-        wageSynFeignService.pushSyncDataToCache(idNumber, groupId, year, type, wageUserPrincipal);
-    }
+// 切库注释
+//    public void mysqlDataSynToMongo(String idNumber, String groupId, String year, String type, UserPrincipal principal) {
+//        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+//        BeanUtils.copyProperties(principal, wageUserPrincipal);
+//        wageSynFeignService.pushSyncDataToCache(idNumber, groupId, year, type, wageUserPrincipal);
+//    }
 
     /**
      * 查询员工企业列表(切库新增接口)

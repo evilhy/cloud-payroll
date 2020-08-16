@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.dto.tfinance;
 
-import chain.fxgj.core.jpa.model.BankProductIntention;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -82,17 +81,17 @@ public class IntentInfoDTO {
      */
     private List<WechatUser> list;
 
-
-    public IntentInfoDTO(BankProductIntention bankProductIntention) {
-        this.custManagerId = bankProductIntention.getCustManagerId();
-        this.intentAmount = bankProductIntention.getIntentAmount();
-        this.crtDateTime = bankProductIntention.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        this.subcribeDateTime = bankProductIntention.getSubcribeDateTime() == null ? null : bankProductIntention.getSubcribeDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        this.status = bankProductIntention.getIntentStatus().getCode();
-        this.subcribeAmount = bankProductIntention.getSubcribeAmount();
-        this.subcribeRate = bankProductIntention.getSubcribeRate();
-        this.entId = bankProductIntention.getEntId();
-    }
+// 切库注释 无base包，无 bank_product_intention 银行产品预约表 所以注释
+//    public IntentInfoDTO(BankProductIntention bankProductIntention) {
+//        this.custManagerId = bankProductIntention.getCustManagerId();
+//        this.intentAmount = bankProductIntention.getIntentAmount();
+//        this.crtDateTime = bankProductIntention.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        this.subcribeDateTime = bankProductIntention.getSubcribeDateTime() == null ? null : bankProductIntention.getSubcribeDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        this.status = bankProductIntention.getIntentStatus().getCode();
+//        this.subcribeAmount = bankProductIntention.getSubcribeAmount();
+//        this.subcribeRate = bankProductIntention.getSubcribeRate();
+//        this.entId = bankProductIntention.getEntId();
+//    }
 
     /**
      * 微信用户

@@ -1,6 +1,6 @@
 package chain.fxgj.server.payroll.dto.wechat;
 
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -35,7 +35,7 @@ public class WechatCallBackDTO {
      * 清算通道
      */
     @NotNull
-    private chain.utils.fxgj.constant.DictEnums.AppPartnerEnum appPartner = chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.FXGJ;
+    private AppPartnerEnum appPartner = AppPartnerEnum.FXGJ;
 
     /**
      * 规则(暂未使用)

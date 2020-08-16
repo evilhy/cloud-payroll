@@ -1,12 +1,12 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
-import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.feign.client.AdvertisingFeignService;
-import chain.fxgj.feign.dto.advertising.WageAdvertisingRotationDTO;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
+import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
+import chain.wage.manager.core.dto.advertising.WageAdvertisingRotationDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;

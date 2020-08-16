@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.dto.response;
 
-import chain.fxgj.core.jpa.model.EmployeeCardInfo;
 import chain.fxgj.server.payroll.dto.EmployeeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -97,10 +96,11 @@ public class Res100708 {
          */
         private String bankCard;
 
-        public BankCardListBean(EmployeeCardInfo employeeCardInfo) {
-            this.bankName = employeeCardInfo.getIssuerName();
-            this.bankCard = employeeCardInfo.getCardNo();
-        }
+        // 切库注释
+//        public BankCardListBean(EmployeeCardInfo employeeCardInfo) {
+//            this.bankName = employeeCardInfo.getIssuerName();
+//            this.bankCard = employeeCardInfo.getCardNo();
+//        }
 
     }
 

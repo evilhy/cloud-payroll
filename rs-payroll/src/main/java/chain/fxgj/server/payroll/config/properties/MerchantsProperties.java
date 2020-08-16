@@ -1,7 +1,7 @@
 package chain.fxgj.server.payroll.config.properties;
 
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
-import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
+import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.Accessors;

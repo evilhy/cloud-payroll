@@ -1,9 +1,5 @@
 package chain.fxgj.server.payroll.dto.tfinance;
 
-import chain.fxgj.core.common.constant.DictEnums.DelStatusEnum;
-import chain.fxgj.core.common.constant.DictEnums.ProductStatusEnum;
-import chain.fxgj.core.jpa.model.BankProductInfo;
-import chain.fxgj.core.jpa.model.BankProductMark;
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -132,24 +128,26 @@ public class ProductInfoDTO {
      */
     private List<ProductMarkDTO> markList;
 
-    public ProductInfoDTO(BankProductInfo bankProductInfo, String imgUrl) {
-        this.productId = bankProductInfo.getId();
-        this.productName = bankProductInfo.getProductName();
-        this.productDesc = bankProductInfo.getProductDesc();
-        this.promote = bankProductInfo.getPromote();
-        this.intentStartDate = bankProductInfo.getIntentStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        this.intentEndDate = bankProductInfo.getIntentEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        this.subscribeStartDate = bankProductInfo.getSubscribeStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        this.subscribeEndDate = bankProductInfo.getSubscribeEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        this.productTerm = bankProductInfo.getProductTerm();
-        this.maxLimit = bankProductInfo.getMaxLimit();
-        this.subscribeEndDate1 = bankProductInfo.getSubscribeEndDate();
-        this.productImg = bankProductInfo.getProductImages().size() == 0 ? null : imgUrl + bankProductInfo.getProductImages().get(0).getImagePath();
-        if (bankProductInfo.getProductStatus().equals(ProductStatusEnum.UP)
-                && bankProductInfo.getDelStatusEnum().equals(DelStatusEnum.normal))
-            this.intentFlag = IsStatusEnum.YES.getCode();
-        this.nextImageUrl = bankProductInfo.getNextImageUrl();
-    }
+
+    // 切库注释 无 bank_product_info 银行产品表
+//    public ProductInfoDTO(BankProductInfo bankProductInfo, String imgUrl) {
+//        this.productId = bankProductInfo.getId();
+//        this.productName = bankProductInfo.getProductName();
+//        this.productDesc = bankProductInfo.getProductDesc();
+//        this.promote = bankProductInfo.getPromote();
+//        this.intentStartDate = bankProductInfo.getIntentStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        this.intentEndDate = bankProductInfo.getIntentEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        this.subscribeStartDate = bankProductInfo.getSubscribeStartDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        this.subscribeEndDate = bankProductInfo.getSubscribeEndDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        this.productTerm = bankProductInfo.getProductTerm();
+//        this.maxLimit = bankProductInfo.getMaxLimit();
+//        this.subscribeEndDate1 = bankProductInfo.getSubscribeEndDate();
+//        this.productImg = bankProductInfo.getProductImages().size() == 0 ? null : imgUrl + bankProductInfo.getProductImages().get(0).getImagePath();
+//        if (bankProductInfo.getProductStatus().equals(ProductStatusEnum.UP)
+//                && bankProductInfo.getDelStatusEnum().equals(DelStatusEnum.normal))
+//            this.intentFlag = IsStatusEnum.YES.getCode();
+//        this.nextImageUrl = bankProductInfo.getNextImageUrl();
+//    }
 
     /**
      * 理财产品档位
@@ -197,15 +195,16 @@ public class ProductInfoDTO {
         @Builder.Default
         private Integer nowMark = IsStatusEnum.NO.getCode();
 
-        public ProductMarkDTO(BankProductMark bankProductMark, Integer productTerm) {
-            this.markLevel = bankProductMark.getMarkLevel();
-            this.markRemark = bankProductMark.getMarkRemark();
-            this.levelRate = bankProductMark.getLevelRate();
-            this.minPeople = bankProductMark.getMinPeople();
-            this.maxPeople = bankProductMark.getMaxPeople();
-            //计算收益=金额*利率(0.05)*天数/365
-            double amt = 10000 * levelRate * 0.01 * productTerm / 365;
-            this.amt = new BigDecimal(amt).setScale(2, BigDecimal.ROUND_HALF_UP);
-        }
+        // 切库注释 bank_product_mark") //银行产品档位表
+//        public ProductMarkDTO(BankProductMark bankProductMark, Integer productTerm) {
+//            this.markLevel = bankProductMark.getMarkLevel();
+//            this.markRemark = bankProductMark.getMarkRemark();
+//            this.levelRate = bankProductMark.getLevelRate();
+//            this.minPeople = bankProductMark.getMinPeople();
+//            this.maxPeople = bankProductMark.getMaxPeople();
+//            //计算收益=金额*利率(0.05)*天数/365
+//            double amt = 10000 * levelRate * 0.01 * productTerm / 365;
+//            this.amt = new BigDecimal(amt).setScale(2, BigDecimal.ROUND_HALF_UP);
+//        }
     }
 }

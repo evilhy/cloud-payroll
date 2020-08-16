@@ -2,7 +2,6 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.payroll.client.feign.VirusFeignService;
@@ -11,6 +10,7 @@ import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import core.dto.PageDTO;
 import core.dto.request.virus.VirusRequestDto;
 import core.dto.response.virus.NcpVirusPromiseListDto;

@@ -2,16 +2,14 @@ package chain.fxgj.core.common.config;
 
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
-import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.utils.commons.JacksonUtil;
 import feign.Response;
 import feign.Util;
 import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
-import org.springframework.context.annotation.Configuration;
-import reactor.core.Exceptions;
+
 import java.io.IOException;
+
 import static feign.FeignException.errorStatus;
 
 //@Configuration

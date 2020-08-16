@@ -2,9 +2,6 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
-import chain.fxgj.core.common.constant.DictEnums.IsStatusEnum;
-import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.wechat.WechatCallBackDTO;
@@ -17,6 +14,7 @@ import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
+import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;

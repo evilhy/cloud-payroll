@@ -1,7 +1,5 @@
 package chain.fxgj.server.payroll.service;
 
-import chain.fxgj.feign.dto.web.WageUserPrincipal;
-import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;

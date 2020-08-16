@@ -2,11 +2,11 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.feign.client.CustManagerFeignService;
-import chain.fxgj.feign.dto.custmanager.WageManagerInfoDTO;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
+import chain.wage.manager.core.dto.custmanager.WageManagerInfoDTO;
 import chain.wage.manager.core.dto.dataquery.OpeningTipsDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;

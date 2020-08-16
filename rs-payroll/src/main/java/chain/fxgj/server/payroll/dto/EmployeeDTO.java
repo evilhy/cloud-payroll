@@ -1,7 +1,7 @@
 package chain.fxgj.server.payroll.dto;
 
-import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
+import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;

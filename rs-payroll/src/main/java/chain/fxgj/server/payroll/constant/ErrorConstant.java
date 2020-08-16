@@ -19,6 +19,13 @@ public enum ErrorConstant {
     WECHAT_OUT("o001", "请重新点击[我的工资条]查看"),
 
     WZWAGE_011("0011", "token验证失败"),
+
+    WECHAR_006("r006", "银行卡后六位输入错误"),
+    WECHAR_007("r007", "密码输入错误"),
+
+    WECHAR_013("r013", "银行卡必须为纯数字"),
+
+
     ;
 
     private String errorCode;

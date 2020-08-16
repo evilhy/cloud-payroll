@@ -1,7 +1,5 @@
 package chain.fxgj.server.payroll.dto.response;
 
-import chain.fxgj.core.jpa.model.WageDetailInfo;
-import chain.fxgj.core.jpa.model.WageShowInfo;
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -82,14 +80,15 @@ public class WageDetailDTO {
      */
     private String payStatus;
 
-    public WageDetailDTO(WageDetailInfo wageDetailInfo) {
-        this.wageDetailId = wageDetailInfo.getId();
-        this.bankName = wageDetailInfo.getBankName();
-        this.realAmt = wageDetailInfo.getRealTotalAmt();
-        this.groupId = wageDetailInfo.getGroupId();
-//        this.pushDateTime = wageDetailInfo.getPayDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        this.receiptStautus = wageDetailInfo.getReceiptsStatus().getCode();
-    }
+    // 切库注释
+//    public WageDetailDTO(WageDetailInfo wageDetailInfo) {
+//        this.wageDetailId = wageDetailInfo.getId();
+//        this.bankName = wageDetailInfo.getBankName();
+//        this.realAmt = wageDetailInfo.getRealTotalAmt();
+//        this.groupId = wageDetailInfo.getGroupId();
+////        this.pushDateTime = wageDetailInfo.getPayDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+//        this.receiptStautus = wageDetailInfo.getReceiptsStatus().getCode();
+//    }
 
 
     /**
@@ -119,13 +118,13 @@ public class WageDetailDTO {
          * 工资发放机构名
          */
         String grantName;
-
-        public WageShowDTO(WageShowInfo wageShowInfo) {
-            this.isShow0 = wageShowInfo.getIsShow0() == null ? null : wageShowInfo.getIsShow0().getCode();
-            this.isReceipt = wageShowInfo.getIsReceipt() == null ? IsStatusEnum.YES.getCode() : wageShowInfo.getIsReceipt().getCode();
-            this.receiptDay = wageShowInfo.getReceiptDay();
-            this.grantName=wageShowInfo.getGrantName();
-        }
+// 切库注释
+//        public WageShowDTO(WageShowInfo wageShowInfo) {
+//            this.isShow0 = wageShowInfo.getIsShow0() == null ? null : wageShowInfo.getIsShow0().getCode();
+//            this.isReceipt = wageShowInfo.getIsReceipt() == null ? IsStatusEnum.YES.getCode() : wageShowInfo.getIsReceipt().getCode();
+//            this.receiptDay = wageShowInfo.getReceiptDay();
+//            this.grantName=wageShowInfo.getGrantName();
+//        }
 
 
     }

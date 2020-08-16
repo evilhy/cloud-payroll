@@ -1,14 +1,13 @@
 package chain.fxgj.server.payroll.dto.merchant;
 
 import chain.css.exception.ParamsIllegalException;
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
-import chain.fxgj.core.common.constant.DictEnums.CertTypeEnum;
-import chain.fxgj.core.common.constant.DictEnums.FundLiquidationEnum;
-import chain.fxgj.core.common.constant.DictEnums.RegisterTypeEnum;
-import chain.fxgj.core.jpa.model.EmployeeWechatInfo;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.util.Sha1;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
+import chain.utils.fxgj.constant.DictEnums.CertTypeEnum;
+import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
+import chain.utils.fxgj.constant.DictEnums.RegisterTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -133,21 +132,21 @@ public class MerchantDTO {
         return signature;
     }
 
-
-    public EmployeeWechatInfo conver() {
-        EmployeeWechatInfo employeeWechatInfo = EmployeeWechatInfo.builder()
-                .name(name)
-                .idType(CertTypeEnum.values()[Integer.valueOf(this.idType)])
-                .idNumber(this.idNumber)
-                .phone(phone)
-                .uid(uid)
-                .openId(openId)
-                .nickname(this.nickname)
-                .headimgurl(this.headimgurl)
-                .appPartner(this.appPartner)
-                .build();
-
-        return employeeWechatInfo;
-
-    }
+// 切库注释
+//    public EmployeeWechatInfo conver() {
+//        EmployeeWechatInfo employeeWechatInfo = EmployeeWechatInfo.builder()
+//                .name(name)
+//                .idType(CertTypeEnum.values()[Integer.valueOf(this.idType)])
+//                .idNumber(this.idNumber)
+//                .phone(phone)
+//                .uid(uid)
+//                .openId(openId)
+//                .nickname(this.nickname)
+//                .headimgurl(this.headimgurl)
+//                .appPartner(this.appPartner)
+//                .build();
+//
+//        return employeeWechatInfo;
+//
+//    }
 }

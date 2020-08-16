@@ -2,7 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.FxgjDBConstant;
+import chain.fxgj.core.common.constant.PayrollDBConstant;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
 import chain.fxgj.server.payroll.service.AdminService;
@@ -165,7 +165,7 @@ public class AdminController {
 
             try {
                 //密码校验通过之后，缓存中登记一条记录，之后的几分钟只能不再输入密码，key：sessionId
-                String redisKey = FxgjDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
+                String redisKey = PayrollDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
                 log.info("checkPwd.redisKey:[{}]", redisKey);
                 redisTemplate.opsForValue().set(redisKey, true, 5, TimeUnit.MINUTES);
             } catch (Exception e) {

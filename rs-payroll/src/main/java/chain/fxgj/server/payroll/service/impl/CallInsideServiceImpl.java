@@ -4,17 +4,13 @@ import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
-import chain.fxgj.core.common.constant.DictEnums.MsgBuisTypeEnum;
-import chain.fxgj.core.common.constant.ErrorConstant;
-import chain.fxgj.core.common.dto.msg.MsgCodeLogCheckRequestDTO;
-import chain.fxgj.core.common.dto.msg.MsgCodeLogRequestDTO;
-import chain.fxgj.core.common.dto.msg.MsgCodeLogResponeDTO;
+import chain.fxgj.core.common.constant.PayrollDBConstant;
+import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.MsgCodeLogCheckRequestDTO;
 import chain.fxgj.server.payroll.dto.MsgCodeLogRequestDTO;
 import chain.fxgj.server.payroll.dto.MsgCodeLogResponeDTO;
 import chain.fxgj.server.payroll.dto.base.*;
-import chain.fxgj.core.common.constant.FxgjDBConstant;
 import chain.fxgj.server.payroll.service.CallInsideService;
 import chain.fxgj.server.payroll.dto.EventDTO;
 import chain.fxgj.server.payroll.dto.response.Res100302;
@@ -49,7 +45,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "weixin/subscribe");
         log.info("====>管家url:{}", webTarget.getUri());
         Response response = webTarget.request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
                 .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
                 .post(Entity.entity(eventDTO, MediaType.APPLICATION_JSON_TYPE));
         log.debug("====>{},{}", response.getStatus(), response.readEntity(String.class));
@@ -60,7 +56,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         // 验证消息 消息
         Response response = client.target(payrollProperties.getInsideUrl() + "weixin/getOAuthUrl")
                 .request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
                 .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
                 .post(Entity.entity(weixinAuthorizeUrlDTO, MediaType.APPLICATION_JSON_TYPE));
 
@@ -79,7 +75,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         // 验证消息 消息
         Response response = client.target(payrollProperties.getInsideUrl() + "weixin/checkSignature")
                 .request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
                 .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
                 .post(Entity.entity(weixinSignatureDTO, MediaType.APPLICATION_JSON_TYPE));
         log.info("====>status:{}", response.getStatus());
@@ -96,7 +92,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         // 验证消息 消息
         Response response = client.target(payrollProperties.getInsideUrl() + "weixin/getWechatCfg")
                 .request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
                 .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
                 .get();
 
@@ -114,7 +110,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         Response response = client.target(payrollProperties.getInsideUrl() + "weixin/Oauth2AccessToken")
                 .queryParam("code", code)
                 .request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
                 .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
                 .get();
 
@@ -133,7 +129,7 @@ public class CallInsideServiceImpl implements CallInsideService {
                 .queryParam("access_token", access_token)
                 .queryParam("openid", openid)
                 .request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
                 .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
                 .get();
 
@@ -151,7 +147,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         Response response = client.target(payrollProperties.getInsideUrl() + "weixin/getJsapiSignature")
                 .queryParam("url", url)
                 .request()
-                .header(FxgjDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(FxgjDBConstant.LOG_TOKEN)))
+                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
                 .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
                 .get();
 

@@ -1,14 +1,12 @@
 package chain.fxgj.server.payroll.service;
 
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
-import chain.fxgj.feign.dto.response.WageDetailInfoDTO;
-import chain.fxgj.feign.dto.response.WageRes100703;
-import chain.fxgj.feign.dto.web.WageUserPrincipal;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
+import chain.wage.manager.core.dto.response.WageRes100703;
 import core.dto.response.PayrollRes100703DTO;
 import core.dto.response.PayrollWageDetailDTO;
+import core.dto.sync.WageDetailInfoDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;

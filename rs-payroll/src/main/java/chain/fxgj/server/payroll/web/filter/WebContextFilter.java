@@ -1,11 +1,11 @@
 package chain.fxgj.server.payroll.web.filter;
 
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.core.common.constant.DictEnums.AppPartnerEnum;
-import chain.fxgj.core.common.constant.FxgjDBConstant;
+import chain.fxgj.core.common.constant.PayrollDBConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.core.Ordered;
@@ -46,7 +46,7 @@ public class WebContextFilter implements WebFilter, Ordered {
 
         }
         MDC.put(REQ, reqId);
-        MDC.put(FxgjDBConstant.LOG_TOKEN, logToken);
+        MDC.put(PayrollDBConstant.LOG_TOKEN, logToken);
 
         String apppartner = exchange.getRequest().getHeaders().getFirst(PayrollConstants.APPPARTNER);
         log.info("exchange.getRequest().getHeaders().getFirst(apppartner):[{}]", apppartner);
@@ -80,7 +80,7 @@ public class WebContextFilter implements WebFilter, Ordered {
 
         return chain.filter(build).then(Mono.fromRunnable(() -> {
             MDC.put(REQ, finalReqId);
-            MDC.put(FxgjDBConstant.LOG_TOKEN, finalReqId);
+            MDC.put(PayrollDBConstant.LOG_TOKEN, finalReqId);
             Long startTime = exchange.getAttribute(START_TIME);
             if (startTime != null) {
                 Long executeTime = (System.currentTimeMillis() - startTime);
