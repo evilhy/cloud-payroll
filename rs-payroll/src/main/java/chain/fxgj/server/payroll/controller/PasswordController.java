@@ -6,6 +6,7 @@ import chain.fxgj.core.common.constant.PayrollDBConstant;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
 import chain.fxgj.server.payroll.dto.request.PasswordSaveReq;
+import chain.fxgj.server.payroll.dto.response.CrateNumericKeypadRes;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
@@ -254,7 +255,7 @@ public class PasswordController {
     @GetMapping("/crateNumericKeypad")
     @TrackLog
     @PermitAll
-    public Mono<String> crateNumericKeypad() {
+    public Mono<CrateNumericKeypadRes> crateNumericKeypad() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
         return Mono.fromCallable(() -> {
@@ -277,7 +278,7 @@ public class PasswordController {
                 log.error("密码键盘入缓存失败:[{}]", e.getMessage());
             }
 
-            return keyboardResponse.getNumberBase64();
+            return CrateNumericKeypadRes.builder().numberBase(keyboardResponse.getNumberBase64()).build();
         }).subscribeOn(Schedulers.elastic());
     }
 }
