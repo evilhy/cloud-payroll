@@ -63,7 +63,7 @@ dependencyManagement {
     }
 }
 dependencies {
-    compile("chain:ids-client:1.1.6")
+    compile("chain:ids-client:1.1.10-SNAPSHOT")
     compile("chain.fxgj:fxgj-ent-client:1.0.9")
     compile("chain:pub-client:1.1.6")
     compile('chain:wage-client:1.1.2-SNAPSHOT')

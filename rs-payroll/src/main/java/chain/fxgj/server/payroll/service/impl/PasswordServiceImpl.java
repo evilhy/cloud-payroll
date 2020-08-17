@@ -3,7 +3,11 @@ package chain.fxgj.server.payroll.service.impl;
 import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
-import chain.fxgj.server.payroll.service.AdminService;
+import chain.fxgj.server.payroll.service.PaswordService;
+import chain.ids.client.feign.KeyboardFeign;
+import chain.ids.core.commons.dto.softkeyboard.KeyboardRequest;
+import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
+import chain.ids.core.commons.enums.EnumKeyboardType;
 import chain.payroll.client.feign.EmployeeWechatDeignController;
 import chain.utils.commons.StringUtils;
 import core.dto.request.wechat.EmployeeWechatSaveReq;
@@ -22,10 +26,12 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
-public class AdminServiceImpl implements AdminService {
+public class PasswordServiceImpl implements PaswordService {
 
     @Autowired
     EmployeeWechatDeignController employeeWechatDeignController;
+    @Autowired
+    KeyboardFeign keyboardFeign;
 
     @Override
     public HandPasswordDTO queryHandPassword(String wechatId) {
@@ -124,5 +130,18 @@ public class AdminServiceImpl implements AdminService {
                 .handPassword("")
                 .build();
         return employeeWechatDeignController.save(saveReq);
+    }
+
+    @Override
+    public KeyboardResponse crateNumericKeypad(String keyboardId) {
+        KeyboardRequest keyboardRequest = KeyboardRequest.builder()
+                .keyboardType(EnumKeyboardType.number)
+                .keyboardId(keyboardId)
+                .build();
+        KeyboardResponse keyboard = keyboardFeign.createKeyboard(keyboardRequest);
+        if (null == keyboard || null == keyboard.getNumber()) {
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("密码键盘生成失败"));
+        }
+        return keyboard;
     }
 }
