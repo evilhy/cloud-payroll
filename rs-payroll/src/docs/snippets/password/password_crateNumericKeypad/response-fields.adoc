@@ -1,0 +1,8 @@
+|===
+|Path|Type|Description
+
+|`+numberBase+`
+|`+String+`
+|密码键盘 Base64 图片
+
+|===

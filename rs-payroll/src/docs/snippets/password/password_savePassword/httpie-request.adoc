@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ echo '{"password":"N0,N1,N3,N4,N7,N9","oldPassword":"N0,N1,N3,N4,N7,N9","type":"0"}' | http POST 'http://localhost:8080/password/savePassword' \
+    'Content-Type:application/json;charset=UTF-8'
+----

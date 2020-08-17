@@ -1,0 +1,6 @@
+[source,http,options="nowrap"]
+----
+GET /password/checkPassword?password=N0%2CN1%2CN3%2CN4%2CN7%2CN9&type=0 HTTP/1.1
+Host: localhost:8080
+
+----

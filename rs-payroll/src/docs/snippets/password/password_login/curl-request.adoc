@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/password/login?password=123456&type=1' -i -X GET
+----

@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+status+`
+|`+Integer+`
+|是否开启手势密码 0:未开启   1：已开启
+
+|`+statusVal+`
+|`+String+`
+|是否开启手势密码 描述
+
+|===

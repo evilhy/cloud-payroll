@@ -21,8 +21,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
 
@@ -121,7 +120,7 @@ public class PasswordControllerTest {
      */
     @Test
     public void checkPassword() {
-        String password = "123456";
+        String password = "N0,N1,N3,N4,N7,N9";
         String type = "0";
 
         webTestClient.get()
@@ -132,8 +131,8 @@ public class PasswordControllerTest {
                 .expectBody(String.class)//返回是什么类型的对象
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("password_checkPassword",
-                        pathParameters(parameterWithName("password").description("密码(数字密码以“,”分隔)")),
-                        pathParameters(parameterWithName("type").description("密码类型： 0、数字密码  1、手势密码"))
+                        requestParameters(parameterWithName("password").description("密码(数字密码以“,”分隔)"),
+                                parameterWithName("type").description("密码类型： 0、数字密码  1、手势密码"))
                 ));
     }
 
@@ -143,8 +142,8 @@ public class PasswordControllerTest {
     @Test
     public void savePassword() {
         PasswordSaveReq req = PasswordSaveReq.builder()
-                .oldPassword("123456")
-                .password("123456")
+                .oldPassword("N0,N1,N3,N4,N7,N9")
+                .password("N0,N1,N3,N4,N7,N9")
                 .type("0")
                 .build();
 
@@ -164,7 +163,7 @@ public class PasswordControllerTest {
     @Test
     public void login() {
         String password = "123456";
-        String type = "0";
+        String type = "1";
 
         webTestClient.get()
                 .uri("/password/login?password={password}&type={type}", password, type)
@@ -174,8 +173,8 @@ public class PasswordControllerTest {
                 .expectBody(String.class)//返回是什么类型的对象
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("password_login",
-                        pathParameters(parameterWithName("password").description("密码(数字密码以“,”分隔)")),
-                        pathParameters(parameterWithName("type").description("密码类型： 0、数字密码  1、手势密码"))
+                        requestParameters(parameterWithName("password").description("密码(数字密码以“,”分隔)"),
+                        parameterWithName("type").description("密码类型： 0、数字密码  1、手势密码"))
                 ));
     }
 }
