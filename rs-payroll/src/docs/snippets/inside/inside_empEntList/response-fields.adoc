@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+entList+`
+|`+List+`
+|员工企业列表(未排序)
+
+|`+empEntDTO+`
+|`+EmpEntResDTOP+`
+|最近代发企业
+
+|===

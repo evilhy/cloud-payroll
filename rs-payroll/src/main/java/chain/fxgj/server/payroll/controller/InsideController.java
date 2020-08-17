@@ -23,6 +23,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.MsgBuisTypeEnum;
 import core.dto.request.*;
+import core.dto.response.index.IndexEmpEntDTO;
 import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -342,34 +343,10 @@ public class InsideController {
         }).subscribeOn(Schedulers.elastic()).then();
     }
 
-//    /** 注释原因：数据脱敏后，无法获取手机号，现增加busiType区分场景获取手机号,上线成功后的下个版本可删除
-//     * 验证手机验证码
-//     *
-//     * @param reqPhone
-//     * @return
-//     * @throws Exception
-//     */
-//    @PostMapping("/checkPhoneCode")
-//    @TrackLog
-//    public Mono<Void> checkPhoneCode(@RequestBody ReqPhone reqPhone) throws Exception {
-//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//
-//        return Mono.fromCallable(() -> {
-//            MDC.setContextMap(mdcContext);
-//
-//            WageReqPhone wageReqPhone = new WageReqPhone();
-//            BeanUtils.copyProperties(reqPhone, wageReqPhone);
-//
-//            String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
-//            if (!StringUtils.equals("0000", retStr)) {
-//                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
-//            }
-//            return null;
-//        }).subscribeOn(Schedulers.elastic()).then();
-//    }
-
     /**
      * 验证手机验证码
+     *
+     * 数据脱敏后，无法获取手机号，现增加busiType区分场景获取手机号
      *
      * @param reqPhone
      * @return
@@ -531,25 +508,25 @@ public class InsideController {
     /**
      * 查询员工企业列表(切库新增接口)
      *
-     * @param baseReqDTO
+     * @param
      * @return
      * @throws Exception
      */
     @PostMapping("/empEntList")
     @TrackLog
-    public Mono<String> empEntList(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
+    public Mono<IndexEmpEntDTO> empEntList(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String idNumber = baseReqDTO.getIdNumber();
-        if (StringUtils.isBlank(idNumber)) {
-//            throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
-        }
+
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            BaseReqDTO baseReqDTO1 = new BaseReqDTO();
-            baseReqDTO1.setIdNumber(userPrincipal.getIdNumber());
-            insideFeignController.empEntList(baseReqDTO1);
-            return "";
+            String idNumber = "ff80808171b40c010171c489c2210009";//userPrincipal.getIdNumber();
+            if (StringUtils.isBlank(idNumber)) {
+                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
+            }
+            IndexEmpEntDTO indexEmpEntDTOS = insideFeignController.empEntList(baseReqDTO);
+
+            return indexEmpEntDTOS;
         }).subscribeOn(Schedulers.elastic());
     }
 

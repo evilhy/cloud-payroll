@@ -1,0 +1,40 @@
+= 微信工资条api文档[1.0(切库前版本已过时)]
+开发团队;
+:toc: left
+:toclevels: 3
+:toc-title: 目录
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:idprefix: id_
+:author_name: author
+:author_email: kayak@kayak.com
+:author: {author_name}
+:email: {author_email}
+:revnumber:
+:revdate: 2019-03-12
+:revremark:  适用于3月底版本
+:sectlinks:
+:sectanchors:
+:sectnums:
+:sectnumlevels: 5
+
+include::wechat.adoc[]
+
+include::tfinance.adoc[]
+
+include::custmanager.adoc[]
+
+include::roll.adoc[]
+
+include::inside.adoc[]
+
+include::advertising.adoc[]
+
+include::wisales.adoc[]
+
+include::virus.adoc[]
+
+include::mini.adoc[]
+
+include::securities.adoc[]

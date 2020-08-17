@@ -12,29 +12,38 @@
 :author: {author_name}
 :email: {author_email}
 :revnumber:
-:revdate: 2019-03-12
-:revremark:  适用于3月底版本
+:revdate: 2020-08
+:revremark:  适用于8月切库版本
 :sectlinks:
 :sectanchors:
 :sectnums:
 :sectnumlevels: 5
 
-include::wechat.adoc[]
 
-include::tfinance.adoc[]
-
-include::custmanager.adoc[]
-
-include::roll.adoc[]
-
-include::inside.adoc[]
+include::password.adoc[]
 
 include::advertising.adoc[]
 
-include::wisales.adoc[]
+include::custmanager.adoc[]
+
+include::inside.adoc[]
+
+include::advertising.adoc[] ## 对第三方提供接口(待提供
+
+include::roll.adoc[]
+
+include::securities.adoc[]
+
+include::tfinance.adoc[]
 
 include::virus.adoc[]
 
-include::mini.adoc[]
+include::wallet.adoc[]
 
-include::securities.adoc[]
+include::wechat.adoc[]
+
+include::advertising.adoc[] ## 微信回调(待提供
+
+include::wisales.adoc[]
+
+include::mini.adoc[]

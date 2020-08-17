@@ -720,16 +720,17 @@ public class PayRollController {
      */
     @GetMapping("/wageList")
     @TrackLog
-    public Mono<Res100703> wageList(@RequestParam("groupId") String groupId,
-                                    @RequestParam("year") String year,
-                                    @RequestParam("type") String type) {
+    public Mono<Res100703> wageList(
+            @RequestHeader(value = "entId") String entId,
+            @RequestParam("groupId") String groupId,
+            @RequestParam("year") String year,
+            @RequestParam("type") String type) {
         log.info("调用wageList开始时间::[{}]", LocalDateTime.now());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
         BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         String idNumber = principal.getIdNumber();
-        String entId = principal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Res100703 res100703 = new Res100703();

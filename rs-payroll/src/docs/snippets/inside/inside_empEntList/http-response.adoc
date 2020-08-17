@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 458
+Content-Type: application/json;charset=UTF-8
+
+{"entList":[{"entId":"ff80808171b40c010171c489c2210009","entName":"测试更换企业","shortEntName":"测试更换"},{"entId":"2c9480ef7303eed9017345b974e70015","entName":"杭州农民工代发测试","shortEntName":"杭州农代"},{"entId":"ff808081702e7af401705b9b3c6f0019","entName":"小古测试企业","shortEntName":"小古测试"}],"empEntDTO":{"entId":"ff80808171b40c010171c489c2210009","entName":"测试更换企业","shortEntName":"测试更换"}}
+----

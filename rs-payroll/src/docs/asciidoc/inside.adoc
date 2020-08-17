@@ -145,4 +145,20 @@ include::{snippets}/inside/inside_updBankCard/curl-request.adoc[]
 include::{snippets}/inside/inside_updBankCard/http-response.adoc[]
 
 
+=== 员工企业列表
+==== 接口定义
 
+* Query Parameters:
++
+include::{snippets}/inside/inside_empEntList/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_empEntList/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_empEntList/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_empEntList/http-response.adoc[]

@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"entId":""}' | http POST 'http://localhost:8080/wallet/empCardList' \
+    'Content-Type:application/json' \
+    'id:fxgj'
+----

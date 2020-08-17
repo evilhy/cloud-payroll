@@ -56,13 +56,15 @@ public class PasswordController {
     @PermitAll
     public Mono<HandPasswordDTO> queryHandPassword() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
+        String wechatId = "11";//String.valueOf(WebContext.getCurrentUser().getWechatId());
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到登录用户可用标识")));
             log.info("=====> /admin/queryHandPassword 查询用户是否开启手势密码 wechatId:{}", wechatId);
-
-            return paswordService.queryHandPassword(wechatId);
+            HandPasswordDTO handPasswordDTO = new HandPasswordDTO();
+            handPasswordDTO.setStatus(1);
+            handPasswordDTO.setStatusVal("好");
+            return handPasswordDTO;
         }).subscribeOn(Schedulers.elastic());
     }
 
