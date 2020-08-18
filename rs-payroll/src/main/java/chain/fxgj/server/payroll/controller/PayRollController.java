@@ -103,7 +103,9 @@ public class PayRollController {
             MDC.setContextMap(mdcContext);
             CacheUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
             log.info("wageMangerFeignService.index(wageUserPrincipal)开始");
-            WageIndexDTO wageIndexDTO = null;//wageMangerFeignService.index(wageUserPrincipal); todo 切库注释
+            WageUserPrincipal wageUserPrincipal1 = new WageUserPrincipal();
+            BeanUtils.copyProperties(wageUserPrincipal, wageUserPrincipal1);
+            WageIndexDTO wageIndexDTO = wageMangerFeignService.index(wageUserPrincipal1);
             NewestWageLogDTO newestWageLogDTO = new NewestWageLogDTO();
             Integer isNew = 0;
             if (null != wageIndexDTO) {

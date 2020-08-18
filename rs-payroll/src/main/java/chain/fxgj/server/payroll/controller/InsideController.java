@@ -520,9 +520,9 @@ public class InsideController {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            String idNumber = "ff80808171b40c010171c489c2210009";//userPrincipal.getIdNumber();
+            String idNumber = userPrincipal.getIdNumber();
             if (StringUtils.isBlank(idNumber)) {
-                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
             }
             IndexEmpEntDTO indexEmpEntDTOS = insideFeignController.empEntList(baseReqDTO);
 
