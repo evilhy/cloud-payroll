@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+POST /password/secretFree HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 19
+Host: localhost:8080
+
+{"oldPassword":"1"}
+----

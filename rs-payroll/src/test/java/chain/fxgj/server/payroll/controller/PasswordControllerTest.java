@@ -177,4 +177,20 @@ public class PasswordControllerTest {
                         parameterWithName("type").description("密码类型： 0、数字密码  1、手势密码"))
                 ));
     }
+
+    @Test
+    public void secretFree() {
+        PasswordSaveReq passwordSaveReq = new PasswordSaveReq();
+        passwordSaveReq.setOldPassword("1");
+        webTestClient.post().uri("/password/secretFree")
+//                .header("jsessionId", sessionId)
+                .syncBody(passwordSaveReq)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody()
+                .consumeWith(document("password_secretFree",
+                        relaxedRequestFields(JavaDocReader.javaDoc(PasswordSaveReq.class))
+                ));
+    }
 }

@@ -8,7 +8,7 @@ import chain.ids.client.feign.KeyboardFeign;
 import chain.ids.core.commons.dto.softkeyboard.KeyboardRequest;
 import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
 import chain.ids.core.commons.enums.EnumKeyboardType;
-import chain.payroll.client.feign.EmployeeWechatDeignController;
+import chain.payroll.client.feign.EmployeeWechatFeignController;
 import chain.utils.commons.StringUtils;
 import core.dto.request.wechat.EmployeeWechatSaveReq;
 import core.dto.response.wechat.EmployeeWechatDTO;
@@ -29,7 +29,7 @@ import java.util.Optional;
 public class PasswordServiceImpl implements PaswordService {
 
     @Autowired
-    EmployeeWechatDeignController employeeWechatDeignController;
+    EmployeeWechatFeignController employeeWechatFeignController;
     @Autowired
     KeyboardFeign keyboardFeign;
 
@@ -37,7 +37,7 @@ public class PasswordServiceImpl implements PaswordService {
     public HandPasswordDTO queryHandPassword(String wechatId) {
         Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘用户微信绑定ID’参数不能为空")));
 
-        EmployeeWechatDTO dto = employeeWechatDeignController.findById(wechatId);
+        EmployeeWechatDTO dto = employeeWechatFeignController.findById(wechatId);
 
         if (null == dto) {
             log.info("=====> wechatId:{} 用户微信绑定信息不存在!", wechatId);
@@ -60,7 +60,7 @@ public class PasswordServiceImpl implements PaswordService {
         Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘用户微信绑定ID’参数不能为空")));
         Optional.ofNullable(type).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘密码类型’参数不能为空")));
 
-        EmployeeWechatDTO dto = employeeWechatDeignController.findById(wechatId);
+        EmployeeWechatDTO dto = employeeWechatFeignController.findById(wechatId);
         if (null == dto) {
             log.info("=====> wechatId:{} 用户微信绑定信息不存在!", wechatId);
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户微信绑定信息不存在"));
@@ -90,7 +90,7 @@ public class PasswordServiceImpl implements PaswordService {
         Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘用户微信绑定ID’参数不能为空")));
         Optional.ofNullable(password).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘确认密码’参数不能为空")));
 
-        EmployeeWechatDTO dto = employeeWechatDeignController.findById(wechatId);
+        EmployeeWechatDTO dto = employeeWechatFeignController.findById(wechatId);
         if (null == dto) {
             log.info("=====> wechatId:{} 用户微信绑定信息不存在!", wechatId);
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户微信绑定信息不存在"));
@@ -111,14 +111,14 @@ public class PasswordServiceImpl implements PaswordService {
             log.info("=====> 校验失败，密码类型异常(0：数字密码  1：手势密码) type = {}", type);
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("校验失败，密码类型异常"));
         }
-        return employeeWechatDeignController.save(saveReq);
+        return employeeWechatFeignController.save(saveReq);
     }
 
     @Override
     public EmployeeWechatDTO closeHandPassword(String wechatId) {
         Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘用户微信绑定ID’参数不能为空")));
 
-        EmployeeWechatDTO dto = employeeWechatDeignController.findById(wechatId);
+        EmployeeWechatDTO dto = employeeWechatFeignController.findById(wechatId);
         if (null == dto) {
             log.info("=====> wechatId:{} 用户微信绑定信息不存在!", wechatId);
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户微信绑定信息不存在"));
@@ -129,7 +129,7 @@ public class PasswordServiceImpl implements PaswordService {
                 .wechatId(dto.getWechatId())
                 .handPassword("")
                 .build();
-        return employeeWechatDeignController.save(saveReq);
+        return employeeWechatFeignController.save(saveReq);
     }
 
     @Override

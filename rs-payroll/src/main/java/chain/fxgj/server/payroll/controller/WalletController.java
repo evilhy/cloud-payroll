@@ -3,14 +3,11 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.log.annotation.TrackLog;
 import chain.payroll.client.feign.WalletFeignController;
 import core.dto.request.BaseReqDTO;
-import core.dto.response.wallet.EmpCardResDTO;
+import core.dto.response.wallet.EmpCardAndBalanceResDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -49,19 +46,25 @@ public class WalletController {
 
 
     /**
-     * 员工银行卡</p>
+     * 查询
+     * 1.员工银行卡</p>
+     * 2.钱包余额</p>
      *      查询当前企业下的银行卡数，去重
      *
      * @param baseReqDTO
      * @return
      */
-    @PostMapping("/empCardList")
+    @PostMapping("/empCardAdnBalance")
     @TrackLog
-    public Mono<EmpCardResDTO> empCardList(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
+    public Mono<EmpCardAndBalanceResDTO> empCardList(@RequestHeader(value = "encry-salt", required = false) String salt,
+                                                            @RequestHeader(value = "encry-passwd", required = false) String passwd,
+                                                            @RequestBody BaseReqDTO baseReqDTO) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            EmpCardResDTO empCardResDTO = walletFeignController.empCardList(baseReqDTO);
+            EmpCardAndBalanceResDTO empCardResDTO = walletFeignController.empCardAndBalance(baseReqDTO);
+            empCardResDTO.setPasswd(passwd);
+            empCardResDTO.setSalt(salt);
             return empCardResDTO;
         }).subscribeOn(Schedulers.elastic());
     }

@@ -26,6 +26,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.wage.manager.core.dto.CheckCardDTO;
 import chain.wage.manager.core.dto.response.*;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
+import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.response.*;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -465,38 +466,27 @@ public class PayRollController {
      */
     @GetMapping("/empCard")
     @TrackLog
-    public Mono<List<EmpEntDTO>> empCard(@RequestHeader(value = "encry-salt", required = false) String salt,
-                                         @RequestHeader(value = "encry-passwd", required = false) String passwd) {
+    public Mono<List<PayrollBankCardDTO>> empCard(
+            @RequestHeader(value = "entId", required = false) String entId,
+            @RequestHeader(value = "encry-salt", required = false) String salt,
+            @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        CacheUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
-        try {
-            List<chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum> userPrincipalDataAuths = userPrincipal.getDataAuths();
-            List<chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum> wageUserPrincipalDataAuths = wageUserPrincipal.getDataAuths();
-            log.info("userPrincipalDataAuths.size():[{}]", userPrincipalDataAuths.size());
-            log.info("wageUserPrincipalDataAuths.size():[{}]", wageUserPrincipalDataAuths.size());
-            for (chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum userPrincipalDataAuth : userPrincipalDataAuths) {
-                log.info("userPrincipalDataAuth:[{}]", userPrincipalDataAuth.getDesc());
-            }
-        } catch (Exception e) {
-            log.info("日志打印报错");
-        }
+        String idNumber = userPrincipal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EmpEntDTO> list = new ArrayList<>();
             log.info("调用wageMangerFeignService.empCard(wageUserPrincipal)开始");
-            List<PayrollEmpEntDTO> wageEmpEntDTOList = payrollFeignController.empCard(wageUserPrincipal);
+            CacheEmployeeInfoReq cacheEmployeeInfoReq = new CacheEmployeeInfoReq();
+            List<PayrollEmpEntDTO> wageEmpEntDTOList = new ArrayList<>();
+            List<PayrollBankCardDTO> payrollBankCardDTOS = payrollFeignController.empCard(cacheEmployeeInfoReq);
+            //todo 加密处理
             if (!CollectionUtils.isEmpty(wageEmpEntDTOList)) {
-//                for (WageEmpEntDTO wageEmpEntDTO:wageEmpEntDTOList){
-//                    EmpEntDTO entDTO=new EmpEntDTO();
-//                    BeanUtils.copyProperties(wageEmpEntDTO,entDTO);
-//                    list.add(entDTO);
-//                }
                 //数据转换及加密处理
                 list = transfalWageEmpEntDto(wageEmpEntDTOList, salt, passwd);
             }
             log.info("加密返回empCard.list:[{}]", JacksonUtil.objectToJson(list));
-            return list;
+            return payrollBankCardDTOS;
         }).subscribeOn(Schedulers.elastic());
     }
 

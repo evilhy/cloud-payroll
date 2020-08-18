@@ -7,13 +7,16 @@ import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
 import chain.fxgj.server.payroll.dto.request.PasswordSaveReq;
 import chain.fxgj.server.payroll.dto.response.CrateNumericKeypadRes;
+import chain.fxgj.server.payroll.dto.response.SecretFreeRes;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
+import chain.payroll.client.feign.EmployeeWechatFeignController;
 import chain.utils.commons.JacksonUtil;
 import core.dto.response.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,11 +46,15 @@ public class PasswordController {
     PaswordService paswordService;
     @Resource
     RedisTemplate redisTemplate;
+    @Autowired
+    EmployeeWechatFeignController employeeWechatFeignController;
+
+
 
     private static String KEYBOARD_KEY = "keyboard_{KEYBOARDID}";
 
     /**
-     * 查询用户是否开启手势密码
+     * 查询用户是否开启手势密码(待定使用)
      *
      * @return
      */
@@ -56,15 +63,12 @@ public class PasswordController {
     @PermitAll
     public Mono<HandPasswordDTO> queryHandPassword() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String wechatId = "11";//String.valueOf(WebContext.getCurrentUser().getWechatId());
+        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到登录用户可用标识")));
             log.info("=====> /admin/queryHandPassword 查询用户是否开启手势密码 wechatId:{}", wechatId);
-            HandPasswordDTO handPasswordDTO = new HandPasswordDTO();
-            handPasswordDTO.setStatus(1);
-            handPasswordDTO.setStatusVal("好");
-            return handPasswordDTO;
+            return paswordService.queryHandPassword(wechatId);
         }).subscribeOn(Schedulers.elastic());
     }
 
@@ -90,7 +94,7 @@ public class PasswordController {
     }
 
     /**
-     * 登录密码校验
+     * 数字密码、手势密码校验
      *
      * @param password 密码   （数字密码以“,”分隔）
      * @param type     密码类型 0：数字密码  1：手势密码
@@ -155,7 +159,7 @@ public class PasswordController {
     }
 
     /**
-     * 校验并保存密码
+     * 数字密码、手势密码保存
      *
      * @return
      */
@@ -201,7 +205,7 @@ public class PasswordController {
     }
 
     /**
-     * 用户登录
+     * 用户登录(校验通过，记录缓存)
      *
      * @param password 密码   （数字密码以“,”分隔）
      * @param type     密码类型 0：数字密码  1：手势密码
@@ -250,7 +254,7 @@ public class PasswordController {
     }
 
     /**
-     * 数字密码键盘生成
+     * 数字密码键盘生成(调用多次，每次都不一样)
      *
      * @return
      */
@@ -283,4 +287,66 @@ public class PasswordController {
             return CrateNumericKeypadRes.builder().numberBase(keyboardResponse.getNumberBase64()).build();
         }).subscribeOn(Schedulers.elastic());
     }
+
+    /**
+     * 是否免密
+     *
+     * @return
+     */
+    @PostMapping("/secretFree")
+    @TrackLog
+    @PermitAll
+    public Mono<SecretFreeRes> secretFree(@RequestBody PasswordSaveReq req) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
+        UserPrincipal principal = WebContext.getCurrentUser();
+        String idNumberEncrytor = principal.getIdNumberEncrytor();
+        String wechatId = String.valueOf(principal.getWechatId());
+
+        return Mono.fromCallable(() -> {
+
+            MDC.setContextMap(mdcContext);
+            SecretFreeRes secretFreeRes = new SecretFreeRes();
+
+            boolean security = true;//默认免密
+
+            //一、是否免密
+            if (StringUtils.isBlank(idNumberEncrytor)) {
+                log.info("idNumberEncrytor空，直接返回false，需要输入密码");
+                security = false;
+            }
+            String redisKey = PayrollDBConstant.PREFIX + ":checkFreePassword:" + idNumberEncrytor;
+            Object value = redisTemplate.opsForValue().get(redisKey);
+            if (value == null) {
+                log.info("根据idNumberEncrytor:[{}]未查询到登录记录", idNumberEncrytor);
+                security = false;
+            }
+            log.info("根据idNumberEncrytor:[{}]查询到登录记录,value:[{}]", idNumberEncrytor, value);
+            secretFreeRes.setSecretFree(security);
+
+            //二、密码类型
+            Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到登录用户可用标识")));
+            EmployeeWechatDTO employeeWechatDTO = employeeWechatFeignController.findById(wechatId);
+            String queryPwd = employeeWechatDTO.getQueryPwd();
+            String handPassword = employeeWechatDTO.getHandPassword();
+            Integer pwdTyp = 0;
+            if (StringUtils.isEmpty(queryPwd)) {
+                // 0 无密码
+                pwdTyp = 0;
+            } else {
+                if (StringUtils.isEmpty(handPassword)) {
+                    //1 数字密码
+                    pwdTyp = 1;
+                } else {
+                    //2 手势密码
+                    pwdTyp = 2;
+                }
+            }
+            secretFreeRes.setPwdType(pwdTyp);
+
+            return secretFreeRes;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+
 }

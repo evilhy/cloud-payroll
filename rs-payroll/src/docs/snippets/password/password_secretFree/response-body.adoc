@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"secretFree":false,"pwdType":2}
+----

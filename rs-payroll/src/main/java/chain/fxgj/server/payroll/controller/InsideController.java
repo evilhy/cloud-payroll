@@ -23,6 +23,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.MsgBuisTypeEnum;
 import core.dto.request.*;
+import core.dto.response.index.EmpEntResDTO;
 import core.dto.response.index.IndexEmpEntDTO;
 import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -514,7 +515,7 @@ public class InsideController {
      */
     @PostMapping("/empEntList")
     @TrackLog
-    public Mono<IndexEmpEntDTO> empEntList(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
+    public Mono<List<EmpEntResDTO>> empEntList(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
@@ -524,9 +525,9 @@ public class InsideController {
             if (StringUtils.isBlank(idNumber)) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
             }
-            IndexEmpEntDTO indexEmpEntDTOS = insideFeignController.empEntList(baseReqDTO);
+            List<EmpEntResDTO> empEntResDTOList = insideFeignController.empEntList(baseReqDTO);
 
-            return indexEmpEntDTOS;
+            return empEntResDTOList;
         }).subscribeOn(Schedulers.elastic());
     }
 
