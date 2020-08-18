@@ -81,19 +81,17 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             }
         }
         log.info("[{}]需要验证jsessionId", requestUrl);
-        //todo 需要找出 哪里入的redis
-//        UserPrincipal principal = empWechatService.getWechatInfo(jsessionId);
-//        CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
-//        UserPrincipal principal = TransferUtil.WageUserPrincipalToUserPrincipal(wechatInfoDetail);
-//        if (principal == null) {
-//            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
-//        }
-//        LocalDateTime sessionTimeOut = principal.getSessionTimeOut();
-//        if (LocalDateTime.now().isAfter(sessionTimeOut)) {
-//            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
-//        }
-//        principal.setEntId(entId);
-//        WebContext.setCurrentUser(principal);
+        CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+        UserPrincipal principal = TransferUtil.WageUserPrincipalToUserPrincipal(wechatInfoDetail);
+        if (principal == null) {
+            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
+        }
+        LocalDateTime sessionTimeOut = principal.getSessionTimeOut();
+        if (LocalDateTime.now().isAfter(sessionTimeOut)) {
+            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
+        }
+        principal.setEntId(entId);
+        WebContext.setCurrentUser(principal);
 
         String pageNumStr = exchange.getRequest().getHeaders().getFirst("page-num");
         String limitStr = exchange.getRequest().getHeaders().getFirst("limit");
