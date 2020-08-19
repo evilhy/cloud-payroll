@@ -29,5 +29,7 @@ public class FeignBasicAuthRequestInterceptor implements RequestInterceptor {
         requestTemplate.header("direction", mdcContext.get("direction"));
         requestTemplate.header("entId", mdcContext.get("entId"));
         requestTemplate.header("jsessionId", mdcContext.get("jsessionId"));
+        requestTemplate.header("idNumber", mdcContext.get("idNumber"));
+        requestTemplate.header("idNumberEncrytor", mdcContext.get("idNumberEncrytor"));
     }
 }

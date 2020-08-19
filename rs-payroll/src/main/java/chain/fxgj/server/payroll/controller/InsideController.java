@@ -13,6 +13,7 @@ import chain.fxgj.server.payroll.dto.request.ReadWageDTO;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.request.ReqPhone;
 import chain.fxgj.server.payroll.dto.response.Res100302;
+import chain.fxgj.server.payroll.dto.system.SkinThemeInfoDto;
 import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
@@ -536,6 +537,19 @@ public class InsideController {
             List<EmpEntResDTO> empEntResDTOList = insideFeignController.empEntList(baseReqDTO);
 
             return empEntResDTOList;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/theme")
+    @TrackLog
+    public Mono<SkinThemeInfoDto> getSkin(){
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        return Mono.fromCallable(() -> {
+
+
+            return new SkinThemeInfoDto();
         }).subscribeOn(Schedulers.elastic());
     }
 

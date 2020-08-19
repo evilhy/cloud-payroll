@@ -110,6 +110,8 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         MDC.put("version", version);
         MDC.put("subVersion", subVersion);
         MDC.put("entId", entId);
+        MDC.put("idNumber", wechatInfoDetail.getIdNumber());
+        MDC.put("idNumberEncrytor", wechatInfoDetail.getIdNumberEncrytor());
 
         HeaderDTO headerDTO = HeaderDTO.builder()
                 .limit(StringUtils.isBlank(limitStr) ? 30 : Integer.parseInt(limitStr))
