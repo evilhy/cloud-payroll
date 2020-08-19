@@ -221,4 +221,5 @@ public class PasswordControllerTest {
                         relaxedResponseFields(JavaDocReader.javaDoc(SecretFreeRes.class))
                 ));
     }
+
 }
