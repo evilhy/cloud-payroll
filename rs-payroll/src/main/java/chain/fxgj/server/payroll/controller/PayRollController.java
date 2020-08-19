@@ -15,6 +15,7 @@ import chain.fxgj.server.payroll.dto.response.EntUserDTO;
 import chain.fxgj.server.payroll.dto.response.GroupInvoiceDTO;
 import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
 import chain.fxgj.server.payroll.dto.response.Res100701;
+import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.service.PayRollService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
@@ -73,6 +74,8 @@ public class PayRollController {
 
     @Autowired
     PayRollService payRollService;
+    @Autowired
+    PaswordService paswordService;
 
     /**
      * 服务当前时间
@@ -319,10 +322,19 @@ public class PayRollController {
     @TrackLog
     public Mono<Void> checkCard(@RequestBody CacheCheckCardDTO cacheCheckCardDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
+
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");
-            boolean bool = payrollFeignController.checkCard(cacheCheckCardDTO);
+            String cardNo = cacheCheckCardDTO.getCardNo();
+            //数字键盘密码，解密
+            String password = paswordService.checkNumberPassword(cardNo, wechatId);
+            CacheCheckCardDTO checkCardDTOReq = new CacheCheckCardDTO();
+            BeanUtils.copyProperties(cacheCheckCardDTO, checkCardDTOReq);
+            checkCardDTOReq.setCardNo(password);
+
+            boolean bool = payrollFeignController.checkCard(checkCardDTOReq);
             if (!bool) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
             }

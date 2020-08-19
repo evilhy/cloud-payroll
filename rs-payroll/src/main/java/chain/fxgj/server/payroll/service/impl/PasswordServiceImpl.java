@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.service.impl;
 
 import chain.css.exception.ParamsIllegalException;
+import chain.fxgj.core.common.constant.PayrollDBConstant;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
 import chain.fxgj.server.payroll.service.PaswordService;
@@ -9,14 +10,18 @@ import chain.ids.core.commons.dto.softkeyboard.KeyboardRequest;
 import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
 import chain.ids.core.commons.enums.EnumKeyboardType;
 import chain.payroll.client.feign.EmployeeWechatFeignController;
+import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import core.dto.request.wechat.EmployeeWechatSaveReq;
 import core.dto.response.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -32,6 +37,10 @@ public class PasswordServiceImpl implements PaswordService {
     EmployeeWechatFeignController employeeWechatFeignController;
     @Autowired
     KeyboardFeign keyboardFeign;
+    @Resource
+    RedisTemplate redisTemplate;
+
+    private static String KEYBOARD_KEY = "keyboard_{KEYBOARDID}";
 
     @Override
     public HandPasswordDTO queryHandPassword(String wechatId) {
@@ -143,5 +152,34 @@ public class PasswordServiceImpl implements PaswordService {
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("密码键盘生成失败"));
         }
         return keyboard;
+    }
+
+    @Override
+    public String checkNumberPassword(String passsword, String wechatId) {
+        //生成密码键盘ID
+        String keyboardId = PayrollDBConstant.PREFIX + ":numberKeyboard:" + wechatId;
+
+        //取出缓存
+        try {
+            log.info("crateNumericKeypad.redisKey:[{}]", keyboardId);
+            String redisStr = redisTemplate.opsForValue().get(KEYBOARD_KEY.replace("{KEYBOARDID}", keyboardId)).toString();
+
+            Map<String, Character> number = (Map<String, Character>) JacksonUtil.jsonToMap(redisStr);
+            String[] split = passsword.split(",");
+            if (null == split || split.length <= 0) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("校验失败，密码不能为空"));
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < split.length; i++) {
+                Character character = number.get(split[i]);
+                sb = sb.append(character.charValue());
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("密码键盘读取缓存失败:[{}]", e.getMessage());
+        }
+        return null;
     }
 }

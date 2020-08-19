@@ -54,4 +54,13 @@ public interface PaswordService {
      * @return
      */
     KeyboardResponse crateNumericKeypad(String keyboardId);
+
+    /**
+     * 数字键盘密码解密
+     *
+     * @param passsword
+     * @param wechatId
+     * @return
+     */
+    String checkNumberPassword(String passsword, String wechatId);
 }

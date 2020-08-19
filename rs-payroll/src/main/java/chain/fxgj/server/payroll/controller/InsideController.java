@@ -14,6 +14,7 @@ import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.request.ReqPhone;
 import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.service.EmpWechatService;
+import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -29,6 +30,7 @@ import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,8 @@ public class InsideController {
     EmployeeInfoServiceFeign employeeInfoServiceFeign;
     @Autowired
     InsideFeignController insideFeignController;
+    @Autowired
+    PaswordService paswordService;
 
     /**
      * 发送短信验证码
@@ -266,13 +270,17 @@ public class InsideController {
     @TrackLog
     public Mono<Void> rz(@RequestBody Req100701 req100701) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
+        String pwd = req100701.getPwd();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-
             CacheReq100701 wageReq100701 = new CacheReq100701();
             BeanUtils.copyProperties(req100701, wageReq100701);
+
+            //数字键盘密码，解密
+            String password = paswordService.checkNumberPassword(pwd, wechatId);
+            wageReq100701.setPwd(password);
 
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);

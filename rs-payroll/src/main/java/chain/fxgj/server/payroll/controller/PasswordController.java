@@ -119,7 +119,7 @@ public class PasswordController {
                 EmployeeWechatDTO dto = paswordService.checkPassword(wechatId, password, type);
             } else if ("0".equals(type)) {
                 //数字键盘
-                String password1 = checkNumberPassword(password, wechatId);
+                String password1 = paswordService.checkNumberPassword(password, wechatId);
                 EmployeeWechatDTO dto = paswordService.checkPassword(wechatId, password1, type);
             } else {
                 log.info("=====> 校验失败，密码类型异常(0：数字密码  1：手势密码) type = {}", type);
@@ -130,33 +130,6 @@ public class PasswordController {
         }).subscribeOn(Schedulers.elastic()).then();
     }
 
-    public String checkNumberPassword(String passsword, String wechatId) {
-        //生成密码键盘ID
-        String keyboardId = PayrollDBConstant.PREFIX + ":numberKeyboard:" + wechatId;
-
-        //取出缓存
-        try {
-            log.info("crateNumericKeypad.redisKey:[{}]", keyboardId);
-            String redisStr = redisTemplate.opsForValue().get(KEYBOARD_KEY.replace("{KEYBOARDID}", keyboardId)).toString();
-
-            Map<String, Character> number = (Map<String, Character>) JacksonUtil.jsonToMap(redisStr);
-            String[] split = passsword.split(",");
-            if (null == split || split.length <= 0) {
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("校验失败，密码不能为空"));
-            }
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < split.length; i++) {
-                Character character = number.get(split[i]);
-                sb = sb.append(character.charValue());
-            }
-            return sb.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("密码键盘读取缓存失败:[{}]", e.getMessage());
-        }
-        return null;
-    }
 
     /**
      * 数字密码、手势密码保存
@@ -191,7 +164,7 @@ public class PasswordController {
                 EmployeeWechatDTO dto = paswordService.savePassword(wechatId, password, type);
             } else if ("0".equals(type)) {
                 //数字键盘
-                String password1 = checkNumberPassword(password, wechatId);
+                String password1 = paswordService.checkNumberPassword(password, wechatId);
                 EmployeeWechatDTO dto = paswordService.savePassword(wechatId, password1, type);
             } else {
                 log.info("=====> 校验失败，密码类型异常(0：数字密码  1：手势密码) type = {}", type);
@@ -231,7 +204,7 @@ public class PasswordController {
                 EmployeeWechatDTO dto = paswordService.checkPassword(wechatId, password, type);
             } else if ("0".equals(type)) {
                 //数字键盘
-                String password1 = checkNumberPassword(password, wechatId);
+                String password1 = paswordService.checkNumberPassword(password, wechatId);
                 EmployeeWechatDTO dto = paswordService.checkPassword(wechatId, password1, type);
             } else {
                 log.info("=====> 校验失败，密码类型异常(0：数字密码  1：手势密码) type = {}", type);
