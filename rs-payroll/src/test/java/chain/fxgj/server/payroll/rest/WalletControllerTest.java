@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.rest;
 import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.dto.request.BindWechatDTO;
 import chain.fxgj.server.payroll.dto.testfile.EmpCardResDTOP;
+import chain.fxgj.server.payroll.dto.tfinance.IntentRequestDTO;
 import core.dto.request.BaseReqDTO;
 import core.dto.response.wallet.EmpCardAndBalanceResDTO;
 import org.junit.FixMethodOrder;
@@ -54,5 +55,28 @@ public class WalletControllerTest extends BaseTestCase{
                         //相应文档
                         relaxedRequestFields(JavaDocReader.javaDoc(BindWechatDTO.class)),
                         relaxedResponseFields(JavaDocReader.javaDoc(EmpCardAndBalanceResDTO.class))));
+    }
+
+
+    /**
+     * 福利卡券数量
+     *
+     * @throws Exception
+     */
+    @Test
+    public void countWelfareEmpTicket() throws Exception {
+        IntentRequestDTO intentRequestDTO = new IntentRequestDTO();
+        intentRequestDTO.setProtocol(1);
+        webTestClient.post()
+                .uri("/wisales/countWelfareEmpTicket")
+                .header("jsession_id", "123123123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .syncBody(intentRequestDTO)//入参
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(IntentRequestDTO.class)//返回是什么类型的对象
+                .consumeWith(document("wisales_countWelfareEmpTicket",
+                        relaxedRequestFields(JavaDocReader.javaDoc(IntentRequestDTO.class))));
     }
 }

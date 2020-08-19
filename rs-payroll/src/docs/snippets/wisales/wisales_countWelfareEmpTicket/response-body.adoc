@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"idNumber":null,"prizeExchangeNum":1}
+----

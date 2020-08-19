@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/wisales/countWelfareEmpTicket' -i -X POST \
+    -H 'jsession_id: 123123123' \
+    -H 'Content-Type: application/json' \
+----

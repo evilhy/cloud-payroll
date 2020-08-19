@@ -304,3 +304,21 @@ include::{snippets}/wisales/welfare_orderTrack_get/curl-request.adoc[]
 +
 include::{snippets}/wisales/welfare_orderTrack_get/http-response.adoc[]
 
+
+=== 福利卡券数量
+==== 接口定义
+* Path Parameters:
++
+无
+* Response Body:
++
+include::{snippets}/wisales/wisales_countWelfareEmpTicket/request-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wisales/wisales_countWelfareEmpTicket/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wisales/wisales_countWelfareEmpTicket/http-response.adoc[]
+

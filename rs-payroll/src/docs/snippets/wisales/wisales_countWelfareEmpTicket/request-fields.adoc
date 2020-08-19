@@ -1,0 +1,8 @@
+|===
+|Path|Type|Description
+
+|`+prizeExchangeNum+`
+|`+long+`
+|礼品券数量()
+
+|===

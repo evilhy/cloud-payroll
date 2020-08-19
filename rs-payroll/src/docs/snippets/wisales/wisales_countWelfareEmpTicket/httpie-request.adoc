@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"productId":null,"entId":null,"custManagerId":null,"clientName":null,"idNumber":null,"clientPhone":null,"intentAmount":null,"channel":"0","fxId":null,"openId":null,"protocol":1,"idNumber2":null,"prizeExchangeNum":0}' | http POST 'http://localhost:8080/wisales/countWelfareEmpTicket' \
+    'jsession_id:123123123' \
+    'Content-Type:application/json'
+----

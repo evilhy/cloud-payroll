@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.server.payroll.dto.tfinance.IntentRequestDTO;
 import chain.fxgj.server.payroll.dto.wisales.PayrllWelfareCustAddressInfoDTO;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
@@ -426,4 +427,22 @@ public class WisalesController {
             return orderTrack;
         }).subscribeOn(Schedulers.elastic());
     }
+
+    /**
+     *  福利卡券数量
+     * @return
+     */
+    @PostMapping("/countWelfareEmpTicket")
+    public Mono<WelfareEmpTicketCountDTO> countWelfareEmpTicket(@RequestBody IntentRequestDTO intentRequestDTO){
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String idNumber = currentUser.getIdNumber();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            WelfareEmpTicketCountDTO welfareEmpTicketCountDTO = welfareActivityFeignService.countWelfareEmpTicket(idNumber);
+            return welfareEmpTicketCountDTO;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+
 }
