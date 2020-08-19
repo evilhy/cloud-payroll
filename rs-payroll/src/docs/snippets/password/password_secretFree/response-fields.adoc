@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+secretFree+`
+|`+boolean+`
+|是否免密(true免密，false需要输入密码)
+
+|`+pwdType+`
+|`+Integer+`
+|密码类型 (0无密码、1数字密码、2手势密码)
+
+|===

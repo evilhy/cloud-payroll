@@ -96,17 +96,17 @@ public class PasswordController {
     /**
      * 数字密码、手势密码校验
      *
-     * @param password 密码   （数字密码以“,”分隔）
-     * @param type     密码类型 0：数字密码  1：手势密码
+     * @param passwordSaveReq
      * @return
      */
-    @GetMapping("/checkPassword")
+    @PostMapping("/checkPassword")
     @TrackLog
-    public Mono<Void> checkPassword(@RequestParam("password") String password,
-                                    @RequestParam("type") String type) {
+    public Mono<Void> checkPassword(@RequestBody PasswordSaveReq passwordSaveReq) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
         return Mono.fromCallable(() -> {
+            String password = passwordSaveReq.getPassword();
+            String type = passwordSaveReq.getType();
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到登录用户可用标识")));
             Optional.ofNullable(password).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘密码’参数不能为空")));
@@ -172,20 +172,13 @@ public class PasswordController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到登录用户可用标识")));
-            Optional.ofNullable(req.getOldPassword()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘新密码’参数不能为空")));
             Optional.ofNullable(req.getPassword()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘确认密码’参数不能为空")));
             Optional.ofNullable(req.getType()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘密码类型’参数不能为空")));
 
             log.info("=====> /admin/savePassword 添加密码 wechatId:{}，req:{}", wechatId, JacksonUtil.objectToJson(req));
 
             String password = req.getPassword();
-            String oldPassword = req.getOldPassword();
             String type = req.getType();
-
-            if (!oldPassword.equals(password)) {
-                log.info("=====> wechatId:{} 用户密码校验失败：oldPassword：{}，password：{}", wechatId, oldPassword, password);
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("两次输入密码不一致"));
-            }
 
             //密码校验
             if ("1".equals(type)) {
@@ -207,21 +200,21 @@ public class PasswordController {
     /**
      * 用户登录(校验通过，记录缓存)
      *
-     * @param password 密码   （数字密码以“,”分隔）
-     * @param type     密码类型 0：数字密码  1：手势密码
+     * @param passwordSaveReq
      * @return
      */
-    @GetMapping("/login")
+    @PostMapping("/login")
     @TrackLog
     @PermitAll
-    public Mono<Void> login(@RequestParam("password") String password,
-                            @RequestParam("type") String type) {
+    public Mono<Void> login(@RequestBody PasswordSaveReq passwordSaveReq) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String wechatId = String.valueOf(currentUser.getWechatId());
         String idNumberEncrytor = currentUser.getIdNumberEncrytor();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            String password = passwordSaveReq.getPassword();
+            String type = passwordSaveReq.getType();
             log.info("=====> /admin/login 用户登录 wechatId:{}, password:{}，type{}", wechatId, password, type);
 
             Optional.ofNullable(type).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘密码类型’参数不能为空")));
@@ -289,7 +282,7 @@ public class PasswordController {
     }
 
     /**
-     * 是否免密
+     * 是否免密查询
      *
      * @return
      */

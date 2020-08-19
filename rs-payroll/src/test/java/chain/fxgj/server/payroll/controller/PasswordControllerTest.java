@@ -4,6 +4,7 @@ import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
 import chain.fxgj.server.payroll.dto.request.PasswordSaveReq;
 import chain.fxgj.server.payroll.dto.response.CrateNumericKeypadRes;
+import chain.fxgj.server.payroll.dto.response.SecretFreeRes;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.*;
@@ -120,20 +121,30 @@ public class PasswordControllerTest {
      */
     @Test
     public void checkPassword() {
-        String password = "N0,N1,N3,N4,N7,N9";
-        String type = "0";
+        PasswordSaveReq req = PasswordSaveReq.builder()
+                .password("N0,N1,N3,N4,N7,N9")
+                .type("0")
+                .build();
 
-        webTestClient.get()
-                .uri("/password/checkPassword?password={password}&type={type}", password, type)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(String.class)//返回是什么类型的对象
-                .consumeWith(body -> log.info(body.getResponseBody()))
+        webTestClient.post().uri("/password/checkPassword")
+//                .header("jsessionId", sessionId)
+                .syncBody(req).exchange()
+                .expectStatus().isOk()
+                .expectBody()
                 .consumeWith(document("password_checkPassword",
-                        requestParameters(parameterWithName("password").description("密码(数字密码以“,”分隔)"),
-                                parameterWithName("type").description("密码类型： 0、数字密码  1、手势密码"))
+                        relaxedRequestFields(JavaDocReader.javaDoc(PasswordSaveReq.class))
                 ));
+//        webTestClient.get()
+//                .uri("/password/checkPassword?password={password}&type={type}", password, type)
+//                .exchange()
+//                .expectStatus()
+//                .isOk()
+//                .expectBody(String.class)//返回是什么类型的对象
+//                .consumeWith(body -> log.info(body.getResponseBody()))
+//                .consumeWith(document("password_checkPassword",
+//                        requestParameters(parameterWithName("password").description("密码(数字密码以“,”分隔)"),
+//                                parameterWithName("type").description("密码类型： 0、数字密码  1、手势密码"))
+//                ));
     }
 
     /**
@@ -142,7 +153,6 @@ public class PasswordControllerTest {
     @Test
     public void savePassword() {
         PasswordSaveReq req = PasswordSaveReq.builder()
-                .oldPassword("N0,N1,N3,N4,N7,N9")
                 .password("N0,N1,N3,N4,N7,N9")
                 .type("0")
                 .build();
@@ -158,30 +168,47 @@ public class PasswordControllerTest {
     }
 
     /**
-     * 用户登录
+     * 数字密码和手势密码校验并免密
      */
     @Test
     public void login() {
-        String password = "123456";
-        String type = "1";
 
-        webTestClient.get()
-                .uri("/password/login?password={password}&type={type}", password, type)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(String.class)//返回是什么类型的对象
-                .consumeWith(body -> log.info(body.getResponseBody()))
+        PasswordSaveReq req = PasswordSaveReq.builder()
+                .password("N0,N1,N3,N4,N7,N9")
+                .type("0")
+                .build();
+
+        webTestClient.post().uri("/password/login")
+//                .header("jsessionId", sessionId)
+                .syncBody(req).exchange()
+                .expectStatus().isOk()
+                .expectBody()
                 .consumeWith(document("password_login",
-                        requestParameters(parameterWithName("password").description("密码(数字密码以“,”分隔)"),
-                        parameterWithName("type").description("密码类型： 0、数字密码  1、手势密码"))
+                        relaxedRequestFields(JavaDocReader.javaDoc(PasswordSaveReq.class))
                 ));
+
+
+//        String password = "123456";
+//        String type = "1";
+//
+//        webTestClient.get()
+//                .uri("/password/login?password={password}&type={type}", password, type)
+//                .exchange()
+//                .expectStatus()
+//                .isOk()
+//                .expectBody(String.class)//返回是什么类型的对象
+//                .consumeWith(body -> log.info(body.getResponseBody()))
+//                .consumeWith(document("password_login",
+//                        requestParameters(parameterWithName("password").description("密码(数字密码以“,”分隔)"),
+//                        parameterWithName("type").description("密码类型： 0、数字密码  1、手势密码"))
+//                ));
     }
 
     @Test
     public void secretFree() {
         PasswordSaveReq passwordSaveReq = new PasswordSaveReq();
-        passwordSaveReq.setOldPassword("1");
+        passwordSaveReq.setPassword("N0,N1,N3,N4,N7,N9");
+        passwordSaveReq.setType("0");
         webTestClient.post().uri("/password/secretFree")
 //                .header("jsessionId", sessionId)
                 .syncBody(passwordSaveReq)
@@ -190,7 +217,8 @@ public class PasswordControllerTest {
                 .isOk()
                 .expectBody()
                 .consumeWith(document("password_secretFree",
-                        relaxedRequestFields(JavaDocReader.javaDoc(PasswordSaveReq.class))
+                        relaxedRequestFields(JavaDocReader.javaDoc(PasswordSaveReq.class)),
+                        relaxedResponseFields(JavaDocReader.javaDoc(SecretFreeRes.class))
                 ));
     }
 }

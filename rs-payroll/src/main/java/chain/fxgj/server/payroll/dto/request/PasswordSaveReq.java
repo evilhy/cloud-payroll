@@ -25,10 +25,6 @@ public class PasswordSaveReq {
      */
     String password;
     /**
-     * 新密码  （数字密码以“,”分隔）
-     */
-    String oldPassword;
-    /**
      * 类型 0:数字密码    1：手势密码
      */
     String type;

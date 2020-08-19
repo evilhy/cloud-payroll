@@ -2,5 +2,5 @@
 ----
 $ curl 'http://localhost:8080/password/savePassword' -i -X POST \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -d '{"password":"N0,N1,N3,N4,N7,N9","oldPassword":"N0,N1,N3,N4,N7,N9","type":"0"}'
+    -d '{"password":"N0,N1,N3,N4,N7,N9","type":"0"}'
 ----

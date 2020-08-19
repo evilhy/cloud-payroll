@@ -5,5 +5,5 @@ Content-Length: 77
 Content-Type: application/json;charset=UTF-8
 Host: localhost:8080
 
-{"password":"N0,N1,N3,N4,N7,N9","oldPassword":"N0,N1,N3,N4,N7,N9","type":"0"}
+{"password":"N0,N1,N3,N4,N7,N9","type":"0"}
 ----

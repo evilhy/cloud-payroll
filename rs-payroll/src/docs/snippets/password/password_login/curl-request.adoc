@@ -1,4 +1,6 @@
 [source,bash]
 ----
-$ curl 'http://localhost:8080/password/login?password=123456&type=1' -i -X GET
+$ curl 'http://localhost:8080/password/login' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -d '{"password":"N0,N1,N3,N4,N7,N9","type":"0"}'
 ----

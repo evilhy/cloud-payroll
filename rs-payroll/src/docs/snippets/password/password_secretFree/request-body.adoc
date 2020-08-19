@@ -1,4 +1,4 @@
 [source,options="nowrap"]
 ----
-{"oldPassword":"1"}
+{"password":"N0,N1,N3,N4,N7,N9","type":"0"}
 ----

@@ -1,4 +1,5 @@
 [source,bash]
 ----
-$ http GET 'http://localhost:8080/password/login?password=123456&type=1'
+$ echo '{"password":"N0,N1,N3,N4,N7,N9","type":"0"}' | http POST 'http://localhost:8080/password/login' \
+    'Content-Type:application/json;charset=UTF-8'
 ----
