@@ -478,12 +478,16 @@ public class PayRollController {
             List<EmpEntDTO> list = new ArrayList<>();
             log.info("调用wageMangerFeignService.empCard(wageUserPrincipal)开始");
             CacheEmployeeInfoReq cacheEmployeeInfoReq = new CacheEmployeeInfoReq();
-            List<PayrollEmpEntDTO> wageEmpEntDTOList = new ArrayList<>();
             List<PayrollBankCardDTO> payrollBankCardDTOS = payrollFeignController.empCard(cacheEmployeeInfoReq);
             //todo 加密处理
-            if (!CollectionUtils.isEmpty(wageEmpEntDTOList)) {
+            if (!CollectionUtils.isEmpty(payrollBankCardDTOS)) {
                 //数据转换及加密处理
-                list = transfalWageEmpEntDto(wageEmpEntDTOList, salt, passwd);
+                for (PayrollBankCardDTO item : payrollBankCardDTOS) {
+                    item.setCardNo(EncrytorUtils.encryptField(item.getCardNo(), salt, passwd));
+                    item.setOldCardNo(EncrytorUtils.encryptField(item.getOldCardNo(), salt, passwd));
+                    item.setSalt(salt);
+                    item.setPasswd(passwd);
+                }
             }
             log.info("加密返回empCard.list:[{}]", JacksonUtil.objectToJson(list));
             return payrollBankCardDTOS;
