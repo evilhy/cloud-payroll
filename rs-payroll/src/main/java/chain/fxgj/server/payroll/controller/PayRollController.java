@@ -504,11 +504,11 @@ public class PayRollController {
             MDC.setContextMap(mdcContext);
             List<EmpCardLogDTO> list = null;
             log.info("调用wageMangerFeignService.empCardLog(ids)开始");
-            List<WageEmpCardLogDTO> wageEmpCardLogList = wageMangerFeignService.empCardLog(ids);
+            List<PayrollEmpCardLogDTO> wageEmpCardLogList = payrollFeignController.empCardLog(ids);
             log.info("empCardLog--->{}", wageEmpCardLogList);
             if (!CollectionUtils.isEmpty(wageEmpCardLogList)) {
                 list = new ArrayList<>();
-                for (WageEmpCardLogDTO wageEmpCardLogDTO : wageEmpCardLogList) {
+                for (PayrollEmpCardLogDTO wageEmpCardLogDTO : wageEmpCardLogList) {
                     EmpCardLogDTO logDTO = new EmpCardLogDTO();
                     BeanUtils.copyProperties(wageEmpCardLogDTO, logDTO);
                     //脱敏处理
