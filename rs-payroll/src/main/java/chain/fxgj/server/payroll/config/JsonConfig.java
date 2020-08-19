@@ -20,11 +20,11 @@ import java.time.LocalDateTime;
  * @author chain
  * create by chain on 2018/10/19 下午12:11
  **/
-//@Configuration
+@Configuration
 @SuppressWarnings("unchecked")
 public class JsonConfig {
 
-//    @Bean
+    @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
