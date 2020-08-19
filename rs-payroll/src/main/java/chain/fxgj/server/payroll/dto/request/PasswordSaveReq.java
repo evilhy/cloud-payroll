@@ -21,9 +21,15 @@ import lombok.*;
 public class PasswordSaveReq {
 
     /**
+     * 第一次输入的密码  （数字密码以“,”分隔）
+     */
+    String firstPassword;
+
+    /**
      * 确认密码 （数字密码以“,”分隔）
      */
     String password;
+
     /**
      * 类型 0:数字密码    1：手势密码
      */

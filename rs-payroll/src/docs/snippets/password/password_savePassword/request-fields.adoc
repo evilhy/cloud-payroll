@@ -1,6 +1,11 @@
 |===
 |Path|Type|Description
 
+|`+firstPassword+`
+|`+String+`
+|第一次输入的密码 （数字密码以“,”分隔）
+
+
 |`+password+`
 |`+String+`
 |确认密码 （数字密码以“,”分隔）

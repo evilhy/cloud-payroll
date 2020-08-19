@@ -172,6 +172,7 @@ public class PasswordController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到登录用户可用标识")));
+            Optional.ofNullable(req.getFirstPassword()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("第一次密码不能为空")));
             Optional.ofNullable(req.getPassword()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘确认密码’参数不能为空")));
             Optional.ofNullable(req.getType()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘密码类型’参数不能为空")));
 
@@ -179,7 +180,11 @@ public class PasswordController {
 
             String password = req.getPassword();
             String type = req.getType();
-
+            String firstPassword = req.getFirstPassword();
+            if (!firstPassword.equals(password)) {
+                log.info("=====> wechatId:{} 用户密码校验失败：firstPassword：{}，password：{}", wechatId, firstPassword, password);
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("两次输入密码不一致"));
+            }
             //密码校验
             if ("1".equals(type)) {
                 //手势键盘
