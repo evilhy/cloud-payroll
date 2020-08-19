@@ -23,9 +23,9 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.PayrollFeignController;
 import chain.utils.commons.JacksonUtil;
-import chain.wage.manager.core.dto.CheckCardDTO;
 import chain.wage.manager.core.dto.response.*;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
+import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.response.*;
 import core.dto.wechat.CacheUserPrincipal;
@@ -317,12 +317,12 @@ public class PayRollController {
      */
     @PostMapping("/checkCard")
     @TrackLog
-    public Mono<Void> checkCard(@RequestBody CheckCardDTO checkCardDTO) {
+    public Mono<Void> checkCard(@RequestBody CacheCheckCardDTO cacheCheckCardDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");
-            boolean bool = wageMangerFeignService.checkCard(checkCardDTO);
+            boolean bool = payrollFeignController.checkCard(cacheCheckCardDTO);
             if (!bool) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
             }
