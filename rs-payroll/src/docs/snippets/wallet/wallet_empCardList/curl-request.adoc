@@ -1,7 +1,0 @@
-[source,bash]
-----
-$ curl 'http://localhost:8080/wallet/empCardList' -i -X POST \
-    -H 'Content-Type: application/json' \
-    -H 'id: fxgj' \
-    -d '{"entId":""}'
-----

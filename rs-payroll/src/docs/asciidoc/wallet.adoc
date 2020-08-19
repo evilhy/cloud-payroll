@@ -1,32 +1,19 @@
 :snippets: ../snippets
 == 放薪钱包
 
-=== 钱包余额
+=== 员工银行卡数和钱包余额
 ==== 接口定义
 * Part Parameters:
 +
-
-==== 示例
-* Request:
-+
-include::{snippets}/wallet/wallet_balance/curl-request.adoc[]
-* Response:
-+
-include::{snippets}/wallet/wallet_balance/http-response.adoc[]
-
-=== 员工银行卡数
-==== 接口定义
-* Part Parameters:
-+
-include::{snippets}/wallet/wallet_empCardList/request-parameters.adoc[]
+无
 * Response Body:
 +
-include::{snippets}/wallet/wallet_empCardList/response-fields.adoc[]
+include::{snippets}/wallet/wallet_empCardAdnBalance/response-fields.adoc[]
 
 ==== 示例
 * Request:
 +
-include::{snippets}/wallet/wallet_empCardList/curl-request.adoc[]
+include::{snippets}/wallet/wallet_empCardAdnBalance/curl-request.adoc[]
 * Response:
 +
-include::{snippets}/wallet/wallet_empCardList/http-response.adoc[]
+include::{snippets}/wallet/wallet_empCardAdnBalance/http-response.adoc[]

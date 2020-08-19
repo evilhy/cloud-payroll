@@ -56,7 +56,7 @@ public class WalletController {
      */
     @PostMapping("/empCardAdnBalance")
     @TrackLog
-    public Mono<EmpCardAndBalanceResDTO> empCardList(@RequestHeader(value = "encry-salt", required = false) String salt,
+    public Mono<EmpCardAndBalanceResDTO> empCardAdnBalance(@RequestHeader(value = "encry-salt", required = false) String salt,
                                                             @RequestHeader(value = "encry-passwd", required = false) String passwd,
                                                             @RequestBody BaseReqDTO baseReqDTO) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();

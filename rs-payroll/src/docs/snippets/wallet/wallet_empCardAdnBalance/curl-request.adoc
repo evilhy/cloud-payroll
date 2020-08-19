@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/wallet/empCardAdnBalance' -i -X POST \
+    -H 'encry-salt: 123456' \
+    -H 'Content-Type: application/json' \
+    -H 'encry-passwd: 234567' \
+----

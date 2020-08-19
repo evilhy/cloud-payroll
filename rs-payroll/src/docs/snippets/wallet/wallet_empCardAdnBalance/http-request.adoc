@@ -1,0 +1,10 @@
+[source,http,options="nowrap"]
+----
+POST /wallet/empCardAdnBalance HTTP/1.1
+encry-salt: 123456
+Content-Length: 54
+Content-Type: application/json
+encry-passwd: 234567
+Host: localhost:8080
+
+----

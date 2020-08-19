@@ -1,13 +1,16 @@
 package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.server.payroll.JavaDocReader;
+import chain.fxgj.server.payroll.dto.request.BindWechatDTO;
 import chain.fxgj.server.payroll.dto.testfile.EmpCardResDTOP;
 import core.dto.request.BaseReqDTO;
+import core.dto.response.wallet.EmpCardAndBalanceResDTO;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.http.MediaType;
 
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 
@@ -35,20 +38,21 @@ public class WalletControllerTest extends BaseTestCase{
     }
 
     @Test
-    public void empCardList() throws Exception {
-        BaseReqDTO baseReqDTO = new BaseReqDTO();
-        baseReqDTO.setEntId("");
-        webTestClient.post().uri("/wallet/empCardList")
+    public void empCardAdnBalance() throws Exception {
+        BindWechatDTO baseReqDTO = new BindWechatDTO();
+
+        webTestClient.post().uri("/wallet/empCardAdnBalance")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("id", "fxgj")
+                .header("encry-salt", "123456")
+                .header("encry-passwd", "234567")
                 .syncBody(baseReqDTO)//入参
                 .exchange()
                 .expectStatus()
                 .isOk()
-                .expectBody(EmpCardResDTOP.class)//返回是什么类型的对象
-                .consumeWith(document("wallet_empCardList",
+                .expectBody(EmpCardAndBalanceResDTO.class)//返回是什么类型的对象
+                .consumeWith(document("wallet_empCardAdnBalance",
                         //相应文档
-//                        relaxedRequestFields(JavaDocReader.javaDoc(BaseReqDTO.class)),
-                        relaxedResponseFields(JavaDocReader.javaDoc(EmpCardResDTOP.class))));
+                        relaxedRequestFields(JavaDocReader.javaDoc(BindWechatDTO.class)),
+                        relaxedResponseFields(JavaDocReader.javaDoc(EmpCardAndBalanceResDTO.class))));
     }
 }

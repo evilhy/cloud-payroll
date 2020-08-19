@@ -1,8 +1,0 @@
-|===
-|Path|Type|Description
-
-|`+cardNum+`
-|`+Integer+`
-|银行卡张数
-
-|===

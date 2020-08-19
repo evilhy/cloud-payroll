@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"openId":null,"phone":null,"idNumber":"1","pwd":null}
+----

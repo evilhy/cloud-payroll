@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ echo '{"openId":null,"phone":null,"idNumber":"1","pwd":null}' | http POST 'http://localhost:8080/wallet/empCardAdnBalance' \
+    'encry-salt:123456' \
+    'Content-Type:application/json' \
+    'encry-passwd:234567'
+----
