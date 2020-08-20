@@ -107,6 +107,7 @@ public class WechatIndexController {
             res100705.setPhone("");
             res100705.setSalt(salt);
             res100705.setPasswd(passwd);
+            res100705.setThemeId(cacheUserPrincipal.getThemeId());
             log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
         }).subscribeOn(Schedulers.elastic());

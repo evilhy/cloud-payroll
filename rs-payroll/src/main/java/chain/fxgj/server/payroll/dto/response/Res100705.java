@@ -65,6 +65,8 @@ public class Res100705 {
      */
     private String passwd;
 
+    private String themeId;
+
 
 
     public Res100705(String jsessionId, String bindStatus) {
