@@ -1,0 +1,12 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 121
+Content-Type: application/json;charset=UTF-8
+
+{
+  "accessToken" : "kc383AWf",
+  "expiresIn" : 120,
+  "accessUrl" : "https://sitwxp.cardpu.com/fx-payroll/#/token"
+}
+----

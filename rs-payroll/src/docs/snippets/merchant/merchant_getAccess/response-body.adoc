@@ -1,0 +1,8 @@
+[source,options="nowrap"]
+----
+{
+  "accessToken" : "kc383AWf",
+  "expiresIn" : 120,
+  "accessUrl" : "https://sitwxp.cardpu.com/fx-payroll/#/token"
+}
+----

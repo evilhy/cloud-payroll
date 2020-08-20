@@ -1,0 +1,19 @@
+:snippets: ../snippets
+== 第三方调用接口
+
+=== 振兴银行
+==== 接口定义
+* Part Parameters:
++
+include::{snippets}/merchant/merchant_getAccess/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/merchant/merchant_getAccess/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/merchant/merchant_getAccess/curl-request.adoc[]
+* Response:
++
+include::{snippets}/merchant/merchant_getAccess/http-response.adoc[]

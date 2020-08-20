@@ -47,3 +47,5 @@ include::advertising.adoc[] ## 微信回调(待提供
 include::wisales.adoc[]
 
 include::mini.adoc[]
+
+include::merchant.adoc[]

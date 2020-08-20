@@ -1,0 +1,20 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/merchant/getAccess' -i -X POST \
+    -H 'clientTime: ' \
+    -H 'signature: xxxxxxxxxxx' \
+    -H 'appid: wx0345ad9614fe9567' \
+    -H 'clientDate: ' \
+    -H 'Content-Type: application/json' \
+    -H 'clientSn: ' \
+    -H 'version: 01' \
+    -d '{
+  "name" : "用户微信昵称",
+  "idType" : "01",
+  "idNumber" : "14212219891008530X",
+  "phone" : "16666666666",
+  "uid" : "9871234",
+  "openId" : "oFnSLvyxBArqJtYqd3-xU6H7Xr08",
+  "headimgurl" : "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLGZicQDuRPCCcFEFEN72qnAgVGJ99JMmegLMTknEpaSGbVzo2aweUSCkC0reicqhpZOWABEoTqahmA/132"
+}'
+----

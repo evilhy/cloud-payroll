@@ -355,7 +355,7 @@ public class PayRollController {
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         CacheUserPrincipal build = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
-        BeanUtils.copyProperties(userPrincipal, build);
+//        BeanUtils.copyProperties(userPrincipal, build);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             EmpInfoDTO empInfoDTO = null;

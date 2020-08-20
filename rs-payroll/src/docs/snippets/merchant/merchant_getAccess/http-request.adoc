@@ -1,0 +1,23 @@
+[source,http,options="nowrap"]
+----
+POST /merchant/getAccess HTTP/1.1
+clientTime: 
+signature: xxxxxxxxxxx
+appid: wx0345ad9614fe9567
+clientDate: 
+Content-Type: application/json
+clientSn: 
+Content-Length: 342
+version: 01
+Host: localhost:8080
+
+{
+  "name" : "用户微信昵称",
+  "idType" : "01",
+  "idNumber" : "14212219891008530X",
+  "phone" : "16666666666",
+  "uid" : "9871234",
+  "openId" : "oFnSLvyxBArqJtYqd3-xU6H7Xr08",
+  "headimgurl" : "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLGZicQDuRPCCcFEFEN72qnAgVGJ99JMmegLMTknEpaSGbVzo2aweUSCkC0reicqhpZOWABEoTqahmA/132"
+}
+----
