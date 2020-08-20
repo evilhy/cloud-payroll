@@ -30,9 +30,9 @@ public class MerchantControllerTest extends BaseTestCase{
         merchantDTO.setHeadimgurl("http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLGZicQDuRPCCcFEFEN72qnAgVGJ99JMmegLMTknEpaSGbVzo2aweUSCkC0reicqhpZOWABEoTqahmA/132");
 
         webTestClient.post().uri("/merchant/getAccess")
-                .header("signature", "xxxxxxxxxxx")
+                .header("signature", "QklIQXlkSGVycStZcHpYenBmRGs0Uk9ReUV5NTB0ektvTGthRW4vQ2hZWnUraXZBdHh2OGZvRjkzdHFvSXRDMHJVUldFOFFZQ2gxS2N6MllqVk81cHNadzFkbk1LcUtqN2hYYndYUThEUGUyYy9ocTB2d0tnVkwrZ3lpOHpNNzBaMHNKcVo3NEFKaklDdElqK1d3NFNOK0xIMERJaG8vQlNUR3JoWVJrOWxBPQ==")
                 .header("appid", "wx0345ad9614fe9567")
-                .header("version", "01")
+                .header("version", "dgl412VRwgpKpeTzx7sUq+w5rbNHFKMNhjo/STCAqpF4Z/uiL/pAxsfy7q4MprnDtUv2AvPvoSHaO6a82EJ2DWu4DWYQ6SI1BBr9AmB6bujl+K0B/jpAJiTJWpuIr1cqIlruyO6+IDQzl47XX7WkMaonNvvlaoQNvZYnCn1oCs0=")
                 .header("clientSn", "")
                 .header("clientDate", "")
                 .header("clientTime", "")

@@ -142,7 +142,7 @@ public class SslHttpTest {
 
 
         //测试地址
-        String requestUrl = "https://sitwx.cardpu.com/merchant/getAccess";
+        String requestUrl = "https://sitgateway.cardpu.com/payroll/merchant/getAccess";
         System.out.println("调用地址:" + requestUrl);
         System.out.println("入参:" + reqParam);
 
@@ -178,6 +178,9 @@ public class SslHttpTest {
             log.info("yyyyMMdd1:[{}]", new SimpleDateFormat("yyyyMMdd").format(new Date()));
             long clientTime = now.toInstant(ZoneOffset.of("+8")).toEpochMilli();
             log.info("clientTime:[{}]", clientTime);
+
+            String encryptVersion = RSAEncrypt.encrypt(version, rsaPublicKey);
+            log.info("version:[{}], encryptVersion:[{}]", version, encryptVersion);
             //方式一：post请求
             HttpPost httpPost = new HttpPost(requestUrl);
             httpPost.setEntity(postingString);
