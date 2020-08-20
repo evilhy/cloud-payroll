@@ -1,0 +1,8 @@
+|===
+|Path|Type|Description
+
+|`+themeId+`
+|`+String+`
+|主题id
+
+|===

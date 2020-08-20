@@ -162,3 +162,39 @@ include::{snippets}/inside/inside_empEntList/curl-request.adoc[]
 * Response:
 +
 include::{snippets}/inside/inside_empEntList/http-response.adoc[]
+
+=== 获取该用户主题信息
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_getTheme/http-request.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_getTheme/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_getTheme/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_getTheme/http-response.adoc[]
+
+=== 设置主题信息
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/inside/inside_setTheme/http-request.adoc[]
+* Response Body:
++
+include::{snippets}/inside/inside_setTheme/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/inside/inside_setTheme/curl-request.adoc[]
+* Response:
++
+include::{snippets}/inside/inside_setTheme/http-response.adoc[]

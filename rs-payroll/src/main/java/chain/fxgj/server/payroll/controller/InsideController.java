@@ -9,11 +9,11 @@ import chain.fxgj.ent.core.dto.response.EmployeeInfoRes;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.MsgCodeLogRequestDTO;
 import chain.fxgj.server.payroll.dto.MsgCodeLogResponeDTO;
+import chain.fxgj.server.payroll.dto.base.HeaderDTO;
 import chain.fxgj.server.payroll.dto.request.ReadWageDTO;
 import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.request.ReqPhone;
 import chain.fxgj.server.payroll.dto.response.Res100302;
-import chain.fxgj.server.payroll.dto.system.SkinThemeInfoDto;
 import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
@@ -27,6 +27,8 @@ import chain.utils.fxgj.constant.DictEnums.MsgBuisTypeEnum;
 import core.dto.request.*;
 import core.dto.response.index.EmpEntResDTO;
 import core.dto.response.index.IndexEmpEntDTO;
+import core.dto.response.inside.SkinThemeInfoDto;
+import core.dto.response.inside.SkinThemeInfoReq;
 import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -540,17 +542,38 @@ public class InsideController {
         }).subscribeOn(Schedulers.elastic());
     }
 
+    /**
+     * 获取该用户主题信息
+     * @return
+     */
     @GetMapping("/theme")
     @TrackLog
     public Mono<SkinThemeInfoDto> getSkin(){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
-        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        HeaderDTO header = WebContext.getCurrentHeader();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
 
-
-            return new SkinThemeInfoDto();
+            return insideFeignController.getSkin();
         }).subscribeOn(Schedulers.elastic());
+    }
+
+    /**
+     * 设置主题信息
+     * @param req
+     * @return
+     */
+    @PostMapping("/theme")
+    @TrackLog
+    public Mono<Void> setSkin(@RequestBody SkinThemeInfoReq req){
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        HeaderDTO header = WebContext.getCurrentHeader();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
+            insideFeignController.setSkin(req);
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 
 }

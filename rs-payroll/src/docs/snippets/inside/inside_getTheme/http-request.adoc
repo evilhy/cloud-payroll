@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /inside/theme HTTP/1.1
+Content-Length: 16
+Host: localhost:8080
+
+----

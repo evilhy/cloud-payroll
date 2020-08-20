@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"themeId:"black"}' | http POST 'http://localhost:8080/inside/theme' \
+    'Content-Type:application/json' \
+    'jsession_id:07e027921805403dbfe83fc1a7ac9c0e'
+----
