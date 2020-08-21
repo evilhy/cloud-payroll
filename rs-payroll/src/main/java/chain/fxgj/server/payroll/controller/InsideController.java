@@ -526,7 +526,7 @@ public class InsideController {
      */
     @PostMapping("/empEntList")
     @TrackLog
-    public Mono<IndexEmpEntDTO> empEntList(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
+    public Mono<List<EmpEntResDTO>> empEntList(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
@@ -536,9 +536,9 @@ public class InsideController {
             if (StringUtils.isBlank(idNumber)) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
             }
-            IndexEmpEntDTO indexEmpEntDTO = insideFeignController.empEntList(baseReqDTO);
+            List<EmpEntResDTO> empEntResDTOList = insideFeignController.empEntList(baseReqDTO);
 
-            return indexEmpEntDTO;
+            return empEntResDTOList;
         }).subscribeOn(Schedulers.elastic());
     }
 
