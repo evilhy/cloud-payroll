@@ -67,7 +67,7 @@ public class SslHttpTest {
             e.printStackTrace();
         }
 
-
+        // 开始
         String rsaPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCGYHGGPlZvE4DE7ExTBMDNwJlDKXBiQYaprvxGZ+rf7YqJhxO08UnecTHKpPdA0KGe6vMwgT58AN3Cj1WsytIQ6Y2ybiqSwlpjlFQaNb3jiiE4gnSMkMvxxzRaHQ+Y10Qtfil47wqVq2TCKMMWrgSfMNINoTbSEp10FFbhbVrxpQIDAQAB";
         String version = "1.0";
         String appid = "wx0345ad9614fe9567";
@@ -100,7 +100,7 @@ public class SslHttpTest {
         System.out.println("merchantHeadDTO:" + merHead);
 
         String merDto = JacksonUtil.objectToJson(merchantDTO);
-        System.out.println("merchantDTO:[]" + merDto);
+        System.out.println("merchantDTO:[{}]" + merDto);
 
         String signature = MerchantDTO.signature(merchantDTO, merchantHeadDTO);
         System.out.println("signature sha-1:" + signature);
@@ -122,7 +122,7 @@ public class SslHttpTest {
             e.printStackTrace();
         }
         String reqParam = JsonUtil.objectToJson(merchantDTO_Encrypt);
-        System.out.println("reqParam:" + JacksonUtil.objectToJson(reqParam));
+        System.out.println("reqParam:" + reqParam);
 
         Base64 base64 = new Base64();
 
@@ -130,19 +130,24 @@ public class SslHttpTest {
         try {
             signature = RSAEncrypt.encrypt(signature, rsaPublicKey);
             System.out.println("signature使用公钥加密:" + signature);
+            String s = RSAEncrypt.decrypt(signature, priKey);
+            System.out.println("signature使用私钥解密-->:" + s);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
             signature = base64.encodeToString(signature.getBytes("UTF-8"));
             System.out.println("signature.base64:" + signature);
+            String ss = new String(base64.decode(signature), "UTF-8");
+            System.out.println("signature.base64解密:-->:" + ss);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
 
         //测试地址
-        String requestUrl = "https://sitgateway.cardpu.com/payroll/merchant/getAccess";
+            String requestUrl = "https://sitgateway.cardpu.com/payroll/merchant/getAccess";
         System.out.println("调用地址:" + requestUrl);
         System.out.println("入参:" + reqParam);
 
@@ -201,7 +206,7 @@ public class SslHttpTest {
             System.out.print(response.getStatusLine().getStatusCode());
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity);
-
+            log.info("result:[{}]");
             System.out.print(result);
         } catch (Exception e) {
             e.printStackTrace();

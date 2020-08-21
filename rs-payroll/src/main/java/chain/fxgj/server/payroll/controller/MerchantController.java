@@ -100,6 +100,8 @@ public class MerchantController {
                                                 ServerHttpResponse response
     ) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        log.info("getAccess.signature:[{}]", signature);
+        log.info("getAccess.appid:[{}]", appid);
         log.info("getAccess.version:[{}]", version);
         log.info("getAccess.merchantDTO:[{}]", JacksonUtil.objectToJson(merchantDTO));
         //【1】根据appid -->  取配置文件里商户信息
@@ -111,9 +113,10 @@ public class MerchantController {
                 .signature(signature)
                 .appid(appid)
                 .build();
-
+        log.info("构建 MerchantHeadDTO:[{}]", JacksonUtil.objectToJson(merchantHeadDTO));
         //解密
         MerchantHeadDTO merchantHeadDecrypt = MerchantHeadDTO.decrypt(merchantHeadDTO, merchant.getRsaPrivateKey());
+        log.info("解密 MerchantHeadDTO:[{}]", JacksonUtil.objectToJson(merchantHeadDecrypt));
 
         //1、解析 返回报文体信息
         MerchantDTO merchantDecrypt = MerchantDTO.decrypt(merchantDTO, merchant.getRsaPrivateKey());

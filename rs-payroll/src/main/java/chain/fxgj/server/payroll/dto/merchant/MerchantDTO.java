@@ -4,6 +4,7 @@ import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.util.Sha1;
+import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import chain.utils.fxgj.constant.DictEnums.CertTypeEnum;
 import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
@@ -107,6 +108,7 @@ public class MerchantDTO {
             log.error("获取昵称出现异常！");
         }
         merchant.setNickname(nickName);
+        log.info("merchantDTO 解密:[{}]", merchantDTO);
         return merchant;
     }
 
@@ -121,7 +123,7 @@ public class MerchantDTO {
 
         signatureMap.put("version", merchantHeadDTO.getVersion());
         signatureMap.put("appid", merchantHeadDTO.getAppid());
-
+        log.info("signatureMap:[{}]", JacksonUtil.objectToJson(signatureMap));
         String signature = null;
         try {
             signature = Sha1.SHA1(signatureMap);
