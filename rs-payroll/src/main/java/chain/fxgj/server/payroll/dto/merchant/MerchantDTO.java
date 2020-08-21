@@ -108,7 +108,6 @@ public class MerchantDTO {
             log.error("获取昵称出现异常！");
         }
         merchant.setNickname(nickName);
-        log.info("merchantDTO 解密:[{}]", merchantDTO);
         return merchant;
     }
 
