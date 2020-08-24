@@ -17,6 +17,7 @@ import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
@@ -524,21 +525,41 @@ public class InsideController {
      * @return
      * @throws Exception
      */
-    @PostMapping("/empEntList")
+    @GetMapping("/empEntList")
     @TrackLog
-    public Mono<List<EmpEntResDTO>> empEntList(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
+    public Mono<List<EmpEntResDTO>> empEntList(@RequestHeader(value = "encry-salt", required = false) String salt,
+                                               @RequestHeader(value = "encry-passwd", required = false) String passwd) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             String idNumber = userPrincipal.getIdNumber();
+            log.info("empEntList.idNumber:[{}]", idNumber);
+            BaseReqDTO baseReqDTO = BaseReqDTO.builder()
+                    .idNumber(idNumber)
+                    .build();
             if (StringUtils.isBlank(idNumber)) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
             }
             List<EmpEntResDTO> empEntResDTOList = insideFeignController.empEntList(baseReqDTO);
 
-            return empEntResDTOList;
+            //数据加密
+            List<EmpEntResDTO> empEntResDTOListRes = new ArrayList<>();
+            if (null != empEntResDTOList && empEntResDTOList.size() > 0) {
+                for (EmpEntResDTO empEntResDTO : empEntResDTOList) {
+                    EmpEntResDTO empEntResDTORes = EmpEntResDTO.builder()
+                            .entId(EncrytorUtils.encryptField(empEntResDTO.getEntId(), salt, passwd))
+                            .entName(EncrytorUtils.encryptField(empEntResDTO.getEntName(), salt, passwd))
+                            .shortEntName(EncrytorUtils.encryptField(empEntResDTO.getShortEntName(), salt, passwd))
+                            .salt(salt)
+                            .passwd(passwd)
+                            .build();
+                    empEntResDTOListRes.add(empEntResDTORes);
+                }
+            }
+            log.info("empEntResDTOListRes:[{}]", JacksonUtil.objectToJson(empEntResDTOListRes));
+            return empEntResDTOListRes;
         }).subscribeOn(Schedulers.elastic());
     }
 

@@ -268,7 +268,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/address/getById")
-    public Mono<WelfareCustAddressInfoDTO> getCustAddressById(@RequestParam(required = false) String idNumber,
+    public Mono<PayrllWelfareCustAddressInfoDTO> getCustAddressById(@RequestParam(required = false) String idNumber,
         @RequestParam String addressId, @RequestHeader(value = "encry-salt", required = false) String salt,
         @RequestHeader(value = "encry-passwd", required = false) String passwd){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
@@ -299,7 +299,7 @@ public class WisalesController {
 
             }
             log.info("getCustAddressById.custAddressById:[{}]", JacksonUtil.objectToJson(custAddressById));
-            return custAddressById;
+            return payrllWelfareCustAddressInfoDTO;
         }).subscribeOn(Schedulers.elastic());
     }
 
@@ -432,8 +432,8 @@ public class WisalesController {
      *  福利卡券数量
      * @return
      */
-    @PostMapping("/countWelfareEmpTicket")
-    public Mono<WelfareEmpTicketCountDTO> countWelfareEmpTicket(@RequestBody IntentRequestDTO intentRequestDTO){
+    @GetMapping("/countWelfareEmpTicket")
+    public Mono<WelfareEmpTicketCountDTO> countWelfareEmpTicket(){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String idNumber = currentUser.getIdNumber();

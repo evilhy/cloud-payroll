@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.payroll.client.feign.WalletFeignController;
 import core.dto.request.BaseReqDTO;
 import core.dto.response.wallet.EmpCardAndBalanceResDTO;
@@ -54,7 +55,7 @@ public class WalletController {
      * @param baseReqDTO
      * @return
      */
-    @PostMapping("/empCardAdnBalance")
+    @GetMapping("/empCardAdnBalance")
     @TrackLog
     public Mono<EmpCardAndBalanceResDTO> empCardAdnBalance(@RequestHeader(value = "encry-salt", required = false) String salt,
                                                             @RequestHeader(value = "encry-passwd", required = false) String passwd,
@@ -63,6 +64,7 @@ public class WalletController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             EmpCardAndBalanceResDTO empCardResDTO = walletFeignController.empCardAndBalance(baseReqDTO);
+            empCardResDTO.setBalance(EncrytorUtils.encryptField(empCardResDTO.getBalance(), salt, passwd));
             empCardResDTO.setPasswd(passwd);
             empCardResDTO.setSalt(salt);
             return empCardResDTO;
