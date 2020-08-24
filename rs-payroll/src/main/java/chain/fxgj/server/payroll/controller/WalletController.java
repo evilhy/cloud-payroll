@@ -2,6 +2,8 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
+import chain.fxgj.server.payroll.web.UserPrincipal;
+import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.WalletFeignController;
 import core.dto.request.BaseReqDTO;
 import core.dto.response.wallet.EmpCardAndBalanceResDTO;
@@ -52,16 +54,20 @@ public class WalletController {
      * 2.钱包余额</p>
      *      查询当前企业下的银行卡数，去重
      *
-     * @param baseReqDTO
      * @return
      */
     @GetMapping("/empCardAdnBalance")
     @TrackLog
     public Mono<EmpCardAndBalanceResDTO> empCardAdnBalance(@RequestHeader(value = "encry-salt", required = false) String salt,
                                                             @RequestHeader(value = "encry-passwd", required = false) String passwd,
-                                                            @RequestBody BaseReqDTO baseReqDTO) throws Exception {
+                                                           @RequestHeader(value = "entId") String entId) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
+            BaseReqDTO baseReqDTO = BaseReqDTO.builder()
+                    .idNumber(currentUser.getIdNumber())
+                    .entId(entId)
+                    .build();
             MDC.setContextMap(mdcContext);
             EmpCardAndBalanceResDTO empCardResDTO = walletFeignController.empCardAndBalance(baseReqDTO);
             empCardResDTO.setBalance(EncrytorUtils.encryptField(empCardResDTO.getBalance(), salt, passwd));
