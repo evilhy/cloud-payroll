@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+newsId+`
+|`+String+`
+|消息id(没传该值，默认全部操作)
+
+|`+operateType+`
+|`+String+`
+|操作类型(0:已读 1：删除)
+
+|===

@@ -1,0 +1,74 @@
+:snippets: ../snippets/
+== 消息中心
+
+=== 首页滚动展示信息
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/news/news_bulletInfo/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/news/news_bulletInfo/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/news/news_bulletInfo/curl-request.adoc[]
+* Response:
++
+include::{snippets}/news/news_bulletInfo/http-response.adoc[]
+
+=== 各类消息类型未读个数统计
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/news/news_statisticInfo/request-body.adoc[]
+* Response Body:
++
+include::{snippets}/news/news_statisticInfo/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/news/news_statisticInfo/curl-request.adoc[]
+* Response:
++
+include::{snippets}/news/news_statisticInfo/http-response.adoc[]
+
+=== 分页查询消息列表
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/news/news_pageList/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/news/news_pageList/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/news/news_pageList/curl-request.adoc[]
+* Response:
++
+include::{snippets}/news/news_pageList/http-response.adoc[]
+
+=== 操作消息
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/news/news_operate/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/news/news_operate/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/news/news_operate/curl-request.adoc[]
+* Response:
++
+include::{snippets}/news/news_operate/http-response.adoc[]
+
+
+
+

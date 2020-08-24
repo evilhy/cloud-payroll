@@ -1,0 +1,9 @@
+|===
+|Path|Type|Description
+
+
+|`+[].newsType+`
+|`+Integer+`
+|消息类型
+
+|===

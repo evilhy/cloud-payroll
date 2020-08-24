@@ -1,0 +1,7 @@
+[source,options="nowrap"]
+----
+{
+  "newsId" : "123",
+  "operateType" : 1
+}
+----

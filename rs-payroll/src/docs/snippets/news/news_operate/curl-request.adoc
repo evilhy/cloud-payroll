@@ -1,0 +1,9 @@
+[source,bash]
+----
+$ curl 'http://localhost:8081/news/operate' -i -X POST \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -d '{
+  "newsId" : "123",
+  "operateType" : 1
+}'
+----

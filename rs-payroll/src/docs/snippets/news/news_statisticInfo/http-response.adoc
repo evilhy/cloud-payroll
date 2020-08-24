@@ -1,0 +1,19 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 143
+Content-Type: application/json;charset=UTF-8
+
+[
+{
+    "newsType": 1,
+    "newsTypeDesc": "资金状态",
+    "unReadCnt": 3
+},
+{
+    "newsType": 2,
+    "newsTypeDesc": "申请状态",
+    "unReadCnt": 2
+}
+]
+----

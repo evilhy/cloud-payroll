@@ -1,0 +1,10 @@
+[source,options="nowrap"]
+----
+{
+  "unReadTotalCnt" : 1,
+  "list" : [ {
+                "newsType" :1,
+                "digest" : "这是一个摘要" }
+  ]
+}
+----

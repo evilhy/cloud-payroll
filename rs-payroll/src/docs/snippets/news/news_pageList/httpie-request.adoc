@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ echo '{
+
+}' | http POST 'http://localhost:8081/news' \
+    'Content-Type:application/json;charset=UTF-8'
+----

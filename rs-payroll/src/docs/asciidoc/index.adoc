@@ -49,3 +49,5 @@ include::wisales.adoc[]
 include::mini.adoc[]
 
 include::merchant.adoc[]
+
+include::news.adoc[]

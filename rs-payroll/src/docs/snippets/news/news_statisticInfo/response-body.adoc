@@ -1,0 +1,15 @@
+[source,options="nowrap"]
+----
+[
+{
+    "newsType": 1,
+    "newsTypeDesc": "资金状态",
+    "unReadCnt": 3
+},
+{
+    "newsType": 2,
+    "newsTypeDesc": "申请状态",
+    "unReadCnt": 2
+}
+]
+----
