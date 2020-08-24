@@ -88,7 +88,7 @@ public class UserPrincipal implements Principal {
     /**
      * 用户绑定微信表 唯一标识
      */
-    private ObjectId wechatId;
+    private String wechatId;
     /**
      * 用户查询密码
      */
