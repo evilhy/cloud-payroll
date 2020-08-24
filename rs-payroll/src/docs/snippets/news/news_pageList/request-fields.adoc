@@ -2,7 +2,7 @@
 |Path|Type|Description
 
 
-|`+[].newsType+`
+|`+newsType+`
 |`+Integer+`
 |消息类型
 
