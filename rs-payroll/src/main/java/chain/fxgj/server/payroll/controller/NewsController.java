@@ -1,6 +1,8 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.server.payroll.web.UserPrincipal;
+import chain.fxgj.server.payroll.web.WebContext;
 import chain.news.dto.PageDTO;
 import chain.news.dto.news.*;
 import chain.news.server.service.NewsNoticeServiceFeign;
@@ -41,10 +43,13 @@ public class NewsController {
     @TrackLog
     public Mono<NewsBulletInfoDto> bulletInfo(@RequestBody NewsInfoReq req){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            return NewsBulletInfoDto.builder().build();
+            req.setEntId(userPrincipal.getEntId());
+            req.setIdNumber(userPrincipal.getIdNumber());
+            return newsNoticeServiceFeign.bulletInfo(req);
         }).subscribeOn(Schedulers.elastic());
     }
 
@@ -57,11 +62,13 @@ public class NewsController {
     @TrackLog
     public Mono<List<NewsStatisticInfoDto>> statisticInfo(@RequestBody NewsInfoReq req){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            List<NewsStatisticInfoDto> dtos = new ArrayList<>();
-            return dtos;
+            req.setEntId(userPrincipal.getEntId());
+            req.setIdNumber(userPrincipal.getIdNumber());
+            return newsNoticeServiceFeign.statisticInfo(req);
         }).subscribeOn(Schedulers.elastic());
     }
 
@@ -74,10 +81,13 @@ public class NewsController {
     @TrackLog
     public Mono<PageDTO<NewsInfoDto>> pageList(@RequestBody NewsInfoReq req){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            return new PageDTO<NewsInfoDto>();
+            req.setEntId(userPrincipal.getEntId());
+            req.setIdNumber(userPrincipal.getIdNumber());
+            return newsNoticeServiceFeign.pageList(req);
         }).subscribeOn(Schedulers.elastic());
     }
 
@@ -90,9 +100,13 @@ public class NewsController {
     @TrackLog
     public Mono<Void> operate(@RequestBody NewsOperateInfoReq req){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
+            req.setEntId(userPrincipal.getEntId());
+            req.setIdNumber(userPrincipal.getIdNumber());
+            newsNoticeServiceFeign.operate(req);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
