@@ -30,6 +30,10 @@ public class Res100705 {
      */
     private String idNumber;
     /**
+     * 企业id
+     */
+    private String entId;
+    /**
      * 是否设置查询密码 1是 0否
      */
     @Builder.Default

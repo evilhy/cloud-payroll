@@ -100,11 +100,11 @@ public class WechatIndexController {
                 res100705.setIfPwd(StringUtils.isEmpty(StringUtils.trimToEmpty(cacheUserPrincipal.getQueryPwd())) ? IsStatusEnum.NO.getCode() : IsStatusEnum.YES.getCode());
                 res100705.setName(cacheUserPrincipal.getName());
                 res100705.setPhone(cacheUserPrincipal.getPhone());
+                res100705.setEntId(cacheUserPrincipal.getEntId());
             }
             res100705.setHeadimgurl(headImgurl);
             //加密处理
             res100705.setBindStatus(EncrytorUtils.encryptField(res100705.getBindStatus(), salt, passwd));
-            res100705.setPhone("");
             res100705.setSalt(salt);
             res100705.setPasswd(passwd);
             res100705.setThemeId(cacheUserPrincipal.getThemeId());
