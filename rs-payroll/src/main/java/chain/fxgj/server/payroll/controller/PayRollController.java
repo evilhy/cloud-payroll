@@ -729,7 +729,7 @@ public class PayRollController {
     @GetMapping("/wageList")
     @TrackLog
     public Mono<Res100703> wageList(
-            @RequestHeader(value = "entId") String entId,
+            @RequestHeader(value = "ent-id") String entId,
             @RequestParam("groupId") String groupId,
             @RequestParam("year") String year,
             @RequestParam("type") String type) {

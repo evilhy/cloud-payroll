@@ -60,7 +60,7 @@ public class WalletController {
     @TrackLog
     public Mono<EmpCardAndBalanceResDTO> empCardAdnBalance(@RequestHeader(value = "encry-salt", required = false) String salt,
                                                             @RequestHeader(value = "encry-passwd", required = false) String passwd,
-                                                           @RequestHeader(value = "entId") String entId) throws Exception {
+                                                           @RequestHeader(value = "ent-id") String entId) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
