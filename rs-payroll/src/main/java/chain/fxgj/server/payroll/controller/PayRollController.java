@@ -482,12 +482,15 @@ public class PayRollController {
             @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        String idNumber = userPrincipal.getIdNumber();
+        String idNumber1 = userPrincipal.getIdNumber();
+        String entId1 = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EmpEntDTO> list = new ArrayList<>();
-            log.info("调用wageMangerFeignService.empCard(wageUserPrincipal)开始");
             CacheEmployeeInfoReq cacheEmployeeInfoReq = new CacheEmployeeInfoReq();
+            cacheEmployeeInfoReq.setIdNumber(idNumber1);
+            cacheEmployeeInfoReq.setEntId(entId1);
+            log.info("调用wageMangerFeignService.empCard(wageUserPrincipal)开始idNumber:[{}], entId[{}]", idNumber1, entId1);
             List<PayrollBankCardDTO> payrollBankCardDTOS = payrollFeignController.empCard(cacheEmployeeInfoReq);
             //todo 加密处理
             if (!CollectionUtils.isEmpty(payrollBankCardDTOS)) {
