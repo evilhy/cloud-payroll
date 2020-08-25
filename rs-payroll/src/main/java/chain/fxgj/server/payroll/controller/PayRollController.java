@@ -550,17 +550,17 @@ public class PayRollController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
-        BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
+        CacheUserPrincipal cacheUserPrincipal = new CacheUserPrincipal();
+        BeanUtils.copyProperties(userPrincipal, cacheUserPrincipal);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<EmployeeListBean> list = null;
-            log.info("调用wageMangerFeignService.entPhone(wageUserPrincipal)开始");
-            List<WageEmployeeListBean> wageEmployeeListBeanList = wageMangerFeignService.entPhone(wageUserPrincipal);
+            log.info("调用wageMangerFeignService.entPhone(cacheUserPrincipal)开始");
+            List<core.dto.response.EmployeeListBean> wageEmployeeListBeanList = payrollFeignController.entPhone(cacheUserPrincipal);
             log.info("entPhone-->{}", wageEmployeeListBeanList);
             if (!CollectionUtils.isEmpty(wageEmployeeListBeanList)) {
                 list = new ArrayList<>();
-                for (WageEmployeeListBean welb : wageEmployeeListBeanList) {
+                for (core.dto.response.EmployeeListBean welb : wageEmployeeListBeanList) {
                     EmployeeListBean eb = new EmployeeListBean();
                     BeanUtils.copyProperties(welb, eb);
                     //身份证、手机号加密处理
