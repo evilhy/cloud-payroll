@@ -382,7 +382,7 @@ public class PayRollController {
     @GetMapping("/empEnt")
     @TrackLog
     @Deprecated
-    public Mono<List<EmpEntDTO>> empEnt() {
+    public Mono<EmpEntDTO> empEnt() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
@@ -465,7 +465,7 @@ public class PayRollController {
                 }
             }
             log.info("empEnt.list:[{}]", JacksonUtil.objectToJson(list));
-            return list;
+            return list.get(0);
         }).subscribeOn(Schedulers.elastic());
     }
 
