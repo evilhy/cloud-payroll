@@ -263,7 +263,7 @@ public class PayRollController {
             MDC.setContextMap(mdcContext);
             List<GroupInvoiceDTO> list = null;
             log.info("invoice.wageUserPrincipal:[{}]", JacksonUtil.objectToJson(wageUserPrincipal));
-            List<WageGroupInvoiceDTO> wageGroupInvoiceDTOList = wageMangerFeignService.invoice(wageUserPrincipal);
+            List<WageGroupInvoiceDTO> wageGroupInvoiceDTOList = wageMangerFeignService.invoice(idNumber);
             log.info("invoice-->{}", wageGroupInvoiceDTOList);
             if (!CollectionUtils.isEmpty(wageGroupInvoiceDTOList)) {
                 list = new ArrayList<>();
