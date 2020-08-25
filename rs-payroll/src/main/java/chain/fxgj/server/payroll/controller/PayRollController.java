@@ -70,7 +70,7 @@ public class PayRollController {
     @Qualifier("applicationTaskExecutor")
     Executor executor;
     @Autowired
-    private PayRollFeignService wageMangerFeignService;
+    PayRollFeignService wageMangerFeignService;
 
     @Autowired
     PayRollService payRollService;
@@ -261,7 +261,7 @@ public class PayRollController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<GroupInvoiceDTO> list = null;
-            log.info("调用wageMangerFeignService.invoice(wageUserPrincipal)开始");
+            log.info("invoice.wageUserPrincipal:[{}]", JacksonUtil.objectToJson(wageUserPrincipal));
             List<WageGroupInvoiceDTO> wageGroupInvoiceDTOList = wageMangerFeignService.invoice(wageUserPrincipal);
             log.info("invoice-->{}", wageGroupInvoiceDTOList);
             if (!CollectionUtils.isEmpty(wageGroupInvoiceDTOList)) {
@@ -502,7 +502,7 @@ public class PayRollController {
                     item.setPasswd(passwd);
                 }
             }
-            log.info("加密返回empCard.list:[{}]", JacksonUtil.objectToJson(list));
+            log.info("加密返回empCard.payrollBankCardDTOS:[{}]", JacksonUtil.objectToJson(payrollBankCardDTOS));
             return payrollBankCardDTOS;
         }).subscribeOn(Schedulers.elastic());
     }
