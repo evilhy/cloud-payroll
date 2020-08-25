@@ -172,8 +172,9 @@ public class PasswordServiceImpl implements PaswordService {
 
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < split.length; i++) {
-                Character character = number.get(split[i]);
-                sb = sb.append(character.charValue());
+//                Character character = number.get(split[i]);
+                String s = split[i];
+                sb = sb.append(number.get(s));
             }
             return sb.toString();
         } catch (Exception e) {
