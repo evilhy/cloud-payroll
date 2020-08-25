@@ -1,112 +1,56 @@
 |===
 |Path|Type|Description
 
-|`+[]+`
-|`+Array+`
-|员工银行卡
-
-|`+[].shortEntName+`
-|`+String+`
-|企业简称
-
-|`+[].entName+`
-|`+String+`
-|企业名称
-
-|`+[].items+`
-|`+List+`
-|基本信息
-
-|`+[].cards+`
-|`+List+`
-|银行卡
-
-|`+items[].employeeId+`
-|`+String+`
-|员工id
-
-|`+items[].employeeName+`
-|`+String+`
-|姓名
-
-|`+items[].idNumberStar+`
-|`+String+`
-|身份证
-
-|`+items[].phoneStar+`
-|`+String+`
-|手机号
-
-|`+items[].position+`
-|`+String+`
-|职位
-
-|`+items[].inServiceStatus+`
-|`+String+`
-|状态
-
-|`+items[].inServiceStatusVal+`
-|`+String+`
-|状态
-
-|`+items[].employeeNo+`
-|`+String+`
-|员工工号
-
-|`+items[].groupName+`
-|`+String+`
-|机构
-
-|`+items[].entryDate+`
-|`+Long+`
-|入职时间
-
-|`+items[].bankCardList+`
-|`+List+`
-|银行卡
-
-|`+cards[].cardNo+`
+|`+[].cardNo+`
 |`+String+`
 |账号
 
-|`+cards[].oldCardNo+`
+|`+[].oldCardNo+`
 |`+String+`
 |修改之前账号
 
-|`+cards[].issuerName+`
+|`+[].issuerName+`
 |`+String+`
 |开户行
 
-|`+cards[].bankCardGroups+`
-|`+List+`
-|银行卡所属机构
-
-|`+cards[].cardUpdStatus+`
+|`+[].cardUpdStatus+`
 |`+Integer+`
 |银行卡修改状态
 
-|`+cards[].cardUpdStatusVal+`
+|`+[].cardUpdStatusVal+`
 |`+String+`
 |银行卡修改状态描述
 
-|`+cards[].updDesc+`
+|`+[].updDesc+`
 |`+String+`
 |银行卡修改被拒原因
 
-|`+cards[].isNew+`
+|`+[].isNew+`
 |`+Integer+`
 |银行卡修改是否最新记录（0：已看 1：新，未看）
 
-|`+cards.bankCardGroups[].id+`
+|`+[].bankCardGroups+`
+|`+List+`
+|银行卡所属机构
+
+|`+bankCardGroups[].id+`
 |`+String+`
 |id
 
-|`+cards.bankCardGroups[].groupId+`
+|`+bankCardGroups[].groupId+`
 |`+String+`
 |机构id
 
-|`+cards.bankCardGroups[].shortGroupName+`
+|`+bankCardGroups[].shortGroupName+`
 |`+String+`
 |机构名称
+
+|`+[].salt+`
+|`+String+`
+|salt
+
+|`+[].passwd+`
+|`+String+`
+|passwd
 
 |===
