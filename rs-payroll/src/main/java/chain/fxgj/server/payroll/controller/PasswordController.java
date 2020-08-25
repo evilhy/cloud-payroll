@@ -14,6 +14,7 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
 import chain.payroll.client.feign.EmployeeWechatFeignController;
 import chain.utils.commons.JacksonUtil;
+import com.google.gson.GsonBuilder;
 import core.dto.response.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -245,11 +246,12 @@ public class PasswordController {
 
             //生成密码键盘
             KeyboardResponse keyboardResponse = paswordService.crateNumericKeypad(keyboardId);
+            String result = new GsonBuilder().disableHtmlEscaping().create().toJson(keyboardResponse.getNumber());
 
             //加入缓存
             try {
                 log.info("crateNumericKeypad.redisKey:[{}]", keyboardId);
-                redisTemplate.opsForValue().set(keyboardId, JacksonUtil.objectToJson(keyboardResponse.getNumber()), 1, TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set(keyboardId, result, 1, TimeUnit.MINUTES);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("密码键盘入缓存失败:[{}]", e.getMessage());
