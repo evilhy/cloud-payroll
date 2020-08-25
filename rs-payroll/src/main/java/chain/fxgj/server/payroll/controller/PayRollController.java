@@ -258,6 +258,7 @@ public class PayRollController {
         UserPrincipal principal = WebContext.getCurrentUser();
         WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
         BeanUtils.copyProperties(principal, wageUserPrincipal);
+        wageUserPrincipal.setLoginDateTime(null);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<GroupInvoiceDTO> list = null;
