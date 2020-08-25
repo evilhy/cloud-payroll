@@ -162,7 +162,7 @@ public class PasswordServiceImpl implements PaswordService {
         //取出缓存
         try {
             log.info("crateNumericKeypad.redisKey:[{}]", keyboardId);
-            String redisStr = redisTemplate.opsForValue().get(KEYBOARD_KEY.replace("{KEYBOARDID}", keyboardId)).toString();
+            String redisStr = redisTemplate.opsForValue().get(keyboardId).toString();
 
             Map<String, Character> number = (Map<String, Character>) JacksonUtil.jsonToMap(redisStr);
             String[] split = passsword.split(",");
