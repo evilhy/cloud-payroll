@@ -6,10 +6,12 @@ import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
 import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.fxgj.server.payroll.service.PayRollService;
 import chain.fxgj.server.payroll.util.DateTimeUtils;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.payroll.client.feign.*;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
 import core.dto.request.employee.EmployeeQueryReq;
 import core.dto.request.wageDetail.WageDetailQueryReq;
 import core.dto.response.employee.EmployeeDTO;
@@ -47,8 +49,9 @@ public class PayRollServiceImpl implements PayRollService {
     @Autowired
     GroupFeignController groupFeignController;
 
-    public List<NewestWageLogDTO> groupList(String entId, String groupId, String idNumber) {
-
+    public List<NewestWageLogDTO> groupList(String entId, String groupId, String idNumber, UserPrincipal userPrincipal) {
+        List<FundLiquidationEnum> dataAuths = userPrincipal.getDataAuths();
+        log.info("groupList.dataAuths:[{}]", JacksonUtil.objectToJson(dataAuths));
         List<NewestWageLogDTO> list = new ArrayList<>();
 
         //根据身份证查询员工所属机构
@@ -66,8 +69,7 @@ public class PayRollServiceImpl implements PayRollService {
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("员工信息不存在"));
         }
         Set<String> groupIdSet = new HashSet<>();
-        for (EmployeeDTO dto : employeeDTOList
-        ) {
+        for (EmployeeDTO dto : employeeDTOList) {
             if (StringUtils.isNotBlank(dto.getGroupId())) {
                 groupIdSet.add(dto.getGroupId());
             }
@@ -77,8 +79,7 @@ public class PayRollServiceImpl implements PayRollService {
             log.info("=====> groupIdSet:{} groupIds:{}", JacksonUtil.objectToJson(groupIdSet), JacksonUtil.objectToJson(groupIds));
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("员工所属机构信息不存在"));
         }
-        for (String id : groupIds
-        ) {
+        for (String id : groupIds) {
 
             //查询机构信息
             GroupDTO groupDTO = groupFeignController.findById(id);
@@ -94,6 +95,19 @@ public class PayRollServiceImpl implements PayRollService {
 
             //企业信息
             EntErpriseDTO erpriseDTO = entErpriseFeignController.findById(groupDTO.getEntId());
+
+            //数据权限
+            log.info("getEmpList()dataAuths:[{}]", JacksonUtil.objectToJson(dataAuths));
+            if (dataAuths != null && dataAuths.size() > 0) {
+                for (int j = 0; j < dataAuths.size(); j++) {
+                    FundLiquidationEnum fundLiquidationEnum = dataAuths.get(j);
+                    if (fundLiquidationEnum != erpriseDTO.getLiquidation()) {
+                        //数据权限不一致，不添加返回
+                       continue;
+                    }
+                }
+            }
+
             if (null == erpriseDTO) {
                 log.info("=====> 机构所属企业信息不存在 groupId:{}，entId:{}", id, groupDTO.getEntId());
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("机构所属企业信息不存在"));

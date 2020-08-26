@@ -155,7 +155,7 @@ public class PayRollController {
 //                    list.add(dto);
 //                }
 //            }
-            List<NewestWageLogDTO> list = payRollService.groupList(entId, null, idNumber);
+            List<NewestWageLogDTO> list = payRollService.groupList(entId, null, idNumber, principal);
             log.info("NewestWageLogDTOList:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());

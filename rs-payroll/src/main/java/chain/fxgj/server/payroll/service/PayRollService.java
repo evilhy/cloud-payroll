@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.service;
 
 import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
+import chain.fxgj.server.payroll.web.UserPrincipal;
 
 import java.util.List;
 
@@ -11,5 +12,5 @@ import java.util.List;
  */
 public interface PayRollService {
 
-    List<NewestWageLogDTO> groupList(String entId, String groupId, String idNumber);
+    List<NewestWageLogDTO> groupList(String entId, String groupId, String idNumber, UserPrincipal userPrincipal);
 }
