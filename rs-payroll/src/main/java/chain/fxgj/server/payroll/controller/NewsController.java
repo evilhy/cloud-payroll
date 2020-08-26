@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -36,38 +33,34 @@ public class NewsController {
 
     /**
      * 首页滚动展示信息
-     * @param req
      * @return
      */
-    @PostMapping("/bulletInfo")
+    @GetMapping("/bulletInfo")
     @TrackLog
-    public Mono<NewsBulletInfoDto> bulletInfo(@RequestBody NewsInfoReq req){
+    public Mono<NewsBulletInfoDto> bulletInfo(){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            req.setEntId(userPrincipal.getEntId());
-            req.setIdNumber(userPrincipal.getIdNumber());
+            NewsInfoReq req = NewsInfoReq.builder().entId(userPrincipal.getEntId()).idNumber(userPrincipal.getIdNumber()).build();
             return newsNoticeServiceFeign.bulletInfo(req);
         }).subscribeOn(Schedulers.elastic());
     }
 
     /**
      * 各类消息类型未读个数统计
-     * @param req
      * @return
      */
-    @PostMapping("/statisticInfo")
+    @GetMapping("/statisticInfo")
     @TrackLog
-    public Mono<List<NewsStatisticInfoDto>> statisticInfo(@RequestBody NewsInfoReq req){
+    public Mono<List<NewsStatisticInfoDto>> statisticInfo(){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            req.setEntId(userPrincipal.getEntId());
-            req.setIdNumber(userPrincipal.getIdNumber());
+            NewsInfoReq req = NewsInfoReq.builder().entId(userPrincipal.getEntId()).idNumber(userPrincipal.getIdNumber()).build();
             return newsNoticeServiceFeign.statisticInfo(req);
         }).subscribeOn(Schedulers.elastic());
     }
