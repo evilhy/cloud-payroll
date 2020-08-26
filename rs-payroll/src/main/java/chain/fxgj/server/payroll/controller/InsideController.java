@@ -27,14 +27,12 @@ import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.MsgBuisTypeEnum;
 import core.dto.request.*;
 import core.dto.response.index.EmpEntResDTO;
-import core.dto.response.index.IndexEmpEntDTO;
 import core.dto.response.inside.SkinThemeInfoDto;
 import core.dto.response.inside.SkinThemeInfoReq;
 import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.bson.types.ObjectId;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +53,8 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class InsideController {
 
-    @Autowired
-    InsideFeignController insideFeignService;
+//    @Autowired
+//    InsideFeignService insideFeignService;
     @Qualifier("applicationTaskExecutor")
     Executor executor;
     @Autowired
@@ -195,7 +193,7 @@ public class InsideController {
             MDC.setContextMap(mdcContext);
             PayrollResReceiptDTO wageResReceiptDTO = new PayrollResReceiptDTO();
             BeanUtils.copyProperties(resReceiptDTO, wageResReceiptDTO);
-            WageRetReceiptDTO wageRetReceiptDTO = insideFeignService.receipt(wageResReceiptDTO);
+            WageRetReceiptDTO wageRetReceiptDTO = insideFeignController.receipt(wageResReceiptDTO);
             try {
                 log.info("同步数据receipt wageRetReceiptDTO:[{}]", JacksonUtil.objectToJson(wageRetReceiptDTO));
                 String idNumber = wageRetReceiptDTO.getIdNumber();
@@ -228,7 +226,7 @@ public class InsideController {
             readWageDTO.setIdNumber(idNumber);
             BeanUtils.copyProperties(readWageDTO, wageReadWageDTO);
             log.info("wageReadWageDTO:[{}]", JacksonUtil.objectToJson(wageReadWageDTO));
-            insideFeignService.readWage(wageReadWageDTO);
+            insideFeignController.readWage(wageReadWageDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -258,7 +256,7 @@ public class InsideController {
             wageBindRequestDTO.setCacheReq100702(wageReq100702);
             wageBindRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
 
-            insideFeignService.bandWX(wageBindRequestDTO);
+            insideFeignController.bandWX(wageBindRequestDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -292,7 +290,7 @@ public class InsideController {
             CacheRzRequestDTO wageRzRequestDTO = new CacheRzRequestDTO();
             wageRzRequestDTO.setCacheReq100701(wageReq100701);
             wageRzRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
-            String retStr = insideFeignService.rz(wageRzRequestDTO);
+            String retStr = insideFeignController.rz(wageRzRequestDTO);
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
             }
@@ -320,7 +318,7 @@ public class InsideController {
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
-            insideFeignService.setPwd(pwd, wageUserPrincipal);
+            insideFeignController.setPwd(pwd, wageUserPrincipal);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -351,7 +349,7 @@ public class InsideController {
             wageUpPwdRequestDTO.setQueryPwd(currentUser.getQueryPwd());
             wageUpPwdRequestDTO.setCacheUpdPwdDTO(wageUpdPwdDTO);
             wageUpPwdRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
-            insideFeignService.updPwd(wageUpPwdRequestDTO);
+            insideFeignController.updPwd(wageUpPwdRequestDTO);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -450,7 +448,7 @@ public class InsideController {
             wageReqPhone.setPhone(phone);
             log.info("checkPhoneCode.wageReqPhone:[{}]", JacksonUtil.objectToJson(wageReqPhone));
 
-            String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
+            String retStr = insideFeignController.checkPhoneCode(wageReqPhone);
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
             }
