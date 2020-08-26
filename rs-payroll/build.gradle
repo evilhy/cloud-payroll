@@ -98,6 +98,8 @@ dependencies {
     //compile('org.aspectj:aspectjweaver:1.8.8')
 
     //zhucj添加
+    compile group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.27'
+    compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.27'
     compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.8'
     //application/json
     //compile 'org.springframework.cloud:spring-cloud-starter-openfeign'

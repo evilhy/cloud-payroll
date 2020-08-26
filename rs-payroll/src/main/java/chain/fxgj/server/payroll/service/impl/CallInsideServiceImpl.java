@@ -162,7 +162,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         Response response = webTarget.request()
                 .header(PayrollConstants.LOG_TOKEN, StringUtils.trimToEmpty(MDC.get(PayrollConstants.LOG_TOKEN)))
                 .header("clientIp",clientIp)
-                .post(Entity.entity(msgCodeLogRequestDTO, MediaType.APPLICATION_JSON));//APPLICATION_JSON_TYPE
+                .post(Entity.entity(msgCodeLogRequestDTO, MediaType.APPLICATION_JSON_TYPE));
         if (response.getStatus() != 200) {
             ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
             throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrorCode(), errorDTO.getErrorMsg()));
