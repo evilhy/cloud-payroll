@@ -12,6 +12,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
+import chain.utils.fxgj.constant.DictEnums.PayStatusEnum;
 import core.dto.request.employee.EmployeeQueryReq;
 import core.dto.request.wageDetail.WageDetailQueryReq;
 import core.dto.response.employee.EmployeeDTO;
@@ -22,10 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Description:
@@ -121,6 +119,7 @@ public class PayRollServiceImpl implements PayRollService {
                     .idNumber(idNumber)
                     .groupId(id)
                     .entId(entId1)
+                    .payStatus(Arrays.asList(PayStatusEnum.SUCCESS, PayStatusEnum.ING, PayStatusEnum.FAIL, PayStatusEnum.UNKNOWN))
                     .build();
             List<WageDetailDTO> detailDTOList = wageDetailFeignController.query(wageDetailQueryReq);
             if (null != detailDTOList && detailDTOList.size() > 0) {
