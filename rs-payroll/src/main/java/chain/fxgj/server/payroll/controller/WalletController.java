@@ -56,7 +56,7 @@ public class WalletController {
      *
      * @return
      */
-    @GetMapping("/empCardAdnBalance")
+    @GetMapping("/empCardAndBalance")
     @TrackLog
     public Mono<EmpCardAndBalanceResDTO> empCardAdnBalance(@RequestHeader(value = "encry-salt", required = false) String salt,
                                                             @RequestHeader(value = "encry-passwd", required = false) String passwd,
