@@ -125,39 +125,25 @@ public class PayRollController {
     }
 
     /**
-     * 企业机构列表
+     * 员工机构列表(我的收入-机构列表)
      *
      * @return
      */
     @GetMapping("/groupList")
     @TrackLog
-    public Mono<List<NewestWageLogDTO>> groupList() {
+    public Mono<List<core.dto.response.NewestWageLogDTO>> groupList() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal principal = WebContext.getCurrentUser();
+        CacheUserPrincipal cacheUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
         String entId = principal.getEntId();
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-//            BeanUtils.copyProperties(principal,wageUserPrincipal);
-//            CacheUserPrincipal wageUserPrincipal=TransferUtil.userPrincipalToWageUserPrincipal(principal);
-//
-//            log.info("调用wageMangerFeignService.groupList(wageUserPrincipal)开始");
-//            List<WageNewestWageLogDTO> wageNewestWageLogDTOS = null;//wageMangerFeignService.groupList(wageUserPrincipal);
-//            log.info("groupList--->{}",wageNewestWageLogDTOS.size());
-//            List<NewestWageLogDTO> list=null;
-//            if (!CollectionUtils.isEmpty(wageNewestWageLogDTOS)){
-//                list=new ArrayList<>();
-//                for (WageNewestWageLogDTO wageLogDTO:wageNewestWageLogDTOS){
-//                    NewestWageLogDTO dto=new NewestWageLogDTO();
-//                    BeanUtils.copyProperties(wageLogDTO,dto);
-//                    list.add(dto);
-//                }
-//            }
-            List<NewestWageLogDTO> list = payRollService.groupList(entId, null, idNumber, principal);
-            log.info("NewestWageLogDTOList:[{}]", JacksonUtil.objectToJson(list));
-            return list;
+//            List<NewestWageLogDTO> list = payRollService.groupList(entId, null, idNumber, principal);//为减少服务之间的交互所以注释
+            List<core.dto.response.NewestWageLogDTO> newestWageLogDTOS = payrollFeignController.empGroupList(cacheUserPrincipal);
+            log.info("NewestWageLogDTOList:[{}]", JacksonUtil.objectToJson(newestWageLogDTOS));
+            return newestWageLogDTOS;
         }).subscribeOn(Schedulers.elastic());
     }
 

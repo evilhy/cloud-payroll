@@ -12,6 +12,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
+import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.PayStatusEnum;
 import core.dto.request.employee.EmployeeQueryReq;
 import core.dto.request.wageDetail.WageDetailQueryReq;
@@ -56,8 +57,6 @@ public class PayRollServiceImpl implements PayRollService {
         EmployeeQueryReq employeeQueryReq = EmployeeQueryReq.builder()
                 .entId(entId)
                 .idNumber(idNumber)
-//                .delStatusEnum(DelStatusEnum.normal)
-                .groupId(groupId)
                 .build();
         List<EmployeeDTO> employeeDTOList = employeeFeignController.query(employeeQueryReq);
 
@@ -114,11 +113,14 @@ public class PayRollServiceImpl implements PayRollService {
             logDTO.setEntId(entId1);
             logDTO.setEntName(erpriseDTO.getEntName());
 
+            //根据entId、groupId、idNumber查询最新一笔代发明细 todo
+
             //查询代发方案
             WageDetailQueryReq wageDetailQueryReq = WageDetailQueryReq.builder()
                     .idNumber(idNumber)
                     .groupId(id)
                     .entId(entId1)
+                    .isCountStatus(IsStatusEnum.YES)
                     .payStatus(Arrays.asList(PayStatusEnum.SUCCESS, PayStatusEnum.ING, PayStatusEnum.FAIL, PayStatusEnum.UNKNOWN))
                     .build();
             List<WageDetailDTO> detailDTOList = wageDetailFeignController.query(wageDetailQueryReq);
