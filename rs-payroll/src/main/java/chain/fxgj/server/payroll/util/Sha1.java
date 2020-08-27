@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.util;
 
 import com.esotericsoftware.minlog.Log;
 
+import java.io.UnsupportedEncodingException;
 import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -108,10 +109,21 @@ public class Sha1 {
 //            }
             paramStr.append(paramName).append("=");
 
-            if(i<paramNames.size()-1){
-                paramStr.append(String.valueOf(maps.get(paramName))).append("&");
-            }else {
-                paramStr.append(String.valueOf(maps.get(paramName)));
+            //解决乱码问题
+//            if(i<paramNames.size()-1){
+//                paramStr.append(String.valueOf(maps.get(paramName))).append("&");
+//            }else {
+//                paramStr.append(String.valueOf(maps.get(paramName)));
+//            }
+
+            try {
+                if (i < paramNames.size() - 1) {
+                    paramStr.append(new String(String.valueOf(maps.get(paramName)).getBytes("UTF-8"))).append("&");
+                } else {
+                    paramStr.append(new String(String.valueOf(maps.get(paramName)).getBytes("UTF-8")));
+                }
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
 
 //            maps.get(paramName);
