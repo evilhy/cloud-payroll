@@ -739,7 +739,7 @@ public class PayRollController {
                 payrollRes100703ReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
                 payrollRes100703ReqDTO.setEntId(entId);
                 log.info("开始调用wageList时间:[{}]", LocalDateTime.now());
-                log.info("groupId:[{}]，year:[{}]，type:[{}]，idNumber:[{}]", groupId, year, type, idNumber);
+                log.info("wageList.payrollRes100703ReqDTO:[{}]", JacksonUtil.objectToJson(payrollRes100703ReqDTO));
                 PayrollRes100703DTO source = payrollFeignController.wageList(payrollRes100703ReqDTO);
                 if (null != source) {
                     res100703.setShouldTotalAmt(source.getShouldTotalAmt());
