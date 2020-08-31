@@ -526,7 +526,8 @@ public class InsideController {
     @GetMapping("/empEntList")
     @TrackLog
     public Mono<List<EmpEntResDTO>> empEntList(@RequestHeader(value = "encry-salt", required = false) String salt,
-                                               @RequestHeader(value = "encry-passwd", required = false) String passwd) throws Exception {
+                                               @RequestHeader(value = "encry-passwd", required = false) String passwd,
+                                               @RequestHeader(value = "ent-id", required = false) String entId) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
@@ -536,6 +537,7 @@ public class InsideController {
             log.info("empEntList.idNumber:[{}]", idNumber);
             BaseReqDTO baseReqDTO = BaseReqDTO.builder()
                     .idNumber(idNumber)
+                    .entId(entId)
                     .build();
             if (StringUtils.isBlank(idNumber)) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
