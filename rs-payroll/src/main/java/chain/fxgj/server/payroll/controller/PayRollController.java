@@ -748,6 +748,18 @@ public class PayRollController {
                     res100703.setRealTotalAmt(source.getRealTotalAmt());
                     List<Integer> years = source.getYears();
                     res100703.setYears(years);
+                    List<PayrollPlanListDTO> planListSource = source.getPlanList();
+                    List<PlanListBean> planListBeans = new ArrayList<>();
+                    if (null != planListSource && planListSource.size() > 0) {
+                        for (PayrollPlanListDTO payrollPlanListDTO : planListSource) {
+                            PlanListBean planListBean = new PlanListBean();
+                            BeanUtils.copyProperties(payrollPlanListDTO, planListBean);
+                            planListBeans.add(planListBean);
+                        }
+                        res100703.setPlanList(planListBeans);
+                        log.info("res100703:[{}]", JacksonUtil.objectToJson(res100703));
+
+                    }
                     log.info("mongo.wageList:[{}]", JacksonUtil.objectToJson(res100703));
                 } else {
                     log.info("查询mongo未查询到数据");
