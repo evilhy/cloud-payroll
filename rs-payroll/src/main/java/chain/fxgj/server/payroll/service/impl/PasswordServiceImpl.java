@@ -56,7 +56,7 @@ public class PasswordServiceImpl implements PaswordService {
                 .status(0)
                 .statusVal("未开启")
                 .build();
-        if (StringUtils.isNotBlank(dto.getHeadimgurl())) {
+        if (StringUtils.isNotBlank(dto.getHandPassword())) {
             handPasswordDTO.setStatus(1);
             handPasswordDTO.setStatusVal("已开启");
         }
