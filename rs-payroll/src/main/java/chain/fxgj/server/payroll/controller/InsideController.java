@@ -571,7 +571,6 @@ public class InsideController {
     @TrackLog
     public Mono<SkinThemeInfoDto> getSkin(){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        HeaderDTO header = WebContext.getCurrentHeader();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
