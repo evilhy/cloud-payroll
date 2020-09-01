@@ -804,7 +804,7 @@ public class PayRollController {
                 List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
                 log.info("调用payrollFeignController.wageDetail(payrollWageDetailReqDTO)，查明细结束时间:[{}]", LocalDateTime.now());
                 log.info("source.size():[{}]", source.size());
-                if (null != list && list.size() > 0) {
+                if (null != source && source.size() > 0) {
                     for (PayrollWageDetailDTO payrollWageDetailDTO : source) {
                         WageDetailDTO wageDetailDTO = new WageDetailDTO();
 
