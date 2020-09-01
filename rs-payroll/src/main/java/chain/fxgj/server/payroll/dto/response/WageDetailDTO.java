@@ -80,6 +80,11 @@ public class WageDetailDTO {
      */
     private String payStatus;
 
+    /**
+     * 皮肤url
+     */
+    private String skinUrl;
+
     // 切库注释
 //    public WageDetailDTO(WageDetailInfo wageDetailInfo) {
 //        this.wageDetailId = wageDetailInfo.getId();

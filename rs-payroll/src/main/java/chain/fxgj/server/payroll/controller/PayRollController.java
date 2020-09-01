@@ -850,6 +850,7 @@ public class PayRollController {
                         wageDetailDTO.setGroupName(payrollWageDetailDTO.getGroupName());
                         wageDetailDTO.setGroupId(payrollWageDetailDTO.getGroupId());
                         wageDetailDTO.setPushDateTime(payrollWageDetailDTO.getPushDateTime());
+                        wageDetailDTO.setSkinUrl(payrollWageDetailDTO.getSkinUrl());
                         wageDetailDTO.setReceiptStautus(payrollWageDetailDTO.getReceiptStautus());
                         wageDetailDTO.setDifferRealAmt(payrollWageDetailDTO.getDifferRealAmt());
                         wageDetailDTO.setPayStatus(payrollWageDetailDTO.getPayStatus());
