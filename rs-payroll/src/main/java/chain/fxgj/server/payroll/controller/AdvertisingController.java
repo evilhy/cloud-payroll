@@ -1,13 +1,16 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
+import chain.feign.hxinside.ent.service.EntErpriseInfoServiceFeign;
+import chain.fxgj.ent.core.dto.request.EntErpriseQueryRequest;
+import chain.fxgj.ent.core.dto.response.EntErpriseInfoRes;
 import chain.fxgj.feign.client.AdvertisingFeignService;
-import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
+import chain.fxgj.server.payroll.web.WebContext;
 import chain.news.dto.adv.AdsAdvInfoRes;
 import chain.news.dto.adv.QueryAdsReq;
 import chain.news.server.service.AdvServiceFegin;
-import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
+import chain.utils.fxgj.constant.DictEnums.EnterpriseStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
 import chain.utils.fxgj.constant.DictEnums.VersionsEnum;
 import chain.utils.fxgj.constant.DictEnums.VersionsTypeEnum;
@@ -24,9 +27,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.security.PermitAll;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -40,6 +41,9 @@ public class AdvertisingController {
 
     @Autowired
     AdvServiceFegin advServiceFegin;
+
+    @Autowired
+    EntErpriseInfoServiceFeign entErpriseInfoServiceFeign;
 
 //    /**
 //     * 轮播图查询
@@ -81,20 +85,28 @@ public class AdvertisingController {
     public Mono<List<AdvertisingRotationDTO>> rotation(@RequestParam("channelId") Integer channelId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         //根据合作方获取一行渠道
-        String apppartner = MDC.get(PayrollConstants.APPPARTNER);
-        log.info("rotation.apppartner:[{}]", apppartner);
-        AppPartnerEnum appPartner = AppPartnerEnum.values()[Integer.valueOf(apppartner)];
-        FundLiquidationEnum liquidation = appPartner.getLiquidation();
-
+        String entId = WebContext.getCurrentUser().getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
-            log.info("fundLiquidationEnum:[{}]", liquidation.toString());
             List<AdvertisingRotationDTO> advertisingRotationDTOS = new ArrayList<>();
 
+            log.info("=====> /advertising/rotation 轮播图查询  entId:[{}]", entId);
+            //查询企业信息
+            EntErpriseQueryRequest erpriseQueryRequest = EntErpriseQueryRequest.builder()
+                    .entId(entId)
+                    .entStatus(new LinkedList(Arrays.asList(EnterpriseStatusEnum.NORMAL)))
+                    .build();
+            EntErpriseInfoRes erpriseInfoRes = entErpriseInfoServiceFeign.find(erpriseQueryRequest);
+            if (null == erpriseInfoRes) {
+                return advertisingRotationDTOS;
+            }
+
+            log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
+
             /** 目前仅支持：普通版——普通版 **/
-            VersionsTypeEnum versionsTypeEnum = VersionsTypeEnum.NORMAL;
-            VersionsEnum versionsEnum = VersionsEnum.NORMAL;
+            FundLiquidationEnum liquidation = erpriseInfoRes.getLiquidation();
+            VersionsTypeEnum versionsTypeEnum = erpriseInfoRes.getVersion();
+            VersionsEnum versionsEnum = erpriseInfoRes.getSubVersion();
 
             log.info("fundLiquidationEnum:[{}]", liquidation.getDesc());
             log.info("versionsTypeEnum:[{}]", versionsTypeEnum.getDesc());
