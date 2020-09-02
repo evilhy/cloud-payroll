@@ -64,14 +64,4 @@ public interface PaswordService {
      * @return
      */
     String checkNumberPassword(String passsword, String wechatId);
-
-    /**
-     * 密码错误次数校验
-     *
-     * @param redisKey      redis 缓存KEY
-     * @param limitTime     控制时间（单位：小时）
-     * @param maxTimes      最大错误次数
-     * @param errorConstant 错误信息
-     */
-    void checkPasswordRedisKey(String redisKey, Integer limitTime, Integer maxTimes, ErrorConstant errorConstant);
 }

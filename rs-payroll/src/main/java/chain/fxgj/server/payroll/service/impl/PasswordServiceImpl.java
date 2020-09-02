@@ -70,18 +70,10 @@ public class PasswordServiceImpl implements PaswordService {
         Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘用户微信绑定ID’参数不能为空")));
         Optional.ofNullable(type).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘密码类型’参数不能为空")));
 
-        //小时内是否有超过10次
-        String redisKey = "tiger:sms:limit:".concat(wechatId);
-        Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
-        if (null != usedTimes && 10 < usedTimes) {
-            checkTimeRedisKey(redisKey);
-        }
-        //24小时内是否超过20次
-        String dailyRedisKey = "tiger:sms:dailyLimit:".concat(wechatId);
-        usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
-        if (null != usedTimes && 20 < usedTimes) {
-            checkTimeRedisKey(redisKey);
-        }
+        char[] chars = password.toCharArray();
+
+        //是否已锁定
+        checkTimeRedisKey(wechatId, type);
 
         EmployeeWechatDTO dto = employeeWechatFeignController.findById(wechatId);
         if (null == dto) {
@@ -91,31 +83,64 @@ public class PasswordServiceImpl implements PaswordService {
 
         if ("0".equals(type)) {
             //数字密码校验
+
+            //是否同一字符
+            boolean same = true;
+            for (int i = 0; i < chars.length-1; i++) {
+                if (chars[i] != chars[i+1]){
+                    same = false;
+                    break;
+                }
+            }
+            if (same){
+                throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
+            }
+
+            //是否连续
+            for (int i = 0; i < chars.length-1; i++) {
+                int i1 = Integer.parseInt(String.valueOf(chars[i])) + 1;
+                int i2 = Integer.parseInt(String.valueOf(chars[i + 1]));
+                if (i1 != i2){
+                    same = false;
+                    break;
+                }
+            }
+            if (same){
+                throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
+            }
+            for (int i = 0; i < chars.length-1; i++) {
+                int i1 = Integer.parseInt(String.valueOf(chars[i]))-1;
+                int i2 = Integer.parseInt(String.valueOf(chars[i + 1]));
+                if (i1 != i2){
+                    same = false;
+                    break;
+                }
+            }
+            if (same){
+                throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
+            }
+
             if (!password.equals(dto.getQueryPwd())) {
                 log.info("=====> wechatId:{} 用户数字密码校验失败：queryPwd：{}，password：{}", wechatId, password);
 //                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("数字密码校验失败"));
-                //对同一手机号一小时内进行次数限制。一小时最多10次
-                this.checkPasswordRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
-                //对同一手机号一天内进行次数限制。一天最多20次
-                this.checkPasswordRedisKey(dailyRedisKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
+                //缓存错误次数
+                this.checkPasswordRedisKey(wechatId, type);
             }
         } else if ("1".equals(type)) {
+            if (4 <chars.length) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请设置至少4个连接点"));
+            }
+
             //手势密码校验
             if (!password.equals(dto.getHandPassword())) {
                 log.info("=====> wechatId:{} 用户手密码校验失败：queryPwd：{}，password：{}", wechatId, password);
 //                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("手势密码校验失败"));
-                //对同一手机号一小时内进行次数限制。一小时最多10次
-                this.checkPasswordRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
-                //对同一手机号一天内进行次数限制。一天最多20次
-                this.checkPasswordRedisKey(dailyRedisKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
+                //缓存错误次数
+                this.checkPasswordRedisKey(wechatId, type);
             }
         } else {
             log.info("=====> 校验失败，密码类型异常(0：数字密码  1：手势密码) type = {}", type);
-//            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("校验失败，密码类型异常"));
-            //对同一手机号一小时内进行次数限制。一小时最多10次
-            this.checkPasswordRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
-            //对同一手机号一天内进行次数限制。一天最多20次
-            this.checkPasswordRedisKey(dailyRedisKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("校验失败，密码类型异常"));
         }
         return dto;
     }
@@ -182,21 +207,15 @@ public class PasswordServiceImpl implements PaswordService {
 
     @Override
     public String checkNumberPassword(String passsword, String wechatId) {
+        if (passsword.split(",").length < 4) {
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请设置至少4个连接点"));
+        }
+
         //生成密码键盘ID
         String keyboardId = PayrollDBConstant.PREFIX + ":numberKeyboard:" + wechatId;
 
-        //小时内是否有超过10次
-        String redisKey = "tiger:sms:limit:".concat(wechatId);
-        Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
-        if (null != usedTimes && 10 < usedTimes) {
-            checkTimeRedisKey(redisKey);
-        }
-        //24小时内是否超过20次
-        String dailyRedisKey = "tiger:sms:dailyLimit:".concat(wechatId);
-        usedTimes = (Integer) redisTemplate.opsForValue().get(dailyRedisKey);
-        if (null != usedTimes && 20 < usedTimes) {
-            checkTimeRedisKey(redisKey);
-        }
+        //是否已锁定
+        checkTimeRedisKey(wechatId, "0");
 
         //取出缓存
         String redisStr = null;
@@ -217,14 +236,8 @@ public class PasswordServiceImpl implements PaswordService {
         String[] split = passsword.split(",");
         if (null == split || split.length <= 0) {
 //                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("校验失败，密码不能为空"));
-            //对同一手机号一小时内进行次数限制。一小时最多10次
-            this.checkPasswordRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
-            //对同一手机号一天内进行次数限制。一天最多20次
-            this.checkPasswordRedisKey(dailyRedisKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
-        }
-
-        if (split.length < 4) {
-            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请设置至少4个连接点"));
+            //缓存错误次数
+            this.checkPasswordRedisKey(wechatId, "0");
         }
 
         StringBuilder sb = new StringBuilder();
@@ -237,14 +250,39 @@ public class PasswordServiceImpl implements PaswordService {
     }
 
     /**
-     * 密码错误次数校验
+     * 缓存密码错误次数
+     *
+     * @param wechatId 登录标识
+     * @param type     密码类型 0：数字密码  1：手势密码
+     */
+    public void checkPasswordRedisKey(String wechatId, String type) {
+        String redisKey = null;
+        if ("0".equals(type)) {
+            //对同一手机号一小时内进行次数限制。一小时最多10次
+            redisKey = "tiger:number:limit:".concat(wechatId);
+            this.setRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
+            //对同一手机号一天内进行次数限制。一天最多20次
+            redisKey = "tiger:number:dailyLimit:".concat(wechatId);
+            this.setRedisKey(redisKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
+        } else if ("1".equals(type)) {
+            //对同一手机号一小时内进行次数限制。一小时最多10次
+            redisKey = "tiger:hand:limit:".concat(wechatId);
+            this.setRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
+            //对同一手机号一天内进行次数限制。一天最多20次
+            redisKey = "tiger:hand:dailyLimit:".concat(wechatId);
+            this.setRedisKey(redisKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
+        }
+    }
+
+    /**
+     * 密码错误次数缓存
      *
      * @param redisKey      redis 缓存KEY
      * @param limitTime     控制时间（单位：小时）
      * @param maxTimes      最大错误次数
      * @param errorConstant 错误信息
      */
-    public void checkPasswordRedisKey(String redisKey, Integer limitTime, Integer maxTimes, ErrorConstant errorConstant) {
+    private void setRedisKey(String redisKey, Integer limitTime, Integer maxTimes, ErrorConstant errorConstant) {
         Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
         if (usedTimes == null) {
             redisTemplate.opsForValue().set(redisKey, 1, limitTime, TimeUnit.HOURS);
@@ -276,7 +314,50 @@ public class PasswordServiceImpl implements PaswordService {
         throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("密码错误，请核对后重试！"));
     }
 
-    private void checkTimeRedisKey(String redisKey) {
+    /**
+     * 是否锁定
+     *
+     * @param wechatId 登录标识
+     * @param type     密码类型 0：数字密码  1：手势密码
+     */
+    private void checkTimeRedisKey(String wechatId, String type) {
+        //数字键盘
+        if ("0".equals(type)) {
+            //1小时内是否有超过10次
+            String redisKey = "tiger:number:limit:".concat(wechatId);
+            Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
+            if (null != usedTimes && 10 < usedTimes) {
+                checkRedisTime(redisKey);
+            }
+            //24小时内是否超过20次
+            String dailyRedisKey = "tiger:number:dailyLimit:".concat(wechatId);
+            usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
+            if (null != usedTimes && 20 < usedTimes) {
+                checkRedisTime(redisKey);
+            }
+        } else if ("1".equals(type)) {
+            //手势键盘
+            //1小时内是否有超过10次
+            String redisKey = "tiger:hand:limit:".concat(wechatId);
+            Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
+            if (null != usedTimes && 10 < usedTimes) {
+                checkRedisTime(redisKey);
+            }
+            //24小时内是否超过20次
+            String dailyRedisKey = "tiger:hand:dailyLimit:".concat(wechatId);
+            usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
+            if (null != usedTimes && 20 < usedTimes) {
+                checkRedisTime(redisKey);
+            }
+        }
+    }
+
+    /**
+     * 锁定时间
+     *
+     * @param redisKey
+     */
+    private void checkRedisTime(String redisKey) {
         Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
         if (usedTimes != null) {
             Long expire = redisTemplate.getExpire(redisKey);
@@ -295,5 +376,4 @@ public class PasswordServiceImpl implements PaswordService {
             throw new ParamsIllegalException(ErrorConstant.PASSWORD.format(sb.toString()));
         }
     }
-
 }

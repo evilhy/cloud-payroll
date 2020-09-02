@@ -28,7 +28,8 @@ public enum ErrorConstant {
     PASSWORD("0017","您的密码校验请求过于频繁，请于%s后再试!"),
     PASSWORDLIMITERR("0017","错误次数过多，剩余%s次机会，请仔细确认！"),
     PASSWORDCHECKERR("0018","错误次数过多，剩余%s次机会，次数超限后将锁定24小时！"),
-    SMSDAILYLIMITERR("0020","您今日短信请求已达上限，请于%s后再试!"),
+    PASSWORDCDAILYLIMITERR("0020","您今日短信请求已达上限，请于%s后再试!"),
+    PASSWORDMASE("0021","您设置的密码安全等级过低，请重新设置！"),
     ;
 
     private String errorCode;
