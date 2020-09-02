@@ -70,7 +70,7 @@ public class PasswordServiceImpl implements PaswordService {
         Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘用户微信绑定ID’参数不能为空")));
         Optional.ofNullable(type).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘密码类型’参数不能为空")));
 
-        char[] chars = password.toCharArray();
+        String[] chars = password.split(",");
 
         //是否已锁定
         checkTimeRedisKey(wechatId, type);
@@ -86,37 +86,37 @@ public class PasswordServiceImpl implements PaswordService {
 
             //是否同一字符
             boolean same = true;
-            for (int i = 0; i < chars.length-1; i++) {
-                if (chars[i] != chars[i+1]){
+            for (int i = 0; i < chars.length - 1; i++) {
+                if (chars[i].equals(chars[i + 1])) {
                     same = false;
                     break;
                 }
             }
-            if (same){
+            if (same) {
                 throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
             }
 
             //是否连续
-            for (int i = 0; i < chars.length-1; i++) {
-                int i1 = Integer.parseInt(String.valueOf(chars[i])) + 1;
-                int i2 = Integer.parseInt(String.valueOf(chars[i + 1]));
-                if (i1 != i2){
+            for (int i = 0; i < chars.length - 1; i++) {
+                int i1 = Integer.parseInt(chars[i]) + 1;
+                int i2 = Integer.parseInt(chars[i + 1]);
+                if (i1 != i2) {
                     same = false;
                     break;
                 }
             }
-            if (same){
+            if (same) {
                 throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
             }
-            for (int i = 0; i < chars.length-1; i++) {
-                int i1 = Integer.parseInt(String.valueOf(chars[i]))-1;
-                int i2 = Integer.parseInt(String.valueOf(chars[i + 1]));
-                if (i1 != i2){
+            for (int i = 0; i < chars.length - 1; i++) {
+                int i1 = Integer.parseInt(chars[i]) - 1;
+                int i2 = Integer.parseInt(chars[i + 1]);
+                if (i1 != i2) {
                     same = false;
                     break;
                 }
             }
-            if (same){
+            if (same) {
                 throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
             }
 
@@ -127,10 +127,6 @@ public class PasswordServiceImpl implements PaswordService {
                 this.checkPasswordRedisKey(wechatId, type);
             }
         } else if ("1".equals(type)) {
-            if (4 <chars.length) {
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请设置至少4个连接点"));
-            }
-
             //手势密码校验
             if (!password.equals(dto.getHandPassword())) {
                 log.info("=====> wechatId:{} 用户手密码校验失败：queryPwd：{}，password：{}", wechatId, password);
