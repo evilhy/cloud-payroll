@@ -23,7 +23,9 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.InsideFeignController;
 import chain.utils.commons.JacksonUtil;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
 import chain.utils.fxgj.constant.DictEnums.MsgBuisTypeEnum;
 import core.dto.request.*;
 import core.dto.response.index.EmpEntResDTO;
@@ -535,9 +537,11 @@ public class InsideController {
             MDC.setContextMap(mdcContext);
             String idNumber = userPrincipal.getIdNumber();
             log.info("empEntList.idNumber:[{}]", idNumber);
+            List<FundLiquidationEnum> dataAuths = userPrincipal.getDataAuths();
             BaseReqDTO baseReqDTO = BaseReqDTO.builder()
                     .idNumber(idNumber)
                     .entId(entId)
+                    .dataAuths(dataAuths)
                     .build();
             if (StringUtils.isBlank(idNumber)) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证为空查询不到数据"));
