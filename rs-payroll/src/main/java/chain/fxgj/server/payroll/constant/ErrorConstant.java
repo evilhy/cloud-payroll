@@ -25,7 +25,9 @@ public enum ErrorConstant {
 
     WECHAR_013("r013", "银行卡必须为纯数字"),
 
-
+    PASSWORDLIMITERR("0017","错误次数过多，剩余%s次机会，请仔细确认！"),
+    PASSWORDCHECKERR("0018","错误次数过多，剩余%s次机会，次数超限后将锁定24小时！"),
+    SMSDAILYLIMITERR("0020","您今日短信请求已达上限，请于%s后再试!"),
     ;
 
     private String errorCode;
