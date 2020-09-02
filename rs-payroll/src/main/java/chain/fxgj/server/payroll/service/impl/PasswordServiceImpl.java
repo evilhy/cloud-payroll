@@ -253,13 +253,13 @@ public class PasswordServiceImpl implements PaswordService {
 
                 if (1 == limitTime) {
                     if (7 == usedTimes || 8 == usedTimes || 9 == usedTimes) {
-                        throw new ParamsIllegalException(ErrorConstant.PASSWORDLIMITERR.format(usedTimes));
+                        throw new ParamsIllegalException(ErrorConstant.PASSWORDLIMITERR.format(10 - usedTimes));
                     }
                 }
                 if (24 == limitTime) {
-                    if (7 == usedTimes || 8 == usedTimes || 9 == usedTimes) {
+                    if (17 == usedTimes || 18 == usedTimes || 19 == usedTimes) {
                         int times = maxTimes - usedTimes;
-                        throw new ParamsIllegalException(ErrorConstant.PASSWORDCHECKERR.format(times));
+                        throw new ParamsIllegalException(ErrorConstant.PASSWORDCHECKERR.format(20 - times));
                     }
                 }
             }
