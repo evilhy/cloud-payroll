@@ -179,34 +179,43 @@ public class PasswordServiceImpl implements PaswordService {
         String keyboardId = PayrollDBConstant.PREFIX + ":numberKeyboard:" + wechatId;
 
         //取出缓存
+        String redisStr = null;
         try {
             log.info("crateNumericKeypad.redisKey:[{}]", keyboardId);
-            String redisStr = redisTemplate.opsForValue().get(keyboardId).toString();
-
-            Map<String, Character> number = (Map<String, Character>) JacksonUtil.jsonToMap(redisStr);
-            String[] split = passsword.split(",");
-            if (null == split || split.length <= 0) {
-//                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("校验失败，密码不能为空"));
-                //对同一手机号一小时内进行次数限制。一小时最多10次
-                String redisKey = "tiger:sms:limit:".concat(wechatId);
-                this.checkSmsRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
-                //对同一手机号一天内进行次数限制。一天最多20次
-                String dailyRedisKey = "tiger:sms:dailyLimit:".concat(wechatId);
-                this.checkSmsRedisKey(dailyRedisKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
-            }
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < split.length; i++) {
-//                Character character = number.get(split[i]);
-                String s = split[i];
-                sb = sb.append(number.get(s));
-            }
-            return sb.toString();
+            redisStr = redisTemplate.opsForValue().get(keyboardId).toString();
         } catch (Exception e) {
             e.printStackTrace();
             log.error("密码键盘读取缓存失败:[{}]", e.getMessage());
         }
-        return null;
+
+        if (null == redisStr) {
+            log.error("密码键盘读取缓存失败 wechatId:{}， redisKey:{} redisValue:{}", wechatId, keyboardId, redisStr);
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("读取密码异常"));
+        }
+
+        Map<String, Character> number = (Map<String, Character>) JacksonUtil.jsonToMap(redisStr);
+        String[] split = passsword.split(",");
+        if (null == split || split.length <= 0) {
+//                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("校验失败，密码不能为空"));
+            //对同一手机号一小时内进行次数限制。一小时最多10次
+            String redisKey = "tiger:sms:limit:".concat(wechatId);
+            this.checkSmsRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
+            //对同一手机号一天内进行次数限制。一天最多20次
+            String dailyRedisKey = "tiger:sms:dailyLimit:".concat(wechatId);
+            this.checkSmsRedisKey(dailyRedisKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
+        }
+
+        if (split.length < 4) {
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请设置至少4个连接点"));
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < split.length; i++) {
+//                Character character = number.get(split[i]);
+            String s = split[i];
+            sb = sb.append(number.get(s));
+        }
+        return sb.toString();
     }
 
     /**
@@ -223,28 +232,29 @@ public class PasswordServiceImpl implements PaswordService {
             redisTemplate.opsForValue().set(redisKey, 1, limitTime, TimeUnit.HOURS);
         } else {
             if (usedTimes.equals(maxTimes)) {
-                if (1==limitTime){
+                if (1 == limitTime) {
                     throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("错误次数过多，请于59分59秒后尝试"));
                 }
-                if (24 == limitTime){
+                if (24 == limitTime) {
                     throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("错误次数已达上限，请于23时59分59秒后尝试"));
                 }
             } else {
                 usedTimes = usedTimes + 1;
                 redisTemplate.opsForValue().set(redisKey, usedTimes, limitTime, TimeUnit.HOURS);
 
-                if (1== limitTime){
-                    if (7 == usedTimes ||8 == usedTimes ||9 == usedTimes){
+                if (1 == limitTime) {
+                    if (7 == usedTimes || 8 == usedTimes || 9 == usedTimes) {
                         throw new ParamsIllegalException(ErrorConstant.PASSWORDLIMITERR.format(usedTimes));
                     }
                 }
-                if (24 == limitTime){
-                    if (7 == usedTimes ||8 == usedTimes ||9 == usedTimes){
+                if (24 == limitTime) {
+                    if (7 == usedTimes || 8 == usedTimes || 9 == usedTimes) {
                         int times = maxTimes - usedTimes;
                         throw new ParamsIllegalException(ErrorConstant.PASSWORDCHECKERR.format(times));
                     }
                 }
             }
         }
+        throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("密码错误，请核对后重试！"));
     }
 }
