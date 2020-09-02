@@ -73,5 +73,5 @@ public interface PaswordService {
      * @param maxTimes      最大错误次数
      * @param errorConstant 错误信息
      */
-    void checkSmsRedisKey(String redisKey, Integer limitTime, Integer maxTimes, ErrorConstant errorConstant);
+    void checkPasswordRedisKey(String redisKey, Integer limitTime, Integer maxTimes, ErrorConstant errorConstant);
 }
