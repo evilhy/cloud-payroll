@@ -70,8 +70,6 @@ public class PasswordServiceImpl implements PaswordService {
         Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘用户微信绑定ID’参数不能为空")));
         Optional.ofNullable(type).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("‘密码类型’参数不能为空")));
 
-        String[] chars = password.split(",");
-
         //是否已锁定
         checkTimeRedisKey(wechatId, type);
 
@@ -83,43 +81,6 @@ public class PasswordServiceImpl implements PaswordService {
 
         if ("0".equals(type)) {
             //数字密码校验
-
-            //是否同一字符
-            boolean same = true;
-            for (int i = 0; i < chars.length - 1; i++) {
-                if (chars[i].equals(chars[i + 1])) {
-                    same = false;
-                    break;
-                }
-            }
-            if (same) {
-                throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
-            }
-
-            //是否连续
-            for (int i = 0; i < chars.length - 1; i++) {
-                int i1 = Integer.parseInt(chars[i]) + 1;
-                int i2 = Integer.parseInt(chars[i + 1]);
-                if (i1 != i2) {
-                    same = false;
-                    break;
-                }
-            }
-            if (same) {
-                throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
-            }
-            for (int i = 0; i < chars.length - 1; i++) {
-                int i1 = Integer.parseInt(chars[i]) - 1;
-                int i2 = Integer.parseInt(chars[i + 1]);
-                if (i1 != i2) {
-                    same = false;
-                    break;
-                }
-            }
-            if (same) {
-                throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
-            }
-
             if (!password.equals(dto.getQueryPwd())) {
                 log.info("=====> wechatId:{} 用户数字密码校验失败：queryPwd：{}，password：{}", wechatId, password);
 //                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("数字密码校验失败"));
@@ -203,10 +164,6 @@ public class PasswordServiceImpl implements PaswordService {
 
     @Override
     public String checkNumberPassword(String passsword, String wechatId) {
-        if (passsword.split(",").length < 4) {
-            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请设置至少4个连接点"));
-        }
-
         //生成密码键盘ID
         String keyboardId = PayrollDBConstant.PREFIX + ":numberKeyboard:" + wechatId;
 
@@ -220,12 +177,12 @@ public class PasswordServiceImpl implements PaswordService {
             redisStr = redisTemplate.opsForValue().get(keyboardId).toString();
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("密码键盘读取缓存失败:[{}]", e.getMessage());
+            log.error("密码键盘读取缓存国企:[{}]", e.getMessage());
         }
 
         if (null == redisStr) {
             log.error("密码键盘读取缓存失败 wechatId:{}， redisKey:{} redisValue:{}", wechatId, keyboardId, redisStr);
-            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("读取密码异常"));
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("页面缓存已过期，请重新刷新"));
         }
 
         Map<String, Character> number = (Map<String, Character>) JacksonUtil.jsonToMap(redisStr);
