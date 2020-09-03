@@ -104,6 +104,7 @@ public class WechatIndexController {
                 res100705.setName(cacheUserPrincipal.getName());
                 res100705.setPhone(cacheUserPrincipal.getPhone());
                 res100705.setEntId(cacheUserPrincipal.getEntId());
+                MDC.put("idNumberEncrytor", cacheUserPrincipal.getIdNumberEncrytor());
             }
             res100705.setHeadimgurl(headImgurl);
             //加密处理
