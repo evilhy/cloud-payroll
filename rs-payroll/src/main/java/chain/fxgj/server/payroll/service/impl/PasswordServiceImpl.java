@@ -120,6 +120,42 @@ public class PasswordServiceImpl implements PaswordService {
 
         if ("0".equals(type)) {
             //数字密码校验
+            char[] chars = password.toCharArray();
+            //是否同一字符
+            boolean same = true;
+            for (int i = 0; i < chars.length - 1; i++) {
+                if (chars[i] != (chars[i + 1])) {
+                    same = false;
+                    break;
+                }
+            }
+            if (same) {
+                throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
+            }
+
+            //是否连续
+            for (int i = 0; i < chars.length - 1; i++) {
+                int i1 = Integer.parseInt(String.valueOf(chars[i])) + 1;
+                int i2 = Integer.parseInt(String.valueOf(chars[i + 1]));
+                if (i1 != i2) {
+                    same = false;
+                    break;
+                }
+            }
+            if (same) {
+                throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
+            }
+            for (int i = 0; i < chars.length - 1; i++) {
+                int i1 = Integer.parseInt(String.valueOf(chars[i])) - 1;
+                int i2 = Integer.parseInt(String.valueOf(chars[i + 1]));
+                if (i1 != i2) {
+                    same = false;
+                    break;
+                }
+            }
+            if (same) {
+                throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
+            }
             saveReq.setQueryPwd(password);
         } else if ("1".equals(type)) {
             //手势密码校验
