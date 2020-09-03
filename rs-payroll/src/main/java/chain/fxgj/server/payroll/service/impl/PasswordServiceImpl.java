@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -280,29 +279,29 @@ public class PasswordServiceImpl implements PaswordService {
         if (usedTimes == null) {
             redisTemplate.opsForValue().set(redisKey, 1, limitTime, TimeUnit.HOURS);
         } else {
-            if (usedTimes.equals(maxTimes)) {
-                if (1 == limitTime) {
-                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("错误次数过多，请于59分59秒后尝试"));
-                }
-                if (24 == limitTime) {
-                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("错误次数已达上限，请于23时59分59秒后尝试"));
-                }
-            } else {
-                usedTimes = usedTimes + 1;
-                redisTemplate.opsForValue().set(redisKey, usedTimes, limitTime, TimeUnit.HOURS);
+//            if (usedTimes.equals(maxTimes)) {
+//                if (1 == limitTime) {
+//                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("错误次数过多，请于59分59秒后尝试"));
+//                }
+//                if (24 == limitTime) {
+//                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("错误次数已达上限，请于23时59分59秒后尝试"));
+//                }
+//            } else {
+            usedTimes = usedTimes + 1;
+            redisTemplate.opsForValue().set(redisKey, usedTimes, limitTime, TimeUnit.HOURS);
 
-                if (1 == limitTime) {
-                    if (7 == usedTimes || 8 == usedTimes || 9 == usedTimes) {
-                        throw new ParamsIllegalException(ErrorConstant.PASSWORDLIMITERR.format(10 - usedTimes));
-                    }
-                }
-                if (24 == limitTime) {
-                    if (17 == usedTimes || 18 == usedTimes || 19 == usedTimes) {
-                        int times = maxTimes - usedTimes;
-                        throw new ParamsIllegalException(ErrorConstant.PASSWORDCHECKERR.format(20 - times));
-                    }
+            if (1 == limitTime) {
+                if (7 == usedTimes || 8 == usedTimes || 9 == usedTimes) {
+                    throw new ParamsIllegalException(ErrorConstant.PASSWORDLIMITERR.format(10 - usedTimes));
                 }
             }
+            if (24 == limitTime) {
+                if (17 == usedTimes || 18 == usedTimes || 19 == usedTimes) {
+                    int times = maxTimes - usedTimes;
+                    throw new ParamsIllegalException(ErrorConstant.PASSWORDCHECKERR.format(20 - times));
+                }
+            }
+//            }
         }
         throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("密码错误，请核对后重试！"));
     }
@@ -319,13 +318,13 @@ public class PasswordServiceImpl implements PaswordService {
             //1小时内是否有超过10次
             String redisKey = "tiger:number:limit:".concat(wechatId);
             Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
-            if (null != usedTimes && 10 < usedTimes) {
+            if (null != usedTimes && 10 <= usedTimes) {
                 checkRedisTime(redisKey);
             }
             //24小时内是否超过20次
             String dailyRedisKey = "tiger:number:dailyLimit:".concat(wechatId);
             usedTimes = (Integer) redisTemplate.opsForValue().get(dailyRedisKey);
-            if (null != usedTimes && 20 < usedTimes) {
+            if (null != usedTimes && 20 <= usedTimes) {
                 checkRedisTime(redisKey);
             }
         } else if ("1".equals(type)) {
@@ -333,13 +332,13 @@ public class PasswordServiceImpl implements PaswordService {
             //1小时内是否有超过10次
             String redisKey = "tiger:hand:limit:".concat(wechatId);
             Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
-            if (null != usedTimes && 10 < usedTimes) {
+            if (null != usedTimes && 10 <= usedTimes) {
                 checkRedisTime(redisKey);
             }
             //24小时内是否超过20次
             String dailyRedisKey = "tiger:hand:dailyLimit:".concat(wechatId);
             usedTimes = (Integer) redisTemplate.opsForValue().get(dailyRedisKey);
-            if (null != usedTimes && 20 < usedTimes) {
+            if (null != usedTimes && 20 <= usedTimes) {
                 checkRedisTime(redisKey);
             }
         }
