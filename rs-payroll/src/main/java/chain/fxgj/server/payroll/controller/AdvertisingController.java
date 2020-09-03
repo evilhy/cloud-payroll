@@ -10,6 +10,7 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.news.dto.adv.AdsAdvInfoRes;
 import chain.news.dto.adv.QueryAdsReq;
 import chain.news.server.service.AdvServiceFegin;
+import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.EnterpriseStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
 import chain.utils.fxgj.constant.DictEnums.VersionsEnum;
@@ -157,6 +158,8 @@ public class AdvertisingController {
                     advertisingRotationDTOS.add(advertisingRotationDTO);
                 }
             }
+            log.info("======> 企业ID：{}，企业名称：{}，企业渠道：{}，企业版本：{}，企业子版本：{}", erpriseInfoRes.getEntId(), erpriseInfoRes.getEntName(), liquidation.getDesc(), versionsTypeEnum.getDesc(), versionsEnum.getDesc());
+            log.info("======> advertisingRotationDTOS：{}", JacksonUtil.objectToJson(advertisingRotationDTOS));
             return advertisingRotationDTOS;
         }).subscribeOn(Schedulers.elastic());
     }
