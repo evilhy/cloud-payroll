@@ -575,10 +575,11 @@ public class InsideController {
     @TrackLog
     public Mono<SkinThemeInfoDto> getSkin(){
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            return insideFeignController.getSkin();
+            return insideFeignController.getSkin(userPrincipal.getIdNumberEncrytor(),userPrincipal.getSessionId());
         }).subscribeOn(Schedulers.elastic());
     }
 
