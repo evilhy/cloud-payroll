@@ -134,7 +134,7 @@ public class PasswordServiceImpl implements PaswordService {
                 throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
             }
 
-            //是否连续
+            //是否正序连续
             same = true;
             for (int i = 0; i < chars.length - 1; i++) {
                 int i1 = Integer.parseInt(String.valueOf(chars[i])) + 1;
@@ -147,7 +147,7 @@ public class PasswordServiceImpl implements PaswordService {
             if (same) {
                 throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
             }
-
+            //是否倒序连续
             same = true;
             for (int i = 0; i < chars.length - 1; i++) {
                 int i1 = Integer.parseInt(String.valueOf(chars[i])) - 1;
@@ -324,7 +324,7 @@ public class PasswordServiceImpl implements PaswordService {
             }
             //24小时内是否超过20次
             String dailyRedisKey = "tiger:number:dailyLimit:".concat(wechatId);
-            usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
+            usedTimes = (Integer) redisTemplate.opsForValue().get(dailyRedisKey);
             if (null != usedTimes && 20 < usedTimes) {
                 checkRedisTime(redisKey);
             }
@@ -338,7 +338,7 @@ public class PasswordServiceImpl implements PaswordService {
             }
             //24小时内是否超过20次
             String dailyRedisKey = "tiger:hand:dailyLimit:".concat(wechatId);
-            usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
+            usedTimes = (Integer) redisTemplate.opsForValue().get(dailyRedisKey);
             if (null != usedTimes && 20 < usedTimes) {
                 checkRedisTime(redisKey);
             }
@@ -353,12 +353,8 @@ public class PasswordServiceImpl implements PaswordService {
     private void checkRedisTime(String redisKey) {
         Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
         if (usedTimes != null) {
-            long time = redisTemplate.getExpire(redisKey);
-            log.debug("=================>ipRedisKey.time:{}", time);
-
-            long expire = (time - new Date().getTime()) / 1000;
-            log.info("=====> expire:{}", expire);
-
+            long expire = redisTemplate.getExpire(redisKey);
+            log.debug("=================>ipRedisKey.expire:{}", expire);
             long hour = expire / (60 * 60);
             long minute = (expire - hour * 60 * 60) / 60;
             long second = (expire - hour * 60 * 60 - minute * 60);
