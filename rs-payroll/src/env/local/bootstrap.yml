@@ -3,6 +3,9 @@ spring:
     name: payroll
   cloud:
     consul:
+      retry:
+        # 服务监测时间间隔
+        initial-interval: 10000
       host: 10.68.184.147
       port: 8500
       discovery:
