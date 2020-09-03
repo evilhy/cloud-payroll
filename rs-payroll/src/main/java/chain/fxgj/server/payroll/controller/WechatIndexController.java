@@ -7,6 +7,7 @@ import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.wechat.WechatCallBackDTO;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
+import chain.payroll.client.feign.InsideFeignController;
 import chain.payroll.client.feign.WechatFeignController;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
@@ -15,6 +16,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
+import core.dto.response.inside.SkinThemeInfoDto;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -26,6 +28,7 @@ import reactor.core.scheduler.Schedulers;
 import javax.annotation.security.PermitAll;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 微信通讯
@@ -37,6 +40,8 @@ public class WechatIndexController {
 
     @Autowired
     WechatRedisService wechatRedisService;
+    @Autowired
+    InsideFeignController insideFeignController;
 
 
     /**
@@ -107,7 +112,7 @@ public class WechatIndexController {
             res100705.setBindStatus(EncrytorUtils.encryptField(res100705.getBindStatus(), salt, passwd));
             res100705.setSalt(salt);
             res100705.setPasswd(passwd);
-            res100705.setThemeId(cacheUserPrincipal.getThemeId());
+            Optional.ofNullable(insideFeignController.getSkin()).ifPresent(tuple->res100705.setThemeId(tuple.getThemeId()));
             log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
         }).subscribeOn(Schedulers.elastic());
