@@ -158,8 +158,8 @@ public class AdvertisingController {
                     advertisingRotationDTOS.add(advertisingRotationDTO);
                 }
             }
-            log.info("======> 企业ID：{}，企业名称：{}，企业渠道：{}，企业版本：{}，企业子版本：{}", erpriseInfoRes.getEntId(), erpriseInfoRes.getEntName(), liquidation.getDesc(), versionsTypeEnum.getDesc(), versionsEnum.getDesc());
-            log.info("======> advertisingRotationDTOS：{}", JacksonUtil.objectToJson(advertisingRotationDTOS));
+            log.info("============================================================> 企业ID：{}，企业名称：{}，企业渠道：{}，企业版本：{}，企业子版本：{}", erpriseInfoRes.getEntId(), erpriseInfoRes.getEntName(), liquidation.getDesc(), versionsTypeEnum.getDesc(), versionsEnum.getDesc());
+            log.info("============================================================> advertisingRotationDTOS：{}", JacksonUtil.objectToJson(advertisingRotationDTOS));
             return advertisingRotationDTOS;
         }).subscribeOn(Schedulers.elastic());
     }
