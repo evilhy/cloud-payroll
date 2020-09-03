@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -134,6 +135,7 @@ public class PasswordServiceImpl implements PaswordService {
             }
 
             //是否连续
+            same = true;
             for (int i = 0; i < chars.length - 1; i++) {
                 int i1 = Integer.parseInt(String.valueOf(chars[i])) + 1;
                 int i2 = Integer.parseInt(String.valueOf(chars[i + 1]));
@@ -145,6 +147,8 @@ public class PasswordServiceImpl implements PaswordService {
             if (same) {
                 throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
             }
+
+            same = true;
             for (int i = 0; i < chars.length - 1; i++) {
                 int i1 = Integer.parseInt(String.valueOf(chars[i])) - 1;
                 int i2 = Integer.parseInt(String.valueOf(chars[i + 1]));
@@ -349,8 +353,12 @@ public class PasswordServiceImpl implements PaswordService {
     private void checkRedisTime(String redisKey) {
         Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
         if (usedTimes != null) {
-            Long expire = redisTemplate.getExpire(redisKey);
-            log.debug("=================>ipRedisKey.expire:{}", expire);
+            long time = redisTemplate.getExpire(redisKey);
+            log.debug("=================>ipRedisKey.time:{}", time);
+
+            long expire = (time - new Date().getTime()) / 1000;
+            log.info("=====> expire:{}", expire);
+
             long hour = expire / (60 * 60);
             long minute = (expire - hour * 60 * 60) / 60;
             long second = (expire - hour * 60 * 60 - minute * 60);
