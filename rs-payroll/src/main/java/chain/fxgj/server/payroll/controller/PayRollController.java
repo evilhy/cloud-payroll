@@ -369,14 +369,21 @@ public class PayRollController {
     @GetMapping("/empEnt")
     @TrackLog
     @Deprecated
-    public Mono<EmpEntDTO> empEnt() {
+    public Mono<EmpEntDTO> empEnt(@RequestHeader(value = "ent-id", required = false) String entId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
         BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
+        wageUserPrincipal.setEntId(entId);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+
+            if (StringUtils.isBlank(entId)) {
+                log.error("企业id为空，请检查请求头");
+                return new EmpEntDTO();
+            }
+
             List<EmpEntDTO> list = null;
             log.info("调用wageMangerFeignService.empEnt(wageUserPrincipal)开始");
             List<CacheEmpEntDTO> wageEmpEntDTOList = payrollFeignController.empEnt(wageUserPrincipal);
