@@ -37,7 +37,7 @@ plugins {
     id 'net.ltgt.apt' version '0.10'
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" apply false
     //测试类报错 CreateProcess error=206, 文件名或扩展名太长。本地调试使用。请勿提交！
-//    id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
+    id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
 }
 allprojects {
     apply plugin: 'maven'
