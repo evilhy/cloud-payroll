@@ -264,6 +264,7 @@ public class PasswordServiceImpl implements PaswordService {
             redisKey = "tiger:hand:dailyLimit:".concat(wechatId);
             this.setRedisKey(redisKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
         }
+        throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("密码错误，请核对后重试！"));
     }
 
     /**
@@ -303,7 +304,6 @@ public class PasswordServiceImpl implements PaswordService {
             }
 //            }
         }
-        throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("密码错误，请核对后重试！"));
     }
 
     /**
