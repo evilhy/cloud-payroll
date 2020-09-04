@@ -15,6 +15,7 @@ import chain.fxgj.server.payroll.dto.response.EntUserDTO;
 import chain.fxgj.server.payroll.dto.response.GroupInvoiceDTO;
 import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
 import chain.fxgj.server.payroll.dto.response.Res100701;
+import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.service.PayRollService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
@@ -23,12 +24,14 @@ import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.PayrollFeignController;
+import chain.payroll.client.feign.WageSheetFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.wage.manager.core.dto.response.*;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.response.*;
+import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -76,6 +79,10 @@ public class PayRollController {
     PayRollService payRollService;
     @Autowired
     PaswordService paswordService;
+    @Autowired
+    EmpWechatService empWechatService;
+    @Autowired
+    WageSheetFeignController wageSheetFeignController;
 
     /**
      * 服务当前时间
@@ -789,7 +796,8 @@ public class PayRollController {
      */
     @GetMapping("/wageDetail")
     @TrackLog
-    public Mono<List<WageDetailDTO>> wageDetail(@RequestParam("wageSheetId") String wageSheetId,
+    public Mono<List<WageDetailDTO>> wageDetail(@RequestHeader(value = "jsession-id", required = false) String jsessionId,
+                                                @RequestParam("wageSheetId") String wageSheetId,
                                                 @RequestParam("groupId") String groupId) {
         log.info("调用wageDetail开始时间::[{}]", LocalDateTime.now());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
@@ -870,6 +878,16 @@ public class PayRollController {
                 e.printStackTrace();
                 log.info("查询mongo异常:[{}]", e);
             }
+
+            //工资详情查询完成之后，更新缓存中的entId
+            if (StringUtils.isNotBlank(jsessionId)) {
+                CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+                WageSheetDTO wageSheet = wageSheetFeignController.findById(wageSheetId);
+                empWechatService.upWechatInfoDetail(jsessionId, wageSheet.getEntId(), wechatInfoDetail);
+            }else {
+                log.info("wageDetail未更新缓存中的entId");
+            }
+
             log.info("web.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());

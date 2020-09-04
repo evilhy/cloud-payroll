@@ -13,4 +13,12 @@ public class EmpWechatServiceImpl implements EmpWechatService {
     public CacheUserPrincipal getWechatInfoDetail(String jsessionId) {
         return null;
     }
+
+    @Override
+    public CacheUserPrincipal upWechatInfoDetail(String jsessionId, String entId, CacheUserPrincipal sourcePrincipal) {
+        CacheUserPrincipal cacheUserPrincipal = sourcePrincipal;
+        cacheUserPrincipal.setEntId(entId);
+        log.info("缓存jsessionId:[{}]中，entId已更新为:[{}]", jsessionId, entId);
+        return cacheUserPrincipal;
+    }
 }
