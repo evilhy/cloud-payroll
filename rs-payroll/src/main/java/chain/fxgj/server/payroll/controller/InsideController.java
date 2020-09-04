@@ -250,6 +250,7 @@ public class InsideController {
 
             CacheReq100702 wageReq100702 = new CacheReq100702();
             BeanUtils.copyProperties(req100702, wageReq100702);
+            wageReq100702.setIdNumber(wageReq100702.getIdNumber().toUpperCase());//身份证转大写
 
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
@@ -281,6 +282,7 @@ public class InsideController {
             MDC.setContextMap(mdcContext);
             CacheReq100701 wageReq100701 = new CacheReq100701();
             BeanUtils.copyProperties(req100701, wageReq100701);
+            wageReq100701.setIdNumber(wageReq100701.getIdNumber().toUpperCase());//身份证转大写
 
             //数字键盘密码，解密
             String password = paswordService.checkNumberPassword(pwd, wechatId);
