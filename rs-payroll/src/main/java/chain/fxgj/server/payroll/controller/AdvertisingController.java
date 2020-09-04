@@ -6,7 +6,6 @@ import chain.fxgj.ent.core.dto.request.EntErpriseQueryRequest;
 import chain.fxgj.ent.core.dto.response.EntErpriseInfoRes;
 import chain.fxgj.feign.client.AdvertisingFeignService;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
-import chain.fxgj.server.payroll.web.WebContext;
 import chain.news.dto.adv.AdsAdvInfoRes;
 import chain.news.dto.adv.QueryAdsReq;
 import chain.news.server.service.AdvServiceFegin;
@@ -20,10 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -83,10 +79,10 @@ public class AdvertisingController {
     @GetMapping("/rotation")
     @TrackLog
     @PermitAll
-    public Mono<List<AdvertisingRotationDTO>> rotation(@RequestParam("channelId") Integer channelId) {
+    public Mono<List<AdvertisingRotationDTO>> rotation(@RequestHeader("ent-id") String entId,
+                                                       @RequestParam("channelId") Integer channelId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         //根据合作方获取一行渠道
-        String entId = WebContext.getCurrentUser().getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<AdvertisingRotationDTO> advertisingRotationDTOS = new ArrayList<>();
