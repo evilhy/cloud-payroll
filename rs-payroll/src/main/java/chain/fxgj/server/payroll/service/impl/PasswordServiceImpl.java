@@ -255,17 +255,17 @@ public class PasswordServiceImpl implements PaswordService {
         if ("0".equals(type)) {
             //对同一手机号一小时内进行次数限制。一小时最多10次
             redisKey = "tiger:number:limit:".concat(wechatId);
-            usedTimes = this.setRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
+            usedTimes = this.setRedisKey(redisKey, 5, 10, ErrorConstant.PASSWORDLIMITERR);
             //对同一手机号一天内进行次数限制。一天最多20次
             redisDailyKey = "tiger:number:dailyLimit:".concat(wechatId);
-            usedDailyTimes = this.setRedisKey(redisDailyKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
+            usedDailyTimes = this.setRedisKey(redisDailyKey, 10, 20, ErrorConstant.PASSWORDCHECKERR);
         } else if ("1".equals(type)) {
             //对同一手机号一小时内进行次数限制。一小时最多10次
             redisKey = "tiger:hand:limit:".concat(wechatId);
-            usedTimes = this.setRedisKey(redisKey, 1, 10, ErrorConstant.PASSWORDLIMITERR);
+            usedTimes = this.setRedisKey(redisKey, 5, 10, ErrorConstant.PASSWORDLIMITERR);
             //对同一手机号一天内进行次数限制。一天最多20次
             redisDailyKey = "tiger:hand:dailyLimit:".concat(wechatId);
-            usedDailyTimes = this.setRedisKey(redisDailyKey, 24, 20, ErrorConstant.PASSWORDCHECKERR);
+            usedDailyTimes = this.setRedisKey(redisDailyKey, 10, 20, ErrorConstant.PASSWORDCHECKERR);
         }
 
         if (17 == usedDailyTimes || 18 == usedDailyTimes || 19 == usedDailyTimes) {
@@ -295,7 +295,7 @@ public class PasswordServiceImpl implements PaswordService {
     private Integer setRedisKey(String redisKey, Integer limitTime, Integer maxTimes, ErrorConstant errorConstant) {
         Integer usedTimes = (Integer) redisTemplate.opsForValue().get(redisKey);
         if (usedTimes == null) {
-            redisTemplate.opsForValue().set(redisKey, 1, limitTime, TimeUnit.HOURS);
+            redisTemplate.opsForValue().set(redisKey, 1, limitTime, TimeUnit.MINUTES);
             return 1;
         } else {
 //            if (usedTimes.equals(maxTimes)) {
@@ -307,7 +307,7 @@ public class PasswordServiceImpl implements PaswordService {
 //                }
 //            } else {
             usedTimes = usedTimes + 1;
-            redisTemplate.opsForValue().set(redisKey, usedTimes, limitTime, TimeUnit.HOURS);
+            redisTemplate.opsForValue().set(redisKey, usedTimes, limitTime, TimeUnit.MINUTES);
 //            }
             return usedTimes;
         }
