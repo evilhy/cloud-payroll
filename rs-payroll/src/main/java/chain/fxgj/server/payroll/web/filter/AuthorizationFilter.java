@@ -90,7 +90,12 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         if (LocalDateTime.now().isAfter(sessionTimeOut)) {
             throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
         }
-        principal.setEntId(entId);
+
+        //请求头中entId不为空的时候设置到缓存中，为空的时候就不用设置
+        if (!StringUtils.equals("undefined", entId) && StringUtils.isNotBlank(entId)) {
+            principal.setEntId(entId);
+        }
+
         WebContext.setCurrentUser(principal);
 
         String pageNumStr = exchange.getRequest().getHeaders().getFirst("page-num");
