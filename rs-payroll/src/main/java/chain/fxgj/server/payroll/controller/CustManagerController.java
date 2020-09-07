@@ -83,11 +83,11 @@ public class CustManagerController {
      * @return
      */
     @GetMapping("/openingTips")
-    public OpeningTipsDTO openingTips() {
+    public OpeningTipsDTO openingTips(@RequestHeader("ent-id") String entId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String idNumber = currentUser.getIdNumber();
-        String entId = currentUser.getEntId();
+//        String entId = currentUser.getEntId();
         log.info("openingTips.idNumber:[{}], entId:[{}]", idNumber, entId);
         OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber, entId);
         log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
