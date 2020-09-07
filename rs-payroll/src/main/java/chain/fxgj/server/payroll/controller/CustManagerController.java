@@ -87,8 +87,9 @@ public class CustManagerController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String idNumber = currentUser.getIdNumber();
-        log.info("openingTips.idNumber:[{}]", idNumber);
-        OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber);
+        String entId = currentUser.getEntId();
+        log.info("openingTips.idNumber:[{}], entId:[{}]", idNumber, entId);
+        OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber, entId);
         log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
         return openingTipsDTO;
     }
