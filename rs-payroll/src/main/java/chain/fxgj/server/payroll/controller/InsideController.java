@@ -70,8 +70,6 @@ public class InsideController {
     InsideFeignController insideFeignController;
     @Autowired
     PaswordService paswordService;
-    @Autowired
-    EmployeeInfoServiceFeign employeeInfoServiceFeign;
 
     /**
      * 发送短信验证码
