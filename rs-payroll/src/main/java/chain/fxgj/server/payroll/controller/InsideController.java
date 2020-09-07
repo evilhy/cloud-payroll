@@ -5,6 +5,7 @@ import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
 import chain.feign.hxinside.ent.service.EmployeeInfoServiceFeign;
 import chain.fxgj.ent.core.dto.request.EmployeeQueryRequest;
+import chain.fxgj.ent.core.dto.request.employee.EmpUpdPhoneReq;
 import chain.fxgj.ent.core.dto.response.EmployeeInfoRes;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.MsgCodeLogRequestDTO;
@@ -69,6 +70,8 @@ public class InsideController {
     InsideFeignController insideFeignController;
     @Autowired
     PaswordService paswordService;
+    @Autowired
+    EmployeeInfoServiceFeign employeeInfoServiceFeign;
 
     /**
      * 发送短信验证码
@@ -469,12 +472,15 @@ public class InsideController {
      */
     @PostMapping("/updPhone")
     @TrackLog
-    public Mono<Void> updPhone(@RequestBody ReqPhone reqPhone) throws Exception {
+    public Mono<Void> updPhone(@RequestHeader("ent-id") String entId,
+                               @RequestBody ReqPhone reqPhone) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         log.info("updPhone reqPhone:[{}]", JacksonUtil.objectToJson(reqPhone));
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+
+            //修改Mongo手机号
             CacheReqPhone wageReqPhone = new CacheReqPhone();
             BeanUtils.copyProperties(reqPhone, wageReqPhone);
 
@@ -482,7 +488,17 @@ public class InsideController {
             CacheUpdPhoneRequestDTO cacheUpdPhoneRequestDTO = new CacheUpdPhoneRequestDTO();
             cacheUpdPhoneRequestDTO.setCacheReqPhone(wageReqPhone);
             cacheUpdPhoneRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
+            cacheUpdPhoneRequestDTO.setEntId(entId);
             insideFeignController.updPhone(cacheUpdPhoneRequestDTO);
+
+            //修改Mysql手机号
+            EmpUpdPhoneReq empUpdPhoneReq = EmpUpdPhoneReq.builder()
+                    .entId(entId)
+                    .idNumber(userPrincipal.getIdNumber())
+                    .phone(reqPhone.getPhone())
+                    .build();
+            log.info("updPhone.feign:[{}]", JacksonUtil.objectToJson(empUpdPhoneReq));
+            employeeInfoServiceFeign.updPhone(empUpdPhoneReq);
 
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
