@@ -245,10 +245,9 @@ public class InsideController {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-
+            log.info("bindWX.req100702:[{}]", JacksonUtil.objectToJson(req100702));
             CacheReq100702 wageReq100702 = new CacheReq100702();
             BeanUtils.copyProperties(req100702, wageReq100702);
-            wageReq100702.setIdNumber(wageReq100702.getIdNumber().toUpperCase());//身份证转大写
 
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
