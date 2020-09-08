@@ -165,7 +165,8 @@ public class PayRollController {
                                   @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
-        String idNumber = entEmpDTO.getIdNumber();
+        //强制转换成大写
+        String idNumber = entEmpDTO.getIdNumber().toUpperCase();
         if (StringUtils.isBlank(idNumber)) {
             throw new ParamsIllegalException(new ErrorMsg("9999", "请输入身份证!"));
         }
