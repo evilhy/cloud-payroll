@@ -37,15 +37,15 @@ public class CustManagerController {
      */
     @GetMapping("/managerInfo")
     @TrackLog
-    public Mono<ManagerInfoDTO> sendCode() {
+    public Mono<ManagerInfoDTO> sendCode(@RequestHeader("ent-id") String entId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String idNumber = currentUser.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.debug("==>身份证号:{}", idNumber);
-            WageManagerInfoDTO wageManagerInfoDTO = custManagerFeignService.sendCode(idNumber);
+            log.debug("==>身份证号:{}, entId:[{}]", idNumber, entId);
+            WageManagerInfoDTO wageManagerInfoDTO = custManagerFeignService.sendCode(idNumber, entId);
             ManagerInfoDTO managerInfoDTO = new ManagerInfoDTO();
             if (null != wageManagerInfoDTO) {
                 BeanUtils.copyProperties(wageManagerInfoDTO, managerInfoDTO);
