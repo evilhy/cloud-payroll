@@ -76,12 +76,18 @@ public class SslHttpTest {
                 .appid(appid)
                 .version(version)
                 .build();
-
-        String name = "彭银";
+        String name = "五次名";
         String idType = "01";
-        String idNumber = "14212219891008530X";
-        String phone = "16666666666";
+        String idNumber = "500101199109080018";
+        String phone = "13420090801";
         String uid = "9871234";
+
+//        String name = "彭张银";
+//        String idType = "01";
+//        String idNumber = "500101199109080018";
+//        String phone = "13420090801";
+//        String uid = "9871234";
+
         String openId = "oFnSLvyxBArqJtYqd3-xU6H7Xr08";
         String nickname = "用户微信昵称";
         String headimgurl = "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLGZicQDuRPCCcFEFEN72qnAgVGJ99JMmegLMTknEpaSGbVzo2aweUSCkC0reicqhpZOWABEoTqahmA/132";

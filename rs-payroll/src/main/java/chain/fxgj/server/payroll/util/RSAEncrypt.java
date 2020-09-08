@@ -89,7 +89,7 @@ public class RSAEncrypt {
         //RSA解密
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, priKey);
-        String outStr = new String(cipher.doFinal(inputByte));
+        String outStr = new String(cipher.doFinal(inputByte), "UTF-8");
         return outStr;
     }
 
