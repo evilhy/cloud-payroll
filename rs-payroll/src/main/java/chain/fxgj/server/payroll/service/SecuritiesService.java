@@ -18,7 +18,7 @@ public interface SecuritiesService {
      * @param jsessionId
      * @param openId
      */
-    @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
+    @CachePut(cacheNames = "securities", key = "'jsession:'.concat(#jsessionId)")
     SecuritiesRedisDTO qrySecuritiesCustInfo(String jsessionId, String openId);
 
     /**
@@ -26,14 +26,14 @@ public interface SecuritiesService {
      * @param jsessionId
      * @param securitiesRedisDTO
      */
-    @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
+    @CachePut(cacheNames = "securities", key = "'jsession:'.concat(#jsessionId)")
     SecuritiesRedisDTO upSecuritiesRedis(String jsessionId, SecuritiesRedisDTO securitiesRedisDTO);
 
     /**
      * 查询缓存信息
      * @param jsessionId
      */
-    @Cacheable(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
+    @Cacheable(cacheNames = "securities", key = "'jsession:'.concat(#jsessionId)")
     SecuritiesRedisDTO qrySecuritiesRedis(String jsessionId);
 
     /**

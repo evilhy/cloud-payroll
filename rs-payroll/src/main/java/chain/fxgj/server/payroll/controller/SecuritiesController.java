@@ -8,6 +8,7 @@ import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.ResSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
+import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
@@ -25,6 +26,7 @@ import chain.utils.commons.UUIDUtil;
 import chain.wage.manager.core.dto.request.WageReqPhone;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
+import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
@@ -61,9 +63,11 @@ public class SecuritiesController {
     InsideFeignService insideFeignService;
     @Autowired
     CaptchaFeignClient captchaFeignClient;
+    @Autowired
+    EmpWechatService empWechatService;
 
     /**
-     * 登录校验
+     * 登录校验-工资条外部菜单使用
      * @return
      */
     @GetMapping("/loginCheck")
@@ -120,6 +124,49 @@ public class SecuritiesController {
         }).subscribeOn(Schedulers.elastic());
     }
 
+    /**
+     * 登录校验-工资条内部使用接口
+     * @return
+     */
+    @GetMapping("/loginCheckIn")
+    @TrackLog
+    public Mono<SecuritiesRedisDTO> loginCheckIn(@RequestParam("jsessionId") String jsessionId,
+                                               @RequestHeader(value = "encry-salt", required = false) String salt,
+                                               @RequestHeader(value = "encry-passwd", required = false) String passwd) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+            String openId = wechatInfoDetail.getOpenId();
+            if (StringUtils.isEmpty(openId)) {
+                throw new ParamsIllegalException(ErrorConstant.AUTH_ERR.getErrorMsg());
+            }
+
+            //用openId查询唯销是否已登录，同时放入 redis
+            SecuritiesRedisDTO securitiesRedisDTO = securitiesService.qrySecuritiesCustInfo(jsessionId, openId);
+            log.info("securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
+
+            Integer loginStatus = securitiesRedisDTO.getLoginStatus();
+            if (loginStatus == 0) {
+                //未登录
+                String nickName = wechatInfoDetail.getNickname();
+                securitiesRedisDTO.setNickname(nickName);
+                securitiesRedisDTO.setHeadimgurl(wechatInfoDetail.getHeadimgurl());
+                //todo 需微信登录的时候，加入到CacheUserPrincipal缓存中，这里再获取
+//                securitiesRedisDTO.setSex(String.valueOf(userPrincipal.getSex()));
+//                securitiesRedisDTO.setCountry(userPrincipal.getCountry());
+//                securitiesRedisDTO.setCity(userPrincipal.getCity());
+                //更新缓存
+                securitiesService.upSecuritiesRedis(jsessionId, securitiesRedisDTO);
+            }
+            // 手机号加密返回
+            securitiesRedisDTO.setPhone(EncrytorUtils.encryptField(securitiesRedisDTO.getPhone(), salt, passwd));
+            securitiesRedisDTO.setSalt(salt);
+            securitiesRedisDTO.setPasswd(passwd);
+            log.info("loginCheck.securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
+            return securitiesRedisDTO;
+        }).subscribeOn(Schedulers.elastic());
+    }
     /**
      * 证券登录
      *
