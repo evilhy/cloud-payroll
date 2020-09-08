@@ -5,7 +5,7 @@ import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
 import chain.feign.hxinside.ent.service.EmployeeInfoServiceFeign;
 import chain.fxgj.ent.core.dto.request.EmployeeQueryRequest;
-import chain.fxgj.ent.core.dto.request.employee.EmpUpdPhoneReq;
+import chain.fxgj.ent.core.dto.request.employee.EmpInfoUpdReq;
 import chain.fxgj.ent.core.dto.response.EmployeeInfoRes;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.MsgCodeLogRequestDTO;
@@ -24,10 +24,7 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.InsideFeignController;
 import chain.utils.commons.JacksonUtil;
-import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
-import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
-import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
-import chain.utils.fxgj.constant.DictEnums.MsgBuisTypeEnum;
+import chain.utils.fxgj.constant.DictEnums.*;
 import core.dto.request.*;
 import core.dto.response.index.EmpEntResDTO;
 import core.dto.response.inside.SkinThemeInfoDto;
@@ -261,6 +258,15 @@ public class InsideController {
             wageBindRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
 
             insideFeignController.bandWX(wageBindRequestDTO);
+            log.info("微信号绑定身份证完成");
+
+            //绑定完成之后，更新MySql员工表绑定状态
+            EmpInfoUpdReq empInfoUpdReq = EmpInfoUpdReq.builder()
+                    .idNumber(req100702.getIdNumber())
+                    .bindStatus(IsBindWechatEnum.ISBINDWECHAT)
+                    .build();
+            employeeInfoServiceFeign.updEmpInfo(empInfoUpdReq);
+            log.info("更新MySql员工表绑定状态完成");
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -299,6 +305,16 @@ public class InsideController {
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
             }
+
+            log.info("微信号绑定身份证完成-无手机号");
+            //绑定完成之后，更新MySql员工表绑定状态
+            EmpInfoUpdReq empInfoUpdReq = EmpInfoUpdReq.builder()
+                    .idNumber(req100701.getIdNumber())
+                    .bindStatus(IsBindWechatEnum.ISBINDWECHAT)
+                    .build();
+            employeeInfoServiceFeign.updEmpInfo(empInfoUpdReq);
+            log.info("更新MySql员工表绑定状态完成");
+
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
@@ -490,13 +506,13 @@ public class InsideController {
             insideFeignController.updPhone(cacheUpdPhoneRequestDTO);
 
             //修改Mysql手机号
-            EmpUpdPhoneReq empUpdPhoneReq = EmpUpdPhoneReq.builder()
+            EmpInfoUpdReq empInfoUpdReq = EmpInfoUpdReq.builder()
                     .entId(entId)
                     .idNumber(userPrincipal.getIdNumber())
                     .phone(reqPhone.getPhone())
                     .build();
-            log.info("updPhone.feign:[{}]", JacksonUtil.objectToJson(empUpdPhoneReq));
-            employeeInfoServiceFeign.updPhone(empUpdPhoneReq);
+            log.info("updPhone.feign:[{}]", JacksonUtil.objectToJson(empInfoUpdReq));
+            employeeInfoServiceFeign.updEmpInfo(empInfoUpdReq);
 
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
