@@ -611,7 +611,7 @@ public class InsideController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            return insideFeignController.getSkin(userPrincipal.getIdNumberEncrytor(), userPrincipal.getAppPartner().getCode().toString());
+            return insideFeignController.getSkin(userPrincipal.getSessionId(), userPrincipal.getAppPartner().getCode().toString());
         }).subscribeOn(Schedulers.elastic());
     }
 

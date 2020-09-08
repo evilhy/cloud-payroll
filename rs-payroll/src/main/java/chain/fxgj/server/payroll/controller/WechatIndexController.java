@@ -111,7 +111,7 @@ public class WechatIndexController {
             res100705.setBindStatus(EncrytorUtils.encryptField(res100705.getBindStatus(), salt, passwd));
             res100705.setSalt(salt);
             res100705.setPasswd(passwd);
-            Optional.ofNullable(insideFeignController.getSkin(cacheUserPrincipal.getIdNumberEncrytor(),appPartner.getCode().toString())).ifPresent(tuple->res100705.setThemeId(tuple.getThemeId()));
+            Optional.ofNullable(insideFeignController.getSkin(jsessionId,appPartner.getCode().toString())).ifPresent(tuple->res100705.setThemeId(tuple.getThemeId()));
             log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
         }).subscribeOn(Schedulers.elastic());
