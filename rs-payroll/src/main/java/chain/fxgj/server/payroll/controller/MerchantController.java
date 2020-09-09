@@ -143,11 +143,10 @@ public class MerchantController {
         signature = RSAEncrypt.decrypt(signature, merchant.getRsaPrivateKey());
         log.info("签名信息，报文中={} ,解析后生成签名={} ", signature, checkSignature);
 
-        // todo 注释后测试使用暂不验签。生产请放开注释
-//        if (!signature.equalsIgnoreCase(checkSignature)) {
-//            log.error("签名信息,验证失败。报文中={} ,解析后生成签名={} ", signature, checkSignature);
-//            throw new ParamsIllegalException(ErrorConstant.MERCHANT_02.getErrorMsg());
-//        }
+        if (!signature.equalsIgnoreCase(checkSignature)) {
+            log.error("签名信息,验证失败。报文中={} ,解析后生成签名={} ", signature, checkSignature);
+            throw new ParamsIllegalException(ErrorConstant.MERCHANT_02.getErrorMsg());
+        }
         log.info(">>>>>>>验签通过<<<<<<<");
 
         return Mono.fromCallable(() -> {

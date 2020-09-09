@@ -82,7 +82,7 @@ public class SslHttpTest {
         String phone = "13420090801";
         String uid = "9871234";
 
-//        String name = "彭张银";
+//        String name = "彭银";
 //        String idType = "01";
 //        String idNumber = "500101199109080018";
 //        String phone = "13420090801";
@@ -154,6 +154,7 @@ public class SslHttpTest {
 
         //测试地址
             String requestUrl = "https://sitgateway.cardpu.com/payroll/merchant/getAccess";
+//        String requestUrl = "http://172.16.248.62:8080/merchant/getAccess";
         System.out.println("调用地址:" + requestUrl);
         System.out.println("入参:" + reqParam);
 
@@ -162,23 +163,23 @@ public class SslHttpTest {
         String password = "kayak20200225";
 
         try {
-
-            FileInputStream file = null;
-            file = new FileInputStream(new File(certFile));
-
-            // 私钥证书密码
-            KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(file, password.toCharArray());
-
-            SSLContext sslContext = SSLContexts.custom()
-                    .loadTrustMaterial(null, new TrustStrategy() {
-                        @Override
-                        public boolean isTrusted(java.security.cert.X509Certificate[] chain, String authType) throws java.security.cert.CertificateException {
-                            return true;
-                        }
-                    })
-                    .loadKeyMaterial(keyStore, password.toCharArray())
-                    .build();
+//              测试暂不使用证书
+//            FileInputStream file = null;
+//            file = new FileInputStream(new File(certFile));
+//
+//            // 私钥证书密码
+//            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+//            keyStore.load(file, password.toCharArray());
+//
+//            SSLContext sslContext = SSLContexts.custom()
+//                    .loadTrustMaterial(null, new TrustStrategy() {
+//                        @Override
+//                        public boolean isTrusted(java.security.cert.X509Certificate[] chain, String authType) throws java.security.cert.CertificateException {
+//                            return true;
+//                        }
+//                    })
+//                    .loadKeyMaterial(keyStore, password.toCharArray())
+//                    .build();
 
             StringEntity postingString = new StringEntity(reqParam);
             postingString.setContentType("application/json");//发送json数据需要设置contentType
@@ -205,7 +206,8 @@ public class SslHttpTest {
             HttpGet httpget = new HttpGet(requestUrl);
 
             CloseableHttpClient httpClient = HttpClients.custom()
-                    .setSSLContext(sslContext).build();
+//                    .setSSLContext(sslContext)
+                    .build();
 
             HttpResponse response = httpClient.execute(httpPost);
 
