@@ -42,10 +42,11 @@ public class CustManagerController {
 
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String idNumber = currentUser.getIdNumber();
+        String entIdUser = currentUser.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.debug("==>身份证号:{}, entId:[{}]", idNumber, entId);
-            WageManagerInfoDTO wageManagerInfoDTO = custManagerFeignService.sendCode(idNumber, entId);
+            WageManagerInfoDTO wageManagerInfoDTO = custManagerFeignService.sendCode(idNumber, entIdUser);
             ManagerInfoDTO managerInfoDTO = new ManagerInfoDTO();
             if (null != wageManagerInfoDTO) {
                 BeanUtils.copyProperties(wageManagerInfoDTO, managerInfoDTO);
