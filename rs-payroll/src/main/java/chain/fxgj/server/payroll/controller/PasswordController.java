@@ -235,7 +235,8 @@ public class PasswordController {
     @PermitAll
     public Mono<CrateNumericKeypadRes> crateNumericKeypad() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
+        //wechatId为空，就用openId作为 redisKey 缓存
+        String wechatId = StringUtils.isEmpty(WebContext.getCurrentUser().getWechatId())?WebContext.getCurrentUser().getOpenId():WebContext.getCurrentUser().getWechatId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到登录用户可用标识")));
@@ -251,7 +252,7 @@ public class PasswordController {
             //加入缓存
             try {
                 log.info("crateNumericKeypad.redisKey:[{}]", keyboardId);
-                redisTemplate.opsForValue().set(keyboardId, result, 1, TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set(keyboardId, result, 2, TimeUnit.MINUTES);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("密码键盘入缓存失败:[{}]", e.getMessage());

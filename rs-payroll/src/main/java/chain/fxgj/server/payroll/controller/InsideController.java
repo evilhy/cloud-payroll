@@ -280,15 +280,16 @@ public class InsideController {
     @PostMapping("/rz")
     @TrackLog
     public Mono<Void> rz(@RequestBody Req100701 req100701) throws Exception {
+        log.info("rz.wageRzRequestDTO:[{}]", JacksonUtil.objectToJson(req100701));
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
+        String wechatId = StringUtils.isEmpty(WebContext.getCurrentUser().getWechatId())?WebContext.getCurrentUser().getOpenId():WebContext.getCurrentUser().getWechatId();
         String pwd = req100701.getPwd();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             CacheReq100701 wageReq100701 = new CacheReq100701();
             BeanUtils.copyProperties(req100701, wageReq100701);
-            wageReq100701.setIdNumber(wageReq100701.getIdNumber().toUpperCase());//身份证转大写
+//            wageReq100701.setIdNumber(wageReq100701.getIdNumber().toUpperCase());//身份证转大写
 
             //数字键盘密码，解密
             String password = paswordService.checkNumberPassword(pwd, wechatId);
@@ -300,6 +301,7 @@ public class InsideController {
             CacheRzRequestDTO wageRzRequestDTO = new CacheRzRequestDTO();
             wageRzRequestDTO.setCacheReq100701(wageReq100701);
             wageRzRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
+            log.info("wageRzRequestDTO:[{}]", JacksonUtil.objectToJson(wageRzRequestDTO));
             String retStr = insideFeignController.rz(wageRzRequestDTO);
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
