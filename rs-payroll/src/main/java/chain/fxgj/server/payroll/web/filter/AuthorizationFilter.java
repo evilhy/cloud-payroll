@@ -40,7 +40,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/weixin",
             "/tfinance/intentionList",
             "/inside/rz/",
-            "/roll/checkCar",
+//            "/roll/checkCar",
             "/tfinance/codeUrl",
             "/advertising/rotation",
             "/merchant/getAccess",
