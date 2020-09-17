@@ -252,7 +252,7 @@ public class PasswordController {
             //加入缓存
             try {
                 log.info("crateNumericKeypad.redisKey:[{}]", keyboardId);
-                redisTemplate.opsForValue().set(keyboardId, result, 1, TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set(keyboardId, result, 2, TimeUnit.MINUTES);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("密码键盘入缓存失败:[{}]", e.getMessage());
