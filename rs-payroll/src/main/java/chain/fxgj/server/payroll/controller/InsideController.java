@@ -300,6 +300,7 @@ public class InsideController {
             CacheRzRequestDTO wageRzRequestDTO = new CacheRzRequestDTO();
             wageRzRequestDTO.setCacheReq100701(wageReq100701);
             wageRzRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
+            log.info("wageRzRequestDTO:[{}]", JacksonUtil.objectToJson(wageRzRequestDTO));
             String retStr = insideFeignController.rz(wageRzRequestDTO);
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
