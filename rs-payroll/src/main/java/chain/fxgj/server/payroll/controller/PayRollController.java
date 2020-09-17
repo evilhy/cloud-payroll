@@ -317,8 +317,7 @@ public class PayRollController {
     @TrackLog
     public Mono<Void> checkCard(@RequestBody CacheCheckCardDTO cacheCheckCardDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
-
+        String wechatId = StringUtils.isEmpty(WebContext.getCurrentUser().getWechatId())?WebContext.getCurrentUser().getOpenId():WebContext.getCurrentUser().getWechatId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("调用wageMangerFeignService.checkCard(idNumber,cardNo)开始");

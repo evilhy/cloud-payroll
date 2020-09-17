@@ -235,7 +235,8 @@ public class PasswordController {
     @PermitAll
     public Mono<CrateNumericKeypadRes> crateNumericKeypad() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
+        //wechatId为空，就用openId作为 redisKey 缓存
+        String wechatId = StringUtils.isEmpty(WebContext.getCurrentUser().getWechatId())?WebContext.getCurrentUser().getOpenId():WebContext.getCurrentUser().getWechatId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到登录用户可用标识")));

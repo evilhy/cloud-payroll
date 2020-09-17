@@ -282,7 +282,7 @@ public class InsideController {
     public Mono<Void> rz(@RequestBody Req100701 req100701) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        String wechatId = String.valueOf(WebContext.getCurrentUser().getWechatId());
+        String wechatId = StringUtils.isEmpty(WebContext.getCurrentUser().getWechatId())?WebContext.getCurrentUser().getOpenId():WebContext.getCurrentUser().getWechatId();
         String pwd = req100701.getPwd();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
