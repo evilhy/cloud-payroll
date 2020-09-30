@@ -81,6 +81,10 @@ public interface WechatRedisService {
     @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
     CacheUserPrincipal registeWechatPayroll(String jsessionId, String openId, String nickName, String headImgurl, String idNumber, chain.utils.fxgj.constant.DictEnums.AppPartnerEnum appPartner) throws Exception;
 
-
+    /**
+     * 年会红包设置超时时间
+     */
+    @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
+    CacheUserPrincipal setActivitySessionTimeOut(String jsessionId, String openId) throws Exception;
 
 }
