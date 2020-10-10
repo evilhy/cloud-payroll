@@ -20,7 +20,7 @@ public class PayrollConstants {
     public final static String PLAT_ID = "plat-id";    //平台id(EnumPlatform)
     public final static String APPPARTNER = "apppartner";
     public final static String APPPARTNER_DESC = "apppartnerdesc";
-
+    public final static String SUB_TOKEN = "sub_token";  //子线程日志
     /**
      * 凭证超时时间   默认值：600
      */
@@ -35,5 +35,16 @@ public class PayrollConstants {
      * 构造网页授权链接，获取code
      */
     public static final String SNSAPI_USERINFO = "snsapi_userinfo";
+
+    /**
+     * 活动 凭证超时时间   默认值：600
+     */
+    public final static Integer ACTIVITY_EXPIRESIN = 30;
+
+    /**
+     * 活动
+     */
+    public static final String ACTIVITYACCEDE_LOCK_ACTIVITYID_IDNUMBER = "activityaccede_lock_activityid_idnumber";
+
 
 }

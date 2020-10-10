@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,5 +78,15 @@ public class WechatRedisServiceImpl implements WechatRedisService {
         CacheUserPrincipal cacheUserPrincipal = wechatFeignController.registeWechatPayroll(cacheRegisteWechatPayrollDTO);
         log.info("wageUserPrincipal:[{}]", JacksonUtil.objectToJson(cacheUserPrincipal));
         return cacheUserPrincipal;
+    }
+
+    @Override
+    public CacheUserPrincipal setActivitySessionTimeOut(String jsessionId, String openId) throws Exception {
+        CacheUserPrincipal userPrincipal = CacheUserPrincipal.builder()
+                .sessionId(jsessionId)
+                .openId(openId)
+                .sessionTimeOut(LocalDateTime.now().plusHours(8))
+                .build();
+        return userPrincipal;
     }
 }

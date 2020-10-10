@@ -257,11 +257,12 @@ public class PayRollController {
             MDC.setContextMap(mdcContext);
             List<GroupInvoiceDTO> list = null;
             log.info("invoice.wageUserPrincipal:[{}]", JacksonUtil.objectToJson(wageUserPrincipal));
-            List<WageGroupInvoiceDTO> wageGroupInvoiceDTOList = wageMangerFeignService.invoice(idNumber);
+//            List<WageGroupInvoiceDTO> wageGroupInvoiceDTOList = wageMangerFeignService.invoice(idNumber); //改查mongo
+            List<core.dto.response.GroupInvoiceDTO> wageGroupInvoiceDTOList = payrollFeignController.invoice(idNumber, principal.getEntId());
             log.info("invoice-->{}", wageGroupInvoiceDTOList);
             if (!CollectionUtils.isEmpty(wageGroupInvoiceDTOList)) {
                 list = new ArrayList<>();
-                for (WageGroupInvoiceDTO wageGroupInvoiceDTO : wageGroupInvoiceDTOList) {
+                for (core.dto.response.GroupInvoiceDTO wageGroupInvoiceDTO : wageGroupInvoiceDTOList) {
                     GroupInvoiceDTO groupInvoiceDTO = new GroupInvoiceDTO();
                     BeanUtils.copyProperties(wageGroupInvoiceDTO, groupInvoiceDTO);
                     list.add(groupInvoiceDTO);
