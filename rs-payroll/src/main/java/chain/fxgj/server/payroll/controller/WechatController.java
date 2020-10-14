@@ -223,4 +223,27 @@ public class WechatController {
             return weixinJsapiDTO;
         }).subscribeOn(Schedulers.elastic());
     }
+
+    /**
+     * JS分享产生分享签名(新增接口，前端增加 AppPartnerEnum)
+     *
+     */
+    @GetMapping("/getJsapiSignatureById")
+    @TrackLog
+    @PermitAll
+    public Mono<WechatJsapiRequestDTO> getJsapiSignatureById(
+            @RequestParam("url") String url,
+            @RequestParam(value = "id", required = true, defaultValue = "FXGJ") AppPartnerEnum id)
+            throws BusiVerifyException {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("getJsapiSignature url:[{}],id:[{}]", url, id);
+            WechatGroupEnum wechatGroup = WechatGroupEnum.valueOf(id.name());
+            WechatJsapiRequestDTO wechatJsapiRequestDTO = wechatFeignClient.jsapiSignature(wechatGroup, url);
+            log.info("wechatJsapiRequestDTO:[{}]", JacksonUtil.objectToJson(wechatJsapiRequestDTO));
+            return wechatJsapiRequestDTO;
+        }).subscribeOn(Schedulers.elastic());
+    }
 }
