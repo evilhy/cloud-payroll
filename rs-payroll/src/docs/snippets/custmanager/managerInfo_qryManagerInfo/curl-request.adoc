@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/manager/qryManagerInfo' -i -X GET \
+    -H 'jsession_id: 5f360ad71e4b42db8f54d2afb78fde73'
+    -H 'Content-Type: application/json' \
+    -d '{"managerId":"ff8080816899924301689e0297240001"}'
+----

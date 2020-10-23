@@ -1,0 +1,9 @@
+|===
+|Parameter|Type|Description
+
+|`+managerId+`
+|`+String+`
+|客户经理id
+
+
+|===

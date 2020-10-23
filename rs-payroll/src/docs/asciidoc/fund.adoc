@@ -1,0 +1,58 @@
+:snippets: ../snippets/wechat
+== 基金预约
+
+=== 基金预约信息查询
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/fund/fund_appointmentInfo/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/fund/fund_appointmentInfo/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/fund/fund_appointmentInfo/curl-request.adoc[]
+* Response:
++
+include::{snippets}/fund/fund_appointmentInfo/http-response.adoc[]
+
+=== 基金预约入库-工资条
+==== 接口定义
+* Query Parameters:
++
+include::{snippets}/fund/fund_appointmentSave/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/fund/fund_appointmentSave/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/fund/fund_appointmentSave/curl-request.adoc[]
+* Response:
++
+include::{snippets}/fund/fund_appointmentSave/response-body.adoc[]
+
+=== 基金预约入库-经理
+==== 接口定义
+* Query Parameters:
++
+include::{snippets}/fund/fund_appointmentSaveByManagerId/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/fund/fund_appointmentSaveByManagerId/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/fund/fund_appointmentSaveByManagerId/curl-request.adoc[]
+* Response:
++
+include::{snippets}/fund/fund_appointmentSaveByManagerId/response-body.adoc[]
+
+
+
+
+

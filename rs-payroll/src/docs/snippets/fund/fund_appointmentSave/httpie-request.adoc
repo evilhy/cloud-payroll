@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"phone":"13400000000","customerId":"","invitationId":"123123123","code":"9527"}' | http POST 'http://localhost:8080/securityes/securitiesLogin' \
+    'Content-Type:application/json' \
+    'jsession_id:321321321'
+----

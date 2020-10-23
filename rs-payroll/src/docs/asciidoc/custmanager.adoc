@@ -36,3 +36,23 @@ include::{snippets}/custmanager/distribute_custmanager/curl-request.adoc[]
 * Response:
 +
 include::{snippets}/custmanager/distribute_custmanager/http-response.adoc[]
+
+=== 根据managerId查询客户经理信息: GET
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/custmanager/managerInfo_qryManagerInfo/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/custmanager/managerInfo_qryManagerInfo/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/custmanager/managerInfo_qryManagerInfo/curl-request.adoc[]
+* Response:
++
+include::{snippets}/custmanager/managerInfo_qryManagerInfo/http-response.adoc[]
+
+

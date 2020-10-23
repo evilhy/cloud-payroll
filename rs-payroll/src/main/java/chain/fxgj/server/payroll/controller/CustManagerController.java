@@ -95,4 +95,27 @@ public class CustManagerController {
         return openingTipsDTO;
     }
 
+
+    /**
+     * 根据managerId查询客户经理信息
+     *
+     * @return
+     */
+    @GetMapping("/qryManagerInfo")
+    @TrackLog
+    public Mono<ManagerInfoDTO> qryManagerInfo(@RequestParam("managerId") String managerId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.debug("qryManagerInfo.managerId:[{}]", managerId);
+            WageManagerInfoDTO wageManagerInfoDTO = custManagerFeignService.managerInfoById(managerId);
+            ManagerInfoDTO managerInfoDTO = new ManagerInfoDTO();
+            if (null != wageManagerInfoDTO) {
+                BeanUtils.copyProperties(wageManagerInfoDTO, managerInfoDTO);
+            }
+            log.info("qryManagerInfo.managerInfoDTO:[{}]", JacksonUtil.objectToJson(managerInfoDTO));
+            return managerInfoDTO;
+        }).subscribeOn(Schedulers.elastic());
+
+    }
 }

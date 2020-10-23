@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/securityes/qryOpenRewardList?custId=1231231231234' -i -X GET
+----
