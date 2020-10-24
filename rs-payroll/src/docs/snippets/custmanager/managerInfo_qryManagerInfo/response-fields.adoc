@@ -1,7 +1,7 @@
 |===
 |Path|Type|Description
 
-|`+id+`
+|`+managerId+`
 |`+String+`
 |客户经理id
 
@@ -9,15 +9,15 @@
 |`+String+`
 |客户经理姓名
 
-|`+mobile+`
+|`+managerPhone+`
 |`+String+`
 |客户经理手机号
 
-|`+branchOrgNo+`
+|`+branchNo+`
 |`+String+`
 |分行机构号
 
-|`+branchOrgName+`
+|`+branchName+`
 |`+String+`
 |分行名称
 
@@ -25,11 +25,11 @@
 |`+String+`
 |吸存码
 
-|`+subBranchOrgNo+`
+|`+subBranchNo+`
 |`+String+`
 |支行机构号
 
-|`+subBranchOrgName+`
+|`+subBranchName+`
 |`+String+`
 |支行名称
 

@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.feign.client.CustManagerFeignService;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
+import chain.fxgj.server.payroll.dto.response.ManagerInformationDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
@@ -103,18 +104,25 @@ public class CustManagerController {
      */
     @GetMapping("/qryManagerInfo")
     @TrackLog
-    public Mono<ManagerInfoDTO> qryManagerInfo(@RequestParam("managerId") String managerId) {
+    public Mono<ManagerInformationDTO> qryManagerInfo(@RequestParam("managerId") String managerId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.debug("qryManagerInfo.managerId:[{}]", managerId);
             WageManagerInfoDTO wageManagerInfoDTO = custManagerFeignService.managerInfoById(managerId);
-            ManagerInfoDTO managerInfoDTO = new ManagerInfoDTO();
+            ManagerInformationDTO managerInformationDTO = new ManagerInformationDTO();
             if (null != wageManagerInfoDTO) {
-                BeanUtils.copyProperties(wageManagerInfoDTO, managerInfoDTO);
+                BeanUtils.copyProperties(wageManagerInfoDTO, managerInformationDTO);
+                managerInformationDTO.setManagerId(wageManagerInfoDTO.getId());
+                managerInformationDTO.setManagerName(wageManagerInfoDTO.getManagerName());
+                managerInformationDTO.setBranchName(wageManagerInfoDTO.getBranchOrgName());
+                managerInformationDTO.setBranchNo(wageManagerInfoDTO.getBranchOrgNo());
+                managerInformationDTO.setSubBranchName(wageManagerInfoDTO.getSubBranchOrgName());
+                managerInformationDTO.setSubBranchNo(wageManagerInfoDTO.getSubBranchOrgNo());
+                managerInformationDTO.setManagerPhone(wageManagerInfoDTO.getMobile());
             }
-            log.info("qryManagerInfo.managerInfoDTO:[{}]", JacksonUtil.objectToJson(managerInfoDTO));
-            return managerInfoDTO;
+            log.info("qryManagerInfo.managerInfoDTO:[{}]", JacksonUtil.objectToJson(managerInformationDTO));
+            return managerInformationDTO;
         }).subscribeOn(Schedulers.elastic());
 
     }
