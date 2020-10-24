@@ -74,7 +74,6 @@ public class FundController {
             fundAppointmentInfoDTO.setPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getPhone(), salt, passwd));
             fundAppointmentInfoDTO.setManagerName(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerName(), salt, passwd));
             fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerPhone(), salt, passwd));
-            fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getAppointmentType(), salt, passwd));
             fundAppointmentInfoDTO.setSalt(salt);
             fundAppointmentInfoDTO.setPasswd(passwd);
             log.info("fundAppointmentInfoDTO:[{}]", JacksonUtil.objectToJson(fundAppointmentInfoDTO));
@@ -118,7 +117,6 @@ public class FundController {
             fundAppointmentInfoDTO.setPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getPhone(), salt, passwd));
             fundAppointmentInfoDTO.setManagerName(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerName(), salt, passwd));
             fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerPhone(), salt, passwd));
-            fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getAppointmentType(), salt, passwd));
             fundAppointmentInfoDTO.setSalt(salt);
             fundAppointmentInfoDTO.setPasswd(passwd);
             return fundAppointmentInfoDTORes;
@@ -162,7 +160,6 @@ public class FundController {
             fundAppointmentInfoDTO.setPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getPhone(), salt, passwd));
             fundAppointmentInfoDTO.setManagerName(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerName(), salt, passwd));
             fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerPhone(), salt, passwd));
-            fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getAppointmentType(), salt, passwd));
             fundAppointmentInfoDTO.setSalt(salt);
             fundAppointmentInfoDTO.setPasswd(passwd);
             return fundAppointmentInfoDTORes;
