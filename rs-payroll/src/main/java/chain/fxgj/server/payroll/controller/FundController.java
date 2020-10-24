@@ -83,12 +83,12 @@ public class FundController {
      */
     @PostMapping("/appointmentSave")
     @TrackLog
-    public Mono<FundAppointmentInfoDTO> appointmentSave(@RequestBody FundAppointmentInfoDTO fundSaveDTO) {
+    public Mono<FundAppointmentInfoDTO> appointmentSave(@RequestHeader("jsession-id") String jsessionId, @RequestBody FundAppointmentInfoDTO fundSaveDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("appointmentSave.fundSaveDTO[{}]", JacksonUtil.objectToJson(fundSaveDTO));
-            String jsessionId = fundSaveDTO.getJsessionId();
+//            String jsessionId = fundSaveDTO.getJsessionId();
 
             //根据 jsessionId 查询Redis预约信息
             FundAppointmentInfoDTO fundAppointmentInfoDTO = fundService.qryFunInfo(jsessionId);
