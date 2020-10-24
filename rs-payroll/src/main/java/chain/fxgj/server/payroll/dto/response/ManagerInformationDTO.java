@@ -76,4 +76,13 @@ public class ManagerInformationDTO {
      */
     private Integer score;
 
+    /**
+     * salt
+     */
+    private String salt;
+
+    /**
+     * password
+     */
+    private String passwd;
 }

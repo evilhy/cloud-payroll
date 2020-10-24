@@ -4,6 +4,7 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.feign.client.CustManagerFeignService;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
 import chain.fxgj.server.payroll.dto.response.ManagerInformationDTO;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
@@ -104,7 +105,9 @@ public class CustManagerController {
      */
     @GetMapping("/qryManagerInfo")
     @TrackLog
-    public Mono<ManagerInformationDTO> qryManagerInfo(@RequestParam("managerId") String managerId) {
+    public Mono<ManagerInformationDTO> qryManagerInfo(@RequestParam("managerId") String managerId,
+                                                      @RequestHeader(value = "encry-salt", required = false) String salt,
+                                                      @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -114,12 +117,14 @@ public class CustManagerController {
             if (null != wageManagerInfoDTO) {
                 BeanUtils.copyProperties(wageManagerInfoDTO, managerInformationDTO);
                 managerInformationDTO.setManagerId(wageManagerInfoDTO.getId());
-                managerInformationDTO.setManagerName(wageManagerInfoDTO.getManagerName());
+                managerInformationDTO.setManagerName(EncrytorUtils.encryptField(wageManagerInfoDTO.getManagerName(), salt, passwd));
                 managerInformationDTO.setBranchName(wageManagerInfoDTO.getBranchOrgName());
                 managerInformationDTO.setBranchNo(wageManagerInfoDTO.getBranchOrgNo());
                 managerInformationDTO.setSubBranchName(wageManagerInfoDTO.getSubBranchOrgName());
                 managerInformationDTO.setSubBranchNo(wageManagerInfoDTO.getSubBranchOrgNo());
-                managerInformationDTO.setManagerPhone(wageManagerInfoDTO.getMobile());
+                managerInformationDTO.setManagerPhone(EncrytorUtils.encryptField(wageManagerInfoDTO.getMobile(), salt, passwd));
+                managerInformationDTO.setSalt(salt);
+                managerInformationDTO.setPasswd(passwd);
             }
             log.info("qryManagerInfo.managerInfoDTO:[{}]", JacksonUtil.objectToJson(managerInformationDTO));
             return managerInformationDTO;
