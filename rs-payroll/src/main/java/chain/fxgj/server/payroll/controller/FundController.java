@@ -6,6 +6,7 @@ import chain.fxgj.feign.client.CustManagerFeignService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.service.FundService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
@@ -69,7 +70,11 @@ public class FundController {
 
             //【二】根据 openId 查询预约信息
             FundAppointmentInfoDTO fundAppointmentInfoDTO = fundService.qryFundAppointmentInfo(jsessionId, openId);
-            // todo 加密
+            fundAppointmentInfoDTO.setName(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getName(), salt, passwd));
+            fundAppointmentInfoDTO.setPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getPhone(), salt, passwd));
+            fundAppointmentInfoDTO.setManagerName(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerName(), salt, passwd));
+            fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerPhone(), salt, passwd));
+            fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getAppointmentType(), salt, passwd));
             fundAppointmentInfoDTO.setSalt(salt);
             fundAppointmentInfoDTO.setPasswd(passwd);
             log.info("fundAppointmentInfoDTO:[{}]", JacksonUtil.objectToJson(fundAppointmentInfoDTO));
@@ -83,7 +88,9 @@ public class FundController {
      */
     @PostMapping("/appointmentSave")
     @TrackLog
-    public Mono<FundAppointmentInfoDTO> appointmentSave(@RequestHeader("jsession-id") String jsessionId, @RequestBody FundAppointmentInfoDTO fundSaveDTO) {
+    public Mono<FundAppointmentInfoDTO> appointmentSave(@RequestHeader("jsession-id") String jsessionId, @RequestBody FundAppointmentInfoDTO fundSaveDTO,
+                                                        @RequestHeader(value = "encry-salt", required = false) String salt,
+                                                        @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -107,7 +114,13 @@ public class FundController {
             fundAppointmentInfoDTO.setCity(fundSaveDTO.getCity());
             fundAppointmentInfoDTO.setMoney(fundSaveDTO.getMoney());
             FundAppointmentInfoDTO fundAppointmentInfoDTORes = fundService.fundAppointmentInfoSave(jsessionId, fundAppointmentInfoDTO);
-
+            fundAppointmentInfoDTO.setName(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getName(), salt, passwd));
+            fundAppointmentInfoDTO.setPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getPhone(), salt, passwd));
+            fundAppointmentInfoDTO.setManagerName(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerName(), salt, passwd));
+            fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerPhone(), salt, passwd));
+            fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getAppointmentType(), salt, passwd));
+            fundAppointmentInfoDTO.setSalt(salt);
+            fundAppointmentInfoDTO.setPasswd(passwd);
             return fundAppointmentInfoDTORes;
         }).subscribeOn(Schedulers.elastic());
     }
@@ -118,7 +131,9 @@ public class FundController {
      */
     @PostMapping("/appointmentSaveByManagerId")
     @TrackLog
-    public Mono<FundAppointmentInfoDTO> appointmentSaveByManagerId(@RequestBody FundAppointmentInfoDTO fundSaveDTO) {
+    public Mono<FundAppointmentInfoDTO> appointmentSaveByManagerId(@RequestBody FundAppointmentInfoDTO fundSaveDTO,
+                                                                   @RequestHeader(value = "encry-salt", required = false) String salt,
+                                                                   @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -143,7 +158,13 @@ public class FundController {
             String jsessionId = UUIDUtil.createUUID32();
             log.info("appointmentSaveByManagerId.jsessionId:[{}]", jsessionId);
             FundAppointmentInfoDTO fundAppointmentInfoDTORes = fundService.fundAppointmentInfoSave(jsessionId, fundAppointmentInfoDTO);
-
+            fundAppointmentInfoDTO.setName(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getName(), salt, passwd));
+            fundAppointmentInfoDTO.setPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getPhone(), salt, passwd));
+            fundAppointmentInfoDTO.setManagerName(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerName(), salt, passwd));
+            fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getManagerPhone(), salt, passwd));
+            fundAppointmentInfoDTO.setManagerPhone(EncrytorUtils.encryptField(fundAppointmentInfoDTO.getAppointmentType(), salt, passwd));
+            fundAppointmentInfoDTO.setSalt(salt);
+            fundAppointmentInfoDTO.setPasswd(passwd);
             return fundAppointmentInfoDTORes;
         }).subscribeOn(Schedulers.elastic());
     }
