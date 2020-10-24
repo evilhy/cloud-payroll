@@ -106,7 +106,7 @@ public class FundController {
             fundAppointmentInfoDTO.setPhone(fundSaveDTO.getPhone());
             fundAppointmentInfoDTO.setCity(fundSaveDTO.getCity());
             fundAppointmentInfoDTO.setMoney(fundSaveDTO.getMoney());
-            FundAppointmentInfoDTO fundAppointmentInfoDTORes = fundService.fundAppointmentInfoSave(jsessionId, fundSaveDTO);
+            FundAppointmentInfoDTO fundAppointmentInfoDTORes = fundService.fundAppointmentInfoSave(jsessionId, fundAppointmentInfoDTO);
 
             return fundAppointmentInfoDTORes;
         }).subscribeOn(Schedulers.elastic());
