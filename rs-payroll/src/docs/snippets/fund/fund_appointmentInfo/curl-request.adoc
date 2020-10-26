@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/fund/appointmentInfo?code=b1610e49e63a692c5543f9dc000058ec75b4aeb7' -i -X GET
+----

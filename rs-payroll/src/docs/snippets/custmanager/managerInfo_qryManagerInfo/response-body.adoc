@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"managerId":"ff8080816899924301689e0297240001","managerName":"张三行","managerPhone":"18800000000","branchNo":"1255","branchName":"重庆分行行行行","officer":"123456","subBranchNo":"1255","subBranchName":"营业部行行","status":"正常","avatarUrl":"","isConfirmed":"1","wechatId":"wudawei904923","wechatQrUrl":"http://weixin.qq.com/r/csnUzE7EAhN9rQqv95xg","wechatQrImgae":"f4b861865be74a8cbc6f5febe3eaa1f8.jpg","score":55}
+----

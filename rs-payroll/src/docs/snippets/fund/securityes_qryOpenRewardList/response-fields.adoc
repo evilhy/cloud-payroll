@@ -1,0 +1,20 @@
+|===
+|Path|Type|Description
+
+|`+List.[]companyId+`
+|`+String+`
+|证券公司id
+
+|`+List.[]companyName+`
+|`+String+`
+|证券公司名称
+
+|`+List.[]standard+`
+|`+Integer+`
+|是否开户达标(0未达标， 已达标)
+
+|`+List.[]standardVal+`
+|`+String+`
+|是否开户达标(0未达标， 去开户(已达标))
+
+|===

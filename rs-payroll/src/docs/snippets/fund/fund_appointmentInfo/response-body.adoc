@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"jsessionId":"123123","phone":"13400000000","loginStatus":1,"loginStatusVal":"是"}
+----

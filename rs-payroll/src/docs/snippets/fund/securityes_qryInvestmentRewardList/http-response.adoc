@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 259
+Content-Type: application/json;charset=UTF-8
+
+[{"companyId":"E20202020","companyName":"新时代证券","monthlyAverageAssets":10000,"goldBean":20,"dataSynTime":1231111111112},{"companyId":"E20202020","companyName":"新时代证券","monthlyAverageAssets":10000,"goldBean":20,"dataSynTime":1231111111111}]
+----

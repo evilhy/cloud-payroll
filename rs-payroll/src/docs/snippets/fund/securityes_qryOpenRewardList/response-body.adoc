@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+[{"companyId":"E20202020","companyName":"新时代证券","standard":0,"standardVal":"未达标"},{"companyId":"E20202021","companyName":"安信证券","standard":1,"standardVal":"已达标"}]
+----

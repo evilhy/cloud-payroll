@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/fun/appointmentSave' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'jsession_id: 321321321' \
+    -d '{"name":"王五","phone":"13400000000","money":10000,"city":"湖北","jsessionId":"b1610e49e63a692c5543"}'
+----

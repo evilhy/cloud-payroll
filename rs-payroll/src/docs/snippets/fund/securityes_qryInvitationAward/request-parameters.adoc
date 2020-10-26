@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+custIdOrManagerId+`
+|客户或经理id
+
+|===
