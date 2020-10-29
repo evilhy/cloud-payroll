@@ -1,0 +1,8 @@
+|===
+|Parameter|Type|Description
+
+|`+code+`
+|`+String+`
+|微信code
+
+|===

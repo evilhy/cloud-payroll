@@ -69,6 +69,7 @@ public class PayrollRedisConfig {
         cacheNames.add("empInfos");  //员工缓存信息
         cacheNames.add("checkFreePassword");  //免密查看工资标记
         cacheNames.add("securities");  //证券开户
+        cacheNames.add("fund");  //基金预约
 
 
         Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
@@ -81,6 +82,7 @@ public class PayrollRedisConfig {
         configMap.put("empInfos", cacheConfiguration.entryTtl(Duration.ofMinutes(2)));
         configMap.put("checkFreePassword", cacheConfiguration.entryTtl(Duration.ofMinutes(1)));;
         configMap.put("securities", cacheConfiguration.entryTtl(Duration.ofHours(2)));
+        configMap.put("fund", cacheConfiguration.entryTtl(Duration.ofHours(2)));
 
         log.debug("自定义RedisCacheManager加载完成");
         return RedisCacheManager

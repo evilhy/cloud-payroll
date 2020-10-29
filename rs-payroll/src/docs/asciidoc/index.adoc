@@ -51,3 +51,5 @@ include::mini.adoc[]
 include::merchant.adoc[]
 
 include::news.adoc[]
+
+include::fund.adoc[]

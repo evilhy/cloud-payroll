@@ -1,0 +1,25 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 84
+Content-Type: application/json;charset=UTF-8
+
+{
+"appointmentType":"1",
+"jsessionId":"312312312123123",
+"branchName":"湖北分行",
+"branchNo":"0100",
+"subBranchName":"武昌支行",
+"subBranchNo":"0101",
+"city":"湖北",
+"managerId":"123123123",
+"managerName":"张经理",
+"managerPhone":"13400000001",
+"money":10000,
+"name":"王五",
+"openId":"oFnSLvyxBArqJtYqd3-xU6H7Xr08",
+"phone":"1341234567",
+"salt":"321312312312312",
+"passwd":"101029291212123123213xccxcxsa"
+}
+----

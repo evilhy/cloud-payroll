@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+[{"companyId":"E20202020","companyName":"新时代证券","monthlyAverageAssets":10000,"goldBean":20,"dataSynTime":1231111111112},{"companyId":"E20202020","companyName":"新时代证券","monthlyAverageAssets":10000,"goldBean":20,"dataSynTime":1231111111111}]
+----
