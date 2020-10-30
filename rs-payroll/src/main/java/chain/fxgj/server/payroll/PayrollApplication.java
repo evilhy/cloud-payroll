@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -18,6 +19,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoAuditing
 //@SpringBootApplication(scanBasePackages = {"chain.fxgj.server.payroll","chain.fxgj.core.common.config","chain.css"},exclude = {DataSourceAutoConfiguration.class})
 @SpringBootApplication(scanBasePackages = {"chain"},exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+//@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class PayrollApplication {
 
     public static void main(String[] args) {

@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.fxgj.server.payroll.annotation.loginlog.annotation.LoginLog;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.wechat.WechatCallBackDTO;
@@ -48,6 +49,7 @@ public class WechatIndexController {
     @PostMapping("/wxCallback")
     @TrackLog
     @PermitAll
+    @LoginLog
     public Mono<Res100705> wxCallback(@RequestHeader(value = "encry-salt", required = false) String salt,
                                       @RequestHeader(value = "encry-passwd", required = false) String passwd,
                                       @RequestBody WechatCallBackDTO wechatCallBackDTO) throws Exception {

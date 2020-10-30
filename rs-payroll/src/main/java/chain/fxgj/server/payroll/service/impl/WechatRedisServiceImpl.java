@@ -89,4 +89,9 @@ public class WechatRedisServiceImpl implements WechatRedisService {
                 .build();
         return userPrincipal;
     }
+
+    @Override
+    public CacheUserPrincipal userPrincipalByJsessionId(String jsessionId) throws Exception {
+        return null;
+    }
 }

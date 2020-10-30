@@ -87,4 +87,11 @@ public interface WechatRedisService {
     @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
     CacheUserPrincipal setActivitySessionTimeOut(String jsessionId, String openId) throws Exception;
 
+
+    /**
+     * 根据jsessionId获取缓存信息
+     */
+    @Cacheable(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
+    CacheUserPrincipal userPrincipalByJsessionId(String jsessionId) throws Exception;
+
 }
