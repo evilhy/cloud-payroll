@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /manager/managerInfo HTTP/1.1
+jsession_id: 5f360ad71e4b42db8f54d2afb78fde73
+Host: localhost:8080
+
+----

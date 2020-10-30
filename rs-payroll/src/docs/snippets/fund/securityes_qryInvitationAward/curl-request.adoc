@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/securityes/qryInvitationAward?custIdOrManagerId=202002230020757' -i -X GET
+----

@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ echo '{"custId":"123123123","managerId":""}' | http POST 'http://localhost:8080/securityes/qryInvestmentRewardList' \
+    'Content-Type:application/json'
+----

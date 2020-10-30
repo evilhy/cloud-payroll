@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+POST /securityes/qryInvestmentRewardList HTTP/1.1
+Content-Type: application/json
+Host: localhost:8080
+Content-Length: 37
+
+{"custId":"123123123","managerId":""}
+----
