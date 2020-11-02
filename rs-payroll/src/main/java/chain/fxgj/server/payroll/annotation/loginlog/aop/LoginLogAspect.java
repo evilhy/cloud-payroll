@@ -1,7 +1,7 @@
 package chain.fxgj.server.payroll.annotation.loginlog.aop;
 
 import chain.fxgj.server.payroll.annotation.loginlog.annotation.LoginLog;
-import chain.fxgj.server.payroll.annotation.loginlog.service.LoginLogService;
+import chain.fxgj.server.payroll.service.LoginLogService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.utils.commons.JacksonUtil;
 import core.dto.wechat.CacheUserPrincipal;
@@ -15,11 +15,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**

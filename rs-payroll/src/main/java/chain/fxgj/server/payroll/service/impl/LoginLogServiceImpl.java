@@ -1,6 +1,6 @@
-package chain.fxgj.server.payroll.annotation.loginlog.service.impl;
+package chain.fxgj.server.payroll.service.impl;
 
-import chain.fxgj.server.payroll.annotation.loginlog.service.LoginLogService;
+import chain.fxgj.server.payroll.service.LoginLogService;
 import chain.payroll.client.feign.LoginLogFeignController;
 import core.dto.request.loginlog.LoginLogDTO;
 import lombok.extern.slf4j.Slf4j;

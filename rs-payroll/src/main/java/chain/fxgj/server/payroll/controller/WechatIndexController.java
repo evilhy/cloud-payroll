@@ -6,9 +6,11 @@ import chain.fxgj.server.payroll.annotation.loginlog.annotation.LoginLog;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.wechat.WechatCallBackDTO;
+import chain.fxgj.server.payroll.service.LoginLogService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.payroll.client.feign.InsideFeignController;
+import chain.payroll.client.feign.LoginLogFeignController;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
@@ -16,6 +18,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
+import core.dto.request.loginlog.LoginLogDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -41,7 +44,10 @@ public class WechatIndexController {
     WechatRedisService wechatRedisService;
     @Autowired
     InsideFeignController insideFeignController;
-
+    @Autowired
+    LoginLogFeignController loginLogFeignController;
+    @Autowired
+    LoginLogService loginLogService;
 
     /**
      * 微信回调接口（Post方式）
@@ -49,7 +55,6 @@ public class WechatIndexController {
     @PostMapping("/wxCallback")
     @TrackLog
     @PermitAll
-    @LoginLog
     public Mono<Res100705> wxCallback(@RequestHeader(value = "encry-salt", required = false) String salt,
                                       @RequestHeader(value = "encry-passwd", required = false) String passwd,
                                       @RequestBody WechatCallBackDTO wechatCallBackDTO) throws Exception {
@@ -115,6 +120,14 @@ public class WechatIndexController {
             res100705.setPasswd(passwd);
             Optional.ofNullable(insideFeignController.getSkin(jsessionId,appPartner.getCode().toString())).ifPresent(tuple->res100705.setThemeId(tuple.getThemeId()));
             log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
+
+            try {
+                //异步登录日志入库
+                loginLogService.saveLoginLog(openId);
+            } catch (Exception e) {
+                log.error("登录日志入库异常");
+            }
+
             return res100705;
         }).subscribeOn(Schedulers.elastic());
     }

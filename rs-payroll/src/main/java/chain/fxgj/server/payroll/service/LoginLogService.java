@@ -1,4 +1,4 @@
-package chain.fxgj.server.payroll.annotation.loginlog.service;
+package chain.fxgj.server.payroll.service;
 
 public interface LoginLogService {
 
