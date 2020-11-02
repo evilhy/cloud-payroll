@@ -51,17 +51,17 @@ public class LoginLogAspect {
 //        System.out.println("所在类的完整类名: " + joinPoint.getSignature().getDeclaringType());
 //        System.out.println("目标方法的声明类型: " + Modifier.toString(joinPoint.getSignature().getModifiers()));
 
-        log.info("注解日志-[{}],[{}],[{}]",joinPoint.getSignature().getDeclaringType().getSimpleName(),joinPoint.getSignature().getName(), logger.value());
+        log.info("注解日志-[{}],[{}],[{}]", joinPoint.getSignature().getDeclaringType().getSimpleName(), joinPoint.getSignature().getName(), logger.value());
         boolean bol = true;
         //返回结果封装类
         //1.这里获取到所有的参数值的数组
         Object[] args = joinPoint.getArgs();
-        List<String> strings = new ArrayList<>();
-        for (Object arg : args) {
-            if (arg instanceof ServerHttpRequest) {
-                strings = ((ServerHttpRequest) arg).getHeaders().get("jsessionidheader");
-            }
-        }
+//        List<String> strings = new ArrayList<>();
+//        for (Object arg : args) {
+//            if (arg instanceof ServerHttpRequest) {
+//                strings = ((ServerHttpRequest) arg).getHeaders().get("jsession_id");
+//            }
+//        }
 
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
@@ -69,7 +69,7 @@ public class LoginLogAspect {
         String[] parameterNames = methodSignature.getParameterNames();
         try {
             //3.通过你需要获取的参数名称的下标获取到对应的值
-            int jsessionIdIndex = ArrayUtils.indexOf(parameterNames, "jsessionidheader");
+            int jsessionIdIndex = ArrayUtils.indexOf(parameterNames, "jsession_id");
             if (jsessionIdIndex != -1) {
                 String jsessionId = (String) args[jsessionIdIndex];
                 log.info("header-jsessionId:[{}]", jsessionId);
@@ -79,13 +79,13 @@ public class LoginLogAspect {
                     if (StringUtils.isNotBlank(openId)) {
                         loginLogService.saveLoginLog(openId);
                         bol = false;
-                    }else{
+                    } else {
                         log.info("根据openId取缓存，但无openId");
                     }
-                }else {
+                } else {
                     log.info("根据jsessionId未查询到缓存信息");
                 }
-            }else {
+            } else {
                 log.info("无jsessionId");
             }
         } catch (Throwable throwable) {
@@ -97,6 +97,9 @@ public class LoginLogAspect {
         if (bol) {
             log.info("根据返回值操作入库");
             try {
+                if (proceed != null) {
+                    log.info("{}", proceed.toString());
+                }
                 String json = JacksonUtil.objectToJson(proceed);
                 log.info("返回值:[{}]", json);
                 Map<?, ?> map = JacksonUtil.jsonToMap(json);
@@ -108,20 +111,20 @@ public class LoginLogAspect {
                         if (StringUtils.isNotBlank(openId)) {
                             loginLogService.saveLoginLog(openId);
                             bol = false;
-                        }else{
+                        } else {
                             log.info("2根据openId取缓存，但无openId");
                         }
-                    }else {
+                    } else {
                         log.info("2根据jsessionId未查询到缓存信息");
                     }
-                }else {
+                } else {
                     log.info("返回值无jsessionId");
                 }
             } catch (Throwable throwable) {
                 log.error("jsessionId日志记录异常");
                 throwable.printStackTrace();
             }
-        }else {
+        } else {
             log.info("通过jsessionId已完成");
         }
         log.info("end");
