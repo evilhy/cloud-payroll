@@ -95,26 +95,36 @@ public class LoginLogAspect {
         Object proceed = joinPoint.proceed();
 
         if (bol) {
-            System.out.println("根据返回值操作入库");
+            log.info("根据返回值操作入库");
             try {
                 String json = JacksonUtil.objectToJson(proceed);
-                System.out.println("返回值:" + json);
+                log.info("返回值:[{}]", json);
                 Map<?, ?> map = JacksonUtil.jsonToMap(json);
-                if (map.containsKey("openId")) {
-                    String openId = map.get("openId").toString();
-                    System.out.println("根据返回值，入库操作openId:" + openId);
-                    loginLogService.saveLoginLog(openId);
+                if (map.containsKey("jsessionId")) {
+                    String jsessionId = map.get("jsessionId").toString();
+                    CacheUserPrincipal cacheUserPrincipal = wechatRedisService.userPrincipalByJsessionId(jsessionId);
+                    if (null != cacheUserPrincipal) {
+                        String openId = cacheUserPrincipal.getOpenId();
+                        if (StringUtils.isNotBlank(openId)) {
+                            loginLogService.saveLoginLog(openId);
+                            bol = false;
+                        }else{
+                            log.info("2根据openId取缓存，但无openId");
+                        }
+                    }else {
+                        log.info("2根据jsessionId未查询到缓存信息");
+                    }
                 }else {
-                    System.out.println("返回值无openId");
+                    log.info("返回值无jsessionId");
                 }
             } catch (Throwable throwable) {
-                System.out.println("openId日志记录异常");
+                log.error("jsessionId日志记录异常");
                 throwable.printStackTrace();
             }
         }else {
-            System.out.println("通过jsessionId已完成");
+            log.info("通过jsessionId已完成");
         }
-        System.out.println("2[" + joinPoint.getSignature().getDeclaringType().getSimpleName() + "][" + joinPoint.getSignature().getName() + "]-日志内容-[" + logger.value() + "]");
+        log.info("end");
         return proceed;
     }
 
