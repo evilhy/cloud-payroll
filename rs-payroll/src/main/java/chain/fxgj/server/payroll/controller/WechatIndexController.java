@@ -50,7 +50,9 @@ public class WechatIndexController {
     @TrackLog
     @PermitAll
     @LoginLog
-    public Mono<Res100705> wxCallback(@RequestHeader(value = "encry-salt", required = false) String salt,
+    public Mono<Res100705> wxCallback(
+            @RequestHeader(value = "jsession-id", required = false) String jsessionidheader,
+            @RequestHeader(value = "encry-salt", required = false) String salt,
                                       @RequestHeader(value = "encry-passwd", required = false) String passwd,
                                       @RequestBody WechatCallBackDTO wechatCallBackDTO) throws Exception {
         String code = wechatCallBackDTO.getCode();
