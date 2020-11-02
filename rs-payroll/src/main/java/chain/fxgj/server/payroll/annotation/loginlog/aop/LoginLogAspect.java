@@ -74,7 +74,7 @@ public class LoginLogAspect {
                 String jsessionId = (String) args[jsessionIdIndex];
                 log.info("header-jsessionId:[{}]", jsessionId);
                 CacheUserPrincipal cacheUserPrincipal = wechatRedisService.userPrincipalByJsessionId(jsessionId);
-                if (null != cacheUserPrincipal) {
+                if (!StringUtils.equals("undefined", jsessionId) && null != cacheUserPrincipal) {
                     String openId = cacheUserPrincipal.getOpenId();
                     if (StringUtils.isNotBlank(openId)) {
                         loginLogService.saveLoginLog(openId);
