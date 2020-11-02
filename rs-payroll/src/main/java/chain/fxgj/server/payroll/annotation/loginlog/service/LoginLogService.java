@@ -6,6 +6,6 @@ public interface LoginLogService {
     /**
      * 登录日志入库
      */
-    void saveLoginLog();
+    void saveLoginLog(String openId);
 
 }

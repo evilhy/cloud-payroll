@@ -560,7 +560,6 @@ public class InsideController {
     @GetMapping("/empEntList")
     @TrackLog
     public Mono<List<EmpEntResDTO>> empEntList(
-            @RequestHeader(value = "jsession-id", required = false) String jsessionId,
             @RequestHeader(value = "encry-salt", required = false) String salt,
             @RequestHeader(value = "encry-passwd", required = false) String passwd,
             @RequestHeader(value = "ent-id", required = false) String entId) throws Exception {

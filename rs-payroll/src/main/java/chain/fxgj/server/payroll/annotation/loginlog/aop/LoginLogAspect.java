@@ -1,15 +1,13 @@
 package chain.fxgj.server.payroll.annotation.loginlog.aop;
 
-import chain.fxgj.server.payroll.annotation.five.dao.User;
 import chain.fxgj.server.payroll.annotation.loginlog.annotation.LoginLog;
 import chain.fxgj.server.payroll.annotation.loginlog.service.LoginLogService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.utils.commons.JacksonUtil;
-import chain.utils.commons.StringUtils;
 import core.dto.wechat.CacheUserPrincipal;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -77,15 +75,10 @@ public class LoginLogAspect {
                 String jsessionId = (String) args[jsessionIdIndex];
                 System.out.println("header-jsessionId:"+jsessionId);
                 CacheUserPrincipal cacheUserPrincipal = wechatRedisService.userPrincipalByJsessionId(jsessionId);
-//                if (null != cacheUserPrincipal) {
-                if (true) {
-                    String openId = "11";//cacheUserPrincipal.getOpenId();
-//                    if (StringUtils.isNotBlank(openId)) {
-                    if (true) {
-                        // todo 根据openId做入库操作
-                        log.info("openId:[{}]", openId);
-                        loginLogService.saveLoginLog();
-                        log.info("11openId:[{}]", openId);
+                if (null != cacheUserPrincipal) {
+                    String openId = cacheUserPrincipal.getOpenId();
+                    if (StringUtils.isNotBlank(openId)) {
+                        loginLogService.saveLoginLog(openId);
                         bol = false;
                     }else{
                         System.out.println("根据openId取缓存，但无openId");
@@ -111,9 +104,7 @@ public class LoginLogAspect {
                 if (map.containsKey("openId")) {
                     String openId = map.get("openId").toString();
                     System.out.println("根据返回值，入库操作openId:" + openId);
-                    //todo save
-                    loginLogService.saveLoginLog();
-
+                    loginLogService.saveLoginLog(openId);
                 }else {
                     System.out.println("返回值无openId");
                 }
