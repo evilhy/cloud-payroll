@@ -20,11 +20,17 @@ public class LoginLogServiceImpl implements LoginLogService {
 
     @Override
     @Async
-    public void saveLoginLog(String openId) {
-
-        log.info("saveLoginLog.openId:[{}], start:[{}]", openId, LocalDateTime.now());
-        LoginLogDTO loginLogDTO = LoginLogDTO.builder().openId(openId).build();
-        loginLogFeignController.save(loginLogDTO);
-        log.info("saveLoginLog.end:[{}]", LocalDateTime.now());
+    public void saveLoginLog(String openId, String methodName) {
+        try {
+            log.info("saveLoginLog.openId:[{}],methodName:[{}], start:[{}]", openId, methodName, LocalDateTime.now());
+            LoginLogDTO loginLogDTO = LoginLogDTO.builder()
+                    .openId(openId)
+                    .methodName(methodName)
+                    .build();
+            loginLogFeignController.save(loginLogDTO);
+            log.info("saveLoginLog.end:[{}]", LocalDateTime.now());
+        } catch (Exception e) {
+            log.error("登录日志入库异常");
+        }
     }
 }

@@ -119,12 +119,8 @@ public class WechatIndexController {
             Optional.ofNullable(insideFeignController.getSkin(jsessionId,appPartner.getCode().toString())).ifPresent(tuple->res100705.setThemeId(tuple.getThemeId()));
             log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
 
-            try {
-                //异步登录日志入库
-                loginLogService.saveLoginLog(openId);
-            } catch (Exception e) {
-                log.error("登录日志入库异常");
-            }
+            //异步记录登录日志
+            loginLogService.saveLoginLog(openId, "wxCallback");
 
             return res100705;
         }).subscribeOn(Schedulers.elastic());
