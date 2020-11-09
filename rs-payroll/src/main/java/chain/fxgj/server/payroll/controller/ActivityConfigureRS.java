@@ -99,7 +99,7 @@ public class ActivityConfigureRS {
      */
     @GetMapping("/wxCallback")
     @TrackLog
-    public Mono<String> wxCallback(@RequestParam("code") String code, @RequestHeader(value = "routeName", required = false) String routeName) {
+    public Mono<ActivityCallBackDTO> wxCallback(@RequestParam("code") String code, @RequestHeader(value = "routeName", required = false) String routeName) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
@@ -129,7 +129,10 @@ public class ActivityConfigureRS {
 
                 log.info("微信：{},{}", jsessionId, openId);
             }
-            return jsessionId;
+            ActivityCallBackDTO activityCallBackDTO = ActivityCallBackDTO.builder()
+                    .jsessionId(jsessionId)
+                    .build();
+            return activityCallBackDTO;
         }).subscribeOn(Schedulers.elastic());
     }
 
