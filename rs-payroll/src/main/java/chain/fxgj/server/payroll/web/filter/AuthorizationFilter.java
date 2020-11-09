@@ -51,6 +51,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/mini",
             "/securityes",
             "/wechat/wxCallback",
+            "/activityConfigure/wxCallback",
             "/fund",
             "/manager/qryManagerInfo"
     };
