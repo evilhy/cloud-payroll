@@ -204,7 +204,7 @@ public class ActivityConfigureRS {
             if (null == userInfoRes) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("用户信息不存在！"));
             }
-            if (UserStatusEnum.NORMAL.equals(userInfoRes.getUserStatus())) {
+            if (!UserStatusEnum.NORMAL.equals(userInfoRes.getUserStatus())) {
                 throw new ParamsIllegalException(ErrorConstant.ACTIVITY_004.getErrorMsg());
             }
             log.info("====>userInfoRes:[{}]", JacksonUtil.objectToJson(userInfoRes));
