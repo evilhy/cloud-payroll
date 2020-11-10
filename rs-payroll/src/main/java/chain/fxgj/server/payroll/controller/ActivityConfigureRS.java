@@ -584,7 +584,7 @@ public class ActivityConfigureRS {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @TrackLog
-    public Mono<ActivityRainRetDTO> addActivityRain(@RequestHeader("jsession-id") String jsessionId,
+    public Mono<String> addActivityRain(@RequestHeader("jsession-id") String jsessionId,
                                         @RequestBody ActivityRainDTO activityRainDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
@@ -606,10 +606,7 @@ public class ActivityConfigureRS {
             String id = activityConfigureService.saveActivityRain(ActivityStatusEnum.SUBMIT,
                     activityRainDTO, redisDTO.getEntId(), redisDTO.getUserId(), redisDTO.getOpenId());
             log.info("addActivityRain.id:[{}]", id);
-            ActivityRainRetDTO activityRainRetDTO = ActivityRainRetDTO.builder()
-                    .id(id)
-                    .build();
-            return activityRainRetDTO;
+            return id;
         }).subscribeOn(Schedulers.elastic());
 
     }
