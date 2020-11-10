@@ -374,17 +374,6 @@ public class ActivityConfigureRS {
             List<AccountInfoListDTO> accountInfoListDTOS = accountFeignService.accountInfoList(accountQueryRequest);
             log.info("account ret accountInfoListDTOS:[{}]", JacksonUtil.objectToJson(accountInfoListDTOS));
 
-            //todo 挡板测试，生产请删除
-            if (true) {
-                List<EntAccountDTO> retEntAccountDTO = new ArrayList<>();
-                EntAccountDTO entAccountDTO = new EntAccountDTO();
-                entAccountDTO.setAccount("10250000003197043");
-                entAccountDTO.setAccountBalance(new BigDecimal(10000));
-                entAccountDTO.setId("2c948242758bb8ec01758bce45940001");
-                retEntAccountDTO.add(entAccountDTO);
-                log.info("retEntAccountDTO:[{}]", JacksonUtil.objectToJson(retEntAccountDTO));
-                return retEntAccountDTO;
-            }
 
             Iterator iterator = Flux.fromIterable(accountInfoListDTOS)
                     .flatMapSequential(accountInfoListDTO -> Mono.fromCallable(() ->
