@@ -584,13 +584,13 @@ public class ActivityConfigureRS {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @TrackLog
-    public Mono<String> addActivityRain(@RequestHeader("jsession-id") String jsessionId,
+    public Mono<ActivityRainRetDTO> addActivityRain(@RequestHeader("jsession-id") String jsessionId,
                                         @RequestBody ActivityRainDTO activityRainDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             UserRedisDTO redisDTO = this.getUser(jsessionId, "rain");
-
+            log.info("addActivityRain.activityRainDTO:[{}]", JacksonUtil.objectToJson(activityRainDTO));
             //TODO
             //[1] 开始时间不能为空
             //    只支持 定时开启
@@ -605,7 +605,11 @@ public class ActivityConfigureRS {
 
             String id = activityConfigureService.saveActivityRain(ActivityStatusEnum.SUBMIT,
                     activityRainDTO, redisDTO.getEntId(), redisDTO.getUserId(), redisDTO.getOpenId());
-            return id;
+            log.info("addActivityRain.id:[{}]", id);
+            ActivityRainRetDTO activityRainRetDTO = ActivityRainRetDTO.builder()
+                    .id(id)
+                    .build();
+            return activityRainRetDTO;
         }).subscribeOn(Schedulers.elastic());
 
     }
