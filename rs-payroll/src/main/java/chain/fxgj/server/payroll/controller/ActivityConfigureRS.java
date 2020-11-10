@@ -381,6 +381,8 @@ public class ActivityConfigureRS {
                 entAccountDTO.setAccount("10250000003197043");
                 entAccountDTO.setAccountBalance(new BigDecimal(10000));
                 entAccountDTO.setId("2c948242758bb8ec01758bce45940001");
+                retEntAccountDTO.add(entAccountDTO);
+                log.info("retEntAccountDTO:[{}]", JacksonUtil.objectToJson(retEntAccountDTO));
                 return retEntAccountDTO;
             }
 
