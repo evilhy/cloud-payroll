@@ -668,7 +668,7 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         log.info("findGroupInfo.queryReq:[{}]", JacksonUtil.objectToJson(queryReq));
         List<GroupDTO> query = groupFeignController.query(queryReq);
 
-        if (null == query || query.size() > 0) {
+        if (null == query || query.size() <= 0) {
             log.error("未查询到机构");
             throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("未查询到机构！"));
         }
