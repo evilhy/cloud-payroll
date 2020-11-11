@@ -827,7 +827,7 @@ public class ActivityConfigureRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             UserRedisDTO redisDTO = this.getUser(jsessionId, "random");
-
+            log.info("random.updActivityRandom.activityRandomDTO:[{}]", JacksonUtil.objectToJson(activityRandomDTO));
             //TODO 【X】
             //[1] 开始时间不能为空
             //[2] 活动时间限制  活动开启时间不能在22:00-00:00
