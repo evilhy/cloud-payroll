@@ -665,6 +665,7 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
                 .groupId(groupId)
                 .delStatusEnum(DelStatusEnum.normal)
                 .build();
+        log.info("findGroupInfo.queryReq:[{}]", JacksonUtil.objectToJson(queryReq));
         List<GroupDTO> query = groupFeignController.query(queryReq);
 
         if (null == query || query.size() > 0) {
