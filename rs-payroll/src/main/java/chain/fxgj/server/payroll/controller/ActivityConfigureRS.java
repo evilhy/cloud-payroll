@@ -38,7 +38,6 @@ import chain.wage.core.dto.activity.ActivityRequestDTO;
 import chain.wage.core.dto.other.GroupAccountDTO;
 import chain.wage.core.dto.other.GroupCheckDTO;
 import chain.wage.core.dto.response.WageSheetRespone;
-import core.dto.request.group.GroupQueryReq;
 import core.dto.response.ent.EntErpriseDTO;
 import core.dto.response.group.GroupDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -456,6 +455,7 @@ public class ActivityConfigureRS {
                                 if (activityInfoRes.getActivityType().equals(ActivityTypeEnum.RAIN)) {
                                     ActivityQueryRequest rainActivityRequest = ActivityQueryRequest.builder()
                                             .activityId(activityInfoRes.getActivityId())
+                                            .delStatus(Arrays.asList(DelStatusEnum.normal))
                                             .build();
                                     ActivityInfoRes rainActivityInfo = activityConfigureFeignService.findActivityById(rainActivityRequest);
                                     ActivityRainRes activityRain = rainActivityInfo.getActivityRain();
@@ -484,6 +484,7 @@ public class ActivityConfigureRS {
                                 List<ActivityListDTO.ActivityFlow> activityFlowList = new ArrayList<ActivityListDTO.ActivityFlow>();
                                 ActivityQueryRequest activityQueryRequestLogs = ActivityQueryRequest.builder()
                                         .activityId(activityListDTO.getId())
+                                        .delStatus(Arrays.asList(DelStatusEnum.normal))
                                         .build();
                                 List<ActivityFlowLogRes> activityFlowLogs = activityConfigureFeignService.findActivityFlowLogs(activityQueryRequestLogs);
 
