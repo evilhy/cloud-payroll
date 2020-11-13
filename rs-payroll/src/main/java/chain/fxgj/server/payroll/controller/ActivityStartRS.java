@@ -243,22 +243,22 @@ public class ActivityStartRS {
             //员工可能在多个企业，下面的多个机构，每个机构状态可能不一样，需要筛选出来在职
             for (int i = 0; i < list.size(); i++) {
                 EntInfoDTO entInfoDTO = list.get(i);
-                //todo 这里有报错，先直接过，后续打开下面的代码重新调试 挡板
-                checkList.add(entInfoDTO);
-//                LinkedList<EntInfoDTO.GroupInfo> groupInfolist = entInfoDTO.getGroupInfoList();
-//                int k = 0;
-//                log.info("员工所以机构数量：{}", groupInfolist.size());
-//                for (int j = 0; j < groupInfolist.size(); j++) {
-//                    if (!groupInfolist.get(j).getEmpGroupInservice()) {
-//                        k = k + 1;
-//                    }
-//                }
-//
-//                if (k == groupInfolist.size()) {
-//                    log.error("====>员工所在机构下，员工状态都不为【在职】状态");
-//                } else {
-//                    checkList.add(entInfoDTO);
-//                }
+                LinkedList<EntInfoDTO.GroupInfo> groupInfolist = entInfoDTO.getGroupInfoList();
+                int k = 0;
+                log.info("员工所有机构数据[{}]", JacksonUtil.objectToJson(groupInfolist));
+                for (int j = 0; j < groupInfolist.size(); j++) {
+                    EntInfoDTO.GroupInfo groupInfo = groupInfolist.get(j);
+                    log.info("EntInfoDTO.GroupInfo:[{}]", JacksonUtil.objectToJson(groupInfo));
+                    if (!groupInfo.getEmpGroupInservice()) {
+                        k = k + 1;
+                    }
+                }
+
+                if (k == groupInfolist.size()) {
+                    log.error("====>员工所在机构下，员工状态都不为【在职】状态");
+                } else {
+                    checkList.add(entInfoDTO);
+                }
             }
 
             EntInfoActivityDTO entInfoActivityDTO = new EntInfoActivityDTO();
