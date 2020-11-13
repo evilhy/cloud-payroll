@@ -133,7 +133,7 @@ public class UserPrincipal implements Principal {
     /**
      * 用户所在企业列表
      */
-    private List<EntInfoDTO> entInfoDTOS;
+    private List<core.dto.wechat.EntInfoDTO> entInfoDTOS;
     /**
      * 数据权限
      */
