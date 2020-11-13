@@ -235,19 +235,19 @@ public class ActivityStartRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            List<EntInfoDTO> list = principal.getEntInfoDTOS();
+            List<core.dto.wechat.EntInfoDTO> list = principal.getEntInfoDTOS();
 
-            List<EntInfoDTO> checkList = new LinkedList<EntInfoDTO>();
+            List<core.dto.wechat.EntInfoDTO> checkList = new LinkedList<>();
 
             //list中员工的数据（在职、离职、删除等状态），只有在职员工才能参与活动， 剔除删除员工
             //员工可能在多个企业，下面的多个机构，每个机构状态可能不一样，需要筛选出来在职
             for (int i = 0; i < list.size(); i++) {
-                EntInfoDTO entInfoDTO = list.get(i);
-                LinkedList<EntInfoDTO.GroupInfo> groupInfolist = entInfoDTO.getGroupInfoList();
+                core.dto.wechat.EntInfoDTO entInfoDTO = list.get(i);
+                LinkedList<core.dto.wechat.EntInfoDTO.GroupInfo> groupInfolist = entInfoDTO.getGroupInfoList();
                 int k = 0;
                 log.info("员工所有机构数据[{}]", JacksonUtil.objectToJson(groupInfolist));
                 for (int j = 0; j < groupInfolist.size(); j++) {
-                    EntInfoDTO.GroupInfo groupInfo = groupInfolist.get(j);
+                    core.dto.wechat.EntInfoDTO.GroupInfo groupInfo = groupInfolist.get(j);
                     log.info("EntInfoDTO.GroupInfo:[{}]", JacksonUtil.objectToJson(groupInfo));
                     if (!groupInfo.getEmpGroupInservice()) {
                         k = k + 1;
@@ -271,7 +271,7 @@ public class ActivityStartRS {
                                 MDC.setContextMap(mdcContext);
 
                                 //员工分布企业所在机构，员工所属多机构
-                                LinkedList<EntInfoDTO.GroupInfo> groupInfoList = entinfodto.getGroupInfoList();
+                                LinkedList<core.dto.wechat.EntInfoDTO.GroupInfo> groupInfoList = entinfodto.getGroupInfoList();
                                 int len = groupInfoList.size();
                                 String[] groupIds = new String[len];
                                 for (int i = 0; i < len; i++) {
@@ -339,10 +339,10 @@ public class ActivityStartRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             String entName = "";
-            List<EntInfoDTO> list = principal.getEntInfoDTOS();
+            List<core.dto.wechat.EntInfoDTO> list = principal.getEntInfoDTOS();
             //取 企业 名称
-            List<EntInfoDTO> entInfoDTOList = principal.getEntInfoDTOS();
-            for (EntInfoDTO entInfoDTO : entInfoDTOList) {
+            List<core.dto.wechat.EntInfoDTO> entInfoDTOList = principal.getEntInfoDTOS();
+            for (core.dto.wechat.EntInfoDTO entInfoDTO : entInfoDTOList) {
                 if (entId.equalsIgnoreCase(entInfoDTO.getEntId())) {
                     entName = entInfoDTO.getEntName();
                     break;
@@ -426,10 +426,10 @@ public class ActivityStartRS {
             MDC.setContextMap(mdcContext);
 
             String entName = "";
-            List<EntInfoDTO> list = principal.getEntInfoDTOS();
+            List<core.dto.wechat.EntInfoDTO> list = principal.getEntInfoDTOS();
             //取 企业 名称
-            List<EntInfoDTO> entInfoDTOList = principal.getEntInfoDTOS();
-            for (EntInfoDTO entInfoDTO : entInfoDTOList) {
+            List<core.dto.wechat.EntInfoDTO> entInfoDTOList = principal.getEntInfoDTOS();
+            for (core.dto.wechat.EntInfoDTO entInfoDTO : entInfoDTOList) {
                 if (entId.equalsIgnoreCase(entInfoDTO.getEntId())) {
                     entName = entInfoDTO.getEntName();
                     break;
