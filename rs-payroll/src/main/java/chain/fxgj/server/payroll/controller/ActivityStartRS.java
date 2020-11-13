@@ -1387,7 +1387,7 @@ public class ActivityStartRS {
                         .nickname(activityPrizeRes.getNickname())
                         .headimgurl(activityPrizeRes.getHeadimgurl())
                         .prizeAmt(activityPrizeRes.getPrizeAmt())
-                        .prizeDateTime(activityPrizeRes.getPrizeDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                        .prizeDateTime(null==activityPrizeRes.getPrizeDateTime()?0L:activityPrizeRes.getPrizeDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .prizeName(activityPrizeRes.getPrizeName())
                         .build();
 
