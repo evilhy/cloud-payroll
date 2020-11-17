@@ -278,7 +278,7 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
             activityModifyRequest.setSubVersion(entErpriseInfoRes.getSubVersion());
 
             String accountId = activityAnswerDTO.getAccountId();
-            AccountDetailDTO accountDetailDTO = accountFeignService.accountDetailInfo(accountId);
+            AccountDetailDTO accountDetailDTO = getAccountDetailDTO(accountId); //查询账户明细
             activityModifyRequest.setAccount(accountDetailDTO.getAccount());
             activityModifyRequest.setAccountName(accountDetailDTO.getSignClientName());
             activityModifyRequest.setBatchSpUnitNo(accountDetailDTO.getBatchSpUnitNo());
@@ -441,7 +441,7 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
             activityModifyRequest.setSubVersion(entErpriseInfoRes.getSubVersion());
 
             String accountId = activityRainDTO.getAccountId();
-            AccountDetailDTO accountDetailDTO = accountFeignService.accountDetailInfo(accountId);
+            AccountDetailDTO accountDetailDTO = getAccountDetailDTO(accountId); //查询账户明细
             activityModifyRequest.setAccount(accountDetailDTO.getAccount());
             activityModifyRequest.setAccountName(accountDetailDTO.getSignClientName());
             activityModifyRequest.setBatchSpUnitNo(accountDetailDTO.getBatchSpUnitNo());
@@ -597,7 +597,7 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
             activityModifyRequest.setSubVersion(entErpriseInfoRes.getSubVersion());
 
             String accountId = activityRandomDTO.getAccountId();
-            AccountDetailDTO accountDetailDTO = accountFeignService.accountDetailInfo(accountId);
+            AccountDetailDTO accountDetailDTO = getAccountDetailDTO(accountId); //查询账户明细
             activityModifyRequest.setAccount(accountDetailDTO.getAccount());
             activityModifyRequest.setAccountName(accountDetailDTO.getSignClientName());
             activityModifyRequest.setBatchSpUnitNo(accountDetailDTO.getBatchSpUnitNo());
@@ -698,5 +698,18 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
             throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("未查询到活动！"));
         }
         return activityInfoRes;
+    }
+
+    /**
+     * 查询账户明细
+     * @param accountId
+     * @return
+     */
+    public AccountDetailDTO getAccountDetailDTO(String accountId){
+
+        AccountDetailDTO accountDetailDTO = accountFeignService.accountDetailInfo(accountId);
+
+        return accountDetailDTO;
+
     }
 }

@@ -189,6 +189,7 @@ public class ActivityStartRS {
             }
             // 查询 活动交易记录表  构建数据
             ActivityTransLogReq activityTransLogReq = ActivityTransLogConvert.of(id, idNumber, entId);
+            log.info("isRandom.activityTransLogReq:[{}]", JacksonUtil.objectToJson(activityTransLogReq));
             ActivityTransLogRes activityTransLogRes = activityStartFeignService.involved(activityTransLogReq);
 
             if (activityTransLogRes != null) {
