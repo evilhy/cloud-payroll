@@ -130,7 +130,9 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             //todo 待解决
 //            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = new WelfareGoodsInfoAllResDTO();
-            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = welfareActivityFeignService.baseList(pageNum, limit, goodsNo, goodsName, activityId, fItemCatId, sItemCatId, tItemCatId, minAmt, maxAmt, pickFlag, IsStatusEnum.YES.name());
+            WelfareGoodsInfoAllResDTO welfareGoodsInfoAllResDTO = welfareActivityFeignService.baseList(pageNum, limit
+                    , goodsNo, goodsName, activityId, fItemCatId, sItemCatId, tItemCatId, minAmt, maxAmt, pickFlag,
+                    null);
             return welfareGoodsInfoAllResDTO;
         }).subscribeOn(Schedulers.elastic());
     }
