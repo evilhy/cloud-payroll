@@ -24,7 +24,7 @@ configurations {
     create("asciidoctor")
 }
 
-mainClassName = 'chain.fxgj.server.payroll.RedPacketApplication'
+mainClassName = 'chain.fxgj.server.payroll.PayrollApplication'
 
 def printPropers() {
     println("env:$ENV")
