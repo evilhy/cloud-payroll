@@ -154,8 +154,6 @@ dependencies {
     compile('chain:utils-mq:1.0.0')
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.22.1'
     compile('mysql:mysql-connector-java:5.1.38')
-    //链路跟踪
-    compile 'org.springframework.cloud:spring-cloud-starter-zipkin'
 }
 
 
