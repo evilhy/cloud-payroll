@@ -40,10 +40,10 @@ public class PayrollConfig {
      *
      * @return
      */
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE - 5)
-    public WebFilter webFilter() {
-        return new TrackLogFilter();
-    }
+//    @Bean
+//    @Order(Ordered.HIGHEST_PRECEDENCE - 5)
+//    public WebFilter webFilter() {
+//        return new TrackLogFilter();
+//    }
 
 }

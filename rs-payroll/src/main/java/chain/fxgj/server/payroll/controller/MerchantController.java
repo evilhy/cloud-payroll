@@ -21,11 +21,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
-import chain.utils.fxgj.constant.DictEnums.CertTypeEnum;
 import chain.utils.fxgj.constant.DictEnums.RegisterTypeEnum;
-import chain.wage.manager.core.dto.response.WageEmpInfoDTO;
-import chain.wage.manager.core.dto.response.WageEmployeeWechatInfoDTO;
-import chain.wage.manager.core.dto.response.WageRes100705;
 import core.dto.response.merchant.CacheEmpInfoDTO;
 import core.dto.response.merchant.CacheEmployeeWechatInfoDTO;
 import core.dto.response.merchant.CacheRes100705;
@@ -40,7 +36,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import sun.misc.Cache;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
@@ -183,7 +178,7 @@ public class MerchantController {
                 CacheEmpInfoDTO wageEmpInfoDTO = new CacheEmpInfoDTO();
                 wageEmpInfoDTO.setIdNumber(merchantDecrypt.getIdNumber());
                 wageEmpInfoDTO.setName(merchantDecrypt.getName());
-                CacheEmpInfoDTO empInfoDTO=employeeWechatFeignController.findemp(wageEmpInfoDTO);
+                CacheEmpInfoDTO empInfoDTO = employeeWechatFeignController.findemp(wageEmpInfoDTO);
                 if (empInfoDTO != null) {
                     log.info("员工信息表中【存在】！入库:[{}]", JacksonUtil.objectToJson(paramWetchatDto));
                     wechatInfoDTO = employeeWechatFeignController.saveempwechat(paramWetchatDto);
@@ -217,7 +212,7 @@ public class MerchantController {
             log.info("encryptAccessUrl:[{}]", merchantAccess.getAccessUrl());
             log.info("encryptVersion:[{}]", encryptVersion);
             log.info("appid:[{}]", merchant.getAppid());
-            String retureSignature = MerchantAccessDTO.signatureSHA( merchantAccess.getAccessUrl(), encryptVersion, merchant.getAppid());
+            String retureSignature = MerchantAccessDTO.signatureSHA(merchantAccess.getAccessUrl(), encryptVersion, merchant.getAppid());
             log.info("accessUrl.version.appid签名：{}", retureSignature);
 
             //公钥加密
@@ -234,7 +229,7 @@ public class MerchantController {
             String encryptLog = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
             log.info("encryptLog:[{}]", encryptLog);
             response.getHeaders().set("version", encryptVersion);
-            response.getHeaders().set("clientSn",UUIDUtil.createUUID32());
+            response.getHeaders().set("clientSn", UUIDUtil.createUUID32());
 
             response.getHeaders().set("clientDate", new SimpleDateFormat("yyyyMMdd").format(new Date()));
 
@@ -289,8 +284,8 @@ public class MerchantController {
             CacheEmployeeWechatInfoDTO wechatInfoDTO = employeeWechatFeignController.findempwechat(paramWetchatDto);
             if (wechatInfoDTO != null) {
                 CacheRes100705 wageRes100705 = merchantFeignController.wxCallback(accessToken);
-                if (res100705!=null){
-                    BeanUtils.copyProperties(wageRes100705,res100705);
+                if (res100705 != null) {
+                    BeanUtils.copyProperties(wageRes100705, res100705);
                     res100705.setApppartner(chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.values()[wageRes100705.getApppartner()]);
                 }
             } else {

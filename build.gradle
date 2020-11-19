@@ -1,74 +1,140 @@
-buildscript {
-    ext {
-        springBootVersion = '2.1.5.RELEASE'
-    }
-    repositories {
-        maven { url 'https://repo.spring.io/milestone' }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-        maven {
-            name "whkayak-releases"
-            url "http://whkayak.f3322.net:18150/nexus/content/groups/public"
-        }
-        maven {
-            name "whkayak-releases"
-            url "http://whkayak.f3322.net:18150/nexus/content/repositories/releases"
-        }
-        maven {
-            name "whkayak-snapshots"
-            url "http://whkayak.f3322.net:18150/nexus/content/repositories/snapshots"
-        }
-        maven {
-            name "aliyun"
-            url "http://maven.aliyun.com/nexus/content/groups/public"
-        }
-        mavenLocal()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath "gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.10"
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2'
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
-    }
+//buildscript { //插件开发场景中，目标插件需要依赖的包下载中央仓库
+//    //repositories为什么要要声明两次
+//    //buildscript中的声明是gradle脚本自身需要使用的资源。可以声明的资源包括依赖项、第三方插件、maven仓库地址等。
+//    //而在build.gradle文件中直接声明的依赖项、仓库地址等信息是项目自身需要的资源。
+//    repositories {
+//        //优先引用 自建仓库  > aliyun > gradle > Local ;  项目构建时，加载jar包下载
+//        maven {
+//            name "whkayak-releases"
+//            url "http://whkayak.f3322.net:18150/nexus/content/repositories/releases"
+//        }
+//        maven {
+//            name "whkayak-snapshots"
+//            url "http://whkayak.f3322.net:18150/nexus/content/repositories/snapshots"
+//        }
+//        maven {
+//            name "aliyun"
+//            url "http://maven.aliyun.com/nexus/content/groups/public"
+//        }
+//        maven {
+//            url "https://plugins.gradle.org/m2/"
+//        }
+//        //使用本地仓库: 读取%M2_HOME%环境变量下面的/conf/setting.xml中的本地maven仓库
+//        mavenLocal()
+//        //使用中央仓库
+//        mavenCentral()
+//    }
+//}
 
-}
+//https://docs.gradle.org/current/userguide/plugins.html#sec:script_plugins
 plugins {
-    id 'net.ltgt.apt' version '0.10'
-    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" apply false
-    //测试类报错 CreateProcess error=206, 文件名或扩展名太长。本地调试使用。请勿提交！
-//    id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
+    id 'org.springframework.boot' version '2.3.3.RELEASE' apply false
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE' apply false
+    id 'org.asciidoctor.jvm.convert' version '3.1.0' apply false
+    id "com.google.cloud.tools.jib" version "2.1.0" apply false
+    id 'idea'
+    //id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" apply false
+    //id "net.ltgt.apt" version "0.21" apply false
 }
+
+ext {
+    configuration = [
+            javaVersion = JavaVersion.VERSION_1_8
+    ]
+
+    libraries = [
+            springBootVersion = '2.3.3.RELEASE',
+            springCloudVersion = 'Hoxton.SR8',
+            lombokVersion = '1.18.2'
+    ]
+}
+
 allprojects {
-    apply plugin: 'maven'
     group = 'chain'
-    version = '1.0'
+    version = '1.0.1-SNAPSHOT'
 }
+
+description = "cloud payroll"
+
 
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'application'
-    apply plugin: 'net.ltgt.apt'
-    apply plugin: 'maven-publish'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
+
+    /////////环境变量////////////////////////////////////
+    /**
+     *   project.getProperty('env')   --->  gradle.properties
+     *   env   --->   gradle -Penv="local" clean
+     *
+     *  输出: println "$env"
+     *
+     *  def env = project.getProperty('env') ?: 'dev'
+     */
     if (!project.hasProperty('env') || !env) {
         ext.env = 'dev'
     }
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'application'
+//    apply plugin: 'net.ltgt.apt'
+    apply plugin: 'maven-publish'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    //apply plugin: 'net.ltgt.apt'
 
-    ext {
-        springCloudVersion = 'Greenwich.SR1'
-        snippetsDir = file('build/generated-snippets')
-    }
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.encoding = 'UTF-8'
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    //gradle 文件引用
+    apply from: file('../build-publish.gradle')
+
+    //jdk版本
+    sourceCompatibility = "${javaVersion}"
+    targetCompatibility = "${javaVersion}"
+
+    configurations {
+        developmentOnly
+        runtimeClasspath {
+            extendsFrom developmentOnly
+        }
+        compileOnly { //仅在编译时依赖，此处为lombok使用，相关注解在编译时生成getter、setter等
+            extendsFrom annotationProcessor
         }
     }
+
+    //访问特定类型的任务
+    //https://docs.gradle.org/6.5.1/dsl/org.gradle.api.tasks.compile.JavaCompile.html#org.gradle.api.tasks.compile.JavaCompile:options
+    tasks.withType(JavaCompile) {
+        //【CompileOptions】https://docs.gradle.org/6.5.1/dsl/org.gradle.api.tasks.compile.CompileOptions.html
+        //设置编码
+        options.encoding = 'UTF-8'
+        //告知是否记录警告消息。默认值为true。
+        options.warnings = false
+        //告知是否记录不赞成使用的成员或类的使用情况的详细信息。默认为false。
+        options.deprecation = true
+        //Java8反射机制下获取方法名、参数名
+        options.compilerArgs += ["-parameters"]
+    }
+
+    //禁止发布Gradle模块元数据
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
+
+
+    jar {
+        afterEvaluate {
+            manifest {
+                attributes 'Implementation-Version': archiveVersion
+                attributes 'Built-Gradle': gradle.gradleVersion
+                //attributes 'Bundle-DocURL': ''
+                attributes 'Build-OS': System.getProperty("os.name")
+                attributes 'Built-By': System.getProperty("user.name")
+                attributes 'Build-Jdk': System.getProperty("java.version")
+                attributes 'Build-Timestamp': releaseTime()
+            }
+        }
+    }
+
     javadoc {
         options {
             // 语言
@@ -78,15 +144,40 @@ subprojects {
             links "http://docs.oracle.com/javase/8/docs/api"
         }
     }
+
+
+    dependencies {
+        //compile('chain:cloud-common:1.0.13')
+        // compile("chain.fxgj:fxgj-common:1.0.21.1")
+//        compile("chain.fxgj:fxgj-base:1.0.48")
+        compile('chain:utils-fxgj:1.0.12-SNAPSHOT')
+        compile 'org.projectlombok:lombok:1.18.2'
+        compile('chain:css-log:2.1.4')
+//        compile("com.lmax:disruptor:3.4.2")
+        compile('chain:utils-commons:1.0.6')
+        runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        testCompile('junit:junit:4.12')
+        testCompile('pl.pragmatists:JUnitParams:1.1.1')
+        compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+    }
+
+
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.encoding = 'UTF-8'
+            //解决编译java时警告：请使用 -Xlint:unchecked 重新编译
+            //options.compilerArgs = [" -Xlint：unchecked"]
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
+
+    //repositories为什么要要声明两次
+    //buildscript中的声明是gradle脚本自身需要使用的资源。可以声明的资源包括依赖项、第三方插件、maven仓库地址等。
+    //而在build.gradle文件中直接声明的依赖项、仓库地址等信息是项目自身需要的资源。
     repositories {
-        maven { url 'https://repo.spring.io/milestone' }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-        maven {
-            name "whkayak-releases"
-            url "http://whkayak.f3322.net:18150/nexus/content/groups/public"
-        }
+        //优先引用 自建仓库  > aliyun > gradle > Local ;  项目构建时，加载jar包下载
         maven {
             name "whkayak-releases"
             url "http://whkayak.f3322.net:18150/nexus/content/repositories/releases"
@@ -99,33 +190,25 @@ subprojects {
             name "aliyun"
             url "http://maven.aliyun.com/nexus/content/groups/public"
         }
-        mavenCentral()
-        mavenLocal()
-    }
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        maven {
+            url "https://plugins.gradle.org/m2/"
         }
+        maven { url 'https://repo.spring.io/milestone' }
+        //使用本地仓库: 读取%M2_HOME%环境变量下面的/conf/setting.xml中的本地maven仓库
+        mavenLocal()
+        //使用中央仓库
+        mavenCentral()
     }
 
-    dependencies {
-        //compile('chain:cloud-common:1.0.13')
-       // compile("chain.fxgj:fxgj-common:1.0.21.1")
-//        compile("chain.fxgj:fxgj-base:1.0.48")
-        compile 'org.projectlombok:lombok:1.18.2'
-        compile('chain:css-log:2.1.4')
-        compile('chain:utils-commons:1.0.6')
-        compile('chain:utils-fxgj:1.0.12-SNAPSHOT')
-        runtimeOnly 'org.springframework.boot:spring-boot-devtools'
-        testCompile('org.springframework.boot:spring-boot-starter-test')
-        testCompile('junit:junit:4.12')
-        testCompile('pl.pragmatists:JUnitParams:1.1.1')
-        compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-    }
     configurations.all {
-        //每隔 0 秒 检查远程依赖是否存在更新
+        //每隔 n 小时(hours)/分钟(minutes)/秒(seconds) 检查远程依赖是否存在更新
         resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-        // 采用动态版本声明的依赖缓存每隔 0 秒
+        // 采用动态版本声明的依赖缓存1分钟
         resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
     }
+
+}
+
+def releaseTime() {
+    return ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 }
