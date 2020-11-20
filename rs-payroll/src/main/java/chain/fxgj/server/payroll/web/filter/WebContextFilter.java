@@ -41,10 +41,17 @@ public class WebContextFilter implements WebFilter, Ordered {
         String logToken = exchange.getRequest().getHeaders().getFirst("log-token");
         if (StringUtils.isBlank(logToken)) {
             log.info("====>logToken={}",logToken);
-            reqId = UUIDUtil.createUUID8();
+//            reqId = UUIDUtil.createUUID8();
             logToken = UUIDUtil.createUUID8();
 
         }
+
+        if (StringUtils.isNotBlank(reqId)) {
+            reqId = exchange.getRequest().getId();
+        } else if (StringUtils.isBlank(reqId)) {
+            reqId = UUIDUtil.createUUID24();
+        }
+
         MDC.put(REQ, reqId);
         MDC.put(PayrollDBConstant.LOG_TOKEN, logToken);
 
