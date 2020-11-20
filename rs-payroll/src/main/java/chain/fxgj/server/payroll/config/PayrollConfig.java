@@ -39,15 +39,6 @@ public class PayrollConfig {
                 .register(new LoggingFeature(null, Level.INFO, LoggingFeature.Verbosity.PAYLOAD_TEXT, 100));
     }
 
-    @Bean("restTemplate")
-    public RestTemplate restTemplate() {
-        SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
-        httpRequestFactory.setReadTimeout(20000);
-        httpRequestFactory.setConnectTimeout(5000);
-        RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
-        restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
-        return restTemplate;
-    }
 
     /**
      * 设置最后处理，但是不要太往后，目前底层框架 最后执行的过滤器为 最大-10
