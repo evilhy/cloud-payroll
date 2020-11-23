@@ -147,8 +147,6 @@ dependencies {
 
     compile 'org.springframework.cloud:spring-cloud-starter-consul-all'
     compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
-    compile 'org.springframework.cloud:spring-cloud-starter-sleuth'
-    compile 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
     compile 'io.github.openfeign:feign-okhttp'
 //    compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.8'
     //增加mq配置

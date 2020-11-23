@@ -3,11 +3,7 @@ spring:
     name: payroll
   #链路跟踪
   zipkin:
-    enabled: true
-    baseUrl: http://127.0.0.1:7178
-    sleuth:
-      sampler:
-        percentage: 1
+    base-url: http://localhost:7178
   cloud:
     consul:
       retry:
