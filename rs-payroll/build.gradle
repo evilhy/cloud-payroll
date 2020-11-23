@@ -108,6 +108,7 @@ dependencies {
     compile("chain:activity-client:1.0.1-SNAPSHOT")
     compile("chain.fxgj:fxgj-account-client:1.0.3")
     compile("chain.fxgj:fxgj-wage-client:1.0.1-SNAPSHOT")
+    compile 'org.springframework.cloud:spring-cloud-starter-zipkin'
 
     implementation(
             //https://github.com/spring-projects/spring-boot/blob/v2.2.2.RELEASE/spring-boot-project/spring-boot-dependencies/pom.xml
