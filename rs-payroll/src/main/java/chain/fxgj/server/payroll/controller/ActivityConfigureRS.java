@@ -374,15 +374,15 @@ public class ActivityConfigureRS {
             log.info("account ret accountInfoListDTOS:[{}]", JacksonUtil.objectToJson(accountInfoListDTOS));
 
             //todo 账户余额挡板，上生产请删除
-            if (true) {
-                List<EntAccountDTO> entAccountDTOList = new ArrayList<>();
-                EntAccountDTO entAccountDTO = new EntAccountDTO();
-                entAccountDTO.setId("2c948242758bb8ec01758bce45940001");
-                entAccountDTO.setAccountBalance(new BigDecimal(100000));
-                entAccountDTO.setAccount("10250000003197043");
-                entAccountDTOList.add(entAccountDTO);
-                return entAccountDTOList;
-            }
+//            if (true) {
+//                List<EntAccountDTO> entAccountDTOList = new ArrayList<>();
+//                EntAccountDTO entAccountDTO = new EntAccountDTO();
+//                entAccountDTO.setId("2c948242758bb8ec01758bce45940001");
+//                entAccountDTO.setAccountBalance(new BigDecimal(100000));
+//                entAccountDTO.setAccount("10250000003197043");
+//                entAccountDTOList.add(entAccountDTO);
+//                return entAccountDTOList;
+//            }
 
             Iterator iterator = Flux.fromIterable(accountInfoListDTOS)
                     .flatMapSequential(accountInfoListDTO -> Mono.fromCallable(() ->
