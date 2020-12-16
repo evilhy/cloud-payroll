@@ -29,10 +29,10 @@ public class TransferUtil {
             cacheUserPrincipal.setBranchNo(userPrincipal.getBranchNo());
             cacheUserPrincipal.setDataAuths(userPrincipal.getDataAuths());
             cacheUserPrincipal.setEntId(userPrincipal.getEntId());
-            List<EntInfoDTO> entInfoDTOS = userPrincipal.getEntInfoDTOS();
+            List< core.dto.wechat.EntInfoDTO> entInfoDTOS = userPrincipal.getEntInfoDTOS();
             List<core.dto.wechat.EntInfoDTO> entInfoDTOSList = new ArrayList<>();
             if (null != entInfoDTOS && entInfoDTOS.size() > 0) {
-                for (EntInfoDTO entInfoDTO : entInfoDTOS) {
+                for ( core.dto.wechat.EntInfoDTO entInfoDTO : entInfoDTOS) {
                     core.dto.wechat.EntInfoDTO feiginEntInfoDto = new core.dto.wechat.EntInfoDTO();
                     BeanUtils.copyProperties(entInfoDTO,feiginEntInfoDto);
                     entInfoDTOSList.add(feiginEntInfoDto);
@@ -75,10 +75,10 @@ public class TransferUtil {
             userPrincipal.setDataAuths(cacheUserPrincipal.getDataAuths());
             userPrincipal.setEntId(cacheUserPrincipal.getEntId());
             List<core.dto.wechat.EntInfoDTO> entInfoDTOS = cacheUserPrincipal.getEntInfoDTOS();
-            List<EntInfoDTO> entInfoDTOSList = new ArrayList<>();
+            List< core.dto.wechat.EntInfoDTO> entInfoDTOSList = new ArrayList<>();
             if (null != entInfoDTOS && entInfoDTOS.size()>0) {
                 for (core.dto.wechat.EntInfoDTO entInfoDTO : entInfoDTOS) {
-                    EntInfoDTO entInfoDTO1 = new EntInfoDTO();
+                    core.dto.wechat.EntInfoDTO entInfoDTO1 = new  core.dto.wechat.EntInfoDTO();
                     BeanUtils.copyProperties(entInfoDTO,entInfoDTO1);
                     entInfoDTOSList.add(entInfoDTO1);
                 }

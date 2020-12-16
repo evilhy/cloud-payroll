@@ -5,6 +5,7 @@ import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
 import chain.fxgj.server.payroll.dto.request.PasswordSaveReq;
 import chain.fxgj.server.payroll.dto.response.CrateNumericKeypadRes;
 import chain.fxgj.server.payroll.dto.response.SecretFreeRes;
+import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.*;
@@ -49,6 +50,9 @@ public class PasswordControllerTest {
     @Autowired
     @Qualifier("jacksonCodecCustomizer")
     public CodecCustomizer codecCustomizer;
+
+    @Autowired
+    EmployeeEncrytorService employeeEncrytorService;
 
     @Before
     public void setUp() throws Exception {
@@ -220,6 +224,11 @@ public class PasswordControllerTest {
                         relaxedRequestFields(JavaDocReader.javaDoc(PasswordSaveReq.class)),
                         relaxedResponseFields(JavaDocReader.javaDoc(SecretFreeRes.class))
                 ));
+    }
+
+    @Test
+    public void test(){
+        log.info(employeeEncrytorService.decryptPwd("eDcp0Y6NEyw="));
     }
 
 }

@@ -25,7 +25,7 @@ public class Constants {
 
     //红包雨活动默认时长 秒
     public static final Integer RAIN_TIME = 60;
-    //红包雨活动默认时长 小时
+    //随机红包活动默认时长 小时
     public static final Integer RANDOM_TIME = 24;
     //推送执行锁时长 小时
     public static final Integer PUSH_TIME_OUT = 24;

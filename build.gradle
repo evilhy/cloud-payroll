@@ -3,10 +3,7 @@ buildscript {
         springBootVersion = '2.1.5.RELEASE'
     }
     repositories {
-        maven { url 'https://repo.spring.io/milestone' }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+
         maven {
             name "whkayak-releases"
             url "http://whkayak.f3322.net:18150/nexus/content/groups/public"
@@ -22,6 +19,10 @@ buildscript {
         maven {
             name "aliyun"
             url "http://maven.aliyun.com/nexus/content/groups/public"
+        }
+        maven { url 'https://repo.spring.io/milestone' }
+        maven {
+            url "https://plugins.gradle.org/m2/"
         }
         mavenLocal()
     }
@@ -79,10 +80,7 @@ subprojects {
         }
     }
     repositories {
-        maven { url 'https://repo.spring.io/milestone' }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+
         maven {
             name "whkayak-releases"
             url "http://whkayak.f3322.net:18150/nexus/content/groups/public"
@@ -98,6 +96,10 @@ subprojects {
         maven {
             name "aliyun"
             url "http://maven.aliyun.com/nexus/content/groups/public"
+        }
+        maven { url 'https://repo.spring.io/milestone' }
+        maven {
+            url "https://plugins.gradle.org/m2/"
         }
         mavenCentral()
         mavenLocal()
