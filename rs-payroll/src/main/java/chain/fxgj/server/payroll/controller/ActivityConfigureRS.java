@@ -38,7 +38,6 @@ import chain.wage.core.dto.activity.ActivityRequestDTO;
 import chain.wage.core.dto.other.GroupAccountDTO;
 import chain.wage.core.dto.other.GroupCheckDTO;
 import chain.wage.core.dto.response.WageSheetRespone;
-import core.dto.request.group.GroupQueryReq;
 import core.dto.response.ent.EntErpriseDTO;
 import core.dto.response.group.GroupDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -99,7 +98,7 @@ public class ActivityConfigureRS {
      */
     @GetMapping("/wxCallback")
     @TrackLog
-    public Mono<String> wxCallback(@RequestParam("code") String code, @RequestHeader(value = "routeName", required = false) String routeName) {
+    public Mono<ActivityCallBackDTO> wxCallback(@RequestParam("code") String code, @RequestHeader(value = "routeName", required = false) String routeName) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
@@ -129,7 +128,10 @@ public class ActivityConfigureRS {
 
                 log.info("微信：{},{}", jsessionId, openId);
             }
-            return jsessionId;
+            ActivityCallBackDTO activityCallBackDTO = ActivityCallBackDTO.builder()
+                    .jsessionId(jsessionId)
+                    .build();
+            return activityCallBackDTO;
         }).subscribeOn(Schedulers.elastic());
     }
 
@@ -201,7 +203,7 @@ public class ActivityConfigureRS {
             if (null == userInfoRes) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("用户信息不存在！"));
             }
-            if (UserStatusEnum.NORMAL.equals(userInfoRes.getUserStatus())) {
+            if (!UserStatusEnum.NORMAL.equals(userInfoRes.getUserStatus())) {
                 throw new ParamsIllegalException(ErrorConstant.ACTIVITY_004.getErrorMsg());
             }
             log.info("====>userInfoRes:[{}]", JacksonUtil.objectToJson(userInfoRes));
@@ -371,6 +373,16 @@ public class ActivityConfigureRS {
             List<AccountInfoListDTO> accountInfoListDTOS = accountFeignService.accountInfoList(accountQueryRequest);
             log.info("account ret accountInfoListDTOS:[{}]", JacksonUtil.objectToJson(accountInfoListDTOS));
 
+            //todo 账户余额挡板，上生产请删除
+//            if (true) {
+//                List<EntAccountDTO> entAccountDTOList = new ArrayList<>();
+//                EntAccountDTO entAccountDTO = new EntAccountDTO();
+//                entAccountDTO.setId("2c948242758bb8ec01758bce45940001");
+//                entAccountDTO.setAccountBalance(new BigDecimal(100000));
+//                entAccountDTO.setAccount("10250000003197043");
+//                entAccountDTOList.add(entAccountDTO);
+//                return entAccountDTOList;
+//            }
 
             Iterator iterator = Flux.fromIterable(accountInfoListDTOS)
                     .flatMapSequential(accountInfoListDTO -> Mono.fromCallable(() ->
@@ -453,6 +465,7 @@ public class ActivityConfigureRS {
                                 if (activityInfoRes.getActivityType().equals(ActivityTypeEnum.RAIN)) {
                                     ActivityQueryRequest rainActivityRequest = ActivityQueryRequest.builder()
                                             .activityId(activityInfoRes.getActivityId())
+                                            .delStatus(Arrays.asList(DelStatusEnum.normal))
                                             .build();
                                     ActivityInfoRes rainActivityInfo = activityConfigureFeignService.findActivityById(rainActivityRequest);
                                     ActivityRainRes activityRain = rainActivityInfo.getActivityRain();
@@ -481,6 +494,7 @@ public class ActivityConfigureRS {
                                 List<ActivityListDTO.ActivityFlow> activityFlowList = new ArrayList<ActivityListDTO.ActivityFlow>();
                                 ActivityQueryRequest activityQueryRequestLogs = ActivityQueryRequest.builder()
                                         .activityId(activityListDTO.getId())
+                                        .delStatus(Arrays.asList(DelStatusEnum.normal))
                                         .build();
                                 List<ActivityFlowLogRes> activityFlowLogs = activityConfigureFeignService.findActivityFlowLogs(activityQueryRequestLogs);
 
@@ -587,7 +601,7 @@ public class ActivityConfigureRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             UserRedisDTO redisDTO = this.getUser(jsessionId, "rain");
-
+            log.info("addActivityRain.activityRainDTO:[{}]", JacksonUtil.objectToJson(activityRainDTO));
             //TODO
             //[1] 开始时间不能为空
             //    只支持 定时开启
@@ -602,6 +616,7 @@ public class ActivityConfigureRS {
 
             String id = activityConfigureService.saveActivityRain(ActivityStatusEnum.SUBMIT,
                     activityRainDTO, redisDTO.getEntId(), redisDTO.getUserId(), redisDTO.getOpenId());
+            log.info("addActivityRain.id:[{}]", id);
             return id;
         }).subscribeOn(Schedulers.elastic());
 
@@ -823,7 +838,7 @@ public class ActivityConfigureRS {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             UserRedisDTO redisDTO = this.getUser(jsessionId, "random");
-
+            log.info("random.updActivityRandom.activityRandomDTO:[{}]", JacksonUtil.objectToJson(activityRandomDTO));
             //TODO 【X】
             //[1] 开始时间不能为空
             //[2] 活动时间限制  活动开启时间不能在22:00-00:00

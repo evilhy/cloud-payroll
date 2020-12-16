@@ -93,15 +93,15 @@ public class ActivityStartServiceImpl implements ActivityStartService {
             throw new ParamsIllegalException(ErrorConstant.ACTIVITY_007.getErrorMsg());
         }
 
-        List<EntInfoDTO> entInfoList = principal.getEntInfoDTOS();
+        List<core.dto.wechat.EntInfoDTO> entInfoList = principal.getEntInfoDTOS();
         if (entInfoList == null || entInfoList.size() < 1) {
             log.error("请求【登录缓存中无企业信息】为空");
             throw new ParamsIllegalException(ErrorConstant.ACTIVITY_007.getErrorMsg());
         }
         Boolean isEntinfo = false;
-        for (EntInfoDTO entInfoDTO : entInfoList) {
+        for (core.dto.wechat.EntInfoDTO entInfoDTO : entInfoList) {
             if (activityInfoRequestDTO.getEntId().equalsIgnoreCase(entInfoDTO.getEntId())) {
-                LinkedList<EntInfoDTO.GroupInfo> groupInfoList = entInfoDTO.getGroupInfoList();
+                LinkedList<core.dto.wechat.EntInfoDTO.GroupInfo> groupInfoList = entInfoDTO.getGroupInfoList();
                 if (groupInfoList == null || groupInfoList.size() < 1) {
                     log.error("请求【登录缓存中无机构信息】为空");
                     throw new ParamsIllegalException(ErrorConstant.ACTIVITY_007.getErrorMsg());
