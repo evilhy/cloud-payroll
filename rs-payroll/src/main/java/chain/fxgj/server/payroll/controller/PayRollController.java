@@ -17,7 +17,6 @@ import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
 import chain.fxgj.server.payroll.dto.response.Res100701;
 import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.PaswordService;
-import chain.fxgj.server.payroll.service.PayRollService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.util.TransferUtil;
@@ -75,8 +74,6 @@ public class PayRollController {
     @Autowired
     PayRollFeignService wageMangerFeignService;
 
-    @Autowired
-    PayRollService payRollService;
     @Autowired
     PaswordService paswordService;
     @Autowired
@@ -147,7 +144,6 @@ public class PayRollController {
         String idNumber = principal.getIdNumber();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            List<NewestWageLogDTO> list = payRollService.groupList(entId, null, idNumber, principal);//为减少服务之间的交互所以注释
             List<core.dto.response.NewestWageLogDTO> newestWageLogDTOS = payrollFeignController.empGroupList(cacheUserPrincipal);
             log.info("NewestWageLogDTOList:[{}]", JacksonUtil.objectToJson(newestWageLogDTOS));
             return newestWageLogDTOS;

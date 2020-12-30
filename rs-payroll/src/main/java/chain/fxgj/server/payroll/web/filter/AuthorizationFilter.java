@@ -24,7 +24,6 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 
 @Slf4j
-//todo 上线记得放开
 @Component
 public class AuthorizationFilter implements WebFilter, Ordered {
 
@@ -34,7 +33,6 @@ public class AuthorizationFilter implements WebFilter, Ordered {
     public static final String[] excludeUrls = new String[]{
             "docs",
             "/roll/sdt",
-//            "/roll/entEmp",
             "/inside/sendCode",
             "/actuator",
             "/weixin",
@@ -73,10 +71,6 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         log.info("--------------->req_id:[{}]", req_id);
         log.info("--------------->jsessionId:[{}]", jsessionId);
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
-        //todo 跑数据使用，正式环境必须删除
-//        if (true) {
-//            return chain.filter(exchange);
-//        }
         String requestUrl = serverHttpRequest.getURI().getPath();
         for (String url : excludeUrls) {
             if (StringUtils.indexOf(requestUrl, url) > -1) {
@@ -135,22 +129,6 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         WebContext.setCurrentHeader(headerDTO);
         return chain.filter(exchange);
     }
-
-
-//    public Mono<Void> predicate(ServerWebExchange serverWebExchange,WebFilterChain chain) {
-//        log.info("验证访问路径 是否 核验 jsessionId");
-//
-//        URI uri = serverWebExchange.getRequest().getURI();
-//        String requestUri = uri.getPath();
-//        log.info("访问路径  URI={}, PATH={}", uri, requestUri);
-//        String jsessionId = serverWebExchange.getRequest().getHeaders().getFirst(PayrollConstants.JSESSIONID);
-//        log.info("jsessionId = {} ", jsessionId);
-//        if (isPermitUrl(requestUri)) {
-//            return chain.filter(serverWebExchange);
-//        }
-//
-//    }
-
 
     @Override
     public int getOrder() {
