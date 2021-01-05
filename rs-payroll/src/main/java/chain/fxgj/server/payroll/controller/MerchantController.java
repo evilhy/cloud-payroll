@@ -4,8 +4,6 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.constant.PayrollDBConstant;
-import chain.fxgj.feign.client.EmployeeFeignService;
-import chain.fxgj.feign.client.MerchantFeignService;
 import chain.fxgj.server.payroll.config.ErrorConstant;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
@@ -62,10 +60,6 @@ public class MerchantController {
     EmployeeEncrytorService employeeEncrytorService;
     @Resource
     RedisTemplate redisTemplate;
-    @Autowired
-    MerchantFeignService merchantFeignService;
-    @Autowired
-    EmployeeFeignService employeeFeignService;
     @Autowired
     MerchantFeignController merchantFeignController;
     @Autowired

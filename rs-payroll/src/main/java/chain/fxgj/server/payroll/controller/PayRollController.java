@@ -97,38 +97,6 @@ public class PayRollController {
 
 
     /**
-     * 首页
-     */
-    @GetMapping("/index")
-    @TrackLog
-    public Mono<IndexDTO> index() {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
-        UserPrincipal principal = WebContext.getCurrentUser();
-        String idNumber = principal.getIdNumber();
-
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            CacheUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(principal);
-            log.info("wageMangerFeignService.index(wageUserPrincipal)开始");
-            WageUserPrincipal wageUserPrincipal1 = new WageUserPrincipal();
-            BeanUtils.copyProperties(wageUserPrincipal, wageUserPrincipal1);
-            WageIndexDTO wageIndexDTO = wageMangerFeignService.index(wageUserPrincipal1);
-            NewestWageLogDTO newestWageLogDTO = new NewestWageLogDTO();
-            Integer isNew = 0;
-            if (null != wageIndexDTO) {
-                WageNewestWageLogDTO wageNewestWageLogDTO = wageIndexDTO.getBean();
-                BeanUtils.copyProperties(wageNewestWageLogDTO, newestWageLogDTO);
-                isNew = wageIndexDTO.getIsNew();
-            }
-            IndexDTO indexDTO = new IndexDTO();
-            indexDTO.setBean(newestWageLogDTO);
-            indexDTO.setIsNew(isNew);
-            return indexDTO;
-        }).subscribeOn(Schedulers.elastic());
-    }
-
-    /**
      * 员工机构列表(我的收入-机构列表)
      *
      * @return
@@ -205,7 +173,7 @@ public class PayRollController {
     }
 
     /**
-     * 员工个人信息
+     * 员工个人信息 （确认前端未使用）
      *
      * @return
      */
@@ -220,7 +188,7 @@ public class PayRollController {
             WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
             BeanUtils.copyProperties(principal, wageUserPrincipal);
             log.info("调用wageMangerFeignService.empInfo(wageUserPrincipal)开始");
-            List<WageRes100708> wageRes100708List = wageMangerFeignService.empInfo(wageUserPrincipal);
+            List<WageRes100708> wageRes100708List = null;//wageMangerFeignService.empInfo(wageUserPrincipal);
             log.info("wageRes100708List-->{}", wageRes100708List.size());
             List<Res100708> res100708 = null;
             if (!CollectionUtils.isEmpty(wageRes100708List)) {

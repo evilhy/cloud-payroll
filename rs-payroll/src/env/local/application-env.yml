@@ -53,9 +53,6 @@ spring:
     template:
       # 默认为false,Server端会自动删除不可达消息
       mandatory: true
-  #链路跟踪
-  zipkin:
-    base-url: http://localhost:7178
 payroll:
   #调用inside地址
   inside-url: http://10.5.0.101:30090/rest/
