@@ -1,8 +1,6 @@
 [source,options="nowrap"]
 ----
 {
-  "idNumber": "421120198512136895",
-  "employeeName": "刘寒冰",
   "differDays": 367,
   "pushTimes": 7,
   "monthCount": 8,

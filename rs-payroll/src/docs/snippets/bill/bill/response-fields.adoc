@@ -1,15 +1,6 @@
 |===
 |Path|Type|Description
 
-
-|`+idNumber+`
-|`+String+`
-|身份证号
-
-|`+employeeName+`
-|`+String+`
-|姓名
-
 |`+differDays+`
 |`+int+`
 |绑定工资条天数
@@ -58,16 +49,16 @@
 |`+List+`
 | 资金
 
-|`+fundWages+`
 |`+List.fundType+`
+|`+String+`
 | 资金类型
 
-|`+fundWages+`
 |`+List.fundAmount+`
+|`+String+`
 | 资金金额
 
-|`+fundWages+`
 |`+List.fundPercent+`
+|`+String+`
 | 占总金额百分百
 
 |`+industryAvgAmount+`

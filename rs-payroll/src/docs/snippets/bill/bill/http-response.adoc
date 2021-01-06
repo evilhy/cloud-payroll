@@ -5,8 +5,6 @@ Content-Length: 84
 Content-Type: application/json;charset=UTF-8
 
 {
-  "idNumber": "421120198512136895",
-  "employeeName": "刘寒冰",
   "differDays": 367,
   "pushTimes": 7,
   "monthCount": 8,
