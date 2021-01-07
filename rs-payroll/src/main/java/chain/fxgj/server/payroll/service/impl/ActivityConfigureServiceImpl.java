@@ -257,12 +257,6 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         activityModifyRequest.setCrtDateTime(crtDateTime);
         if (activityStatusEnum.equals(ActivityStatusEnum.CHECK)) {
 
-            //企业 改用查Mongo所注释 todo 测试完成后可删除
-//            EntErpriseQueryRequest entErpriseQueryRequest = new EntErpriseQueryRequest();
-//            entErpriseQueryRequest.setEntId(entId);
-//            entErpriseQueryRequest.setEntStatus(new LinkedList(Arrays.asList(EnterpriseStatusEnum.NORMAL, EnterpriseStatusEnum.INIT)));
-//            EntErpriseInfoRes entErpriseInfoRes = entErpriseInfoServiceFeign.find(entErpriseQueryRequest);
-
             //代发设置 (生成中奖明细txt需要使用这些账户数据)
             EntErpriseQueryReq entErpriseQueryReq = EntErpriseQueryReq.builder()
                     .entId(entId)
@@ -288,11 +282,6 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         String activityId = activityConfigureFeignService.modifyActivity(activityModifyRequest);
 
         return activityId;
-    }
-
-    @Override
-    public ActivityAnswerDTO getActivityAnswer(String id) {
-        return null;
     }
 
     /**
@@ -420,12 +409,6 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         activityModifyRequest.setCrtDateTime(crtDateTime);
         if (activityStatusEnum.equals(ActivityStatusEnum.CHECK)) {
 
-            //企业 改用查Mongo所注释 todo 测试完成后可删除
-//            EntErpriseQueryRequest entErpriseQueryRequest = new EntErpriseQueryRequest();
-//            entErpriseQueryRequest.setEntId(entId);
-//            entErpriseQueryRequest.setEntStatus(new LinkedList(Arrays.asList(EnterpriseStatusEnum.NORMAL, EnterpriseStatusEnum.INIT)));
-//            EntErpriseInfoRes entErpriseInfoRes = entErpriseInfoServiceFeign.find(entErpriseQueryRequest);
-
             //代发设置 (生成中奖明细txt需要使用这些账户数据)
             EntErpriseQueryReq entErpriseQueryReq = EntErpriseQueryReq.builder()
                     .entId(entId)
@@ -452,11 +435,6 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         log.info("activityModifyRequest:[{}]", JacksonUtil.objectToJson(activityModifyRequest));
         String activityId = activityConfigureFeignService.modifyActivity(activityModifyRequest);
         return activityId;
-    }
-
-    @Override
-    public ActivityRainDTO getActivityRain(String id) {
-        return null;
     }
 
     /**
@@ -576,12 +554,6 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         activityModifyRequest.setCrtDateTime(crtDateTime);
         if (activityStatusEnum.equals(ActivityStatusEnum.CHECK)) {
 
-            //企业 改用查Mongo所注释 todo 测试完成后可删除
-//            EntErpriseQueryRequest entErpriseQueryRequest = new EntErpriseQueryRequest();
-//            entErpriseQueryRequest.setEntId(entId);
-//            entErpriseQueryRequest.setEntStatus(new LinkedList(Arrays.asList(EnterpriseStatusEnum.NORMAL, EnterpriseStatusEnum.INIT)));
-//            EntErpriseInfoRes entErpriseInfoRes = entErpriseInfoServiceFeign.find(entErpriseQueryRequest);
-
             //代发设置 (生成中奖明细txt需要使用这些账户数据)
             EntErpriseQueryReq entErpriseQueryReq = EntErpriseQueryReq.builder()
                     .entId(entId)
@@ -608,11 +580,6 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         String activityId = activityConfigureFeignService.modifyActivity(activityModifyRequest);
         log.info("random update end");
         return activityId;
-    }
-
-    @Override
-    public ActivityRandomDTO getActivityRandom(String id) {
-        return null;
     }
 
     @Override
@@ -651,14 +618,6 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
 
     @Override
     public GroupDTO findGroupInfo(String entId, String groupId) {
-
-        //注释原因: 改查mongo todo 测试完成后可删除
-//        GroupInfoQueryRequest groupInfoQueryRequest = GroupInfoQueryRequest.builder()
-//                .entId(entId)
-//                .groupId(groupId)
-//                .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal)))
-//                .build();
-//        GroupInfoResponse groupInfoResponse = groupInfoServiceFeign.find(groupInfoQueryRequest);
 
         GroupQueryReq queryReq = GroupQueryReq.builder()
                 .entId(entId)

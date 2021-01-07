@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.service.impl;
 
-import chain.fxgj.feign.client.WechatFeignService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.payroll.client.feign.WechatFeignController;
 import chain.pub.client.feign.WechatFeignClient;
@@ -8,7 +7,6 @@ import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
-import chain.wage.manager.core.dto.response.WageRes100703;
 import core.dto.response.PayrollRes100703DTO;
 import core.dto.response.PayrollWageDetailDTO;
 import core.dto.sync.WageDetailInfoDTO;
@@ -33,11 +31,6 @@ public class WechatRedisServiceImpl implements WechatRedisService {
 
     @Override
     public PayrollRes100703DTO wageListByMongo(String idNumber, String groupId, String year, String type) {
-        return null;
-    }
-
-    @Override
-    public WageRes100703 wageListByMysql(String idNumber, String groupId, String year, String type) {
         return null;
     }
 

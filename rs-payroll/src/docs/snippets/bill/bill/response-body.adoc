@@ -1,0 +1,45 @@
+[source,options="nowrap"]
+----
+{
+  "bindDateTime":14052000000,
+  "differDays": 367,
+  "pushTimes": 7,
+  "monthCount": 8,
+  "totalAmount": "69009.60",
+  "deductTotalAmt":"-1",
+  "maxAmount": "9076.36",
+  "maxMonth": "202010",
+  "minAmount": "1500",
+  "minMonth": "202003",
+  "maxSingleAmountDate": "20201015",
+  "maxSingleAmount": "19076.36",
+  "differAmount": "10000.00",
+  "fundWages": [
+    {
+      "fundType": "工资",
+      "fundAmount": "50230.1",
+      "fundPercent": "82.5"
+    } ,
+    {
+       "fundType": "报销",
+      "fundAmount": "0",
+      "fundPercent": "0"
+    } ,
+    {
+       "fundType": "补贴",
+      "fundAmount": "10000",
+      "fundPercent": "16.5"
+    } ,
+    {
+       "fundType": "其他",
+      "fundAmount": "93",
+      "fundPercent": "1",
+    }
+ ],
+  "industry":"计算机软件",
+  "industryAvgAmount": "10.3",
+  "firstTierCitiesAvgAmount": "9.9",
+  "secondTierCitiesAvgAmount": "6.8",
+  "percent": "30.5"
+}
+----

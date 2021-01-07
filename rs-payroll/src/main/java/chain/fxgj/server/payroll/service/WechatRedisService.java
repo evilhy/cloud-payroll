@@ -3,7 +3,6 @@ package chain.fxgj.server.payroll.service;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
-import chain.wage.manager.core.dto.response.WageRes100703;
 import core.dto.response.PayrollRes100703DTO;
 import core.dto.response.PayrollWageDetailDTO;
 import core.dto.sync.WageDetailInfoDTO;
@@ -26,17 +25,6 @@ public interface WechatRedisService {
      */
 //    @Cacheable(cacheNames = "wechat", key = "'wageListMongo:'.concat(#idNumber).concat(#groupId).concat(#year).concat(#type)")
     PayrollRes100703DTO wageListByMongo(String idNumber, String groupId, String year, String type);
-
-    /**
-     * 薪资列表 - mysql
-     *
-     * @param idNumber
-     * @param groupId
-     * @param year
-     * @return
-     */
-//    @Cacheable(cacheNames = "wechat", key = "'wageListMysql:'.concat(#idNumber).concat(#groupId).concat(#year).concat(#type)")
-    WageRes100703 wageListByMysql(String idNumber, String groupId, String year, String type);
 
     /**
      * 工资详情 - mongo

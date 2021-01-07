@@ -65,43 +65,6 @@ public class CallInsideServiceImpl implements CallInsideService {
     }
 
     /**
-     * 验证消息 是否来自微信，
-     *
-     * @param weixinSignatureDTO
-     * @return
-     */
-    @Override
-    public WeixinSignatureDTO checkWechatSignature(WeixinSignatureDTO weixinSignatureDTO) {
-        // 验证消息 消息
-        Response response = client.target(payrollProperties.getInsideUrl() + "weixin/checkSignature")
-                .request()
-                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
-                .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
-                .post(Entity.entity(weixinSignatureDTO, MediaType.APPLICATION_JSON_TYPE));
-        log.info("====>status:{}", response.getStatus());
-        WeixinSignatureDTO signatureDTO = response.readEntity(WeixinSignatureDTO.class);
-
-        return signatureDTO;
-    }
-
-    /**
-     * 微信配置信息
-     */
-    @Override
-    public WeixinCfgResponeDTO getWechatCfg() {
-        // 验证消息 消息
-        Response response = client.target(payrollProperties.getInsideUrl() + "weixin/getWechatCfg")
-                .request()
-                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
-                .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
-                .get();
-
-        WeixinCfgResponeDTO weixinCfgResponeDTO = response.readEntity(WeixinCfgResponeDTO.class);
-
-        return weixinCfgResponeDTO;
-    }
-
-    /**
      * 获取网页授权凭证access token
      */
     @Override
@@ -119,43 +82,6 @@ public class CallInsideServiceImpl implements CallInsideService {
         return weixinOauthTokenResponeDTO;
     }
 
-    /**
-     * 通过网页授权获取用户信息
-     */
-    @Override
-    public WeixinUserInfoResponeDTO getUserInfo(String access_token, String openid) {
-        // 验证消息 消息
-        Response response = client.target(payrollProperties.getInsideUrl() + "weixin/getUserInfo")
-                .queryParam("access_token", access_token)
-                .queryParam("openid", openid)
-                .request()
-                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
-                .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
-                .get();
-
-        WeixinUserInfoResponeDTO weixinUserInfoResponeDTO = response.readEntity(WeixinUserInfoResponeDTO.class);
-
-        return weixinUserInfoResponeDTO;
-    }
-
-    /**
-     * JS分享产生分享签名
-     */
-    @Override
-    public WeixinJsapiDTO getJsapiSignature(String url) {
-        // 验证消息 消息
-        Response response = client.target(payrollProperties.getInsideUrl() + "weixin/getJsapiSignature")
-                .queryParam("url", url)
-                .request()
-                .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
-                .header("appPartner", StringUtils.trimToEmpty(MDC.get("apppartner")))
-                .get();
-
-        WeixinJsapiDTO weixinJsapiDTO = response.readEntity(WeixinJsapiDTO.class);
-
-        return weixinJsapiDTO;
-    }
-
     @Override
     public MsgCodeLogResponeDTO sendCode(MsgCodeLogRequestDTO msgCodeLogRequestDTO, String clientIp) {
         WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCode");
@@ -171,33 +97,5 @@ public class CallInsideServiceImpl implements CallInsideService {
         Res100302 res100302 = new Res100302();
         res100302.setCodeId(responeDTO.getCodeId());
         return responeDTO;
-    }
-
-    @Override
-    public void checkPhoneCode(String phone, String code) {
-        //验证短信码
-        MsgCodeLogCheckRequestDTO dto = new MsgCodeLogCheckRequestDTO();
-        dto.setSystemId(0);
-        dto.setCheckType(1);
-        dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-        dto.setCode(code);
-        dto.setMsgMedium(phone);
-        WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCodeCheck");
-        log.info("====>管家url:{}", webTarget.getUri());
-        Response response = webTarget.request()
-                .header(PayrollConstants.LOG_TOKEN, StringUtils.trimToEmpty(MDC.get(PayrollConstants.LOG_TOKEN)))
-                .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
-        log.debug("====>{}", response.getStatus());
-        if (response.getStatus() == 500) {
-            throw new ParamsIllegalException(ErrorConstant.WECHAR_008.getErrorMsg());
-        }
-        if (response.getStatus() != 200) {
-            ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
-            throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrorCode(), errorDTO.getErrorMsg()));
-        }
-        MsgCodeLogResponeDTO msgCodeLogResponeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
-        if (msgCodeLogResponeDTO.getMsgStatus() != 1) {
-            throw new ParamsIllegalException(ErrorConstant.Error0004.getErrorMsg());
-        }
     }
 }

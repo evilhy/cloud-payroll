@@ -53,8 +53,6 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class InsideController {
 
-//    @Autowired
-//    InsideFeignService insideFeignService;
     @Qualifier("applicationTaskExecutor")
     Executor executor;
     @Autowired
@@ -543,13 +541,6 @@ public class InsideController {
             return insideFeignController.updBankCard(updBankCardDTO);
         }).subscribeOn(Schedulers.elastic());
     }
-
-// 切库注释
-//    public void mysqlDataSynToMongo(String idNumber, String groupId, String year, String type, UserPrincipal principal) {
-//        WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
-//        BeanUtils.copyProperties(principal, wageUserPrincipal);
-//        wageSynFeignService.pushSyncDataToCache(idNumber, groupId, year, type, wageUserPrincipal);
-//    }
 
     /**
      * 查询员工企业列表(切库新增接口)
