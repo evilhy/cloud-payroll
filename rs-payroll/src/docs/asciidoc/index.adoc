@@ -53,3 +53,5 @@ include::merchant.adoc[]
 include::news.adoc[]
 
 include::fund.adoc[]
+
+include::bill.adoc[]

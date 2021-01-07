@@ -6,10 +6,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.WebFilter;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 
 /**
@@ -35,15 +39,16 @@ public class PayrollConfig {
                 .register(new LoggingFeature(null, Level.INFO, LoggingFeature.Verbosity.PAYLOAD_TEXT, 100));
     }
 
+
     /**
      * 设置最后处理，但是不要太往后，目前底层框架 最后执行的过滤器为 最大-10
      *
      * @return
      */
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE - 5)
-    public WebFilter webFilter() {
-        return new TrackLogFilter();
-    }
+//    @Bean
+//    @Order(Ordered.HIGHEST_PRECEDENCE - 5)
+//    public WebFilter webFilter() {
+//        return new TrackLogFilter();
+//    }
 
 }

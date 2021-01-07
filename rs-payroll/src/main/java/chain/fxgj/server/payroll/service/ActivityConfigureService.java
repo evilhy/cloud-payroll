@@ -81,32 +81,15 @@ public interface ActivityConfigureService {
      */
     String saveActivityAnswer(ActivityStatusEnum activityStatusEnum, ActivityAnswerDTO activityAnswerDTO, String entId, String userId, String openId);
 
-
-    /**
-     * 答题活动详情
-     */
-    ActivityAnswerDTO getActivityAnswer(String id);
-
-
     /**
      * 保存红包雨活动
      */
     String saveActivityRain(ActivityStatusEnum activityStatusEnum, ActivityRainDTO activityRainDTO, String entId, String userId, String openId);
 
     /**
-     * 红包雨活动详情
-     */
-    ActivityRainDTO getActivityRain(String id);
-
-    /**
      * 保存随机红包活动
      */
     String saveActivityRandom(ActivityStatusEnum activityStatusEnum, ActivityRandomDTO activityRandomDTO, String entId, String userId, String openId);
-
-    /**
-     * 随机红包活动详情
-     */
-    ActivityRandomDTO getActivityRandom(String id);
 
     /**
      * 更新活动状态

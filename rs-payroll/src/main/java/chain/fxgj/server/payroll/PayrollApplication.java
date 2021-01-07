@@ -14,9 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableCaching
 @EnableDiscoveryClient
 @EnableFeignClients({"chain"})
-//@EnableMongoRepositories(basePackages = "chain.fxgj.server.payroll")
 @EnableMongoAuditing
-//@SpringBootApplication(scanBasePackages = {"chain.fxgj.server.payroll","chain.fxgj.core.common.config","chain.css"},exclude = {DataSourceAutoConfiguration.class})
 @SpringBootApplication(scanBasePackages = {"chain"},exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class PayrollApplication {
 

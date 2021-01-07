@@ -1,0 +1,23 @@
+:snippets: ../snippets/bill
+== 账单
+
+=== 账单查询
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/bill/bill/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/bill/bill/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/bill/bill/curl-request.adoc[]
+* Response:
++
+include::{snippets}/bill/bill/http-response.adoc[]
+
+
+
+
