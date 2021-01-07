@@ -97,8 +97,8 @@ dependencies {
     compile("chain:ids-client:1.1.10")
     compile("chain.fxgj:fxgj-ent-client:1.0.9")
     compile("chain:pub-client:1.1.7")
-    compile('chain:wage-client:1.1.4-SNAPSHOT')
-    compile('chain:payroll-client:1.1.7-SNAPSHOT')
+    compile('chain:wage-client:1.1.4')
+    compile('chain:payroll-client:1.1.7')
     compile 'chain.wisales:wisales-client:1.0.2.75'
     compile('chain.fxgj:fxgj-ent-client:1.0.14')
     compile('chain:utils-jpa:1.0.4')
