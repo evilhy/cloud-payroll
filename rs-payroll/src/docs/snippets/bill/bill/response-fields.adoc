@@ -1,6 +1,10 @@
 |===
 |Path|Type|Description
 
+|`+bindDateTime+`
+|`+long+`
+|首次绑定工资条时间
+
 |`+differDays+`
 |`+int+`
 |绑定工资条天数
@@ -16,6 +20,10 @@
 |`+totalAmount+`
 |`+String+`
 |年度总代发金额
+
+|`+deductTotalAmt+`
+|`+String+`
+|年度总扣除金额
 
 |`+maxAmount+`
 |`+String+`
@@ -60,6 +68,10 @@
 |`+List.fundPercent+`
 |`+String+`
 | 占总金额百分百
+
+|`+industry+`
+|`+String+`
+| 行业
 
 |`+industryAvgAmount+`
 |`+String+`
