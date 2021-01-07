@@ -21,7 +21,6 @@ import reactor.core.publisher.Mono;
  * create by chain on 2019-01-26 11:10
  **/
 @Slf4j
-//todo 上线记得放开
 @Component
 public class WebContextFilter implements WebFilter, Ordered {
 
@@ -45,6 +44,7 @@ public class WebContextFilter implements WebFilter, Ordered {
             logToken = UUIDUtil.createUUID8();
 
         }
+
         MDC.put(REQ, reqId);
         MDC.put(PayrollDBConstant.LOG_TOKEN, logToken);
 

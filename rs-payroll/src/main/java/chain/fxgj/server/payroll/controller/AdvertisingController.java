@@ -4,7 +4,6 @@ import chain.css.log.annotation.TrackLog;
 import chain.feign.hxinside.ent.service.EntErpriseInfoServiceFeign;
 import chain.fxgj.ent.core.dto.request.EntErpriseQueryRequest;
 import chain.fxgj.ent.core.dto.response.EntErpriseInfoRes;
-import chain.fxgj.feign.client.AdvertisingFeignService;
 import chain.fxgj.server.payroll.dto.advertising.AdvertisingRotationDTO;
 import chain.news.dto.adv.AdsAdvInfoRes;
 import chain.news.dto.adv.QueryAdsReq;
@@ -34,44 +33,10 @@ import java.util.*;
 public class AdvertisingController {
 
     @Autowired
-    AdvertisingFeignService advertisingFeignService;
-
-    @Autowired
     AdvServiceFegin advServiceFegin;
 
     @Autowired
     EntErpriseInfoServiceFeign entErpriseInfoServiceFeign;
-
-//    /**
-//     * 轮播图查询
-//     */
-//    @GetMapping("/rotation")
-//    @TrackLog
-//    @PermitAll
-//    public Mono<List<AdvertisingRotationDTO>> rotation(@RequestParam("channelId") Integer channelId) {
-//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//        //根据合作方获取一行渠道
-//        String apppartner = MDC.get(PayrollConstants.APPPARTNER);
-//        log.info("rotation.apppartner:[{}]", apppartner);
-//        AppPartnerEnum appPartner = AppPartnerEnum.values()[Integer.valueOf(apppartner)];
-//        FundLiquidationEnum liquidation = appPartner.getLiquidation();
-//
-//        return Mono.fromCallable(() -> {
-//            MDC.setContextMap(mdcContext);
-//            log.info("channelId:[{}](0放薪管家web,1放薪经理,2微信工资条,3放薪虎符)", channelId);
-//            log.info("fundLiquidationEnum:[{}]", liquidation.toString());
-//            List<AdvertisingRotationDTO> advertisingRotationDTOS = new ArrayList<>();
-//            List<WageAdvertisingRotationDTO> rotation = advertisingFeignService.rotation(channelId, liquidation);
-//            if (null != rotation && rotation.size() > 0) {
-//                for (WageAdvertisingRotationDTO wageAdvertisingRotationDTO : rotation) {
-//                    AdvertisingRotationDTO advertisingRotationDTO = new AdvertisingRotationDTO();
-//                    BeanUtils.copyProperties(wageAdvertisingRotationDTO, advertisingRotationDTO);
-//                    advertisingRotationDTOS.add(advertisingRotationDTO);
-//                }
-//            }
-//            return advertisingRotationDTOS;
-//        }).subscribeOn(Schedulers.elastic());
-//    }
 
     /**
      * 轮播图查询

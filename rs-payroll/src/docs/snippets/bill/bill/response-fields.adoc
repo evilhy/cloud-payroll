@@ -1,0 +1,92 @@
+|===
+|Path|Type|Description
+
+|`+bindDateTime+`
+|`+long+`
+|首次绑定工资条时间
+
+|`+differDays+`
+|`+int+`
+|绑定工资条天数
+
+|`+pushTimes+`
+|`+int+`
+|推送工资条次数
+
+|`+monthCount+`
+|`+int+`
+|代发工资月份数
+
+|`+totalAmount+`
+|`+String+`
+|年度总代发金额
+
+|`+deductTotalAmt+`
+|`+String+`
+|年度总扣除金额
+
+|`+maxAmount+`
+|`+String+`
+| 最大金额
+
+|`+maxMonth+`
+|`+String+`
+|最大金额月份
+
+|`+minAmount+`
+|`+String+`
+|最小金额
+
+|`+minMonth+`
+|`+String+`
+|最小金额月份
+
+|`+differAmount+`
+|`+String+`
+|金额差
+
+|`+maxSingleAmount+`
+|`+String+`
+|最大一笔金额
+
+|`+maxSingleAmountDate+`
+|`+String+`
+|最大一笔金额日期
+
+|`+fundWages+`
+|`+List+`
+| 资金
+
+|`+List.fundType+`
+|`+String+`
+| 资金类型
+
+|`+List.fundAmount+`
+|`+String+`
+| 资金金额
+
+|`+List.fundPercent+`
+|`+String+`
+| 占总金额百分百
+
+|`+industry+`
+|`+String+`
+| 行业
+
+|`+industryAvgAmount+`
+|`+String+`
+| 行业平均工资
+
+|`+firstTierCitiesAvgAmount+`
+|`+String+`
+| 一线城市行业平均工资
+
+|`+secondTierCitiesAvgAmount+`
+|`+String+`
+| 二线城市行业平均工资
+
+|`+percent+`
+|`+String+`
+| 击败平台用户百分比
+
+|===

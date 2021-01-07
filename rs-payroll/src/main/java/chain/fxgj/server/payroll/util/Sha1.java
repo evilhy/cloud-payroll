@@ -1,6 +1,6 @@
 package chain.fxgj.server.payroll.util;
 
-import com.esotericsoftware.minlog.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.UnsupportedEncodingException;
 import java.security.DigestException;
@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class Sha1 {
 
     /**
@@ -135,7 +136,7 @@ public class Sha1 {
 
             i = i + 1;
         }
-        Log.info("==>拼接后的字符串={}",paramStr.toString());
+        log.info("==>拼接后的字符串={}", paramStr.toString());
         return paramStr.toString();
     }
 }
