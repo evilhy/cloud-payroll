@@ -215,6 +215,7 @@ public enum ErrorConstant {
     PASSWORDCHECKERR("0018","错误次数过多，剩余%s次机会，次数超限后将锁定24小时！"),
     PASSWORDCDAILYLIMITERR("0020","您今日短信请求已达上限，请于%s后再试!"),
     PASSWORDMASE("0021","您设置的密码安全等级过低，请重新设置！"),
+    PASSWORDCONTAINS("0022","请勿设置与手机号、证件号相同的密码！"),
     ;
 
     private String errorCode;

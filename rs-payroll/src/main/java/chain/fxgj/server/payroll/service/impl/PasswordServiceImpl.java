@@ -159,6 +159,21 @@ public class PasswordServiceImpl implements PaswordService {
             if (same) {
                 throw new ParamsIllegalException(ErrorConstant.PASSWORDMASE.getErrorMsg());
             }
+            //新增包含密码校验，手机号、身份证
+            String phone = dto.getPhone();
+            String idNumber = dto.getIdNumber();
+            log.info("密码包含校验phone:[{}], idNumber:[{}], password:[{}]", phone, idNumber, password);
+            same = true;
+            if (StringUtils.isNotBlank(phone)) {
+                if (phone.contains(password)) {
+                    throw new ParamsIllegalException(ErrorConstant.PASSWORDCONTAINS.getErrorMsg());
+                }
+            }
+            if (StringUtils.isNotBlank(idNumber)) {
+                if (idNumber.contains(password)) {
+                    throw new ParamsIllegalException(ErrorConstant.PASSWORDCONTAINS.getErrorMsg());
+                }
+            }
             saveReq.setQueryPwd(password);
         } else if ("1".equals(type)) {
             //手势密码校验
