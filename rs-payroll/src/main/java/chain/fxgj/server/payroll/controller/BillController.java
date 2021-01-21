@@ -5,8 +5,10 @@ import chain.fxgj.data.client.EmployeeBillFeign;
 import chain.fxgj.data.dto.bill.EmployeeBillDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +26,7 @@ import java.util.Map;
 @RequestMapping("/bill")
 @Slf4j
 public class BillController {
+    @Autowired
     EmployeeBillFeign employeeBillFeign;
 
     /**
@@ -38,10 +41,12 @@ public class BillController {
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String idNumber = currentUser.getIdNumber();
         String entId = currentUser.getEntId();
-        log.info("idNumber:{},entId:{}", idNumber, entId);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            return employeeBillFeign.employeeYearBill(entId, idNumber);
-        }).subscribeOn(Schedulers.elastic());
+            log.info("idNumber:{},entId:{}", idNumber, entId);
+            EmployeeBillDTO billDTO = employeeBillFeign.employeeYearBill(entId, idNumber);
+            log.info("-->[{}]", JacksonUtil.objectToJson(billDTO));
+            return billDTO;
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }
