@@ -92,7 +92,7 @@ dependencyManagement {
 
 
 dependencies {
-    compile('chain.cloud:data-client:2.1.0-SNAPSHOT')
+    compile('chain.cloud:data-client:2.1.1')
     compile("chain.news:news-fengin:1.0.1")
     compile("chain:ids-client:1.1.10")
     compile("chain.fxgj:fxgj-ent-client:1.0.9")
