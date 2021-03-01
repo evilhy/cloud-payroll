@@ -150,7 +150,7 @@ subprojects {
         //compile('chain:cloud-common:1.0.13')
         // compile("chain.fxgj:fxgj-common:1.0.21.1")
 //        compile("chain.fxgj:fxgj-base:1.0.48")
-        compile('chain:utils-fxgj:1.0.12-SNAPSHOT')
+        compile('chain:utils-fxgj:1.0.13-SNAPSHOT')
         compile 'org.projectlombok:lombok:1.18.2'
         compile('chain:css-log:2.1.4')
 //        compile("com.lmax:disruptor:3.4.2")

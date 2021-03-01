@@ -10,16 +10,17 @@ import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.merchant.MerchantAccessDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantDTO;
 import chain.fxgj.server.payroll.dto.merchant.MerchantHeadDTO;
-import chain.fxgj.server.payroll.dto.response.Res100705;
+import chain.fxgj.server.payroll.dto.nj.NjRes100705;
 import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.payroll.client.feign.EmployeeWechatFeignController;
 import chain.payroll.client.feign.MerchantFeignController;
+import chain.payroll.client.feign.NjFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
-import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import chain.utils.fxgj.constant.DictEnums.RegisterTypeEnum;
+import core.dto.response.ent.EntIdGroupIdDTO;
 import core.dto.response.merchant.CacheEmpInfoDTO;
 import core.dto.response.merchant.CacheEmployeeWechatInfoDTO;
 import core.dto.response.merchant.CacheRes100705;
@@ -45,7 +46,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 工资条  对外输出接口
+ * 南京工资条  对外输出接口
  */
 @RestController
 @Validated
@@ -64,7 +65,8 @@ public class NjController {
     MerchantFeignController merchantFeignController;
     @Autowired
     EmployeeWechatFeignController employeeWechatFeignController;
-
+    @Autowired
+    NjFeignController njFeignController;
     /**
      * 根据appid 查询工资条接入合作方信息
      *
@@ -241,49 +243,37 @@ public class NjController {
      */
     @GetMapping("/callback")
     @TrackLog
-    public Mono<Res100705> wxCallback(@RequestParam String accessToken) {
+    public Mono<NjRes100705> wxCallback(@RequestParam String accessToken) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
-        String token = StringUtils.trimToEmpty(accessToken);
-
-        String redisKey = PayrollDBConstant.PREFIX + ":merchant:" + token;
-        Object value = redisTemplate.opsForValue().get(redisKey);
-
-        if (value == null) {
-            log.error("根据:[{}]未查询到缓存值", redisKey);
-            throw new ParamsIllegalException(ErrorConstant.MERCHANT_06.getErrorMsg());
-        }
-
-        MerchantDTO merchantDecrypt = JacksonUtil.jsonToBean((String) value, MerchantDTO.class);
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            String jsessionId = UUIDUtil.createUUID32();
-            Res100705 res100705 = Res100705.builder().build();
-            log.info("set之前打印jsessionId:[{}]", jsessionId);
+            //根据jsessionId查询微信绑定数据
+            String jsessionId = accessToken;
+            log.info("nj.callback.accessToken:[{}]", accessToken);
+            NjRes100705 res100705 = NjRes100705.builder().build();
             res100705.setJsessionId(jsessionId);
-            CacheEmployeeWechatInfoDTO paramWetchatDto = CacheEmployeeWechatInfoDTO.builder()
-                    .name(merchantDecrypt.getName())
-                    .idType(Integer.valueOf(merchantDecrypt.getIdType()))
-                    .phone(merchantDecrypt.getPhone())
-                    .uid(merchantDecrypt.getUid())
-                    .openId(merchantDecrypt.getOpenId())
-                    .nickname(merchantDecrypt.getNickname())
-                    .headimgurl(merchantDecrypt.getHeadimgurl())
-                    .build();
-            paramWetchatDto.setIdNumber(employeeEncrytorService.encryptIdNumber(merchantDecrypt.getIdNumber()));
-            paramWetchatDto.setAppPartner(AppPartnerEnum.NEWUP.getCode());
-            paramWetchatDto.setRegisterType(RegisterTypeEnum.UUID.getCode());
-            log.info("copyProperties.paramWetchatDto:[{}]", JacksonUtil.objectToJson(paramWetchatDto));
-            CacheEmployeeWechatInfoDTO wechatInfoDTO = employeeWechatFeignController.findempwechat(paramWetchatDto);
+            CacheEmployeeWechatInfoDTO cacheEmployeeWechatInfoDTOReq = new CacheEmployeeWechatInfoDTO();
+            cacheEmployeeWechatInfoDTOReq.setJsessionId(jsessionId);
+            CacheEmployeeWechatInfoDTO wechatInfoDTO = employeeWechatFeignController.findEmpwechatInfo(cacheEmployeeWechatInfoDTOReq);
+
             if (wechatInfoDTO != null) {
-                CacheRes100705 wageRes100705 = merchantFeignController.wxCallback(accessToken);
+                CacheRes100705 wageRes100705 = njFeignController.wxCallback(accessToken);
                 if (res100705 != null) {
                     BeanUtils.copyProperties(wageRes100705, res100705);
-                    res100705.setApppartner(AppPartnerEnum.values()[wageRes100705.getApppartner()]);
+                    res100705.setApppartner(chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.values()[wageRes100705.getApppartner()]);
+                    String entDirectClientNo = wechatInfoDTO.getEntDirectClientNo();
+                    //根据企业直联客户号，查entId，groupId(一个企业，对应一个机构)
+                    EntIdGroupIdDTO entIdGroupIdDTO = njFeignController.findByClientNo(entDirectClientNo);
+                    if (null != entIdGroupIdDTO) {
+                        res100705.setEntId(entIdGroupIdDTO.getEntId());
+                        res100705.setGroupId(entIdGroupIdDTO.getGroupId());
+                    } else {
+                        log.error("据企业直联客户号未查entId，groupId");
+                    }
                 }
             } else {
-                log.info("用户信息不存在！");
+                log.error("用户信息不存在！");
             }
             log.info("wxCallback.res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;

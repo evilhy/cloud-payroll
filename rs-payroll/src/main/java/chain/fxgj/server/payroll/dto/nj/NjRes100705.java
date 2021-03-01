@@ -1,4 +1,4 @@
-package chain.fxgj.server.payroll.dto.response;
+package chain.fxgj.server.payroll.dto.nj;
 
 import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class Res100705 {
+public class NjRes100705 {
     /**
      * 是否绑定 1已绑定 0未绑定
      */
@@ -77,7 +77,7 @@ public class Res100705 {
     private String groupId;
 
 
-    public Res100705(String jsessionId, String bindStatus) {
+    public NjRes100705(String jsessionId, String bindStatus) {
         this.jsessionId = jsessionId;
         this.bindStatus = bindStatus;
     }
