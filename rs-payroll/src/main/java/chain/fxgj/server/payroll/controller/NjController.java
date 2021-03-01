@@ -278,7 +278,7 @@ public class NjController {
             } else {
                 log.error("用户信息不存在！");
             }
-            log.info("wxCallback.res100705:[{}]", JacksonUtil.objectToJson(res100705));
+            log.info("nj.wxCallback.res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
         }).subscribeOn(Schedulers.elastic());
     }
