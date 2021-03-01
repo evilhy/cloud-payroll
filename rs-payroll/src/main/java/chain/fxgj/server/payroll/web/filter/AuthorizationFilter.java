@@ -53,7 +53,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/fund",
             "/manager/qryManagerInfo",
             "/activityStart/wxCallback",
-            "/nj/wxCallback"
+            "/nj/callback"
     };
 
     @Autowired
