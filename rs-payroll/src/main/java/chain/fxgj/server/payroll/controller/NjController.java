@@ -265,9 +265,9 @@ public class NjController {
                 if (res100705 != null) {
                     BeanUtils.copyProperties(wageRes100705, res100705);
                     res100705.setApppartner(chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.values()[wageRes100705.getApppartner()]);
-                    String entDirectClientNo = wechatInfoDTO.getEntDirectClientNo();
+                    String entCustNo = wechatInfoDTO.getEntCustNo();
                     //根据企业直联客户号，查entId，groupId(一个企业，对应一个机构)
-                    EntIdGroupIdDTO entIdGroupIdDTO = njFeignController.findByClientNo(entDirectClientNo);
+                    EntIdGroupIdDTO entIdGroupIdDTO = njFeignController.findByEntCustNo(entCustNo);
                     if (null != entIdGroupIdDTO) {
                         res100705.setEntId(entIdGroupIdDTO.getEntId());
                         res100705.setGroupId(entIdGroupIdDTO.getGroupId());
