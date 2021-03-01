@@ -19,6 +19,7 @@ import chain.payroll.client.feign.NjFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import chain.utils.fxgj.constant.DictEnums.RegisterTypeEnum;
 import core.dto.response.ent.EntIdGroupIdDTO;
 import core.dto.response.merchant.CacheEmpInfoDTO;
@@ -255,6 +256,8 @@ public class NjController {
             res100705.setJsessionId(jsessionId);
             CacheEmployeeWechatInfoDTO cacheEmployeeWechatInfoDTOReq = new CacheEmployeeWechatInfoDTO();
             cacheEmployeeWechatInfoDTOReq.setJsessionId(jsessionId);
+            cacheEmployeeWechatInfoDTOReq.setAppPartner(AppPartnerEnum.NJCB.getCode());
+            cacheEmployeeWechatInfoDTOReq.setRegisterType(RegisterTypeEnum.UUID.getCode());
             CacheEmployeeWechatInfoDTO wechatInfoDTO = employeeWechatFeignController.findEmpwechatInfo(cacheEmployeeWechatInfoDTOReq);
 
             if (wechatInfoDTO != null) {
