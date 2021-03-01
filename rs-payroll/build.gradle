@@ -196,7 +196,7 @@ asciidoctor {
 /** end asciidoc **/
 
 test {
-    enabled = false
+    enabled = true
 }
 
 //打包
