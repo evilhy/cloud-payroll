@@ -5,21 +5,16 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.server.payroll.config.properties.MerchantsProperties;
 import chain.fxgj.server.payroll.dto.nj.NjRes100705;
 import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
-import chain.fxgj.server.payroll.util.TransferUtil;
-import chain.fxgj.server.payroll.web.UserPrincipal;
-import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.EmployeeWechatFeignController;
 import chain.payroll.client.feign.MerchantFeignController;
 import chain.payroll.client.feign.NjFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import chain.utils.fxgj.constant.DictEnums.RegisterTypeEnum;
-import core.dto.response.NewestWageLogDTO;
 import core.dto.response.ent.EntIdGroupIdDTO;
 import core.dto.response.ent.EntIdGroupIdReqDTO;
 import core.dto.response.merchant.CacheEmployeeWechatInfoDTO;
 import core.dto.response.merchant.CacheRes100705;
-import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
@@ -92,7 +87,7 @@ public class NjController {
                             .encryptIdNumber(wechatInfoDTO.getIdNumber())
                             .build();
                     List<EntIdGroupIdDTO> entIdGroupIdDTOList = njFeignController.findByEntCustNo(entIdGroupIdReqDTO);
-                    res100705.setEntIdGroupIdDTOList(entIdGroupIdDTOList);
+                    res100705.setEntList(entIdGroupIdDTOList);
                 }
             } else {
                 log.error("用户信息不存在！");

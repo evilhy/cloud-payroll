@@ -82,7 +82,7 @@ public class NjRes100705 {
     /**
      * 企业列表(多企业-单机构)
      */
-    private List<EntIdGroupIdDTO> entIdGroupIdDTOList;
+    private List<EntIdGroupIdDTO> entList;
 
 
 
