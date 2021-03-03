@@ -70,7 +70,7 @@ public class NjController {
             MDC.setContextMap(mdcContext);
             //解密
             String encryptJsessionId =  "z2Ze/4nVA19qd3+8xU0NKm3e0N9HChoL73/lBh5bkCwjTayvnoKSL9vXmZvao2wJ";
-            String decrypt = tokenSignService.Sm4FxgjEncrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, encryptJsessionId);
+            String decrypt = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, encryptJsessionId);
             log.info("decrypt:[{}]", decrypt);
 
             //根据jsessionId查询微信绑定数据
