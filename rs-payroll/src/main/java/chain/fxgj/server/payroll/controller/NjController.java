@@ -68,13 +68,14 @@ public class NjController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            //解密
-            String encryptJsessionId =  "z2Ze/4nVA19qd3+8xU0NKm3e0N9HChoL73/lBh5bkCwjTayvnoKSL9vXmZvao2wJ";
-            String decrypt = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, encryptJsessionId);
-            log.info("decrypt:[{}]", decrypt);
 
             //根据jsessionId查询微信绑定数据
             String jsessionId = accessToken;
+            //兼容性判断
+            if (accessToken.length() > 32) {
+                //解密
+                jsessionId = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, accessToken);
+            }
             log.info("nj.callback.accessToken:[{}]", accessToken);
             NjRes100705 res100705 = NjRes100705.builder().build();
             res100705.setJsessionId(jsessionId);
@@ -116,13 +117,14 @@ public class NjController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            //解密
-            String encryptJsessionId =  "z2Ze/4nVA19qd3+8xU0NKm3e0N9HChoL73/lBh5bkCwjTayvnoKSL9vXmZvao2wJ";
-            String decrypt = tokenSignService.Sm4FxgjEncrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, encryptJsessionId);
-            log.info("decrypt:[{}]", decrypt);
-
             //根据jsessionId查询微信绑定数据
-            String jsessionId = njReqDTO.getAccessToken();
+            String accessToken = njReqDTO.getAccessToken();
+            String jsessionId = accessToken;
+            //兼容性判断
+            if (accessToken.length() > 32) {
+                //解密
+                jsessionId = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, accessToken);
+            }
             log.info("nj.callback.accessToken:[{}]", jsessionId);
             NjRes100705 res100705 = NjRes100705.builder().build();
             res100705.setJsessionId(jsessionId);
