@@ -70,21 +70,11 @@ public class NjController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            //根据jsessionId查询微信绑定数据
-            String jsessionId = accessToken;
-            //兼容性判断
-            if (accessToken.length() > 32) {
-                //Base64 解密
-                String encryptJsessionId = Base64Converter.decode(accessToken);
-                log.info("=====> token Base64解密后:[{}]",encryptJsessionId);
-                jsessionId = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, encryptJsessionId);
-                log.info("=====> SM4 解密后:[{}]",jsessionId);
-
-            }
-            String baseDecode = Base64Converter.decode("bWl2OHJsRkxGVXpkT2FkblB6RWJaVnQzUDloTlFNK01PMkI0RkNnYlpNZ2pUYXl2bm9LU0w5dlhtWnZhbzJ3Sg==");
-            log.info("=====> token Base64解密后baseDecode:[{}]",baseDecode);
-            String str = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, baseDecode);
-            log.info("=====> SM4 解密后str:[{}]",str);
+            log.info("入参accessToken:[{}]", accessToken);
+            String encryptJsessionId = Base64Converter.decode(accessToken);
+            log.info("Base64解密后得到密文encryptJsessionId:[{}]",encryptJsessionId);
+            String jsessionId = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, encryptJsessionId);
+            log.info("再SM4解密后得到明文jsessionId:[{}]",jsessionId);
 
             log.info("nj.callback.accessToken:[{}]", accessToken);
             NjRes100705 res100705 = NjRes100705.builder().build();
@@ -97,7 +87,7 @@ public class NjController {
             log.info("nj.wechatInfoDTO:[{}]", JacksonUtil.objectToJson(wechatInfoDTO));
 
             if (wechatInfoDTO != null) {
-                CacheRes100705 wageRes100705 = njFeignController.wxCallback(accessToken);
+                CacheRes100705 wageRes100705 = njFeignController.wxCallback(jsessionId);
                 if (res100705 != null) {
                     BeanUtils.copyProperties(wageRes100705, res100705);
                     res100705.setApppartner(chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.values()[wageRes100705.getApppartner()]);
