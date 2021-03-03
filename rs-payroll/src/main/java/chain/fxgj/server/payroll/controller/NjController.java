@@ -7,6 +7,7 @@ import chain.fxgj.server.payroll.dto.nj.NjReqDTO;
 import chain.fxgj.server.payroll.dto.nj.NjRes100705;
 import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.fxgj.server.payroll.service.sm4.TokenSignService;
+import chain.fxgj.server.payroll.util.nj.Base64Converter;
 import chain.fxgj.server.payroll.util.nj.SM4Util;
 import chain.payroll.client.feign.EmployeeWechatFeignController;
 import chain.payroll.client.feign.MerchantFeignController;
@@ -73,9 +74,18 @@ public class NjController {
             String jsessionId = accessToken;
             //兼容性判断
             if (accessToken.length() > 32) {
-                //解密
-                jsessionId = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, accessToken);
+                //Base64 解密
+                String encryptJsessionId = Base64Converter.decode(accessToken);
+                log.info("=====> token Base64解密后:[{}]",encryptJsessionId);
+                jsessionId = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, encryptJsessionId);
+                log.info("=====> SM4 解密后:[{}]",jsessionId);
+
             }
+            String baseDecode = Base64Converter.decode("bWl2OHJsRkxGVXpkT2FkblB6RWJaVnQzUDloTlFNK01PMkI0RkNnYlpNZ2pUYXl2bm9LU0w5dlhtWnZhbzJ3Sg==");
+            log.info("=====> token Base64解密后baseDecode:[{}]",baseDecode);
+            String str = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, baseDecode);
+            log.info("=====> SM4 解密后str:[{}]",str);
+
             log.info("nj.callback.accessToken:[{}]", accessToken);
             NjRes100705 res100705 = NjRes100705.builder().build();
             res100705.setJsessionId(jsessionId);
@@ -88,55 +98,6 @@ public class NjController {
 
             if (wechatInfoDTO != null) {
                 CacheRes100705 wageRes100705 = njFeignController.wxCallback(accessToken);
-                if (res100705 != null) {
-                    BeanUtils.copyProperties(wageRes100705, res100705);
-                    res100705.setApppartner(chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.values()[wageRes100705.getApppartner()]);
-                    EntIdGroupIdReqDTO entIdGroupIdReqDTO = EntIdGroupIdReqDTO.builder()
-                            .entCustNo(wechatInfoDTO.getEntCustNo())
-                            .encryptIdNumber(wechatInfoDTO.getIdNumber())
-                            .build();
-                    List<EntIdGroupIdDTO> entIdGroupIdDTOList = njFeignController.findByEntCustNo(entIdGroupIdReqDTO);
-                    res100705.setEntList(entIdGroupIdDTOList);
-                }
-            } else {
-                log.error("用户信息不存在！");
-            }
-            log.info("nj.wxCallback.res100705:[{}]", JacksonUtil.objectToJson(res100705));
-            return res100705;
-        }).subscribeOn(Schedulers.elastic());
-    }
-
-
-    /**
-     * 访问凭证 Post
-     */
-    @PostMapping("/callback")
-    @TrackLog
-    public Mono<NjRes100705> callback(@RequestBody NjReqDTO njReqDTO) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            //根据jsessionId查询微信绑定数据
-            String accessToken = njReqDTO.getAccessToken();
-            String jsessionId = accessToken;
-            //兼容性判断
-            if (accessToken.length() > 32) {
-                //解密
-                jsessionId = tokenSignService.Sm4FxgjDecrypt(SM4Util.ALGORITHM_NAME_ECB_PADDING, accessToken);
-            }
-            log.info("nj.callback.accessToken:[{}]", jsessionId);
-            NjRes100705 res100705 = NjRes100705.builder().build();
-            res100705.setJsessionId(jsessionId);
-            CacheEmployeeWechatInfoDTO cacheEmployeeWechatInfoDTOReq = new CacheEmployeeWechatInfoDTO();
-            cacheEmployeeWechatInfoDTOReq.setJsessionId(jsessionId);
-            cacheEmployeeWechatInfoDTOReq.setAppPartner(AppPartnerEnum.NJCB.getCode());
-            cacheEmployeeWechatInfoDTOReq.setRegisterType(RegisterTypeEnum.UUID.getCode());
-            CacheEmployeeWechatInfoDTO wechatInfoDTO = employeeWechatFeignController.findEmpwechatInfo(cacheEmployeeWechatInfoDTOReq);
-            log.info("nj.wechatInfoDTO:[{}]", JacksonUtil.objectToJson(wechatInfoDTO));
-
-            if (wechatInfoDTO != null) {
-                CacheRes100705 wageRes100705 = njFeignController.wxCallback(jsessionId);
                 if (res100705 != null) {
                     BeanUtils.copyProperties(wageRes100705, res100705);
                     res100705.setApppartner(chain.utils.fxgj.constant.DictEnums.AppPartnerEnum.values()[wageRes100705.getApppartner()]);
