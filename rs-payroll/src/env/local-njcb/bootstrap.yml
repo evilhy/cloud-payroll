@@ -9,7 +9,7 @@ spring:
       retry:
         # 服务监测时间间隔
         initial-interval: 10000
-      host: 10.68.184.147
+      host: 10.68.185.93
       port: 8500
       discovery:
         # consul 健康检测频率

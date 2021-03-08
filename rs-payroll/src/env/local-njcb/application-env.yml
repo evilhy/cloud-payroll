@@ -10,7 +10,7 @@ spring:
     restart:
       enabled: false
   redis:
-    database: 1
+    database: 3
     host: 10.5.0.182
     port: 6380
     password:
