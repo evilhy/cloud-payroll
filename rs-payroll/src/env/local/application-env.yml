@@ -76,7 +76,7 @@ management:
         include: ["*"]
 
 
-# mongodb 日志记录
+# mongodb 日志记录-
 logcss:
   sysId: rs-payroll
   activateMongodb: true
