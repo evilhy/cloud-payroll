@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dev -->
+<configuration scan="true" scanPeriod="60 seconds">
+    <property name="log_dir" value="/webserver/www/logs/rs-payroll"/>
+    <property name="maxHistory" value="60"/>
+    <property name="pattern"
+              value="[rs-payroll]-[%d{HHmmss.SSS}]-[%-5level]-[%thread]-[%X{log_token}]-[%X{jsessionId}]-[%X{path}]-[%X{X-B3-TraceId:-}]-[%lo{5}]-[%msg %n"/>
+    <property name="charset" value="utf8"/>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${pattern}</pattern>
+            <charset>${charset}</charset>
+        </encoder>
+    </appender>
+    <!-- ERROR级别日志 -->
+    <!-- 滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件 RollingFileAppender-->
+    <appender name="WARN_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- deny all events with a level below WARN, that is TRACE and DEBUG -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log_dir}/%d{yyyyMMdd}/error-%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>${maxHistory}</maxHistory>
+            <totalSizeCap>20MB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${pattern}</pattern>
+            <charset>${charset}</charset>
+        </encoder>
+    </appender>
+    <appender name="LOG_SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>sys_channel_name</key>
+            <defaultValue>sys</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="TRANS_LOG_FILE"
+                      class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>${log_dir}/%d{yyyyMMdd}/${sys_channel_name}-%i.log
+                    </fileNamePattern>
+                    <maxFileSize>20MB</maxFileSize>
+                    <maxHistory>${maxHistory}</maxHistory>
+                    <totalSizeCap>500MB</totalSizeCap>
+                </rollingPolicy>
+                <encoder>
+                    <pattern>${pattern}</pattern>
+                    <charset>${charset}</charset>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+    <logger name="chain" level="DEBUG"/>
+    <logger name="chain.css.log.aspect.TrackLogAspect" level="INFO"/>
+    <logger name="ch.qos.logback" level="WARN"/>
+    <logger name="org.springframework.data.mongodb.core" level="DEBUG"/>
+    <logger name="com.netflix.loadbalancer.LoadBalancerContext" level="DEBUG"/>
+
+    <!--<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE"/>-->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOG_SIFT"/>
+        <appender-ref ref="WARN_LOG"/>
+    </root>
+</configuration>
