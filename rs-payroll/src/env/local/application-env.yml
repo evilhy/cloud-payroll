@@ -59,6 +59,12 @@ payroll:
   #产品图片
   img-url: http://10.5.0.101/
 
+  #南京银行解密使用
+  #放薪管家 sm4加密、解密key [线下分配]
+  fxgjSm4Key: 934F17AE93CB7F23BE347849C87EED51
+  #放薪管家 sm4加密、解密key [线下分配]
+  fxgjSm4Iv: 9wHFOMfs2Y8JeF8U
+
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
   passwd: MvEpyqjedb4Hvai3vnFakmYxQsebEVCe84RNcVxw79USzc85FPAmbA9NuPxqfGsMh5pPuyzL
@@ -70,7 +76,7 @@ management:
         include: ["*"]
 
 
-# mongodb 日志记录
+# mongodb 日志记录-
 logcss:
   sysId: rs-payroll
   activateMongodb: true

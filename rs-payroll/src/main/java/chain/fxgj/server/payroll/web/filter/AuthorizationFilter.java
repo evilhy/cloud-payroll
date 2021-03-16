@@ -52,7 +52,8 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/activityConfigure/wxCallback",
             "/fund",
             "/manager/qryManagerInfo",
-            "/activityStart/wxCallback"
+            "/activityStart/wxCallback",
+            "/nj/callback"
     };
 
     @Autowired
@@ -103,6 +104,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         String liquidation = exchange.getRequest().getHeaders().getFirst("liquidation");
         String version = exchange.getRequest().getHeaders().getFirst("version");
         String subVersion = exchange.getRequest().getHeaders().getFirst("subVersion");
+        MDC.put("path", requestUrl);
         MDC.put("log-token", req_id);
         MDC.put("jsessionId", jsessionId);
         MDC.put("pageNum", pageNumStr);
