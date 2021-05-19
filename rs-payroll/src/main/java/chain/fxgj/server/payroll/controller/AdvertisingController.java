@@ -76,7 +76,7 @@ public class AdvertisingController {
 
             //宁夏银行-新增校验:[仅华夏银行继续查询，其他银行统一返回空数组]
             if (!FundLiquidationEnum.HXB.equals(liquidation)) {
-                log.info("FundLiquidationEnum.HXB:[{}].eq.liquidation:[{}]", FundLiquidationEnum.HXB, liquidation);
+                log.info("!FundLiquidationEnum.HXB:[{}].eq.liquidation:[{}]", FundLiquidationEnum.HXB, liquidation);
                 return advertisingRotationDTOS;
             }
 
