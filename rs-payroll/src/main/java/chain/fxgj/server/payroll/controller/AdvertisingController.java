@@ -74,6 +74,12 @@ public class AdvertisingController {
             log.info("versionsTypeEnum:[{}]", versionsTypeEnum.getDesc());
             log.info("versionsEnum:[{}]", versionsEnum.getDesc());
 
+            //宁夏银行-新增校验:[仅华夏银行继续查询，其他银行统一返回空数组]
+            if (!FundLiquidationEnum.HXB.equals(liquidation)) {
+                log.info("!FundLiquidationEnum.HXB:[{}].eq.liquidation:[{}]", FundLiquidationEnum.HXB, liquidation);
+                return advertisingRotationDTOS;
+            }
+
             //渠道
             String[] channels = new String[1];
             channels[0] = String.valueOf(channelId);
