@@ -1,0 +1,28 @@
+ext {
+    //可为空，取  project.name
+    APP_NAME=''
+    //可为空，取 version
+    RELEASE=env.RELEASE
+    BUILD_NUMBER=env.BUILD_NUMBER
+    BUILD_TIMESTAMP=env.BUILD_TIMESTAMP
+
+    //jdk基础镜像
+    JdkImage = '10.5.0.103/service/java:apline-openjdk-11.0.9'
+    //harbor仓库地址
+    HARBOR='10.5.0.103'
+    HARBOR_PROJECT='test'
+    HARBOR_USERNAME='admin'
+    HARBOR_PASSWORD='sky373641@Miao'
+
+    //jvm
+    JVM_ARGS=''
+
+    jvmArg = [
+            //"-Xms128m".toString(),
+            //"-Xmx256m".toString(),
+            '-Djava.security.egd=file:/dev/./urandom',
+            '-Dfile.encoding=utf-8',
+            '-Duser.timezone=GMT+08']
+}
+
+
