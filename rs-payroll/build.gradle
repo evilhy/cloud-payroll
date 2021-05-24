@@ -10,6 +10,8 @@ plugins {
 //gradle 文件引用
 apply from: file("src/env/$env/build-jvm.gradle")
 
+//gradle 文件引用 容器参数
+apply from: file("src/env/$env/container.gradle")
 
 ext {
     snippetsDir = file('build/generated-snippets')
