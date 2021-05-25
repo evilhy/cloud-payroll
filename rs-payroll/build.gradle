@@ -22,6 +22,30 @@ ext {
     //queryDslVersion = '4.2.1'
 
 }
+
+if (APP_NAME == "") {
+    APP_NAME = "${project.name}"
+}
+println("RELEASE:${RELEASE}")
+println("BUILD_NUMBER:${BUILD_NUMBER}")
+println("project.version:${project.version}")
+println("project.name:${project.name}")
+
+if (RELEASE == "") {
+    //RELEASE = version+'.'+time()
+    RELEASE = version
+}
+if (BUILD_NUMBER != "") {
+    BUILD_NUMBER = '.' + BUILD_NUMBER
+}
+if (BUILD_TIMESTAMP != "") {
+    BUILD_TIMESTAMP = '.' + BUILD_TIMESTAMP
+}
+if (JVM_ARGS != "") {
+    for (arg in JVM_ARGS.split(", ")) {
+        jvmArg.add("${arg}".toString())
+    }
+}
 configurations {
     create("asciidoctor")
 }
@@ -29,17 +53,19 @@ configurations {
 mainClassName = 'chain.fxgj.server.payroll.PayrollApplication'
 
 def printPropers() {
-    println("env:$ENV")
-    println("harbor:${HARBOR}")
+    println("env:$env")
     println("project.name:${project.name}")
+    println("${RELEASE}")
+    println("release:${RELEASE}${BUILD_TIMESTAMP}")
     println("release:${RELEASE}${BUILD_NUMBER}")
-    println("minMemory:-Xms${MIN_MEMORY}")
-    println("maxMemory:-Xmx${MAX_MEMORY}")
+    println("project.jdkHome:${jdkHome}")
+    println("harbor:${HARBOR}")
     print("jvmArg:[\n")
     for (arg in jvmArg) {
         print("\t$arg \n")
     }
     print("]\n")
+    println("jdk.apline:$JdkImage")
 }
 
 //代表Java源文件和资源文件的逻辑组
@@ -223,4 +249,47 @@ bootJar {
             into 'static/public/docs'
         }
     }
+}
+
+jib {
+    printPropers()
+    //from：拉取的镜像的配置
+    from {
+        //image：拉取或生成的镜像名称
+        image = "$JdkImage"
+        //image = 'registry.cn-hangzhou.aliyuncs.com/kayak/alpine:11.0.9-alpine'
+        //image = 'registry.cn-hangzhou.aliyuncs.com/kayak/alpine:8u171-alpine'
+    }
+    //to:要生成的镜像的配置
+    to {
+        allowInsecureRegistries = true
+        //image：拉取或生成的镜像名称
+        //image = "registry.cn-hangzhou.aliyuncs.com/kayak/news:11-latest"
+        //image = "registry.cn-hangzhou.aliyuncs.com/kayak/news:${RELEASE}-latest"
+        image = "${HARBOR}/${HARBOR_PROJECT}/${APP_NAME}:${RELEASE}${BUILD_TIMESTAMP}"
+        //image = "${HARBOR}/${HARBOR_PROJECT}/${APP_NAME}:${RELEASE}${BUILD_NUMBER}"
+
+        //tags = ["8-latest"]
+
+        //认证信息，分别为用户名和密码
+        //auth {
+        //    username = "503965137@qq.com"
+        //    password = "liusong1010"
+        //}
+        auth {
+            username = "$HARBOR_USERNAME"
+            password = "$HARBOR_PASSWORD"
+        }
+    }
+    //容器的属性
+    container {
+        //JVM 容器的参数，和 Dockerfile 的 ENTRYPOINT作用相同
+        jvmFlags = jvmArg
+        //启动类限定名
+        mainClass = mainClassName
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        filesModificationTime = releaseTime()
+        volumes = ["/app/resources", "/tmp/logs/"]
+    }
+
 }
