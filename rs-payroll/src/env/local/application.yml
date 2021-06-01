@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: payroll
+  config:
+    use-legacy-processing: true
   main:
     allow-bean-definition-overriding: true
   aop:
