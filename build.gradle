@@ -235,3 +235,10 @@ subprojects {
 def releaseTime() {
     return ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 }
+
+def time() {
+    ZonedDateTime zdt = ZonedDateTime.now();
+    final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    String dateStr = zdt.format(DATETIME_FORMATTER);
+    return dateStr
+}
