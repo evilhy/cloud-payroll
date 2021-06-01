@@ -1,9 +1,0 @@
-applicationDefaultJvmArgs = [
-        //"-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5000",
-        "-Dfile.encoding=utf-8",
-        "-Xms512m",
-        "-Xmx512m",
-        "-Xss1024K",
-        "-XX:PermSize=256m",
-        "-XX:MaxPermSize=512m"
-]
