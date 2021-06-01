@@ -58,6 +58,7 @@
     <logger name="ch.qos.logback" level="WARN"/>
     <logger name="org.springframework.data.mongodb.core" level="DEBUG"/>
     <logger name="com.netflix.loadbalancer.LoadBalancerContext" level="DEBUG"/>
+    <logger name="io.lettuce.core.protocol" level="DEBUG"/>
 
     <!--<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE"/>-->
     <root level="INFO">
