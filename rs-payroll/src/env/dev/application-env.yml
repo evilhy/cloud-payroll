@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: payroll
   main:
     allow-bean-definition-overriding: true
   aop:

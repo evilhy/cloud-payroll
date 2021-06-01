@@ -32,7 +32,7 @@ import java.time.format.DateTimeFormatter
 //https://docs.gradle.org/current/userguide/plugins.html#sec:script_plugins
 plugins {
     id 'org.springframework.boot' version '2.4.1' apply false
-//    id 'org.springframework.boot' version '2.3.3.RELEASE' apply false
+    //id 'org.springframework.boot' version '2.3.3.RELEASE' apply false
     id 'io.spring.dependency-management' version '1.0.10.RELEASE' apply false
     id 'org.asciidoctor.jvm.convert' version '3.1.0' apply false
     id "com.google.cloud.tools.jib" version "2.4.0" apply false
@@ -43,16 +43,17 @@ plugins {
 
 ext {
     configuration = [
-            javaVersion = JavaVersion.VERSION_11
-//            javaVersion = JavaVersion.VERSION_1_8
+            //javaVersion = JavaVersion.VERSION_11
+            javaVersion = JavaVersion.VERSION_1_8
     ]
 
     libraries = [
             springBootVersion = '2.4.1',
             springCloudVersion = '2020.0.0',
-//            springBootVersion = '2.3.3.RELEASE',
-//            springCloudVersion = 'Hoxton.SR8',
-            lombokVersion = '1.18.2'
+            //springBootVersion = '2.3.3.RELEASE',
+            //springCloudVersion = 'Hoxton.SR8',
+            lombokVersion = '1.18.2',
+            commonsLang3Version = '3.9'
     ]
 }
 
@@ -78,14 +79,22 @@ subprojects {
     if (!project.hasProperty('env') || !env) {
         ext.env = 'dev'
     }
+    if (!project.hasProperty('RELEASE') ) {
+        ext.RELEASE = project.version
+    }
 
-    apply plugin: 'idea'
+    if (!project.hasProperty('BUILD_NUMBER') ) {
+        ext.BUILD_NUMBER =time()
+    }
+
     apply plugin: 'java'
-    apply plugin: 'application'
-//    apply plugin: 'net.ltgt.apt'
+    apply plugin: 'idea'
     apply plugin: 'maven-publish'
+
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.asciidoctor.jvm.convert'
+    apply plugin: 'com.google.cloud.tools.jib'
     //apply plugin: 'net.ltgt.apt'
 
     //gradle 文件引用
@@ -151,18 +160,28 @@ subprojects {
 
 
     dependencies {
-        //compile('chain:cloud-common:1.0.13')
-        // compile("chain.fxgj:fxgj-common:1.0.21.1")
-//        compile("chain.fxgj:fxgj-base:1.0.48")
-        compile('chain:utils-fxgj:1.0.15')
-        compile 'org.projectlombok:lombok:1.18.2'
+        //开发依赖：
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        //测试依赖:
+        testAnnotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+
         compile('chain:css-log:2.1.4')
-//        compile("com.lmax:disruptor:3.4.2")
         compile('chain:utils-commons:1.0.6')
-        runtimeOnly 'org.springframework.boot:spring-boot-devtools'
-        testCompile('org.springframework.boot:spring-boot-starter-test')
         testCompile('junit:junit:4.12')
         testCompile('pl.pragmatists:JUnitParams:1.1.1')
+
+        compile('chain:utils-fxgj:1.0.15')
+
+
+        //compile('chain:cloud-common:1.0.13')
+        //compile("chain.fxgj:fxgj-common:1.0.21.1")
+        //compile("chain.fxgj:fxgj-base:1.0.48")
+        //compile 'org.projectlombok:lombok:1.18.2'
+        //compile("com.lmax:disruptor:3.4.2")
+        runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+        testCompile('org.springframework.boot:spring-boot-starter-test')
         compileOnly "org.springframework.boot:spring-boot-configuration-processor"
     }
 

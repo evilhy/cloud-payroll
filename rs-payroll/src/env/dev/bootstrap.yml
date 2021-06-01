@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: payroll
   #交易链路跟踪
   zipkin:
     base-url: http://127.0.0.1:7178
