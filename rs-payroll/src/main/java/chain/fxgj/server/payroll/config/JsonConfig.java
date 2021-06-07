@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.config;
 
+import chain.fxgj.ent.core.constant.DateFormatConstants;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.json.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * @author chain
@@ -30,14 +32,19 @@ public class JsonConfig {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);//美化json字符串打印输出
+        //美化json字符串打印输出
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         //objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
         javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer());
+        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(
+                DateFormatConstants.TIME_FORMATTER));
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
         javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer());
+        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(
+                DateFormatConstants.TIME_FORMATTER));
         objectMapper.registerModule(javaTimeModule);
 
         SimpleModule objectIdmodule = new SimpleModule("objectIdmodule");
@@ -51,3 +58,4 @@ public class JsonConfig {
         return objectMapper;
     }
 }
+
