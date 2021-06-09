@@ -96,6 +96,7 @@ public class CustManagerController {
         String idNumber = currentUser.getIdNumber();
         log.info("openingTips.idNumber:[{}], entId:[{}]", idNumber, entId);
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
             OpeningTipsDTO openingTipsDTO = payRollFeignService.getOpeningTips(idNumber, entId);
             log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
             return openingTipsDTO;
