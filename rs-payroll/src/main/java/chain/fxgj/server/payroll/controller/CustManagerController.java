@@ -92,7 +92,7 @@ public class CustManagerController {
         String idNumber = currentUser.getIdNumber();
 //        String entId = currentUser.getEntId();
         log.info("openingTips.idNumber:[{}], entId:[{}]", idNumber, entId);
-        OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber, entId);
+        OpeningTipsDTO openingTipsDTO = custManagerFeignService.getOpeningTips(idNumber, entId);
         log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
         return openingTipsDTO;
     }
