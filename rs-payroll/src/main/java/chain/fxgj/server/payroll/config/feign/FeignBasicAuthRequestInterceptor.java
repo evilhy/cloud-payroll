@@ -20,7 +20,7 @@ public class FeignBasicAuthRequestInterceptor implements RequestInterceptor {
     public void apply(RequestTemplate requestTemplate) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         log.info("=======>mdcContext:[{}]", JacksonUtil.objectToJson(mdcContext));
-        requestTemplate.header("req-id", mdcContext.get("log_token"));
+        requestTemplate.header("req-id", mdcContext.get("req-id"));
         requestTemplate.header("log-token", mdcContext.get("log_token"));
         requestTemplate.header("page-num", mdcContext.get("pageNum"));
         requestTemplate.header("limit", mdcContext.get("limit"));
