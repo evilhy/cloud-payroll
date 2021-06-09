@@ -89,6 +89,7 @@ public class CustManagerController {
      * @return
      */
     @GetMapping("/openingTips")
+    @TrackLog
     public Mono<OpeningTipsDTO> openingTips(@RequestHeader("ent-id") String entId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
