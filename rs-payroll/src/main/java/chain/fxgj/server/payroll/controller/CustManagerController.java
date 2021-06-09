@@ -97,7 +97,7 @@ public class CustManagerController {
         log.info("openingTips.idNumber:[{}], entId:[{}]", idNumber, entId);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            OpeningTipsDTO openingTipsDTO = payRollFeignService.getOpeningTips(idNumber, entId);
+            OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber, entId);
             log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
             return openingTipsDTO;
         }).subscribeOn(Schedulers.elastic());
