@@ -89,15 +89,17 @@ public class CustManagerController {
      * @return
      */
     @GetMapping("/openingTips")
-    public OpeningTipsDTO openingTips(@RequestHeader("ent-id") String entId) {
+    public Mono<OpeningTipsDTO> openingTips(@RequestHeader("ent-id") String entId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String idNumber = currentUser.getIdNumber();
-//        String entId = currentUser.getEntId();
         log.info("openingTips.idNumber:[{}], entId:[{}]", idNumber, entId);
-        OpeningTipsDTO openingTipsDTO = payRollFeignService.getOpeningTips(idNumber, entId);
-        log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
-        return openingTipsDTO;
+        return Mono.fromCallable(() -> {
+            OpeningTipsDTO openingTipsDTO = payRollFeignService.getOpeningTips(idNumber, entId);
+            log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
+            return openingTipsDTO;
+        }).subscribeOn(Schedulers.elastic());
+
     }
 
 
