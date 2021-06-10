@@ -122,8 +122,11 @@ dependencies {
     compile("chain:ids-client:1.1.10")
     compile("chain.fxgj:fxgj-ent-client:1.0.9")
     compile("chain:pub-client:1.1.7")
-    compile('chain:wage-client:1.1.4')
-    compile('chain:payroll-client:1.1.10')
+    //compile('chain:payroll-client:1.1.10')
+    //compile('chain:wage-client:1.1.4')
+    compile('chain:wage-client:2.0.0-SNAPSHOT')
+    compile('chain:payroll-client:2.0.0-SNAPSHOT')
+    
     compile 'chain.wisales:wisales-client:1.0.2.75'
     compile('chain.fxgj:fxgj-ent-client:1.0.14')
     compile('chain:utils-jpa:1.0.4')
@@ -186,6 +189,8 @@ dependencies {
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.22.1'
     compile('mysql:mysql-connector-java:5.1.38')
     //compile 'org.springframework.cloud:spring-cloud-starter-zipkin'
+
+    implementation group: 'org.apache.commons', name: 'commons-pool2', version: '2.9.0'
 }
 
 

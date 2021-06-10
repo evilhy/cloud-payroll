@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.feign.client.CustManagerFeignService;
+import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
 import chain.fxgj.server.payroll.dto.response.ManagerInformationDTO;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
@@ -31,6 +32,8 @@ import java.util.Map;
 public class CustManagerController {
     @Autowired
     CustManagerFeignService custManagerFeignService;
+    @Autowired
+    PayRollFeignService payRollFeignService;
 
     /**
      * 查询客户经理信息
@@ -86,15 +89,19 @@ public class CustManagerController {
      * @return
      */
     @GetMapping("/openingTips")
-    public OpeningTipsDTO openingTips(@RequestHeader("ent-id") String entId) {
+    @TrackLog
+    public Mono<OpeningTipsDTO> openingTips(@RequestHeader("ent-id") String entId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String idNumber = currentUser.getIdNumber();
-//        String entId = currentUser.getEntId();
         log.info("openingTips.idNumber:[{}], entId:[{}]", idNumber, entId);
-        OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber, entId);
-        log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
-        return openingTipsDTO;
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber, entId);
+            log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
+            return openingTipsDTO;
+        }).subscribeOn(Schedulers.elastic());
+
     }
 
 

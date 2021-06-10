@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.config.feign;
 
+import chain.utils.commons.JacksonUtil;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,8 @@ public class FeignBasicAuthRequestInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate requestTemplate) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        requestTemplate.header("req-id", mdcContext.get("log_token"));
+        log.info("=======>mdcContext:[{}]", JacksonUtil.objectToJson(mdcContext));
+        requestTemplate.header("req-id", mdcContext.get("req-id"));
         requestTemplate.header("log-token", mdcContext.get("log_token"));
         requestTemplate.header("page-num", mdcContext.get("pageNum"));
         requestTemplate.header("limit", mdcContext.get("limit"));

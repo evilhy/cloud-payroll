@@ -21,7 +21,7 @@ import java.util.Map;
  * @program: cloud-account
  * @description: feign 服务异常不进入熔断
  * @author: lius
- * @create: 2019/10/20 00:18
+ * @create: 209/10/20 00:18
  */
 @Configuration
 public class NotBreakerConfiguration {
@@ -47,7 +47,7 @@ public class NotBreakerConfiguration {
                         new TypeReference<Map<String, String>>() {
                         });
 
-                logger.info("===feign 服务异常==>content={}", JacksonUtil.objectToJson(content));
+                logger.debug("===feign 服务异常==>content={}", JacksonUtil.objectToJson(content));
 
                 Error error = JacksonUtil.jsonToBean(JacksonUtil.objectToJson(content), Error.class);
                 ErrorMsg errorMsg = new ErrorMsg(error.getErrCode(), error.getErrMsg());
@@ -60,3 +60,4 @@ public class NotBreakerConfiguration {
         }
     }
 }
+

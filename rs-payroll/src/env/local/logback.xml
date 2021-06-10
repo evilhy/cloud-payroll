@@ -4,7 +4,7 @@
     <property name="log_dir" value="/webserver/www/logs/rs-payroll"/>
     <property name="maxHistory" value="60"/>
     <property name="pattern"
-              value="[rs-payroll]-[%d{HHmmss.SSS}]-[%-5level]-[%thread]-[%X{log_token}]-[%X{jsessionId}]-[%X{path}]-[%X{X-B3-TraceId:-}]-[%lo{5}]-[%msg %n"/>
+              value="%d{HHmmss.SSS}-%-5level-[%thread].[%X{log_token}%X{msg_trans_code}]-[%X{X-B3-TraceId:-}]-%lo{5}: %msg %n"/>
     <property name="charset" value="utf8"/>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

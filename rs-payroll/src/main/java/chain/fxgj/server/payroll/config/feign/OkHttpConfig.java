@@ -33,7 +33,7 @@ public class OkHttpConfig {
                 //设置写超时
                 .writeTimeout(200, TimeUnit.SECONDS)
                 //是否自动重连
-                //.retryOnConnectionFailure(true)
+                .retryOnConnectionFailure(false)
                 .connectionPool(new ConnectionPool(10, 5L, TimeUnit.MINUTES))
                 .addInterceptor(new OkHttpLoggingInterceptor())
                 .build();

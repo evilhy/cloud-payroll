@@ -1,19 +1,13 @@
 package chain.fxgj.server.payroll.config;
 
-import chain.css.log.filter.TrackLogFilter;
 import org.glassfish.jersey.logging.LoggingFeature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.WebFilter;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 
 /**
@@ -23,6 +17,10 @@ import java.util.logging.Level;
 @Configuration
 public class PayrollConfig {
 
+    @Autowired
+    public void setLettuceConnectionFactory(LettuceConnectionFactory lettuceConnectionFactory){
+        lettuceConnectionFactory.setShareNativeConnection(false);
+    }
 
     @Bean("wechatClient")
     public Client wechatClient() throws Exception {
