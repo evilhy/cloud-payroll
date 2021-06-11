@@ -39,7 +39,7 @@ if (BUILD_NUMBER != "") {
     BUILD_NUMBER = '.' + BUILD_NUMBER
 }
 if (JVM_ARGS != "") {
-    for (arg in JVM_ARGS.split(", ")) {
+    for (arg in JVM_ARGS.split(",")) {
         jvmArg.add("${arg}".toString())
     }
 }
