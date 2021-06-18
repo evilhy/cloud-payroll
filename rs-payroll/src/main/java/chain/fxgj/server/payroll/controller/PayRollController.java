@@ -8,13 +8,12 @@ import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
 import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
-import chain.fxgj.server.payroll.dto.response.BankCard;
-import chain.fxgj.server.payroll.dto.response.*;
+import chain.fxgj.server.payroll.dto.request.SignedSaveReq;
 import chain.fxgj.server.payroll.dto.response.EmployeeListBean;
 import chain.fxgj.server.payroll.dto.response.EntUserDTO;
 import chain.fxgj.server.payroll.dto.response.GroupInvoiceDTO;
-import chain.fxgj.server.payroll.dto.response.NewestWageLogDTO;
 import chain.fxgj.server.payroll.dto.response.Res100701;
+import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
@@ -23,13 +22,21 @@ import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.PayrollFeignController;
+import chain.payroll.client.feign.SignedReceiptFeignController;
 import chain.payroll.client.feign.WageSheetFeignController;
 import chain.utils.commons.JacksonUtil;
-import chain.wage.manager.core.dto.response.*;
+import chain.utils.commons.JsonUtil;
+import chain.utils.commons.UUIDUtil;
+import chain.wage.core.dto.wageApi.WageDetailResult;
+import chain.wage.core.dto.wageApi.WageResultRespone;
+import chain.wage.manager.core.dto.response.WageEntUserDTO;
+import chain.wage.manager.core.dto.response.WageRes100708;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
+import chain.wage.service.WageFeignService;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.response.*;
+import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +59,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -80,6 +88,10 @@ public class PayRollController {
     EmpWechatService empWechatService;
     @Autowired
     WageSheetFeignController wageSheetFeignController;
+    @Autowired
+    SignedReceiptFeignController signedReceiptFeignController;
+    @Autowired
+    WageFeignService wageFeignService;
 
     /**
      * 服务当前时间
@@ -836,6 +848,7 @@ public class PayRollController {
                         wageDetailDTO.setReceiptStautus(payrollWageDetailDTO.getReceiptStautus());
                         wageDetailDTO.setDifferRealAmt(payrollWageDetailDTO.getDifferRealAmt());
                         wageDetailDTO.setPayStatus(payrollWageDetailDTO.getPayStatus());
+                        wageDetailDTO.setSign(payrollWageDetailDTO.getSign());
                         list.add(wageDetailDTO);
                     }
                 } else {
@@ -851,12 +864,71 @@ public class PayRollController {
                 CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
                 WageSheetDTO wageSheet = wageSheetFeignController.findById(wageSheetId);
                 empWechatService.upWechatInfoDetail(jsessionId, wageSheet.getEntId(), wechatInfoDetail);
-            }else {
+            } else {
                 log.info("wageDetail未更新缓存中的entId");
             }
 
             log.info("web.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
         }).subscribeOn(Schedulers.elastic());
+    }
+
+    /**
+     * 保存发工资条用户签名
+     *
+     * @param req
+     * @return
+     */
+    @GetMapping("/saveSigned")
+    @TrackLog
+    public Mono<Void> saveSigned(@RequestBody SignedSaveReq req) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
+            Optional.ofNullable(req.getWageSheetId()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("代发方案ID不能为空")));
+            Optional.ofNullable(req.getWageDetailId()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("企代发明细ID不能为空")));
+            Optional.ofNullable(req.getSign()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("签名不能为空")));
+
+            log.info("=====> 保存发工资条用户签名 req:{}", JsonUtil.objectToJson(req));
+
+            //获取方案
+            WageResultRespone wageSheet = wageFeignService.getWageSheet(req.getWageSheetId());
+            if (null == wageSheet) {
+                throw new ParamsIllegalException(ErrorConstant.Error0001.format("代发方案"));
+            }
+
+            //获取明细
+            WageDetailResult wageDetail = null;
+            Boolean b = false;
+            for (WageDetailResult detail : wageSheet.getDetailResults()
+            ) {
+                if (detail.getId().equals(req.getWageSheetId())) {
+                    wageDetail = detail;
+                    b = true;
+                    break;
+                }
+            }
+            if (!b) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到方案明细"));
+            }
+
+            //保存签名
+            SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
+                    .crtDateTime(LocalDateTime.now())
+                    .employeeSid(wageDetail.getEmployeeSid())
+                    .entId(wageSheet.getEntId())
+                    .groupId(wageSheet.getGroupId())
+                    .idNumber(wageDetail.getIdNumber())
+//                    .receiptPath()
+                    .signedReceiptId(UUIDUtil.createUUID32())
+                    .signImg(req.getSign())
+                    .updDateTime(LocalDateTime.now())
+                    .wageDetailId(wageDetail.getId())
+                    .wageSheetId(wageSheet.getWageSheetId())
+                    .build();
+            signedReceiptFeignController.save(saveReq);
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
     }
 }
