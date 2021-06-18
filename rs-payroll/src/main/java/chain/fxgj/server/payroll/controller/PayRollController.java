@@ -27,8 +27,6 @@ import chain.payroll.client.feign.WageSheetFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
-import chain.wage.core.dto.wageApi.WageDetailResult;
-import chain.wage.core.dto.wageApi.WageResultRespone;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
 import chain.wage.manager.core.dto.response.WageRes100708;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
@@ -36,8 +34,6 @@ import chain.wage.service.WageFeignService;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.response.*;
-import core.dto.response.signedreceipt.SignedReceiptSaveReq;
-import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -54,12 +50,10 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -780,93 +774,130 @@ public class PayRollController {
                                                 @RequestParam("groupId") String groupId) {
         log.info("调用wageDetail开始时间::[{}]", LocalDateTime.now());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal principal = WebContext.getCurrentUser();
-        String idNumber = principal.getIdNumber();
-        PayrollUserPrincipalDTO payrollUserPrincipalDTO = new PayrollUserPrincipalDTO();
-        BeanUtils.copyProperties(principal, payrollUserPrincipalDTO);
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             List<WageDetailDTO> list = new ArrayList<>();
-            try {
-                PayrollWageDetailReqDTO payrollWageDetailReqDTO = new PayrollWageDetailReqDTO();
-                payrollWageDetailReqDTO.setIdNumber(idNumber);
-                payrollWageDetailReqDTO.setGroupId(groupId);
-                payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
-                payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
-                log.info("groupId:[{}]，idNumber:[{}]，wageSheetId:[{}]", groupId, idNumber, wageSheetId);
-                log.info("调用payrollFeignController.wageDetail(payrollWageDetailReqDTO)，查明细开始时间:[{}]", LocalDateTime.now());
-                List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
-                log.info("调用payrollFeignController.wageDetail(payrollWageDetailReqDTO)，查明细结束时间:[{}]", LocalDateTime.now());
-                log.info("source.size():[{}]", source.size());
-                if (null != source && source.size() > 0) {
-                    for (PayrollWageDetailDTO payrollWageDetailDTO : source) {
-                        WageDetailDTO wageDetailDTO = new WageDetailDTO();
-
-                        PayrollWageHeadDTO payrollWageHeadDTO = payrollWageDetailDTO.getWageHeadDTO();
-                        WageHeadDTO wageHeadDTO = new WageHeadDTO();
-                        wageHeadDTO.setDoubleRow(payrollWageHeadDTO.isDoubleRow());
-                        wageHeadDTO.setHeadIndex(payrollWageHeadDTO.getHeadIndex());
-                        List<PayrollWageHeadDTO.Cell> heads = payrollWageHeadDTO.getHeads();
-                        List<WageHeadDTO.Cell> headsList = new ArrayList<>();
-                        for (PayrollWageHeadDTO.Cell head : heads) {
-                            WageHeadDTO.Cell cell = new WageHeadDTO.Cell();
-                            cell.setColName(head.getColName());
-                            cell.setColNum(head.getColNum());
-                            cell.setHidden(head.isHidden());
-                            PayrollWageHeadDTO.Type type = head.getType();
-                            WageHeadDTO.Type type1 = WageHeadDTO.Type.valueOf(type.name());
-                            cell.setType(type1);
-                            headsList.add(cell);
-                        }
-                        wageHeadDTO.setHeads(headsList);
-                        wageDetailDTO.setWageHeadDTO(wageHeadDTO);
-
-                        PayrollWageDetailDTO.PayrollWageShowDTO payrollWageShowDTO = payrollWageDetailDTO.getWageShowDTO();
-                        WageDetailDTO.WageShowDTO wageShowDTO = new WageDetailDTO.WageShowDTO();
-                        BeanUtils.copyProperties(payrollWageShowDTO, wageShowDTO);
-                        wageDetailDTO.setWageShowDTO(wageShowDTO);
-
-                        List<PayrollWageDetailDTO.Content> payrollContent = payrollWageDetailDTO.getContent();
-                        List<WageDetailDTO.Content> contentList = new ArrayList<>();
-                        for (PayrollWageDetailDTO.Content content : payrollContent) {
-                            WageDetailDTO.Content content1 = new WageDetailDTO.Content();
-                            BeanUtils.copyProperties(content, content1);
-                            contentList.add(content1);
-                        }
-                        wageDetailDTO.setContent(contentList);
-
-                        wageDetailDTO.setWageDetailId(payrollWageDetailDTO.getWageDetailId());
-                        wageDetailDTO.setBankName(payrollWageDetailDTO.getBankName());
-                        wageDetailDTO.setCardNo(payrollWageDetailDTO.getCardNo());
-                        wageDetailDTO.setWageName(payrollWageDetailDTO.getWageName());
-                        wageDetailDTO.setRealAmt(payrollWageDetailDTO.getRealAmt());
-                        wageDetailDTO.setEntName(payrollWageDetailDTO.getEntName());
-                        wageDetailDTO.setGroupName(payrollWageDetailDTO.getGroupName());
-                        wageDetailDTO.setGroupId(payrollWageDetailDTO.getGroupId());
-                        wageDetailDTO.setPushDateTime(payrollWageDetailDTO.getPushDateTime());
-                        wageDetailDTO.setSkinUrl(payrollWageDetailDTO.getSkinUrl());
-                        wageDetailDTO.setReceiptStautus(payrollWageDetailDTO.getReceiptStautus());
-                        wageDetailDTO.setDifferRealAmt(payrollWageDetailDTO.getDifferRealAmt());
-                        wageDetailDTO.setPayStatus(payrollWageDetailDTO.getPayStatus());
-                        wageDetailDTO.setSign(payrollWageDetailDTO.getSign());
-                        list.add(wageDetailDTO);
-                    }
-                } else {
-                    log.info("mongo.wageDetail查询数据为空,idNumber:[{}]", idNumber);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.info("查询mongo异常:[{}]", e);
-            }
-
-            //工资详情查询完成之后，更新缓存中的entId
-            if (StringUtils.isNotBlank(jsessionId)) {
-                CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
-                WageSheetDTO wageSheet = wageSheetFeignController.findById(wageSheetId);
-                empWechatService.upWechatInfoDetail(jsessionId, wageSheet.getEntId(), wechatInfoDetail);
-            } else {
-                log.info("wageDetail未更新缓存中的entId");
-            }
+            List<WageDetailDTO.Content> content = new ArrayList<>();
+            content.add(WageDetailDTO.Content.builder().colNum(0).value("白浅浅").build());
+            content.add(WageDetailDTO.Content.builder().colNum(1).value("367866199309052077").build());
+            content.add(WageDetailDTO.Content.builder().colNum(2).value("6230202013350302").build());
+            content.add(WageDetailDTO.Content.builder().colNum(3).value("30").build());
+            List<WageHeadDTO.Cell> heads = new ArrayList<>();
+            heads.add(WageHeadDTO.Cell.builder().colName("姓名").hidden(true).colNum(Arrays.asList(0)).build());
+            heads.add(WageHeadDTO.Cell.builder().colName("身份证号").hidden(true).colNum(Arrays.asList(1)).build());
+            heads.add(WageHeadDTO.Cell.builder().colName("银行卡号").hidden(true).colNum(Arrays.asList(2)).build());
+            heads.add(WageHeadDTO.Cell.builder().colName("实发金额").hidden(true).colNum(Arrays.asList(3)).build());
+            WageHeadDTO wageHeadDTO = WageHeadDTO.builder()
+                    .headIndex(0)
+                    .heads(heads)
+                    .isDoubleRow(true)
+                    .build();
+            WageDetailDTO.WageShowDTO wageShowDTO = WageDetailDTO.WageShowDTO.builder()
+                    .grantName("上海市好麦多食品有限公司")
+                    .isReceipt(1)
+                    .isShow0(1)
+                    .isSign(1)
+                    .receiptDay(10)
+                    .build();
+            list.add(WageDetailDTO.builder()
+                    .bankName("华夏银行")
+                    .cardNo("6230202013350302")
+                    .content(content)
+                    .differRealAmt(BigDecimal.ZERO)
+                    .entName("上海市好麦多食品有限公司")
+                    .groupId(UUIDUtil.createUUID32())
+                    .groupName("上海市好麦多食品有限公司")
+                    .payStatus("1")
+                    .pushDateTime(System.currentTimeMillis())
+                    .realAmt(new BigDecimal("30"))
+                    .receiptStautus(3)
+                    .sign(null)
+                    .skinUrl("https://wxp.cardpu.com/upload/image/20200910_red.png")
+                    .wageDetailId(UUIDUtil.createUUID32())
+                    .wageHeadDTO(wageHeadDTO)
+                    .wageName("9月份工资代发")
+                    .wageShowDTO(wageShowDTO)
+                    .build());
+//            try {
+//                PayrollWageDetailReqDTO payrollWageDetailReqDTO = new PayrollWageDetailReqDTO();
+//                payrollWageDetailReqDTO.setIdNumber(idNumber);
+//                payrollWageDetailReqDTO.setGroupId(groupId);
+//                payrollWageDetailReqDTO.setWageSheetId(wageSheetId);
+//                payrollWageDetailReqDTO.setPayrollUserPrincipalDTO(payrollUserPrincipalDTO);
+//                log.info("groupId:[{}]，idNumber:[{}]，wageSheetId:[{}]", groupId, idNumber, wageSheetId);
+//                log.info("调用payrollFeignController.wageDetail(payrollWageDetailReqDTO)，查明细开始时间:[{}]", LocalDateTime.now());
+//                List<PayrollWageDetailDTO> source = payrollFeignController.wageDetail(payrollWageDetailReqDTO);
+//                log.info("调用payrollFeignController.wageDetail(payrollWageDetailReqDTO)，查明细结束时间:[{}]", LocalDateTime.now());
+//                log.info("source.size():[{}]", source.size());
+//                if (null != source && source.size() > 0) {
+//                    for (PayrollWageDetailDTO payrollWageDetailDTO : source) {
+//                        WageDetailDTO wageDetailDTO = new WageDetailDTO();
+//
+//                        PayrollWageHeadDTO payrollWageHeadDTO = payrollWageDetailDTO.getWageHeadDTO();
+//                        WageHeadDTO wageHeadDTO = new WageHeadDTO();
+//                        wageHeadDTO.setDoubleRow(payrollWageHeadDTO.isDoubleRow());
+//                        wageHeadDTO.setHeadIndex(payrollWageHeadDTO.getHeadIndex());
+//                        List<PayrollWageHeadDTO.Cell> heads = payrollWageHeadDTO.getHeads();
+//                        List<WageHeadDTO.Cell> headsList = new ArrayList<>();
+//                        for (PayrollWageHeadDTO.Cell head : heads) {
+//                            WageHeadDTO.Cell cell = new WageHeadDTO.Cell();
+//                            cell.setColName(head.getColName());
+//                            cell.setColNum(head.getColNum());
+//                            cell.setHidden(head.isHidden());
+//                            PayrollWageHeadDTO.Type type = head.getType();
+//                            WageHeadDTO.Type type1 = WageHeadDTO.Type.valueOf(type.name());
+//                            cell.setType(type1);
+//                            headsList.add(cell);
+//                        }
+//                        wageHeadDTO.setHeads(headsList);
+//                        wageDetailDTO.setWageHeadDTO(wageHeadDTO);
+//
+//                        PayrollWageDetailDTO.PayrollWageShowDTO payrollWageShowDTO = payrollWageDetailDTO.getWageShowDTO();
+//                        WageDetailDTO.WageShowDTO wageShowDTO = new WageDetailDTO.WageShowDTO();
+//                        BeanUtils.copyProperties(payrollWageShowDTO, wageShowDTO);
+//                        wageDetailDTO.setWageShowDTO(wageShowDTO);
+//
+//                        List<PayrollWageDetailDTO.Content> payrollContent = payrollWageDetailDTO.getContent();
+//                        List<WageDetailDTO.Content> contentList = new ArrayList<>();
+//                        for (PayrollWageDetailDTO.Content content : payrollContent) {
+//                            WageDetailDTO.Content content1 = new WageDetailDTO.Content();
+//                            BeanUtils.copyProperties(content, content1);
+//                            contentList.add(content1);
+//                        }
+//                        wageDetailDTO.setContent(contentList);
+//
+//                        wageDetailDTO.setWageDetailId(payrollWageDetailDTO.getWageDetailId());
+//                        wageDetailDTO.setBankName(payrollWageDetailDTO.getBankName());
+//                        wageDetailDTO.setCardNo(payrollWageDetailDTO.getCardNo());
+//                        wageDetailDTO.setWageName(payrollWageDetailDTO.getWageName());
+//                        wageDetailDTO.setRealAmt(payrollWageDetailDTO.getRealAmt());
+//                        wageDetailDTO.setEntName(payrollWageDetailDTO.getEntName());
+//                        wageDetailDTO.setGroupName(payrollWageDetailDTO.getGroupName());
+//                        wageDetailDTO.setGroupId(payrollWageDetailDTO.getGroupId());
+//                        wageDetailDTO.setPushDateTime(payrollWageDetailDTO.getPushDateTime());
+//                        wageDetailDTO.setSkinUrl(payrollWageDetailDTO.getSkinUrl());
+//                        wageDetailDTO.setReceiptStautus(payrollWageDetailDTO.getReceiptStautus());
+//                        wageDetailDTO.setDifferRealAmt(payrollWageDetailDTO.getDifferRealAmt());
+//                        wageDetailDTO.setPayStatus(payrollWageDetailDTO.getPayStatus());
+//                        wageDetailDTO.setSign(payrollWageDetailDTO.getSign());
+//                        list.add(wageDetailDTO);
+//                    }
+//                } else {
+//                    log.info("mongo.wageDetail查询数据为空,idNumber:[{}]", idNumber);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                log.info("查询mongo异常:[{}]", e);
+//            }
+//
+//            //工资详情查询完成之后，更新缓存中的entId
+//            if (StringUtils.isNotBlank(jsessionId)) {
+//                CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+//                WageSheetDTO wageSheet = wageSheetFeignController.findById(wageSheetId);
+//                empWechatService.upWechatInfoDetail(jsessionId, wageSheet.getEntId(), wechatInfoDetail);
+//            } else {
+//                log.info("wageDetail未更新缓存中的entId");
+//            }
 
             log.info("web.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
@@ -891,43 +922,43 @@ public class PayRollController {
             Optional.ofNullable(req.getSign()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("签名不能为空")));
 
             log.info("=====> 保存发工资条用户签名 req:{}", JsonUtil.objectToJson(req));
-
-            //获取方案
-            WageResultRespone wageSheet = wageFeignService.getWageSheet(req.getWageSheetId());
-            if (null == wageSheet) {
-                throw new ParamsIllegalException(ErrorConstant.Error0001.format("代发方案"));
-            }
-
-            //获取明细
-            WageDetailResult wageDetail = null;
-            Boolean b = false;
-            for (WageDetailResult detail : wageSheet.getDetailResults()
-            ) {
-                if (detail.getId().equals(req.getWageSheetId())) {
-                    wageDetail = detail;
-                    b = true;
-                    break;
-                }
-            }
-            if (!b) {
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到方案明细"));
-            }
-
-            //保存签名
-            SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
-                    .crtDateTime(LocalDateTime.now())
-                    .employeeSid(wageDetail.getEmployeeSid())
-                    .entId(wageSheet.getEntId())
-                    .groupId(wageSheet.getGroupId())
-                    .idNumber(wageDetail.getIdNumber())
-//                    .receiptPath()
-                    .signedReceiptId(UUIDUtil.createUUID32())
-                    .signImg(req.getSign())
-                    .updDateTime(LocalDateTime.now())
-                    .wageDetailId(wageDetail.getId())
-                    .wageSheetId(wageSheet.getWageSheetId())
-                    .build();
-            signedReceiptFeignController.save(saveReq);
+//
+//            //获取方案
+//            WageResultRespone wageSheet = wageFeignService.getWageSheet(req.getWageSheetId());
+//            if (null == wageSheet) {
+//                throw new ParamsIllegalException(ErrorConstant.Error0001.format("代发方案"));
+//            }
+//
+//            //获取明细
+//            WageDetailResult wageDetail = null;
+//            Boolean b = false;
+//            for (WageDetailResult detail : wageSheet.getDetailResults()
+//            ) {
+//                if (detail.getId().equals(req.getWageSheetId())) {
+//                    wageDetail = detail;
+//                    b = true;
+//                    break;
+//                }
+//            }
+//            if (!b) {
+//                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到方案明细"));
+//            }
+//
+//            //保存签名
+//            SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
+//                    .crtDateTime(LocalDateTime.now())
+//                    .employeeSid(wageDetail.getEmployeeSid())
+//                    .entId(wageSheet.getEntId())
+//                    .groupId(wageSheet.getGroupId())
+//                    .idNumber(wageDetail.getIdNumber())
+////                    .receiptPath()
+//                    .signedReceiptId(UUIDUtil.createUUID32())
+//                    .signImg(req.getSign())
+//                    .updDateTime(LocalDateTime.now())
+//                    .wageDetailId(wageDetail.getId())
+//                    .wageSheetId(wageSheet.getWageSheetId())
+//                    .build();
+//            signedReceiptFeignController.save(saveReq);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
