@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"wageDetailId":"6008fc15680a45639e94d1a056de0be5","wageSheetId":"a5a61738e02f4791bcef5fcc2b2fdc6f","sign":"data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QA6RXhpZgAATU0AKgAAAAgAA1EQAAEAAAABAQAAAFERAAQAAAABAAAdh1ESAAQAAAABAAAdhwAAAAD+X/M5v7VitFR203XQ//9k="}
+----

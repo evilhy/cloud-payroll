@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+wageDetailId+`
+|`+String+`
+|
+
+|`+wageSheetId+`
+|`+String+`
+|
+
+|`+sign+`
+|`+String+`
+|
+
+|===

@@ -288,3 +288,40 @@ include::{snippets}/payroll/roll_entUser/curl-request.adoc[]
 +
 include::{snippets}/payroll/roll_entUser/http-response.adoc[]
 
+
+
+=== 个人工资明细
+==== 接口定义
+
+* Query Parameters:
++
+无
+* Response Body:
++
+include::{snippets}/payroll/roll_wageDetail/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_wageDetail/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_wageDetail/http-response.adoc[]
+
+=== 工资确认签名
+==== 接口定义
+
+* Query Parameters:
++
+include::{snippets}/payroll/roll_saveSigned/request-fields.adoc[]
+* Response Body:
++
+无
+
+==== 示例
+* Request:
++
+include::{snippets}/payroll/roll_saveSigned/curl-request.adoc[]
+* Response:
++
+include::{snippets}/payroll/roll_saveSigned/http-response.adoc[]

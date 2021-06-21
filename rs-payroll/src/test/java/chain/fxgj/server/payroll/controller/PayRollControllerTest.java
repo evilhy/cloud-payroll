@@ -35,7 +35,7 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
-public class PayRollController {
+public class PayRollControllerTest {
 
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
