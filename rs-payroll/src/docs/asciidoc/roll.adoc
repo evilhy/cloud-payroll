@@ -295,7 +295,7 @@ include::{snippets}/payroll/roll_entUser/http-response.adoc[]
 
 * Query Parameters:
 +
-无
+include::{snippets}/payroll/roll_wageDetail/request-parameters.adoc[]
 * Response Body:
 +
 include::{snippets}/payroll/roll_wageDetail/response-fields.adoc[]
