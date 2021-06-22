@@ -903,7 +903,7 @@ public class PayRollController {
             Boolean b = false;
             for (WageDetailResult detail : wageSheet.getDetailResults()
             ) {
-                if (detail.getId().equals(req.getWageSheetId())) {
+                if (detail.getId().equals(req.getWageDetailId())) {
                     wageDetail = detail;
                     b = true;
                     break;
