@@ -928,7 +928,7 @@ public class PayRollController {
             log.info("=====> 保存发工资条用户签名 req:{}", JsonUtil.objectToJson(req));
 
             //获取方案
-            WageResultRespone wageSheet = wageFeignService.queryWage(req.getWageSheetId());
+            WageSheetDTO wageSheet = wageSheetFeignController.findById(req.getWageSheetId());
             if (null == wageSheet) {
                 throw new ParamsIllegalException(ErrorConstant.Error0001.format("代发方案"));
             }
@@ -994,7 +994,7 @@ public class PayRollController {
      * @param wageDetail 明细信息
      * @return
      */
-    public String createPDF(String signUrl, String pdfPath, WageResultRespone wageSheet, chain.wage.core.dto.response.WageDetailDTO wageDetail) {
+    public String createPDF(String signUrl, String pdfPath, WageSheetDTO wageSheet, chain.wage.core.dto.response.WageDetailDTO wageDetail) {
         //机构信息
         String groupId = wageSheet.getGroupId();
         GroupInfoVagueQueryReq queryReq = GroupInfoVagueQueryReq.builder()
