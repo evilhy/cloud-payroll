@@ -914,7 +914,7 @@ public class PayRollController {
      * @param req
      * @return
      */
-    @GetMapping("/saveSigned")
+    @PostMapping("/saveSigned")
     @TrackLog
     public Mono<Void> saveSigned(@RequestBody SignedSaveReq req) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
