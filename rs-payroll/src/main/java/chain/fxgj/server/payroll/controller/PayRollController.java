@@ -3,11 +3,20 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.feign.hxinside.account.service.AccountFeignService;
+import chain.feign.hxinside.ent.service.GroupInfoServiceFeign;
+import chain.feign.hxinside.ent.service.UserGroupInfoServiceFeign;
+import chain.fxgj.account.core.dto.response.account.AccountDetailDTO;
+import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.PayrollDBConstant;
+import chain.fxgj.ent.core.dto.request.GroupInfoVagueQueryReq;
+import chain.fxgj.ent.core.dto.response.GroupInfoResponse;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
+import chain.fxgj.server.payroll.dto.payroll.ContentDTO;
 import chain.fxgj.server.payroll.dto.payroll.EntEmpDTO;
+import chain.fxgj.server.payroll.dto.payroll.SignedReceiptPdfDTO;
 import chain.fxgj.server.payroll.dto.request.SignedSaveReq;
 import chain.fxgj.server.payroll.dto.response.EmployeeListBean;
 import chain.fxgj.server.payroll.dto.response.EntUserDTO;
@@ -16,9 +25,7 @@ import chain.fxgj.server.payroll.dto.response.Res100701;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.PaswordService;
-import chain.fxgj.server.payroll.util.EncrytorUtils;
-import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
-import chain.fxgj.server.payroll.util.TransferUtil;
+import chain.fxgj.server.payroll.util.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.PayrollFeignController;
@@ -27,15 +34,24 @@ import chain.payroll.client.feign.WageSheetFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
-import chain.wage.core.dto.wageApi.WageDetailResult;
+import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.FundTypeEnum;
+import chain.wage.core.dto.tiger.WageFundTypeDTO;
 import chain.wage.core.dto.wageApi.WageResultRespone;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
 import chain.wage.manager.core.dto.response.WageRes100708;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
+import chain.wage.service.EmpDetailFeignService;
+import chain.wage.service.WageDownFeignService;
 import chain.wage.service.WageFeignService;
+import chain.wage.service.WageFundTypeFeignService;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.response.*;
+import core.dto.response.signedreceipt.SignedReceiptDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -54,12 +70,13 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
+import java.io.File;
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -92,6 +109,24 @@ public class PayRollController {
     SignedReceiptFeignController signedReceiptFeignController;
     @Autowired
     WageFeignService wageFeignService;
+
+    @Autowired
+    AccountFeignService accountFeignService;
+
+    @Autowired
+    GroupInfoServiceFeign groupInfoServiceFeign;
+
+    @Autowired
+    UserGroupInfoServiceFeign userGroupInfoServiceFeign;
+
+    @Autowired
+    WageFundTypeFeignService wageFundTypeFeignService;
+    @Autowired
+    WageDownFeignService wageDownFeignService;
+    @Autowired
+    EmpDetailFeignService empDetailFeignService;
+    @Autowired
+    PayrollProperties payrollProperties;
 
     /**
      * 服务当前时间
@@ -893,24 +928,42 @@ public class PayRollController {
             log.info("=====> 保存发工资条用户签名 req:{}", JsonUtil.objectToJson(req));
 
             //获取方案
-            WageResultRespone wageSheet = wageFeignService.getWageSheet(req.getWageSheetId());
+            WageResultRespone wageSheet = wageFeignService.queryWage(req.getWageSheetId());
             if (null == wageSheet) {
                 throw new ParamsIllegalException(ErrorConstant.Error0001.format("代发方案"));
             }
 
             //获取明细
-            WageDetailResult wageDetail = null;
-            Boolean b = false;
-            for (WageDetailResult detail : wageSheet.getDetailResults()
-            ) {
-                if (detail.getId().equals(req.getWageDetailId())) {
-                    wageDetail = detail;
-                    b = true;
-                    break;
-                }
-            }
-            if (!b) {
+            int year = wageSheet.getCrtDateTime().getYear();
+            chain.wage.core.dto.response.WageDetailDTO wageDetail = empDetailFeignService.wageDetailById(req.getWageDetailId(), year);
+            if (null == wageDetail) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到方案明细"));
+            }
+
+            String url = payrollProperties.getSignPdfPath() + DateTimeUtils.getDate() + "/";
+            File file1 = new File(url);
+            if (!file1.exists()) {//如果文件夹不存在
+                file1.mkdir();//创建文件夹
+            }
+
+            //生成签名图片
+            String signImg = url + wageDetail.getId() + ".jpg";
+            boolean b = ImageBase64Utils.base64ToImageFile(req.getSign(), signImg);
+            if (!b) {
+                log.info("====> 生成电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getId(), signImg);
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("生成电子签名失败"));
+            }
+
+            //生成的PDF存放路径
+            String pdfUrl = url + wageSheet.getWageSheetId() + "/";
+
+            //生成PDF
+            String pdfPath = createPDF(signImg, pdfUrl, wageSheet, wageDetail);
+
+            //删除签名图片
+            boolean delete = new File(signImg).delete();
+            if (!delete) {
+                log.info("====> 删除电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getId(), signImg);
             }
 
             //保存签名
@@ -920,7 +973,7 @@ public class PayRollController {
                     .entId(wageSheet.getEntId())
                     .groupId(wageSheet.getGroupId())
                     .idNumber(wageDetail.getIdNumber())
-//                    .receiptPath()
+                    .receiptPath(pdfPath)
                     .signedReceiptId(UUIDUtil.createUUID32())
                     .signImg(req.getSign())
                     .updDateTime(LocalDateTime.now())
@@ -930,5 +983,218 @@ public class PayRollController {
             signedReceiptFeignController.save(saveReq);
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
+    }
+
+    /**
+     * 生成电子回执
+     *
+     * @param signUrl    电子签名地址
+     * @param pdfPath    生成的PDF文件存放地址
+     * @param wageSheet  方案信息
+     * @param wageDetail 明细信息
+     * @return
+     */
+    public String createPDF(String signUrl, String pdfPath, WageResultRespone wageSheet, chain.wage.core.dto.response.WageDetailDTO wageDetail) {
+        //机构信息
+        String groupId = wageSheet.getGroupId();
+        GroupInfoVagueQueryReq queryReq = GroupInfoVagueQueryReq.builder()
+                .delStatus(Arrays.asList(DelStatusEnum.values()))
+                .groupId(groupId)
+                .build();
+        GroupInfoResponse group = groupInfoServiceFeign.groupInfo(queryReq);
+        if (null == group) {
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("机构信息不存在"));
+        }
+
+        //账户信息
+        String accountId = wageSheet.getAccountId();
+        AccountDetailDTO account = accountFeignService.findById(accountId);
+        if (null == account) {
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("机构信息不存在"));
+        }
+
+        //资金类型
+        Integer fundTypeId = wageSheet.getFundType();
+        WageFundTypeDTO fundType = wageFundTypeFeignService.findById(fundTypeId);
+        if (null == fundType) {
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("资金类型信息不存在"));
+        }
+
+        //查询方案明细信息
+        int year = wageSheet.getCrtDateTime().getYear();
+
+
+        //是否代发完成，并且完成签名
+        SignedReceiptDTO signedReceiptDTO = signedReceiptFeignController.findByWageDetailId(wageDetail.getId());
+        if ((null == signedReceiptDTO) || chain.utils.commons.StringUtils.isBlank(signedReceiptDTO.getSignImg())
+                || wageDetail.getPayStatus() != chain.utils.fxgj.constant.DictEnums.PayStatusEnum.SUCCESS) {
+            return null;
+        }
+
+        //查询方案内容
+        List<ContentDTO> contentDTOS = new ArrayList<>();
+        Map<String, String> map = empDetailFeignService.contentById(wageDetail.getId(), year);
+        for (String key : map.keySet()
+        ) {
+            ContentDTO dto = ContentDTO.builder()
+                    .name(key)
+                    .value(map.get(key))
+                    .build();
+            contentDTOS.add(dto);
+        }
+
+        SignedReceiptPdfDTO dto = SignedReceiptPdfDTO.builder()
+                .account(account.getAccount())
+                .accountName(account.getAccountName())
+                .applyDateTime(null == wageSheet.getApplyDateTime() ? null : wageSheet.getApplyDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                .bankCard(wageDetail.getBankCard())
+                .crDateTime(null == wageSheet.getCrtDateTime() ? null : wageSheet.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                .custName(wageDetail.getCustName())
+                .fundDate(null == wageSheet.getFundType() ? null : FundTypeEnum.values()[wageSheet.getFundType()].getDesc())
+                .fundType(fundType.getFundType())
+                .groupName(group.getGroupName())
+                .idNumber(wageDetail.getIdNumber())
+                .remark(wageDetail.getRemark4())
+                .signUrl(signUrl)
+                .wageName(wageSheet.getWageName())
+                .build();
+        String receiptPdf = creartSignedReceiptPdf(pdfPath, dto, contentDTOS);
+        log.info("=====> pdf PATH:{}", receiptPdf);
+        return receiptPdf;
+    }
+
+    /**
+     * 生成PDF
+     *
+     * @param path    生成的PDF文件存放地址
+     * @param dto     发放明细信息
+     * @param content 工资内容
+     * @return
+     */
+    public String creartSignedReceiptPdf(String path, SignedReceiptPdfDTO dto, List<ContentDTO> content) {
+        String detailId = dto.getDetailId();
+        String bankCard = dto.getBankCard();
+        String fundDate = dto.getFundDate();
+        String fundType = dto.getFundType();
+        String idNumber = dto.getIdNumber();
+        String custName = dto.getCustName();
+        String remark = dto.getRemark();
+        String groupName = dto.getGroupName();
+        String wageName = dto.getWageName();
+        Long crDateTime = dto.getCrDateTime();
+        String accountName = dto.getAccountName();
+        Long applyDateTime = dto.getApplyDateTime();
+        String account = dto.getAccount();
+        String signUrl = dto.getSignUrl();
+        String successfullyReceived = "successfully_received.png";
+        try {
+            String title = null;
+
+            //导出的pdf文件名
+            String fileName = custName + idNumber + "-" + detailId;
+            String filePathName = path + fileName + ".pdf";
+
+            BigDecimal amt = BigDecimal.ZERO;
+
+            PDFUtil pdfUtil = new PDFUtil();
+            Font chapterFont = PDFUtil.createCHineseFont(18, Font.BOLD, BaseColor.BLACK);//文章标题字体
+            Font sectionFont = PDFUtil.createCHineseFont(12, Font.BOLD, BaseColor.BLACK);//文章小节字体
+            Font apiFont = PDFUtil.createCHineseFont(8, Font.BOLD, new BaseColor(66, 66, 66));
+            Font redapiFont = PDFUtil.createCHineseFont(8, Font.BOLD, BaseColor.RED);
+
+            pdfUtil.createDocument(filePathName, null);
+
+            Chapter chapter = PDFUtil.createChapter(title, 1, 1, 0, chapterFont);
+            Section section1 = PDFUtil.createSection(chapter, "", sectionFont, 0);
+
+            float[] widths = {0.20f, 0.28f, 0.20f, 0.28f};
+            PdfPTable table1 = new PdfPTable(widths);
+            pdfUtil.decorateTable(table1);
+
+            PdfPCell pdfPCel = pdfUtil.createCell("收款确认回执单", chapterFont);
+            pdfPCel.setColspan(4);
+            table1.addCell(pdfPCel);
+
+            table1.addCell(pdfUtil.createHeaderCell("收款人", apiFont));
+            table1.addCell(pdfUtil.createCell(custName, apiFont));
+//        table1.addCell(pdfUtil.createHeaderCell("收款人证件号", apiFont));
+//        table1.addCell(pdfUtil.createCell(idNumber, apiFont));
+            table1.addCell(pdfUtil.createHeaderCell("收款账户号", apiFont));
+            table1.addCell(pdfUtil.createCell(bankCard, apiFont));
+
+
+            table1.addCell(pdfUtil.createHeaderCell("发放机构", apiFont));
+            table1.addCell(pdfUtil.createCell(groupName, apiFont));
+            table1.addCell(pdfUtil.createHeaderCell("方案名称", apiFont));
+            table1.addCell(pdfUtil.createCell(wageName, apiFont));
+
+            table1.addCell(pdfUtil.createHeaderCell("资金类型", apiFont));
+            table1.addCell(pdfUtil.createCell(fundType, apiFont));
+            table1.addCell(pdfUtil.createHeaderCell("资金月份", apiFont));
+            table1.addCell(pdfUtil.createCell(fundDate, apiFont));
+
+            table1.addCell(pdfUtil.createHeaderCell("方案编号", apiFont));
+            table1.addCell(pdfUtil.createCell(crDateTime + "", apiFont));
+            table1.addCell(pdfUtil.createHeaderCell("付款账户号", apiFont));
+            table1.addCell(pdfUtil.createCell(account, apiFont));
+
+            table1.addCell(pdfUtil.createHeaderCell("付款账户名称", apiFont));
+            table1.addCell(pdfUtil.createCell(accountName, apiFont));
+            table1.addCell(pdfUtil.createHeaderCell("发放时间", apiFont));
+            LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(applyDateTime), ZoneId.systemDefault());
+            table1.addCell(pdfUtil.createCell(DateTimeUtils.formatLocalDateTimeSss(dateTime), apiFont));
+
+            table1.addCell(pdfUtil.createHeaderCell("交易金额", apiFont));
+            BigDecimal decimal = amt.setScale(2, BigDecimal.ROUND_HALF_UP);
+            table1.addCell(pdfUtil.createCell(decimal + "", apiFont));
+            table1.addCell(pdfUtil.createHeaderCell("付款结果", apiFont));
+            table1.addCell(pdfUtil.createCell("付款成功", apiFont));
+
+            table1.addCell(pdfUtil.createHeaderCell("备注", apiFont));
+            PdfPCell pdfPCell = pdfUtil.createCell(remark, apiFont);
+            pdfPCell.setColspan(3);
+            table1.addCell(pdfPCell);
+
+            table1.addCell(pdfUtil.createHeaderCell("收款人签字回执", apiFont));
+            PdfPCell pdfCel1 = new PdfPCell();
+            pdfCel1.setColspan(2);
+            pdfCel1.setImage(Image.getInstance(PayRollController.class.getClassLoader().getResource(signUrl).getPath()));//插入图片
+            table1.addCell(pdfCel1);
+            PdfPCell pdfCel2 = new PdfPCell();
+            pdfCel2.setImage(Image.getInstance(PayRollController.class.getClassLoader().getResource(successfullyReceived).getPath()));//插入图片
+            table1.addCell(pdfCel2);
+            section1.add(table1);
+
+            PdfPTable table2 = new PdfPTable(widths);
+            pdfUtil.decorateTable(table2);
+            PdfPCell pdfPCe2 = pdfUtil.createCell("个人工资条明细", chapterFont);
+            pdfPCe2.setColspan(4);
+            table2.addCell(pdfPCe2);
+            if (null != content && content.size() > 0) {
+                for (int i = 0; i < content.size(); i++) {
+                    ContentDTO contentDTO = content.get(0);
+                    table2.addCell(pdfUtil.createHeaderCell(contentDTO.getName(), apiFont));
+                    //如果明细为单数,最后一行占3格
+                    if (i == content.size() - 1 && content.size() / 2 > 0) {
+                        PdfPCell cell = pdfUtil.createCell(contentDTO.getValue(), apiFont);
+                        cell.setColspan(3);
+                        table2.addCell(cell);
+                        continue;
+                    }
+                    table2.addCell(pdfUtil.createCell(contentDTO.getValue(), apiFont));
+                }
+            }
+            section1.add(table2);
+
+            pdfUtil.writeChapterToDoc(chapter);
+            pdfUtil.closeDocument();
+
+            log.debug(filePathName);
+
+            return filePathName;
+        } catch (Exception e) {
+            log.error("个人pdf", e);
+            throw new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.WZWAGE_013.getErrorMsg());
+        }
     }
 }

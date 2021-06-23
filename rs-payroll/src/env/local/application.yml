@@ -69,6 +69,9 @@ payroll:
   #放薪管家 sm4加密、解密key [线下分配]
   fxgjSm4Iv: 9wHFOMfs2Y8JeF8U
 
+  ###签名回执地址
+  signPdfPath: /webserver/www/down/emp/sign/
+
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
   passwd: MvEpyqjedb4Hvai3vnFakmYxQsebEVCe84RNcVxw79USzc85FPAmbA9NuPxqfGsMh5pPuyzL
