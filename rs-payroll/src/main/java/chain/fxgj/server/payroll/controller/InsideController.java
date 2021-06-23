@@ -16,6 +16,7 @@ import chain.fxgj.server.payroll.dto.request.*;
 import chain.fxgj.server.payroll.dto.request.ReqPhone;
 import chain.fxgj.server.payroll.dto.response.Res100302;
 import chain.fxgj.server.payroll.service.EmpWechatService;
+import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.service.impl.CallInsideServiceImpl;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
@@ -65,6 +66,8 @@ public class InsideController {
     InsideFeignController insideFeignController;
     @Autowired
     PaswordService paswordService;
+    @Autowired
+    EmployeeEncrytorService employeeEncrytorService;
 
     /**
      * 发送短信验证码
@@ -286,7 +289,7 @@ public class InsideController {
             MDC.setContextMap(mdcContext);
             CacheReq100701 wageReq100701 = new CacheReq100701();
             BeanUtils.copyProperties(req100701, wageReq100701);
-            wageReq100701.setIdNumber(wageReq100701.getIdNumber().toUpperCase());//身份证转大写
+            //wageReq100701.setIdNumber(wageReq100701.getIdNumber().toUpperCase());//身份证转大写
 
             //数字键盘密码，解密
             String password = paswordService.checkNumberPassword(pwd, wechatId);
@@ -306,7 +309,7 @@ public class InsideController {
             log.info("微信号绑定身份证完成-无手机号");
             //绑定完成之后，更新MySql员工表绑定状态
             EmpInfoUpdReq empInfoUpdReq = EmpInfoUpdReq.builder()
-                    .idNumber(req100701.getIdNumber())
+                    .idNumber(employeeEncrytorService.decryptIdNumber(req100701.getIdNumber()))
                     .bindStatus(IsBindWechatEnum.ISBINDWECHAT)
                     .build();
             employeeInfoServiceFeign.updEmpInfo(empInfoUpdReq);
@@ -374,7 +377,7 @@ public class InsideController {
 
     /**
      * 验证手机验证码
-     *
+     * <p>
      * 数据脱敏后，无法获取手机号，现增加busiType区分场景获取手机号
      *
      * @param reqPhone
@@ -592,11 +595,12 @@ public class InsideController {
 
     /**
      * 获取该用户主题信息
+     *
      * @return
      */
     @GetMapping("/theme")
     @TrackLog
-    public Mono<SkinThemeInfoDto> getSkin(){
+    public Mono<SkinThemeInfoDto> getSkin() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
@@ -608,12 +612,13 @@ public class InsideController {
 
     /**
      * 设置主题信息
+     *
      * @param req
      * @return
      */
     @PostMapping("/theme")
     @TrackLog
-    public Mono<Void> setSkin(@RequestBody SkinThemeInfoReq req){
+    public Mono<Void> setSkin(@RequestBody SkinThemeInfoReq req) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         HeaderDTO header = WebContext.getCurrentHeader();
         return Mono.fromCallable(() -> {
