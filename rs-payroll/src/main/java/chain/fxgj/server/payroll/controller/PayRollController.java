@@ -954,6 +954,10 @@ public class PayRollController {
 
             //生成的PDF存放路径
             String pdfUrl = url + wageSheet.getWageSheetId() + "/";
+            File file2 = new File(pdfUrl);
+            if (!file2.exists()) {//如果文件夹不存在
+                file2.mkdir();//创建文件夹
+            }
 
             //生成PDF
             String pdfPath = createPDF(signImg, pdfUrl, wageSheet, wageDetail);
