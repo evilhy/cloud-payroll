@@ -945,8 +945,9 @@ public class PayRollController {
             }
 
             //生成签名图片
+            String imgStr = req.getSign().replace("data:image/png;base64,", "");
             String signImg = url + wageDetail.getId() + ".jpg";
-            boolean b = ImageBase64Utils.base64ToImageFile(req.getSign(), signImg);
+            boolean b = ImageBase64Utils.base64ToImageFile(imgStr, signImg);
             if (!b) {
                 log.info("====> 生成电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getId(), signImg);
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("生成电子签名失败"));
