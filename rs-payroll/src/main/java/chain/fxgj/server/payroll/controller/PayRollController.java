@@ -24,6 +24,7 @@ import chain.fxgj.server.payroll.dto.response.GroupInvoiceDTO;
 import chain.fxgj.server.payroll.dto.response.Res100701;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.EmpWechatService;
+import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.util.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -125,6 +126,8 @@ public class PayRollController {
     EmpDetailFeignService empDetailFeignService;
     @Autowired
     PayrollProperties payrollProperties;
+    @Autowired
+    EmployeeEncrytorService employeeEncrytorService;
 
     /**
      * 服务当前时间
@@ -937,6 +940,14 @@ public class PayRollController {
             if (null == wageDetail) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到方案明细"));
             }
+            String bankCard = StringUtils.isBlank(wageDetail.getBankCard()) ? null : employeeEncrytorService.decryptCardNo(wageDetail.getBankCard());
+            String employeeSid = StringUtils.isBlank(wageDetail.getEmployeeSid()) ? null : employeeEncrytorService.decryptEmployeeId(wageDetail.getEmployeeSid());;
+            String custName = StringUtils.isBlank(wageDetail.getCustName()) ? null : employeeEncrytorService.decryptCustName(wageDetail.getCustName());;
+            String idNumber = StringUtils.isBlank(wageDetail.getIdNumber()) ? null : employeeEncrytorService.decryptIdNumber(wageDetail.getIdNumber());;
+            wageDetail.setBankCard(bankCard);
+            wageDetail.setEmployeeSid(employeeSid);
+            wageDetail.setCustName(custName);
+            wageDetail.setIdNumber(idNumber);
 
             String url = payrollProperties.getSignPdfPath() + DateTimeUtils.getDate() + "/";
             File file1 = new File(url);
