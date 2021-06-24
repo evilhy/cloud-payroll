@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.util;
 import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
+import chain.utils.commons.StringUtils;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -12,12 +13,11 @@ import java.util.List;
 
 /**
  * 转换工具类
- *
  */
 @Slf4j
 public class TransferUtil {
 
-    public static CacheUserPrincipal userPrincipalToWageUserPrincipal (UserPrincipal userPrincipal){
+    public static CacheUserPrincipal userPrincipalToWageUserPrincipal(UserPrincipal userPrincipal) {
         CacheUserPrincipal cacheUserPrincipal = new CacheUserPrincipal();
         if (null != userPrincipal) {
             cacheUserPrincipal.setSessionId(userPrincipal.getSessionId());
@@ -29,12 +29,12 @@ public class TransferUtil {
             cacheUserPrincipal.setBranchNo(userPrincipal.getBranchNo());
             cacheUserPrincipal.setDataAuths(userPrincipal.getDataAuths());
             cacheUserPrincipal.setEntId(userPrincipal.getEntId());
-            List< core.dto.wechat.EntInfoDTO> entInfoDTOS = userPrincipal.getEntInfoDTOS();
+            List<core.dto.wechat.EntInfoDTO> entInfoDTOS = userPrincipal.getEntInfoDTOS();
             List<core.dto.wechat.EntInfoDTO> entInfoDTOSList = new ArrayList<>();
             if (null != entInfoDTOS && entInfoDTOS.size() > 0) {
-                for ( core.dto.wechat.EntInfoDTO entInfoDTO : entInfoDTOS) {
+                for (core.dto.wechat.EntInfoDTO entInfoDTO : entInfoDTOS) {
                     core.dto.wechat.EntInfoDTO feiginEntInfoDto = new core.dto.wechat.EntInfoDTO();
-                    BeanUtils.copyProperties(entInfoDTO,feiginEntInfoDto);
+                    BeanUtils.copyProperties(entInfoDTO, feiginEntInfoDto);
                     entInfoDTOSList.add(feiginEntInfoDto);
                 }
             }
@@ -56,13 +56,20 @@ public class TransferUtil {
             cacheUserPrincipal.setTimeOutMinute(userPrincipal.getTimeOutMinute());
             cacheUserPrincipal.setUid(userPrincipal.getUid());
             cacheUserPrincipal.setUserName(userPrincipal.getUserName());
-            cacheUserPrincipal.setWechatId(userPrincipal.getWechatId());
+            //涉及到 密码键盘 使用
+            if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(userPrincipal.getWechatId()))) {
+                //用户 已绑定
+                cacheUserPrincipal.setWechatId(userPrincipal.getWechatId());
+            } else {
+                //用户 初次绑定时
+                cacheUserPrincipal.setWechatId(userPrincipal.getSessionId());
+            }
         }
         log.info("cacheUserPrincipal:[{}]", JacksonUtil.objectToJson(cacheUserPrincipal));
         return cacheUserPrincipal;
     }
 
-    public static UserPrincipal WageUserPrincipalToUserPrincipal (CacheUserPrincipal cacheUserPrincipal){
+    public static UserPrincipal WageUserPrincipalToUserPrincipal(CacheUserPrincipal cacheUserPrincipal) {
         UserPrincipal userPrincipal = new UserPrincipal();
         if (null != cacheUserPrincipal) {
             userPrincipal.setSessionId(cacheUserPrincipal.getSessionId());
@@ -75,11 +82,11 @@ public class TransferUtil {
             userPrincipal.setDataAuths(cacheUserPrincipal.getDataAuths());
             userPrincipal.setEntId(cacheUserPrincipal.getEntId());
             List<core.dto.wechat.EntInfoDTO> entInfoDTOS = cacheUserPrincipal.getEntInfoDTOS();
-            List< core.dto.wechat.EntInfoDTO> entInfoDTOSList = new ArrayList<>();
-            if (null != entInfoDTOS && entInfoDTOS.size()>0) {
+            List<core.dto.wechat.EntInfoDTO> entInfoDTOSList = new ArrayList<>();
+            if (null != entInfoDTOS && entInfoDTOS.size() > 0) {
                 for (core.dto.wechat.EntInfoDTO entInfoDTO : entInfoDTOS) {
-                    core.dto.wechat.EntInfoDTO entInfoDTO1 = new  core.dto.wechat.EntInfoDTO();
-                    BeanUtils.copyProperties(entInfoDTO,entInfoDTO1);
+                    core.dto.wechat.EntInfoDTO entInfoDTO1 = new core.dto.wechat.EntInfoDTO();
+                    BeanUtils.copyProperties(entInfoDTO, entInfoDTO1);
                     entInfoDTOSList.add(entInfoDTO1);
                 }
             }
