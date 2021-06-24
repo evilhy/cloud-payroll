@@ -33,11 +33,9 @@ import chain.payroll.client.feign.SignedReceiptFeignController;
 import chain.payroll.client.feign.WageSheetFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
-import chain.utils.commons.UUIDUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.FundTypeEnum;
 import chain.wage.core.dto.tiger.WageFundTypeDTO;
-import chain.wage.core.dto.wageApi.WageResultRespone;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
 import chain.wage.manager.core.dto.response.WageRes100708;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
@@ -1054,9 +1052,10 @@ public class PayRollController {
                 .fundType(fundType.getFundType())
                 .groupName(group.getGroupName())
                 .idNumber(wageDetail.getIdNumber())
-                .remark(wageDetail.getRemark4())
+                .remark(StringUtils.isBlank(wageDetail.getRemark4()) ? "" : wageDetail.getRemark4())
                 .signUrl(signUrl)
                 .wageName(wageSheet.getWageName())
+                .detailId(wageDetail.getId())
                 .build();
         String receiptPdf = creartSignedReceiptPdf(pdfPath, dto, contentDTOS);
         log.info("=====> pdf PATH:{}", receiptPdf);
