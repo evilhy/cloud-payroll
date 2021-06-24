@@ -1162,7 +1162,7 @@ public class PayRollController {
             table1.addCell(pdfUtil.createHeaderCell("收款人签字回执", apiFont));
             PdfPCell pdfCel1 = new PdfPCell();
             pdfCel1.setColspan(2);
-            pdfCel1.setImage(Image.getInstance(PayRollController.class.getClassLoader().getResource(signUrl).getPath()));//插入图片
+            pdfCel1.setImage(Image.getInstance(signUrl));//插入图片
             table1.addCell(pdfCel1);
             PdfPCell pdfCel2 = new PdfPCell();
             pdfCel2.setImage(Image.getInstance(PayRollController.class.getClassLoader().getResource(successfullyReceived).getPath()));//插入图片
