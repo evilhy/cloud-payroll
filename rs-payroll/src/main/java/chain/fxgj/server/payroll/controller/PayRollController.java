@@ -1024,8 +1024,7 @@ public class PayRollController {
 
         //是否代发完成，并且完成签名
         SignedReceiptDTO signedReceiptDTO = signedReceiptFeignController.findByWageDetailId(wageDetail.getId());
-        if ((null == signedReceiptDTO) || chain.utils.commons.StringUtils.isBlank(signedReceiptDTO.getSignImg())
-                || wageDetail.getPayStatus() != chain.utils.fxgj.constant.DictEnums.PayStatusEnum.SUCCESS) {
+        if ( wageDetail.getPayStatus() != chain.utils.fxgj.constant.DictEnums.PayStatusEnum.SUCCESS) {
             return null;
         }
 
