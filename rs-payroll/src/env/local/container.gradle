@@ -17,7 +17,7 @@ ext {
     HARBOR_PASSWORD='sky373641@Miao'
 
     //jvm
-    JVM_ARGS=''
+    JVM_ARGS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5000,-Dfile.encoding=utf-8,-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m'
 
     jvmArg = [
             //"-Xms128m".toString(),
