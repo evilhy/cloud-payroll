@@ -941,9 +941,12 @@ public class PayRollController {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到方案明细"));
             }
             String bankCard = StringUtils.isBlank(wageDetail.getBankCard()) ? null : employeeEncrytorService.decryptCardNo(wageDetail.getBankCard());
-            String employeeSid = StringUtils.isBlank(wageDetail.getEmployeeSid()) ? null : employeeEncrytorService.decryptEmployeeId(wageDetail.getEmployeeSid());;
-            String custName = StringUtils.isBlank(wageDetail.getCustName()) ? null : employeeEncrytorService.decryptCustName(wageDetail.getCustName());;
-            String idNumber = StringUtils.isBlank(wageDetail.getIdNumber()) ? null : employeeEncrytorService.decryptIdNumber(wageDetail.getIdNumber());;
+            String employeeSid = StringUtils.isBlank(wageDetail.getEmployeeSid()) ? null : employeeEncrytorService.decryptEmployeeId(wageDetail.getEmployeeSid());
+            ;
+            String custName = StringUtils.isBlank(wageDetail.getCustName()) ? null : employeeEncrytorService.decryptCustName(wageDetail.getCustName());
+            ;
+            String idNumber = StringUtils.isBlank(wageDetail.getIdNumber()) ? null : employeeEncrytorService.decryptIdNumber(wageDetail.getIdNumber());
+            ;
             wageDetail.setBankCard(bankCard);
             wageDetail.setEmployeeSid(employeeSid);
             wageDetail.setCustName(custName);
@@ -1040,7 +1043,7 @@ public class PayRollController {
 
         //是否代发完成，并且完成签名
         SignedReceiptDTO signedReceiptDTO = signedReceiptFeignController.findByWageDetailId(wageDetail.getId());
-        if ( wageDetail.getPayStatus() != chain.utils.fxgj.constant.DictEnums.PayStatusEnum.SUCCESS) {
+        if (wageDetail.getPayStatus() != chain.utils.fxgj.constant.DictEnums.PayStatusEnum.SUCCESS) {
             return null;
         }
 
@@ -1078,6 +1081,49 @@ public class PayRollController {
         log.info("=====> 个人pdf【电子签名回执】生成 PATH:{}", receiptPdf);
         return receiptPdf;
     }
+
+//    /**
+//     * PDF生成
+//     *
+//     * @return
+//     */
+//    @GetMapping("/signedPDF")
+//    @TrackLog
+//    public Mono<String> signedPDF() {
+//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+//        return Mono.fromCallable(() -> {
+//            MDC.setContextMap(mdcContext);
+//            String dtoJson = "";
+////            String contentJson = "[{\"name\":\"姓名\",\"value\":\"白浅浅\"},{\"name\":\"身份证\",\"value\":\"367866199309052077\"},{\"name\":\"手机号\",\"value\":\"17700011451\"},{\"name\":\"银行卡号\",\"value\":\"6230202013350302\"},{\"name\":\"基本工资\",\"value\":\"30.00\"},{\"name\":\"工龄薪\",\"value\":\"35.00\"},{\"name\":\"项目津贴\",\"value\":\"0.00\"},{\"name\":\"全勤奖\",\"value\":\"100.00\"},{\"name\":\"车补\",\"value\":\"100.00\"},{\"name\":\"话补\",\"value\":\"100.00\"},{\"name\":\"饭补\",\"value\":\"200.00\"},{\"name\":\"补发项\",\"value\":\"0.00\"},{\"name\":\"其他扣款\",\"value\":\"-50.00\"},{\"name\":\"病事假\",\"value\":\"0.00\"},{\"name\":\"应发工资\",\"value\":\"515.00\"},{\"name\":\"社保扣款\",\"value\":\"-350.00\"},{\"name\":\"公积金扣款\",\"value\":\"-120.00\"},{\"name\":\"代扣税\",\"value\":\"-15.00\"},{\"name\":\"实发工资\",\"value\":\"30.00\"}]";
+//            SignedReceiptPdfDTO dto = SignedReceiptPdfDTO.builder()
+//                    .account("15050000000577400")
+//                    .accountName("SIT测试")
+//                    .applyDateTime(1622713061243l)
+//                    .bankCard("6230202013350302")
+//                    .crDateTime(1622713056091l)
+//                    .custName("白浅浅")
+//                    .fundDate("1")
+//                    .fundType("工资")
+//                    .groupName("好麦多(上海)食品科技有限公司")
+//                    .idNumber("367866199309052077")
+//                    .remark("wqqwqw......................................")
+//                    .signUrl("D:/tmp/sign.jpg")
+//                    .wageName("华夏_工资代发")
+//                    .detailId("2c94808579ce07800179d13c3c9a0039")
+//                    .build();
+//            List<ContentDTO> content = new ArrayList<>();
+//            content.add(ContentDTO.builder().name("姓名").value("白浅浅").build());
+//            content.add(ContentDTO.builder().name("身份证").value("367866199309052077").build());
+//            content.add(ContentDTO.builder().name("手机号").value("17700011451").build());
+//            content.add(ContentDTO.builder().name("银行卡号").value("6230202013350302").build());
+//            content.add(ContentDTO.builder().name("应发工资").value("515.00").build());
+//            content.add(ContentDTO.builder().name("实发工资").value("30.00").build());
+//
+//
+//            String receiptPdf = creartSignedReceiptPdf("d:/temp/", dto, content);
+//            return receiptPdf;
+//        }).subscribeOn(Schedulers.elastic());
+//    }
 
     /**
      * 生成PDF
@@ -1188,7 +1234,7 @@ public class PayRollController {
             table2.addCell(pdfPCe2);
             if (null != content && content.size() > 0) {
                 for (int i = 0; i < content.size(); i++) {
-                    ContentDTO contentDTO = content.get(0);
+                    ContentDTO contentDTO = content.get(i);
                     table2.addCell(pdfUtil.createHeaderCell(contentDTO.getName(), apiFont));
                     //如果明细为单数,最后一行占3格
                     if (i == content.size() - 1 && content.size() / 2 > 0) {
