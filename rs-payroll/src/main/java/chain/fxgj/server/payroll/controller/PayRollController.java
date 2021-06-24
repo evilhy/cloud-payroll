@@ -1057,8 +1057,10 @@ public class PayRollController {
                 .wageName(wageSheet.getWageName())
                 .detailId(wageDetail.getId())
                 .build();
+        log.info("=====> PDF 回单数据 pdfReq:{}", JacksonUtil.objectToJson(dto));
+        log.info("=====> PDF 明细数据 Content:{}", JacksonUtil.objectToJson(contentDTOS));
         String receiptPdf = creartSignedReceiptPdf(pdfPath, dto, contentDTOS);
-        log.info("=====> pdf PATH:{}", receiptPdf);
+        log.info("=====> 个人pdf【电子签名回执】生成 PATH:{}", receiptPdf);
         return receiptPdf;
     }
 
@@ -1192,7 +1194,7 @@ public class PayRollController {
 
             return filePathName;
         } catch (Exception e) {
-            log.error("个人pdf", e);
+            log.error("个人pdf【电子签名回执】生成失败", e);
             throw new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.WZWAGE_013.getErrorMsg());
         }
     }
