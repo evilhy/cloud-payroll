@@ -974,7 +974,7 @@ public class PayRollController {
                     .groupId(wageSheet.getGroupId())
                     .idNumber(wageDetail.getIdNumber())
                     .receiptPath(pdfPath)
-                    .signedReceiptId(UUIDUtil.createUUID32())
+//                    .signedReceiptId(UUIDUtil.createUUID32())
                     .signImg(req.getSign())
                     .updDateTime(LocalDateTime.now())
                     .wageDetailId(wageDetail.getId())
