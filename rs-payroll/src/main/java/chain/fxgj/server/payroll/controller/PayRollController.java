@@ -34,6 +34,7 @@ import chain.payroll.client.feign.SignedReceiptFeignController;
 import chain.payroll.client.feign.WageSheetFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
+import chain.utils.commons.UUIDUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.FundTypeEnum;
 import chain.wage.core.dto.tiger.WageFundTypeDTO;
@@ -50,7 +51,6 @@ import com.itextpdf.text.pdf.PdfPTable;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.response.*;
-import core.dto.response.signedreceipt.SignedReceiptDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -960,7 +960,7 @@ public class PayRollController {
 
             //生成签名图片
             String imgStr = req.getSign().replace("data:image/png;base64,", "");
-            String signImg = url + wageDetail.getId() + ".jpg";
+            String signImg = url + UUIDUtil.createUUID32() + ".jpg";
             boolean b = ImageBase64Utils.base64ToImageFile(imgStr, signImg);
             if (!b) {
                 log.info("====> 生成电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getId(), signImg);
@@ -1042,7 +1042,7 @@ public class PayRollController {
 
 
         //是否代发完成，并且完成签名
-        SignedReceiptDTO signedReceiptDTO = signedReceiptFeignController.findByWageDetailId(wageDetail.getId());
+//        SignedReceiptDTO signedReceiptDTO = signedReceiptFeignController.findByWageDetailId(wageDetail.getId());
         if (wageDetail.getPayStatus() != chain.utils.fxgj.constant.DictEnums.PayStatusEnum.SUCCESS) {
             return null;
         }
@@ -1082,48 +1082,50 @@ public class PayRollController {
         return receiptPdf;
     }
 
-//    /**
-//     * PDF生成
-//     *
-//     * @return
-//     */
-//    @GetMapping("/signedPDF")
-//    @TrackLog
-//    public Mono<String> signedPDF() {
-//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//        return Mono.fromCallable(() -> {
-//            MDC.setContextMap(mdcContext);
-//            String dtoJson = "";
-////            String contentJson = "[{\"name\":\"姓名\",\"value\":\"白浅浅\"},{\"name\":\"身份证\",\"value\":\"367866199309052077\"},{\"name\":\"手机号\",\"value\":\"17700011451\"},{\"name\":\"银行卡号\",\"value\":\"6230202013350302\"},{\"name\":\"基本工资\",\"value\":\"30.00\"},{\"name\":\"工龄薪\",\"value\":\"35.00\"},{\"name\":\"项目津贴\",\"value\":\"0.00\"},{\"name\":\"全勤奖\",\"value\":\"100.00\"},{\"name\":\"车补\",\"value\":\"100.00\"},{\"name\":\"话补\",\"value\":\"100.00\"},{\"name\":\"饭补\",\"value\":\"200.00\"},{\"name\":\"补发项\",\"value\":\"0.00\"},{\"name\":\"其他扣款\",\"value\":\"-50.00\"},{\"name\":\"病事假\",\"value\":\"0.00\"},{\"name\":\"应发工资\",\"value\":\"515.00\"},{\"name\":\"社保扣款\",\"value\":\"-350.00\"},{\"name\":\"公积金扣款\",\"value\":\"-120.00\"},{\"name\":\"代扣税\",\"value\":\"-15.00\"},{\"name\":\"实发工资\",\"value\":\"30.00\"}]";
-//            SignedReceiptPdfDTO dto = SignedReceiptPdfDTO.builder()
-//                    .account("15050000000577400")
-//                    .accountName("SIT测试")
-//                    .applyDateTime(1622713061243l)
-//                    .bankCard("6230202013350302")
-//                    .crDateTime(1622713056091l)
-//                    .custName("白浅浅")
-//                    .fundDate("1")
-//                    .fundType("工资")
-//                    .groupName("好麦多(上海)食品科技有限公司")
-//                    .idNumber("367866199309052077")
-//                    .remark("wqqwqw......................................")
-//                    .signUrl("D:/tmp/sign.jpg")
-//                    .wageName("华夏_工资代发")
-//                    .detailId("2c94808579ce07800179d13c3c9a0039")
-//                    .build();
-//            List<ContentDTO> content = new ArrayList<>();
-//            content.add(ContentDTO.builder().name("姓名").value("白浅浅").build());
-//            content.add(ContentDTO.builder().name("身份证").value("367866199309052077").build());
-//            content.add(ContentDTO.builder().name("手机号").value("17700011451").build());
-//            content.add(ContentDTO.builder().name("银行卡号").value("6230202013350302").build());
-//            content.add(ContentDTO.builder().name("应发工资").value("515.00").build());
-//            content.add(ContentDTO.builder().name("实发工资").value("30.00").build());
-//
-//
-//            String receiptPdf = creartSignedReceiptPdf("d:/temp/", dto, content);
-//            return receiptPdf;
-//        }).subscribeOn(Schedulers.elastic());
-//    }
+    /**
+     * TODO PDF生成测试
+     * <p>
+     * PDF生成
+     *
+     * @return
+     */
+    @GetMapping("/signedPDF")
+    @TrackLog
+    public Mono<String> signedPDF() {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            String dtoJson = "";
+//            String contentJson = "[{\"name\":\"姓名\",\"value\":\"白浅浅\"},{\"name\":\"身份证\",\"value\":\"367866199309052077\"},{\"name\":\"手机号\",\"value\":\"17700011451\"},{\"name\":\"银行卡号\",\"value\":\"6230202013350302\"},{\"name\":\"基本工资\",\"value\":\"30.00\"},{\"name\":\"工龄薪\",\"value\":\"35.00\"},{\"name\":\"项目津贴\",\"value\":\"0.00\"},{\"name\":\"全勤奖\",\"value\":\"100.00\"},{\"name\":\"车补\",\"value\":\"100.00\"},{\"name\":\"话补\",\"value\":\"100.00\"},{\"name\":\"饭补\",\"value\":\"200.00\"},{\"name\":\"补发项\",\"value\":\"0.00\"},{\"name\":\"其他扣款\",\"value\":\"-50.00\"},{\"name\":\"病事假\",\"value\":\"0.00\"},{\"name\":\"应发工资\",\"value\":\"515.00\"},{\"name\":\"社保扣款\",\"value\":\"-350.00\"},{\"name\":\"公积金扣款\",\"value\":\"-120.00\"},{\"name\":\"代扣税\",\"value\":\"-15.00\"},{\"name\":\"实发工资\",\"value\":\"30.00\"}]";
+            SignedReceiptPdfDTO dto = SignedReceiptPdfDTO.builder()
+                    .account("15050000000577400")
+                    .accountName("SIT测试")
+                    .applyDateTime(1622713061243l)
+                    .bankCard("6230202013350302")
+                    .crDateTime(1622713056091l)
+                    .custName("白浅浅")
+                    .fundDate("1")
+                    .fundType("工资")
+                    .groupName("好麦多(上海)食品科技有限公司")
+                    .idNumber("367866199309052077")
+                    .remark("wqqwqw......................................")
+                    .signUrl("D:/tmp/sign.jpg")
+                    .wageName("华夏_工资代发")
+                    .detailId("2c94808579ce07800179d13c3c9a0039")
+                    .build();
+            List<ContentDTO> content = new ArrayList<>();
+            content.add(ContentDTO.builder().name("姓名").value("白浅浅").build());
+            content.add(ContentDTO.builder().name("身份证").value("367866199309052077").build());
+            content.add(ContentDTO.builder().name("手机号").value("17700011451").build());
+            content.add(ContentDTO.builder().name("银行卡号").value("6230202013350302").build());
+            content.add(ContentDTO.builder().name("应发工资").value("515.00").build());
+            content.add(ContentDTO.builder().name("实发工资").value("30.00").build());
+
+
+            String receiptPdf = creartSignedReceiptPdf("d:/temp/", dto, content);
+            return receiptPdf;
+        }).subscribeOn(Schedulers.elastic());
+    }
 
     /**
      * 生成PDF
@@ -1218,12 +1220,16 @@ public class PayRollController {
             table1.addCell(pdfPCell);
 
             table1.addCell(pdfUtil.createHeaderCell("收款人签字回执", apiFont));
-            PdfPCell pdfCel1 = new PdfPCell();
+            Image image1 = Image.getInstance(signUrl);
+            PdfPCell pdfCel1 = new PdfPCell(image1, false);
             pdfCel1.setColspan(2);
-            pdfCel1.setImage(Image.getInstance(signUrl));//插入图片
+            pdfCel1.setFixedHeight(60);//单元格高度固定
+            pdfCel1.disableBorderSide(8);//隐藏右边框
             table1.addCell(pdfCel1);
-            PdfPCell pdfCel2 = new PdfPCell();
-            pdfCel2.setImage(Image.getInstance(PayRollController.class.getClassLoader().getResource(successfullyReceived).getPath()));//插入图片
+            Image image2 = Image.getInstance(PayRollController.class.getClassLoader().getResource(successfullyReceived).getPath());
+            PdfPCell pdfCel2 = new PdfPCell(image2, false);
+            pdfCel2.setFixedHeight(60);//单元格高度固定
+            pdfCel2.disableBorderSide(4);//隐藏左边框
             table1.addCell(pdfCel2);
             section1.add(table1);
 
