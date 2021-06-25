@@ -1006,7 +1006,7 @@ public class PayRollController {
             signedReceiptFeignController.save(saveReq);
 
             //回执确认
-            receipt(wageDetail.getId());
+//            receipt(wageDetail.getId());
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
