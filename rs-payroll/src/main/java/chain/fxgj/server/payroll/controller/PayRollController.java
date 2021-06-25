@@ -29,6 +29,7 @@ import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.util.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.payroll.client.feign.InsideFeignController;
 import chain.payroll.client.feign.PayrollFeignController;
 import chain.payroll.client.feign.SignedReceiptFeignController;
 import chain.payroll.client.feign.WageSheetFeignController;
@@ -50,7 +51,9 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
+import core.dto.request.PayrollResReceiptDTO;
 import core.dto.response.*;
+import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -128,6 +131,8 @@ public class PayRollController {
     PayrollProperties payrollProperties;
     @Autowired
     EmployeeEncrytorService employeeEncrytorService;
+    @Autowired
+    InsideFeignController insideFeignController;
 
     /**
      * 服务当前时间
@@ -983,6 +988,7 @@ public class PayRollController {
                 log.info("====> 删除电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getId(), signImg);
             }
 
+
             //保存签名
             SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
                     .crtDateTime(LocalDateTime.now())
@@ -998,9 +1004,33 @@ public class PayRollController {
                     .wageSheetId(wageSheet.getWageSheetId())
                     .build();
             signedReceiptFeignController.save(saveReq);
+
+            //回执确认
+            receipt(wageDetail.getId());
             return null;
         }).subscribeOn(Schedulers.elastic()).then();
     }
+
+    /**
+     * 回执确认
+     *
+     * @param wageDetailId
+     */
+    public void receipt(String wageDetailId) {
+        PayrollResReceiptDTO resReceiptDTO = PayrollResReceiptDTO.builder().wageDetailId(wageDetailId).receiptsStatus(0).build();
+        WageRetReceiptDTO wageRetReceiptDTO = insideFeignController.receipt(resReceiptDTO);
+        try {
+            log.info("同步数据receipt wageRetReceiptDTO:[{}]", JacksonUtil.objectToJson(wageRetReceiptDTO));
+            String idNumber = wageRetReceiptDTO.getIdNumber();
+            String groupId = wageRetReceiptDTO.getGroupId();
+            LocalDateTime crtDateTime = wageRetReceiptDTO.getCrtDateTime();
+            //切库注释
+//                mysqlDataSynToMongo(idNumber, groupId, String.valueOf(crtDateTime.getYear()), "", principal);
+        } catch (Exception e) {
+            log.info("回执后,同步数据失败:[{}]", e);
+        }
+    }
+
 
     /**
      * 生成电子回执
