@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
 
 /**
  * @Description:
@@ -83,4 +84,8 @@ public class SignedReceiptPdfDTO {
      * 签名（图片地址）
      */
     String signUrl;
+    /**
+     * 交易金额
+     */
+    BigDecimal amt;
 }

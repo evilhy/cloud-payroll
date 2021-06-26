@@ -1097,13 +1097,14 @@ public class PayRollController {
                 .crDateTime(null == wageSheet.getCrtDateTime() ? null : wageSheet.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                 .custName(wageDetail.getCustName())
                 .fundDate(null == wageSheet.getFundType() ? null : FundTypeEnum.values()[wageSheet.getFundType()].getDesc())
-                .fundType(fundType.getFundType())
+                .fundType(fundType.getFundTypeVal())
                 .groupName(group.getGroupName())
                 .idNumber(wageDetail.getIdNumber())
                 .remark(StringUtils.isBlank(wageDetail.getRemark4()) ? "" : wageDetail.getRemark4())
                 .signUrl(signUrl)
                 .wageName(wageSheet.getWageName())
                 .detailId(wageDetail.getId())
+                .amt(null == wageDetail.getRealTotalAmt() ? BigDecimal.ZERO : wageDetail.getRealTotalAmt())
                 .build();
         log.info("=====> PDF 回单数据 pdfReq:{}", JacksonUtil.objectToJson(dto));
         log.info("=====> PDF 明细数据 Content:{}", JacksonUtil.objectToJson(contentDTOS));
@@ -1142,6 +1143,7 @@ public class PayRollController {
                     .signUrl("D:/tmp/sign.jpg")
                     .wageName("华夏_工资代发")
                     .detailId("2c94808579ce07800179d13c3c9a0039")
+                    .amt(new BigDecimal("100.00"))
                     .build();
             List<ContentDTO> content = new ArrayList<>();
             content.add(ContentDTO.builder().name("姓名").value("白浅浅").build());
@@ -1180,6 +1182,7 @@ public class PayRollController {
         Long applyDateTime = dto.getApplyDateTime();
         String account = dto.getAccount();
         String signUrl = dto.getSignUrl();
+        BigDecimal amt = dto.getAmt();
         String successfullyReceived = "successfully_received.png";
         try {
             String title = null;
@@ -1187,8 +1190,6 @@ public class PayRollController {
             //导出的pdf文件名
             String fileName = custName + idNumber + "-" + detailId;
             String filePathName = path + fileName + ".pdf";
-
-            BigDecimal amt = BigDecimal.ZERO;
 
             PDFUtil pdfUtil = new PDFUtil();
             Font chapterFont = PDFUtil.createCHineseFont(18, Font.BOLD, BaseColor.BLACK);//文章标题字体
