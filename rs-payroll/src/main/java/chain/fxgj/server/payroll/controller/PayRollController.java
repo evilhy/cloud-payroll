@@ -29,10 +29,7 @@ import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.util.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
-import chain.payroll.client.feign.InsideFeignController;
-import chain.payroll.client.feign.PayrollFeignController;
-import chain.payroll.client.feign.SignedReceiptFeignController;
-import chain.payroll.client.feign.WageSheetFeignController;
+import chain.payroll.client.feign.*;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
@@ -100,6 +97,8 @@ public class PayRollController {
     Executor executor;
     @Autowired
     PayRollFeignService wageMangerFeignService;
+    @Autowired
+    PayrollProperties payrollProperties;
 
     @Autowired
     PaswordService paswordService;
@@ -108,31 +107,11 @@ public class PayRollController {
     @Autowired
     WageSheetFeignController wageSheetFeignController;
     @Autowired
+    WageDetailFeignController wageDetailFeignController;
+    @Autowired
+    WageDetailYearFeignController wageDetailYearFeignController;
+    @Autowired
     SignedReceiptFeignController signedReceiptFeignController;
-    @Autowired
-    WageFeignService wageFeignService;
-
-    @Autowired
-    AccountFeignService accountFeignService;
-
-    @Autowired
-    GroupInfoServiceFeign groupInfoServiceFeign;
-
-    @Autowired
-    UserGroupInfoServiceFeign userGroupInfoServiceFeign;
-
-    @Autowired
-    WageFundTypeFeignService wageFundTypeFeignService;
-    @Autowired
-    WageDownFeignService wageDownFeignService;
-    @Autowired
-    EmpDetailFeignService empDetailFeignService;
-    @Autowired
-    PayrollProperties payrollProperties;
-    @Autowired
-    EmployeeEncrytorService employeeEncrytorService;
-    @Autowired
-    InsideFeignController insideFeignController;
 
     /**
      * 服务当前时间
@@ -941,21 +920,21 @@ public class PayRollController {
 
             //获取明细
             int year = wageSheet.getCrtDateTime().getYear();
-            chain.wage.core.dto.response.WageDetailDTO wageDetail = empDetailFeignService.wageDetailById(req.getWageDetailId(), year);
+            core.dto.response.wageDetail.WageDetailDTO wageDetail = wageDetailYearFeignController.findById(req.getWageDetailId(), year);
             if (null == wageDetail) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到方案明细"));
             }
-            String bankCard = StringUtils.isBlank(wageDetail.getBankCard()) ? null : employeeEncrytorService.decryptCardNo(wageDetail.getBankCard());
-            String employeeSid = StringUtils.isBlank(wageDetail.getEmployeeSid()) ? null : employeeEncrytorService.decryptEmployeeId(wageDetail.getEmployeeSid());
-            ;
-            String custName = StringUtils.isBlank(wageDetail.getCustName()) ? null : employeeEncrytorService.decryptCustName(wageDetail.getCustName());
-            ;
-            String idNumber = StringUtils.isBlank(wageDetail.getIdNumber()) ? null : employeeEncrytorService.decryptIdNumber(wageDetail.getIdNumber());
-            ;
-            wageDetail.setBankCard(bankCard);
-            wageDetail.setEmployeeSid(employeeSid);
-            wageDetail.setCustName(custName);
-            wageDetail.setIdNumber(idNumber);
+//            String bankCard = StringUtils.isBlank(wageDetail.getBankCard()) ? null : employeeEncrytorService.decryptCardNo(wageDetail.getBankCard());
+//            String employeeSid = StringUtils.isBlank(wageDetail.getEmployeeSid()) ? null : employeeEncrytorService.decryptEmployeeId(wageDetail.getEmployeeSid());
+//            ;
+//            String custName = StringUtils.isBlank(wageDetail.getCustName()) ? null : employeeEncrytorService.decryptCustName(wageDetail.getCustName());
+//            ;
+//            String idNumber = StringUtils.isBlank(wageDetail.getIdNumber()) ? null : employeeEncrytorService.decryptIdNumber(wageDetail.getIdNumber());
+//            ;
+//            wageDetail.setBankCard(bankCard);
+//            wageDetail.setEmployeeSid(employeeSid);
+//            wageDetail.setCustName(custName);
+//            wageDetail.setIdNumber(idNumber);
 
             String url = payrollProperties.getSignPdfPath() + DateTimeUtils.getDate() + "/";
             File file1 = new File(url);
@@ -968,7 +947,7 @@ public class PayRollController {
             String signImg = url + UUIDUtil.createUUID32() + ".jpg";
             boolean b = ImageBase64Utils.base64ToImageFile(imgStr, signImg);
             if (!b) {
-                log.info("====> 生成电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getId(), signImg);
+                log.info("====> 生成电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getDetailId(), signImg);
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("生成电子签名失败"));
             }
 
@@ -985,7 +964,7 @@ public class PayRollController {
             //删除签名图片
             boolean delete = new File(signImg).delete();
             if (!delete) {
-                log.info("====> 删除电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getId(), signImg);
+                log.info("====> 删除电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getDetailId(), signImg);
             }
 
 
@@ -1000,7 +979,7 @@ public class PayRollController {
 //                    .signedReceiptId(UUIDUtil.createUUID32())
                     .signImg(req.getSign())
                     .updDateTime(LocalDateTime.now())
-                    .wageDetailId(wageDetail.getId())
+                    .wageDetailId(wageDetail.getDetailId())
                     .wageSheetId(wageSheet.getWageSheetId())
                     .build();
             signedReceiptFeignController.save(saveReq);
@@ -1012,27 +991,6 @@ public class PayRollController {
     }
 
     /**
-     * 回执确认
-     *
-     * @param wageDetailId
-     */
-    public void receipt(String wageDetailId) {
-        PayrollResReceiptDTO resReceiptDTO = PayrollResReceiptDTO.builder().wageDetailId(wageDetailId).receiptsStatus(0).build();
-        WageRetReceiptDTO wageRetReceiptDTO = insideFeignController.receipt(resReceiptDTO);
-        try {
-            log.info("同步数据receipt wageRetReceiptDTO:[{}]", JacksonUtil.objectToJson(wageRetReceiptDTO));
-            String idNumber = wageRetReceiptDTO.getIdNumber();
-            String groupId = wageRetReceiptDTO.getGroupId();
-            LocalDateTime crtDateTime = wageRetReceiptDTO.getCrtDateTime();
-            //切库注释
-//                mysqlDataSynToMongo(idNumber, groupId, String.valueOf(crtDateTime.getYear()), "", principal);
-        } catch (Exception e) {
-            log.info("回执后,同步数据失败:[{}]", e);
-        }
-    }
-
-
-    /**
      * 生成电子回执
      *
      * @param signUrl    电子签名地址
@@ -1041,34 +999,34 @@ public class PayRollController {
      * @param wageDetail 明细信息
      * @return
      */
-    public String createPDF(String signUrl, String pdfPath, WageSheetDTO wageSheet, chain.wage.core.dto.response.WageDetailDTO wageDetail) {
-        //机构信息
-        String groupId = wageSheet.getGroupId();
-        GroupInfoVagueQueryReq queryReq = GroupInfoVagueQueryReq.builder()
-                .delStatus(Arrays.asList(DelStatusEnum.values()))
-                .groupId(groupId)
-                .build();
-        GroupInfoResponse group = groupInfoServiceFeign.groupInfo(queryReq);
-        if (null == group) {
-            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("机构信息不存在"));
-        }
-
-        //账户信息
-        String accountId = wageSheet.getAccountId();
-        AccountDetailDTO account = accountFeignService.findById(accountId);
-        if (null == account) {
-            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("机构信息不存在"));
-        }
-
-        //资金类型
-        Integer fundTypeId = wageSheet.getFundType();
-        WageFundTypeDTO fundType = wageFundTypeFeignService.findById(fundTypeId);
-        if (null == fundType) {
-            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("资金类型信息不存在"));
-        }
-
-        //查询方案明细信息
-        int year = wageSheet.getCrtDateTime().getYear();
+    public String createPDF(String signUrl, String pdfPath, WageSheetDTO wageSheet, core.dto.response.wageDetail.WageDetailDTO wageDetail) {
+//        //机构信息
+//        String groupId = wageSheet.getGroupId();
+//        GroupInfoVagueQueryReq queryReq = GroupInfoVagueQueryReq.builder()
+//                .delStatus(Arrays.asList(DelStatusEnum.values()))
+//                .groupId(groupId)
+//                .build();
+//        GroupInfoResponse group = groupInfoServiceFeign.groupInfo(queryReq);
+//        if (null == group) {
+//            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("机构信息不存在"));
+//        }
+//
+//        //账户信息
+//        String accountId = wageSheet.getAccountId();
+//        AccountDetailDTO account = accountFeignService.findById(accountId);
+//        if (null == account) {
+//            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("机构信息不存在"));
+//        }
+//
+//        //资金类型
+//        Integer fundTypeId = wageSheet.getFundType();
+//        WageFundTypeDTO fundType = wageFundTypeFeignService.findById(fundTypeId);
+//        if (null == fundType) {
+//            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("资金类型信息不存在"));
+//        }
+//
+//        //查询方案明细信息
+//        int year = wageSheet.getCrtDateTime().getYear();
 
 
         //是否代发完成，并且完成签名
@@ -1079,7 +1037,7 @@ public class PayRollController {
 
         //查询方案内容
         List<ContentDTO> contentDTOS = new ArrayList<>();
-        Map<String, String> map = empDetailFeignService.contentById(wageDetail.getId(), year);
+        Map<String, String> map = wageDetailYearFeignController.contentById(wageDetail.getDetailId(), wageSheet.getCrtDateTime().getYear());
         for (String key : map.keySet()
         ) {
             ContentDTO dto = ContentDTO.builder()
@@ -1090,20 +1048,20 @@ public class PayRollController {
         }
 
         SignedReceiptPdfDTO dto = SignedReceiptPdfDTO.builder()
-                .account(account.getAccount())
-                .accountName(account.getAccountName())
+                .account(wageSheet.getAccount())
+                .accountName(wageSheet.getAccountName())
                 .applyDateTime(null == wageSheet.getApplyDateTime() ? null : wageSheet.getApplyDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                 .bankCard(wageDetail.getBankCard())
                 .crDateTime(null == wageSheet.getCrtDateTime() ? null : wageSheet.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                 .custName(wageDetail.getCustName())
                 .fundDate(null == wageSheet.getFundType() ? null : FundTypeEnum.values()[wageSheet.getFundType()].getDesc())
-                .fundType(fundType.getFundTypeVal())
-                .groupName(group.getGroupName())
+                .fundType(wageSheet.getFundTypeDesc())
+                .groupName(wageSheet.getGroupName())
                 .idNumber(wageDetail.getIdNumber())
                 .remark(StringUtils.isBlank(wageDetail.getRemark4()) ? "" : wageDetail.getRemark4())
                 .signUrl(signUrl)
                 .wageName(wageSheet.getWageName())
-                .detailId(wageDetail.getId())
+                .detailId(wageDetail.getDetailId())
                 .amt(null == wageDetail.getRealTotalAmt() ? BigDecimal.ZERO : wageDetail.getRealTotalAmt())
                 .build();
         log.info("=====> PDF 回单数据 pdfReq:{}", JacksonUtil.objectToJson(dto));
