@@ -37,18 +37,3 @@ management:
       enabled: true
     db:
       enabled: false
-
-feign:
-  client:
-    config:
-      default:
-        #connectTimeout: 5000
-        #readTimeout: 5000
-        # NONE  BASIC   HEADRES  FULL
-        loggerLevel: FULL
-  #使用httpclient 连接池
-  httpclient:
-
-  # 开始熔断、超时时间
-  hystrix:
-    enabled: false

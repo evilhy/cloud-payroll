@@ -126,10 +126,10 @@ merchants:
         - NEWUP
 
 #设置feign调用超时时间
-ribbon:
-  ReadTimeout: 30000
-  ConnectTimeout: 30000
-  maxAutoRetries: 0
+#ribbon:
+#  ReadTimeout: 30000
+#  ConnectTimeout: 30000
+#  maxAutoRetries: 0
 
 ##禁用feign熔断
 #feign:
