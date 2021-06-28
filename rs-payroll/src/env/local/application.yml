@@ -18,7 +18,7 @@ spring:
     host: 10.5.0.182
     port: 6380
     password:
-    timeout: 1s
+    timeout: 100s
     lettuce:
       pool:
         max-active: 8
