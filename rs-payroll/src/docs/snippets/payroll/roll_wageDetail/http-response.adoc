@@ -1,8 +1,8 @@
 [source,http,options="nowrap"]
 ----
 HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 2
+Content-Type: application/json
+Content-Length: 1045
 
-[]
+[{"wageHeadDTO":{"headIndex":0,"heads":[{"colName":"姓名","colNum":[0],"type":null,"hidden":true},{"colName":"身份证号","colNum":[1],"type":null,"hidden":true},{"colName":"银行卡号","colNum":[2],"type":null,"hidden":true},{"colName":"实发金额","colNum":[3],"type":null,"hidden":true}],"doubleRow":true},"wageShowDTO":{"isShow0":1,"isSign":1,"isReceipt":1,"receiptDay":10,"grantName":"上海市好麦多食品有限公司"},"wageDetailId":"3b9e9f06714a40129f6ddd500504bc87","bankName":"华夏银行","cardNo":"6230202013350302","wageName":"9月份工资代发","realAmt":30,"entName":"上海市好麦多食品有限公司","groupName":"上海市好麦多食品有限公司","groupId":"9acc5a2ce2a34947b21042a11eb72f13","pushDateTime":1624250712495,"receiptStautus":3,"content":[{"colNum":0,"value":"白浅浅"},{"colNum":1,"value":"367866199309052077"},{"colNum":2,"value":"6230202013350302"},{"colNum":3,"value":"30"}],"differRealAmt":0,"payStatus":"1","skinUrl":"https://wxp.cardpu.com/upload/image/20200910_red.png","sign":null}]
 ----

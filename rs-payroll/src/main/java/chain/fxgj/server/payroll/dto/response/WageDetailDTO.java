@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.dto.response;
 
-import chain.fxgj.server.payroll.constant.DictEnums.IsStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -17,7 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WageDetailDTO {
     /**
      * 工资条表头
@@ -85,6 +84,11 @@ public class WageDetailDTO {
      */
     private String skinUrl;
 
+    /**
+     * 回执签名
+     */
+    private String sign;
+
     // 切库注释
 //    public WageDetailDTO(WageDetailInfo wageDetailInfo) {
 //        this.wageDetailId = wageDetailInfo.getId();
@@ -112,6 +116,10 @@ public class WageDetailDTO {
          */
         Integer isShow0;
         /**
+         * 是否签名 0否 1是
+         */
+        Integer isSign;
+        /**
          * 是否开启回执功能
          */
         Integer isReceipt;
@@ -123,15 +131,14 @@ public class WageDetailDTO {
          * 工资发放机构名
          */
         String grantName;
-// 切库注释
+
+        // 切库注释
 //        public WageShowDTO(WageShowInfo wageShowInfo) {
 //            this.isShow0 = wageShowInfo.getIsShow0() == null ? null : wageShowInfo.getIsShow0().getCode();
 //            this.isReceipt = wageShowInfo.getIsReceipt() == null ? IsStatusEnum.YES.getCode() : wageShowInfo.getIsReceipt().getCode();
 //            this.receiptDay = wageShowInfo.getReceiptDay();
 //            this.grantName=wageShowInfo.getGrantName();
 //        }
-
-
     }
 
     /**

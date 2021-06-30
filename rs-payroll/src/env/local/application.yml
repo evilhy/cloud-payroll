@@ -18,7 +18,7 @@ spring:
     host: 10.5.0.182
     port: 6380
     password:
-    timeout: 1s
+    timeout: 100s
     lettuce:
       pool:
         max-active: 8
@@ -68,6 +68,9 @@ payroll:
   fxgjSm4Key: 934F17AE93CB7F23BE347849C87EED51
   #放薪管家 sm4加密、解密key [线下分配]
   fxgjSm4Iv: 9wHFOMfs2Y8JeF8U
+
+  ###签名回执地址
+  signPdfPath: /webserver/www/down/emp/sign/
 
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
@@ -123,10 +126,10 @@ merchants:
         - NEWUP
 
 #设置feign调用超时时间
-ribbon:
-  ReadTimeout: 30000
-  ConnectTimeout: 30000
-  maxAutoRetries: 0
+#ribbon:
+#  ReadTimeout: 30000
+#  ConnectTimeout: 30000
+#  maxAutoRetries: 0
 
 ##禁用feign熔断
 #feign:

@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+wageDetailId+`
+|`+String+`
+|`+明细ID+`
+
+|`+wageSheetId+`
+|`+String+`
+|`+方案ID+`
+
+|`+sign+`
+|`+String+`
+|`+签名（Base64）+`
+
+|===
