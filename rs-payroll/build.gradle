@@ -125,7 +125,7 @@ dependencies {
     //compile('chain:payroll-client:1.1.10')
     //compile('chain:wage-client:1.1.4')
     compile('chain:wage-client:2.0.0-SNAPSHOT')
-    compile('chain:payroll-client:2.0.0-SNAPSHOT')
+    compile('chain:payroll-client:2.0.0')
     
     compile 'chain.wisales:wisales-client:1.0.2.75'
     compile('chain.fxgj:fxgj-ent-client:1.0.24')
@@ -138,7 +138,7 @@ dependencies {
     //红包增加
     compile("chain:activity-client:1.0.1-SNAPSHOT")
     compile("chain.fxgj:fxgj-account-client:1.0.16")
-    compile("chain.fxgj:fxgj-wage-client:1.0.22-SNAPSHOT")
+    compile("chain.fxgj:fxgj-wage-client:1.0.23")
 
     implementation(
             //https://github.com/spring-projects/spring-boot/blob/v2.2.2.RELEASE/spring-boot-project/spring-boot-dependencies/pom.xml
