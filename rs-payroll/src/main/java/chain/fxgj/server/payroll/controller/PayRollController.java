@@ -34,6 +34,7 @@ import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.FundDateEnum;
 import chain.utils.fxgj.constant.DictEnums.FundTypeEnum;
 import chain.wage.core.dto.tiger.WageFundTypeDTO;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
@@ -1054,7 +1055,7 @@ public class PayRollController {
                 .bankCard(wageDetail.getBankCard())
                 .crDateTime(null == wageSheet.getCrtDateTime() ? null : wageSheet.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                 .custName(wageDetail.getCustName())
-                .fundDate(null == wageSheet.getFundType() ? null : FundTypeEnum.values()[wageSheet.getFundType()].getDesc())
+                .fundDate(null == wageSheet.getFundDate() ? null : wageSheet.getFundDate().getDesc())
                 .fundType(wageSheet.getFundTypeDesc())
                 .groupName(wageSheet.getGroupName())
                 .idNumber(wageDetail.getIdNumber())
