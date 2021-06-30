@@ -1031,6 +1031,11 @@ public class PayRollController {
 
 
         //是否代发完成，并且完成签名
+        if (StringUtils.isBlank(wageSheet.getAccount()) || StringUtils.isBlank(wageSheet.getAccountName())
+                ||StringUtils.isBlank(wageSheet.getFundTypeDesc()) || StringUtils.isBlank(wageSheet.getGroupName())){
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请稍后再试！"));
+        }
+
 //        SignedReceiptDTO signedReceiptDTO = signedReceiptFeignController.findByWageDetailId(wageDetail.getId());
         if (wageDetail.getPayStatus() != chain.utils.fxgj.constant.DictEnums.PayStatusEnum.SUCCESS) {
             return null;
