@@ -37,4 +37,9 @@ public class PayrollProperties {
      * 签名回执地址
      */
     private String signPdfPath;
+
+    /**
+     * 签名回执地址
+     */
+    private String signReplacePath;
 }

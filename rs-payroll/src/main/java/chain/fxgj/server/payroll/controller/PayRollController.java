@@ -957,6 +957,8 @@ public class PayRollController {
                 log.info("====> 删除电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getDetailId(), signImg);
             }
 
+            //替换目录
+            String replace = pdfPath.replace(payrollProperties.getSignReplacePath(), "");
 
             //保存签名
             SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
@@ -965,7 +967,7 @@ public class PayRollController {
                     .entId(wageSheet.getEntId())
                     .groupId(wageSheet.getGroupId())
                     .idNumber(wageDetail.getIdNumber())
-                    .receiptPath(pdfPath)
+                    .receiptPath(replace)
 //                    .signedReceiptId(UUIDUtil.createUUID32())
                     .signImg(req.getSign())
                     .updDateTime(LocalDateTime.now())
