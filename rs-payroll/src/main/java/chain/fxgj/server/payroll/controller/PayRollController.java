@@ -3,14 +3,8 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.feign.hxinside.account.service.AccountFeignService;
-import chain.feign.hxinside.ent.service.GroupInfoServiceFeign;
-import chain.feign.hxinside.ent.service.UserGroupInfoServiceFeign;
-import chain.fxgj.account.core.dto.response.account.AccountDetailDTO;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.PayrollDBConstant;
-import chain.fxgj.ent.core.dto.request.GroupInfoVagueQueryReq;
-import chain.fxgj.ent.core.dto.response.GroupInfoResponse;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
@@ -24,7 +18,6 @@ import chain.fxgj.server.payroll.dto.response.GroupInvoiceDTO;
 import chain.fxgj.server.payroll.dto.response.Res100701;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.EmpWechatService;
-import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.util.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -33,25 +26,15 @@ import chain.payroll.client.feign.*;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
-import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
-import chain.utils.fxgj.constant.DictEnums.FundDateEnum;
-import chain.utils.fxgj.constant.DictEnums.FundTypeEnum;
-import chain.wage.core.dto.tiger.WageFundTypeDTO;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
 import chain.wage.manager.core.dto.response.WageRes100708;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
-import chain.wage.service.EmpDetailFeignService;
-import chain.wage.service.WageDownFeignService;
-import chain.wage.service.WageFeignService;
-import chain.wage.service.WageFundTypeFeignService;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
-import core.dto.request.PayrollResReceiptDTO;
 import core.dto.response.*;
-import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -75,8 +58,10 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -957,6 +942,11 @@ public class PayRollController {
                 log.info("====> 删除电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getDetailId(), signImg);
             }
 
+            //替换目录
+            log.info("=====> 替换前目录：{}", pdfPath);
+            log.info("=====> 需要替换的目录：{}", payrollProperties.getSignReplacePath());
+            String replace = pdfPath.replace(payrollProperties.getSignReplacePath(), "");
+            log.info("=====> 替换后目录：{}", replace);
 
             //保存签名
             SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
@@ -965,8 +955,99 @@ public class PayRollController {
                     .entId(wageSheet.getEntId())
                     .groupId(wageSheet.getGroupId())
                     .idNumber(wageDetail.getIdNumber())
-                    .receiptPath(pdfPath)
+                    .receiptPath(replace)
 //                    .signedReceiptId(UUIDUtil.createUUID32())
+                    .signImg(req.getSign())
+                    .updDateTime(LocalDateTime.now())
+                    .wageDetailId(wageDetail.getDetailId())
+                    .wageSheetId(wageSheet.getWageSheetId())
+                    .build();
+            signedReceiptFeignController.save(saveReq);
+
+            //回执确认
+//            receipt(wageDetail.getId());
+            return null;
+        }).subscribeOn(Schedulers.elastic()).then();
+    }
+
+    /**
+     * 保存发工资条用户签名
+     *
+     * @param req
+     * @return
+     */
+    @PostMapping("/saveSigned1")
+    @TrackLog
+    public Mono<Void> saveSigned1(@RequestBody SignedSaveReq req) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+
+            Optional.ofNullable(req.getWageSheetId()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("代发方案ID不能为空")));
+            Optional.ofNullable(req.getWageDetailId()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("企代发明细ID不能为空")));
+            Optional.ofNullable(req.getSign()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("签名不能为空")));
+
+            log.info("=====> 保存发工资条用户签名 req:{}", JsonUtil.objectToJson(req));
+
+            //获取方案
+            WageSheetDTO wageSheet = wageSheetFeignController.findById(req.getWageSheetId());
+            if (null == wageSheet) {
+                throw new ParamsIllegalException(ErrorConstant.Error0001.format("代发方案"));
+            }
+
+            //获取明细
+            int year = wageSheet.getCrtDateTime().getYear();
+            core.dto.response.wageDetail.WageDetailDTO wageDetail = wageDetailYearFeignController.findById(req.getWageDetailId(), year);
+            if (null == wageDetail) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到方案明细"));
+            }
+
+            String url = payrollProperties.getSignPdfPath() + DateTimeUtils.getDate() + "/";
+            File file1 = new File(url);
+            if (!file1.exists()) {//如果文件夹不存在
+                file1.mkdir();//创建文件夹
+            }
+
+            //生成签名图片
+            String imgStr = req.getSign().replace("data:image/png;base64,", "");
+            String signImg = url + UUIDUtil.createUUID32() + ".jpg";
+            boolean b = ImageBase64Utils.base64ToImageFile(imgStr, signImg);
+            if (!b) {
+                log.info("====> 生成电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getDetailId(), signImg);
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("生成电子签名失败"));
+            }
+
+            //生成的PDF存放路径
+            String pdfUrl = url + wageSheet.getWageSheetId() + "/";
+            File file2 = new File(pdfUrl);
+            if (!file2.exists()) {//如果文件夹不存在
+                file2.mkdir();//创建文件夹
+            }
+
+            //生成PDF
+            String pdfPath = createPDF(signImg, pdfUrl, wageSheet, wageDetail);
+
+            //删除签名图片
+            boolean delete = new File(signImg).delete();
+            if (!delete) {
+                log.info("====> 删除电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getDetailId(), signImg);
+            }
+
+            //替换目录
+            log.info("=====> 替换前目录：{}", pdfPath);
+            log.info("=====> 需要替换的目录：{}", payrollProperties.getSignReplacePath());
+            String replace = pdfPath.replace(payrollProperties.getSignReplacePath(), "");
+            log.info("=====> 替换后目录：{}", replace);
+
+            //保存签名
+            SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
+                    .crtDateTime(LocalDateTime.now())
+                    .employeeSid(wageDetail.getEmployeeSid())
+                    .entId(wageSheet.getEntId())
+                    .groupId(wageSheet.getGroupId())
+                    .idNumber(wageDetail.getIdNumber())
+                    .receiptPath(replace)
+                    .signedReceiptId("0dd0672a0ab84edca20d7c1c61720ae2")
                     .signImg(req.getSign())
                     .updDateTime(LocalDateTime.now())
                     .wageDetailId(wageDetail.getDetailId())
@@ -993,7 +1074,7 @@ public class PayRollController {
 
         //是否代发完成，并且完成签名
         if (StringUtils.isBlank(wageSheet.getAccount()) || StringUtils.isBlank(wageSheet.getAccountName())
-                ||StringUtils.isBlank(wageSheet.getFundTypeDesc()) || StringUtils.isBlank(wageSheet.getGroupName())){
+                || StringUtils.isBlank(wageSheet.getFundTypeDesc()) || StringUtils.isBlank(wageSheet.getGroupName())) {
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请稍后再试！"));
         }
 
