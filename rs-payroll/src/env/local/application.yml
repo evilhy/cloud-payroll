@@ -72,7 +72,7 @@ payroll:
   ###签名回执地址
   signPdfPath: /webserver/www/down/emp/sign/
   ###签名回执地址入库需要替换掉的路径
-  signReplacePath: /home/easysp/www/
+  signReplacePath: /webserver/
 
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
