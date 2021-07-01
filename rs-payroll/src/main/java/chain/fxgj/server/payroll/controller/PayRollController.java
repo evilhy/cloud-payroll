@@ -3,14 +3,8 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.feign.hxinside.account.service.AccountFeignService;
-import chain.feign.hxinside.ent.service.GroupInfoServiceFeign;
-import chain.feign.hxinside.ent.service.UserGroupInfoServiceFeign;
-import chain.fxgj.account.core.dto.response.account.AccountDetailDTO;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.PayrollDBConstant;
-import chain.fxgj.ent.core.dto.request.GroupInfoVagueQueryReq;
-import chain.fxgj.ent.core.dto.response.GroupInfoResponse;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
@@ -24,7 +18,6 @@ import chain.fxgj.server.payroll.dto.response.GroupInvoiceDTO;
 import chain.fxgj.server.payroll.dto.response.Res100701;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.EmpWechatService;
-import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.util.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -33,25 +26,15 @@ import chain.payroll.client.feign.*;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
-import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
-import chain.utils.fxgj.constant.DictEnums.FundDateEnum;
-import chain.utils.fxgj.constant.DictEnums.FundTypeEnum;
-import chain.wage.core.dto.tiger.WageFundTypeDTO;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
 import chain.wage.manager.core.dto.response.WageRes100708;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
-import chain.wage.service.EmpDetailFeignService;
-import chain.wage.service.WageDownFeignService;
-import chain.wage.service.WageFeignService;
-import chain.wage.service.WageFundTypeFeignService;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
-import core.dto.request.PayrollResReceiptDTO;
 import core.dto.response.*;
-import core.dto.response.inside.WageRetReceiptDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -75,8 +58,10 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -958,9 +943,10 @@ public class PayRollController {
             }
 
             //替换目录
-            log.info("=====> 替换前目录：{}",pdfPath);
+            log.info("=====> 替换前目录：{}", pdfPath);
+            log.info("=====> 需要替换的目录：{}", payrollProperties.getSignReplacePath());
             String replace = pdfPath.replace(payrollProperties.getSignReplacePath(), "");
-            log.info("=====> 替换后目录：{}",replace);
+            log.info("=====> 替换后目录：{}", replace);
 
             //保存签名
             SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
@@ -997,7 +983,7 @@ public class PayRollController {
 
         //是否代发完成，并且完成签名
         if (StringUtils.isBlank(wageSheet.getAccount()) || StringUtils.isBlank(wageSheet.getAccountName())
-                ||StringUtils.isBlank(wageSheet.getFundTypeDesc()) || StringUtils.isBlank(wageSheet.getGroupName())){
+                || StringUtils.isBlank(wageSheet.getFundTypeDesc()) || StringUtils.isBlank(wageSheet.getGroupName())) {
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请稍后再试！"));
         }
 
