@@ -958,7 +958,9 @@ public class PayRollController {
             }
 
             //替换目录
+            log.info("=====> 替换前目录：{}",pdfPath);
             String replace = pdfPath.replace(payrollProperties.getSignReplacePath(), "");
+            log.info("=====> 替换后目录：{}",replace);
 
             //保存签名
             SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
