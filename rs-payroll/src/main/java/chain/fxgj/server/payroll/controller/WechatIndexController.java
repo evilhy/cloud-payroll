@@ -9,13 +9,13 @@ import chain.fxgj.server.payroll.service.LoginLogService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.payroll.client.feign.InsideFeignController;
-import chain.payroll.client.feign.LoginLogFeignController;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +43,6 @@ public class WechatIndexController {
     @Autowired
     InsideFeignController insideFeignController;
     @Autowired
-    LoginLogFeignController loginLogFeignController;
-    @Autowired
     LoginLogService loginLogService;
 
     /**
@@ -57,7 +55,7 @@ public class WechatIndexController {
                                       @RequestHeader(value = "encry-passwd", required = false) String passwd,
                                       @RequestBody WechatCallBackDTO wechatCallBackDTO) throws Exception {
         String code = wechatCallBackDTO.getCode();
-        chain.utils.fxgj.constant.DictEnums.AppPartnerEnum appPartner = wechatCallBackDTO.getAppPartner();
+        AppPartnerEnum appPartner = wechatCallBackDTO.getAppPartner();
         MDC.put("apppartner_desc", appPartner.getDesc());
         MDC.put("apppartner", appPartner.getCode().toString());
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
@@ -77,6 +75,7 @@ public class WechatIndexController {
             //【一】根据code获取openId、accessToken
             WechatGroupEnum wechatGroup = WechatGroupEnum.valueOf(appPartner.name());
             log.info("wechatGroup:[{}][{}], code:[{}]", wechatGroup.getId(), wechatGroup.getDesc(), code);
+
             AccessTokenDTO accessTokenDTO = wechatRedisService.oauth2AccessToken(wechatGroup, code);
             log.info("accessTokenDTO:[{}]", JacksonUtil.objectToJson(accessTokenDTO));
             String openId = accessTokenDTO.getOpenid();
@@ -84,6 +83,7 @@ public class WechatIndexController {
             if (StringUtils.isEmpty(openId)) {
                 throw new ParamsIllegalException(ErrorConstant.AUTH_ERR.getErrorMsg());
             }
+
             //【二】根据openId、accessToken获取用户信息
             UserInfoDTO userInfo = wechatRedisService.getUserInfo(accessToken, openId);
             String nickName = userInfo.getNickname();
@@ -116,7 +116,7 @@ public class WechatIndexController {
             res100705.setBindStatus(EncrytorUtils.encryptField(res100705.getBindStatus(), salt, passwd));
             res100705.setSalt(salt);
             res100705.setPasswd(passwd);
-            Optional.ofNullable(insideFeignController.getSkin(jsessionId,appPartner.getCode().toString())).ifPresent(tuple->res100705.setThemeId(tuple.getThemeId()));
+            Optional.ofNullable(insideFeignController.getSkin(jsessionId, appPartner.getCode().toString())).ifPresent(tuple -> res100705.setThemeId(tuple.getThemeId()));
             log.info("res100705:[{}]", JacksonUtil.objectToJson(res100705));
 
             //异步记录登录日志
