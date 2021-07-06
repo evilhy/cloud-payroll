@@ -109,7 +109,14 @@ public class TransferUtil {
             userPrincipal.setTimeOutMinute(cacheUserPrincipal.getTimeOutMinute());
             userPrincipal.setUid(cacheUserPrincipal.getUid());
             userPrincipal.setUserName(cacheUserPrincipal.getUserName());
-            userPrincipal.setWechatId(cacheUserPrincipal.getWechatId());
+            //涉及到 密码键盘 使用
+            if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(userPrincipal.getWechatId()))) {
+                //用户 已绑定
+                cacheUserPrincipal.setWechatId(userPrincipal.getWechatId());
+            } else {
+                //用户 初次绑定时
+                cacheUserPrincipal.setWechatId(userPrincipal.getSessionId());
+            }
         }
         log.info("userPrincipal:[{}]", JacksonUtil.objectToJson(cacheUserPrincipal));
         return userPrincipal;
