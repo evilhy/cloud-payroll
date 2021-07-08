@@ -112,10 +112,10 @@ public class TransferUtil {
             //涉及到 密码键盘 使用
             if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(userPrincipal.getWechatId()))) {
                 //用户 已绑定
-                cacheUserPrincipal.setWechatId(userPrincipal.getWechatId());
+                userPrincipal.setWechatId(cacheUserPrincipal.getWechatId());
             } else {
                 //用户 初次绑定时
-                cacheUserPrincipal.setWechatId(userPrincipal.getSessionId());
+                userPrincipal.setWechatId(cacheUserPrincipal.getSessionId());
             }
         }
         log.info("userPrincipal:[{}]", JacksonUtil.objectToJson(cacheUserPrincipal));
