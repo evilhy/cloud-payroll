@@ -110,7 +110,7 @@ public class TransferUtil {
             userPrincipal.setUid(cacheUserPrincipal.getUid());
             userPrincipal.setUserName(cacheUserPrincipal.getUserName());
             //涉及到 密码键盘 使用
-            if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(userPrincipal.getWechatId()))) {
+            if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(cacheUserPrincipal.getWechatId()))) {
                 //用户 已绑定
                 userPrincipal.setWechatId(cacheUserPrincipal.getWechatId());
             } else {
