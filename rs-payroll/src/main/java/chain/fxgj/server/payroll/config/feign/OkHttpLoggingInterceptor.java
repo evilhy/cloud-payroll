@@ -40,7 +40,7 @@ public class OkHttpLoggingInterceptor implements Interceptor {
 
         log.info("===>接收url: 【{}】", response.request().url());
         log.info("===>响应header: 【{}】", response.headers());
-        log.info("===>返回信息: 【{}】", responseBody.string());
+        log.debug("===>返回信息: 【{}】", responseBody.string());
         log.info("===>耗时: 【{}ms】", (t2 - t1) / 1e6d);
 
         return response;
