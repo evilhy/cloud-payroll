@@ -18,7 +18,9 @@ ext {
 
     //jvm
     //JVM_ARGS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5000,-Dfile.encoding=utf-8,-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m'
-    JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m,-XX:+DisableExplicitGC,-XX:+UseConcMarkSweepGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseFastAccessorMethods,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
+    //1.8
+    //JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m,-XX:+DisableExplicitGC,-XX:+UseConcMarkSweepGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseFastAccessorMethods,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
+    JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:+DisableExplicitGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseFastAccessorMethods,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
 
     jvmArg = [
             //"-Xms128m".toString(),
