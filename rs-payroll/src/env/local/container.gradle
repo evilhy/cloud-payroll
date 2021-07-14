@@ -7,8 +7,8 @@ ext {
     //BUILD_TIMESTAMP=env.BUILD_TIMESTAMP
 
     //jdk基础镜像
-    JdkImage = '10.5.0.103/service/java:apline-openjdk-11.0.9'
-    //JdkImage = '10.5.0.103/service/java:alpine-jdk-1.8.231-utf8'
+    //JdkImage = '10.5.0.103/service/java:apline-openjdk-11.0.9'
+    JdkImage = '10.5.0.103/service/java:alpine-jdk-1.8.231-utf8'
 
     //harbor仓库地址
     HARBOR='10.5.0.103'
@@ -19,9 +19,9 @@ ext {
     //jvm
     //JVM_ARGS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5000,-Dfile.encoding=utf-8,-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m'
     //1.8
-    //JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m,-XX:+DisableExplicitGC,-XX:+UseConcMarkSweepGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseFastAccessorMethods,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
+    JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m,-XX:+DisableExplicitGC,-XX:+UseConcMarkSweepGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseFastAccessorMethods,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
     //11
-    JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:+DisableExplicitGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
+    //JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:+DisableExplicitGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
 
     jvmArg = [
             //"-Xms128m".toString(),
