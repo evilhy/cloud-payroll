@@ -1,0 +1,8 @@
+.+/roll/checkCardBin/{cardNo}+
+|===
+|Parameter|Description
+
+|`+cardNo+`
+|银行卡号
+
+|===

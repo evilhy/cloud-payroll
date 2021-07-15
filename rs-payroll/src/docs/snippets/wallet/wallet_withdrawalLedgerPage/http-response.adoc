@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 942
+
+{"pageNum":1,"pageSize":1,"totalElements":1,"totalPages":1,"last":true,"first":true,"content":[{"withdrawalLedgerId":"e75d4557cea84269a9ff18f5925d4683","entId":"a0f60ab285fb4fc997fc1d7da0822d3b","accountId":"8f02079dce1b49a0b1b9c4f5c16ceb16","account":"10250000003208171","accountStar":"1025********8171","accountName":"张三","accountOpenBank":"华夏银行","custName":"张三","idNumber":"370782199612200038","transAmount":12000.00,"employeeCardNo":"6230200013873745","walletNumber":"818010100100065002","openBank":"华夏银行","issueTime":1626330899814,"fundType":0,"fundTypeVal":"工资","fundDate":1,"fundDateVal":"1月份","payDateTime":192299361314600,"withdrawalStatus":0,"withdrawalStatusVal":"待提现","remark":"这是备注......","year":2021,"month":2,"crtDateTime":1626330899814,"updDateTime":192299361360800,"accountStatus":0,"accountStatusVal":"正常","bankClose":false}],"rankNo":0,"sum":null,"tjNum":null,"tjSum":null}
+----

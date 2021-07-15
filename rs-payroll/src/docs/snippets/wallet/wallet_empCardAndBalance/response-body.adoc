@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"cardNum":2,"employeeWalletId":"519f378471c24f2e86783a6b93349b18","walletNumber":"fxgj-000000001000000","balance":50000.00,"availableAmount":30000.00,"frozenAmount":20000.00,"withdrawStatus":0,"withdrawStatusVal":"待提现","salt":"73c6f7ae1b0545ad95dbd8630c4a06c8","passwd":"c65888c1cced414082990e1edea92d2f"}
+----

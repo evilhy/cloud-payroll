@@ -1,6 +1,6 @@
 [source,bash]
 ----
-$ curl 'http://localhost:8080/wallet/balance' -i -X POST \
-    -H 'Content-Type: application/json' \
-    -d '{"idNumber":"330123198604198875"}'
+$ curl 'http://localhost:8080/wallet/balance' -i -X GET \
+    -H 'jsessionId: 646ddb2ab67f484f95f64bcfba675986' \
+    -H 'ent-id: 4a474f558c644407b9c55ba4d884d1db'
 ----

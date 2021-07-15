@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.feign.hxinside.ent.service.CardbinServiceFeign;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.PayrollDBConstant;
 import chain.fxgj.feign.client.PayRollFeignService;
@@ -1164,5 +1165,35 @@ public class PayRollController {
             log.error("个人pdf【电子签名回执】生成失败", e);
             throw new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.WZWAGE_013.getErrorMsg());
         }
+    }
+
+
+    /**
+     * 查询银行卡卡bin信息
+     *
+     * @param cardNo
+     * @return
+     */
+    @GetMapping("/checkCardBin/{cardNo}")
+    @TrackLog
+    @PermitAll
+    public Mono<CheckCardBinRes> checkCardBin(@PathVariable("cardNo") String cardNo) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            Optional.ofNullable(cardNo).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("银行卡号不能为空")));
+            log.info("=====> /roll/checkCardBin 查询银行卡卡bin信息 cardNo:{}", cardNo);
+
+            //TODO 文档生成
+
+            return CheckCardBinRes.builder()
+                    .binNum("406365")
+                    .cardName("广发银行股份有限公司")
+                    .cardNoLen(6)
+                    .issuerCode("03060000")
+                    .issuerFullName("广东发展银行股份有限公司")
+                    .issuerName("广发银行")
+                    .build();
+        }).subscribeOn(Schedulers.elastic());
     }
 }

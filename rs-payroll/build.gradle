@@ -204,38 +204,53 @@ dependencies {
 //        diagram.use()
 //    }
 //}
+//asciidoctor {
+//    logDocuments true
+//    //sourceDir("src/docs/asciidoc")
+//    outputDir file("build/docs/")
+//    inputs.dir docsSnippetsDir
+//    sources {
+//        include 'insideAPI.adoc'
+//    }
+//    baseDirFollowsSourceDir()
+//    configurations("asciidoctor")
+//    options doctype: 'book', ruby: 'erubis'
+//    attributes 'snippets': docsSnippetsDir,
+//            //'release': "${RELEASE}",
+//            'revdate': releaseTime()
+//    doFirst {
+//        copy {
+//            from "${docsSnippetsDir}"
+//            into "${snippetsDir}"
+//        }
+//    }
+//    doLast {
+//        copy {
+//            from 'build/docs/'
+//            into "src/main/resources/static/docs"
+//            include '*.html', '*.png'
+//        }
+//    }
+//}
 asciidoctor {
-    logDocuments true
-    //sourceDir("src/docs/asciidoc")
-    outputDir file("build/docs/")
-    inputs.dir docsSnippetsDir
+    outputDir "${buildDir}/asciidoc"
     sources {
         include 'insideAPI.adoc'
     }
-    baseDirFollowsSourceDir()
-    configurations("asciidoctor")
     options doctype: 'book', ruby: 'erubis'
     attributes 'snippets': docsSnippetsDir,
-            //'release': "${RELEASE}",
-            'revdate': releaseTime()
-    doFirst {
-        copy {
-            from "${docsSnippetsDir}"
-            into "${snippetsDir}"
-        }
-    }
-    doLast {
-        copy {
-            from 'build/docs/'
-            into "src/main/resources/static/docs"
-            include '*.html', '*.png'
-        }
-    }
+            'backends': "pdf"
 }
 /** end asciidoc **/
 
 test {
-    enabled = true
+    outputs.dir snippetsDir
+    doLast {
+        copy {
+            from "${snippetsDir}"
+            into "${docsSnippetsDir}"
+        }
+    }
 }
 
 //打包

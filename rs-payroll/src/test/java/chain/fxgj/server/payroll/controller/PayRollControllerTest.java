@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.fxgj.server.payroll.JavaDocReader;
 import chain.fxgj.server.payroll.dto.request.SignedSaveReq;
+import chain.fxgj.server.payroll.dto.response.CheckCardBinRes;
 import chain.fxgj.server.payroll.dto.response.WageDetailDTO;
 import chain.fxgj.server.payroll.dto.response.WageHeadDTO;
 import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
@@ -23,6 +24,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
 
@@ -106,6 +109,26 @@ public class PayRollControllerTest {
                                 .andWithPrefix("content.[].", JavaDocReader.javaDoc(WageDetailDTO.Content.class))
                                 .andWithPrefix("wageHeadDTO.", JavaDocReader.javaDoc(WageHeadDTO.class))
                                 .andWithPrefix("wageHeadDTO.heads.[]", JavaDocReader.javaDoc(WageHeadDTO.Cell.class))
+                ));
+    }
+
+    /**
+     * 查询银行卡卡bin信息
+     */
+    @Test
+    public void checkCardBin() {
+        String cardNo = "4063650000065623";
+        webTestClient.get()
+                .uri("/roll/checkCardBin/{cardNo}",  cardNo)
+                .header("jsession-id", UUIDUtil.createUUID32())
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(String.class)//返回是什么类型的对象
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("roll_checkCardBin",
+                        pathParameters(parameterWithName("cardNo").description("银行卡号")),
+                        relaxedResponseFields(JavaDocReader.javaDoc(CheckCardBinRes.class))
                 ));
     }
 }

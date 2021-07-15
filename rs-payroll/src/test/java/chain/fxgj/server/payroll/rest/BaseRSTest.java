@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.rest;
 
-import chain.fxgj.server.payroll.web.UserPrincipal;
+import chain.fxgj.server.payroll.JavaDocReader;
+import chain.fxgj.server.payroll.dto.SelectListDTO;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -23,6 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
 
 /**
@@ -71,6 +76,7 @@ public class BaseRSTest {
     @After
     public void after() throws Exception {
     }
+
     public void login() {
         sessionId = UUIDUtil.createUUID32();
         String openId = "oFnSLv0w4nipfwH0hFBwBimXjleY";
@@ -82,5 +88,22 @@ public class BaseRSTest {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    /**
+     * 数据字典
+     */
+    @Test
+    public void dict() {
+        sessionId = UUIDUtil.createUUID32();
+        String id = "WithdrawalStatusEnum";
+        webTestClient.get().uri("/base/{id}/dictItem", id)
+                .header("jsessionId", sessionId)
+                .exchange().expectStatus().isOk()
+                .expectBody()
+                .consumeWith(document("base_dict",
+                        pathParameters(parameterWithName("id").description("字典kEY")),
+                        relaxedResponseFields(JavaDocReader.javaDoc(SelectListDTO.class))
+                ));
     }
 }

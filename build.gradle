@@ -172,7 +172,7 @@ subprojects {
         testCompile('junit:junit:4.12')
         testCompile('pl.pragmatists:JUnitParams:1.1.1')
 
-        compile('chain:utils-fxgj:1.0.15')
+        compile('chain:utils-fxgj:1.0.17-SNAPSHOT')
 
 
         //compile('chain:cloud-common:1.0.13')
