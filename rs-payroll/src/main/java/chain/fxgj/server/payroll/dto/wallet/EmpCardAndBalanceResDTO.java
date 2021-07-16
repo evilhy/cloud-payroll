@@ -43,17 +43,17 @@ public class EmpCardAndBalanceResDTO {
     /**
      * 钱包总余额
      */
-    private BigDecimal balance;
+    private String balance;
 
     /**
      * 可用余额
      */
-    private BigDecimal availableAmount;
+    private String availableAmount;
 
     /**
      * 冻结金额
      */
-    private BigDecimal frozenAmount;
+    private String frozenAmount;
 
     /**
      *是否启用员工提现（0.停用 1.启用）

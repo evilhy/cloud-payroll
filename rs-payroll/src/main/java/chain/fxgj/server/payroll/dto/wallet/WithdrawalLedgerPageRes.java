@@ -63,7 +63,7 @@ public class WithdrawalLedgerPageRes {
     /**
      * 收款金额
      */
-    private BigDecimal transAmount;
+    private String transAmount;
     /**
      * 收款卡号
      */
@@ -143,4 +143,13 @@ public class WithdrawalLedgerPageRes {
      * 是否收市
      */
     boolean bankClose;
+    /**
+     * salt
+     */
+    private String salt;
+
+    /**
+     * password
+     */
+    private String passwd;
 }

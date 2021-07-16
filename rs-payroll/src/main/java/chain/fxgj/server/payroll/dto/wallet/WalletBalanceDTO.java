@@ -27,13 +27,21 @@ public class WalletBalanceDTO {
     /**
      * 总余额
      */
-    private BigDecimal totalAmount;
+    private String totalAmount;
     /**
      * 可用余额
      */
-    private BigDecimal availableAmount;
+    private String availableAmount;
     /**
      * 冻结金额
      */
-    private BigDecimal frozenAmount;
+    private String frozenAmount;
+    /**
+     * salt
+     */
+    private String salt;\
+    /**
+     * password
+     */
+    private String passwd;
 }

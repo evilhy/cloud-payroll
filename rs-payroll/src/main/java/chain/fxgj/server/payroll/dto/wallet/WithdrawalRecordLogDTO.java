@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
-
 /**
  * @Description:提现记录
  * @Author: du
@@ -34,7 +32,7 @@ public class WithdrawalRecordLogDTO {
     /**
      * 提现金额
      */
-    private BigDecimal transAmount;
+    private String transAmount;
     /**
      * 收款卡号
      */

@@ -43,6 +43,7 @@ import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.request.empCard.EmployeeCardQueryReq;
 import core.dto.response.*;
+import core.dto.response.cardbin.CardbinQueRes;
 import core.dto.response.empCard.EmployeeCardDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
@@ -113,6 +114,8 @@ public class PayRollController {
     GroupInfoFeignService groupInfoFeignService;
     @Autowired
     EnterpriseFeignService enterpriseFeignService;
+    @Autowired
+    CardBinFeignService cardBinFeignService;
 
     /**
      * 服务当前时间
@@ -1239,15 +1242,15 @@ public class PayRollController {
             Optional.ofNullable(cardNo).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("银行卡号不能为空")));
             log.info("=====> /roll/checkCardBin 查询银行卡卡bin信息 cardNo:{}", cardNo);
 
-            //TODO 文档生成
+            CardbinQueRes cardbinQueRes = cardBinFeignService.cardBinByBankCard(cardNo);
 
             return CheckCardBinRes.builder()
-                    .binNum("406365")
-                    .cardName("广发银行股份有限公司")
-                    .cardNoLen(6)
-                    .issuerCode("03060000")
-                    .issuerFullName("广东发展银行股份有限公司")
-                    .issuerName("广发银行")
+                    .binNum(cardbinQueRes.getBinNum())
+                    .cardName(cardbinQueRes.getCardName())
+                    .cardNoLen(cardbinQueRes.getCardNoLen())
+                    .issuerCode(cardbinQueRes.getIssuerCode())
+                    .issuerFullName(cardbinQueRes.getIssuerFullName())
+                    .issuerName(cardbinQueRes.getIssuerName())
                     .build();
         }).subscribeOn(Schedulers.elastic());
     }

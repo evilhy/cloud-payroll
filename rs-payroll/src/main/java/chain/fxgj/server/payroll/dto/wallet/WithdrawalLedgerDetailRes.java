@@ -91,7 +91,7 @@ public class WithdrawalLedgerDetailRes {
     /**
      * 收款金额
      */
-    private BigDecimal transAmount;
+    private String transAmount;
     /**
      * 收款卡号
      */
@@ -148,4 +148,13 @@ public class WithdrawalLedgerDetailRes {
      * 交易流水号
      */
     private String transNo;
+    /**
+     * salt
+     */
+    private String salt;
+
+    /**
+     * password
+     */
+    private String passwd;
 }
