@@ -3,9 +3,13 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.feign.hxinside.ent.service.CardbinServiceFeign;
+import chain.feign.hxinside.ent.service.EmployeeInfoServiceFeign;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.PayrollDBConstant;
+import chain.fxgj.ent.core.dto.request.EmployeeQueryRequest;
+import chain.fxgj.ent.core.dto.response.EmployeeInfoRes;
+import chain.fxgj.feign.client.EnterpriseFeignService;
+import chain.fxgj.feign.client.GroupInfoFeignService;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
@@ -29,13 +33,17 @@ import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
 import chain.wage.manager.core.dto.response.WageRes100708;
+import chain.wage.manager.core.dto.response.enterprise.EntErpriseInfoDTO;
+import chain.wage.manager.core.dto.response.group.GroupInfoDTO;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
+import core.dto.request.empCard.EmployeeCardQueryReq;
 import core.dto.response.*;
+import core.dto.response.empCard.EmployeeCardDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -59,10 +67,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -99,6 +105,14 @@ public class PayRollController {
     WageDetailYearFeignController wageDetailYearFeignController;
     @Autowired
     SignedReceiptFeignController signedReceiptFeignController;
+    @Autowired
+    EmployeeCardFeignService employeeCardFeignService;
+    @Autowired
+    EmployeeInfoServiceFeign employeeInfoServiceFeign;
+    @Autowired
+    GroupInfoFeignService groupInfoFeignService;
+    @Autowired
+    EnterpriseFeignService enterpriseFeignService;
 
     /**
      * 服务当前时间
@@ -486,6 +500,47 @@ public class PayRollController {
                     item.setOldCardNo(EncrytorUtils.encryptField(item.getOldCardNo(), salt, passwd));
                     item.setSalt(salt);
                     item.setPasswd(passwd);
+
+                    //查询员工
+                    EmployeeQueryRequest employeeQueryRequest = EmployeeQueryRequest.builder()
+                            .entId(entId1)
+                            .idNumber(idNumber1)
+                            .build();
+                    List<EmployeeInfoRes> employeeInfoRes = employeeInfoServiceFeign.empInfoList(employeeQueryRequest);
+                    if (null == employeeInfoRes || employeeInfoRes.size() <= 0) {
+                        continue;
+                    }
+                    List<String> employeeIds = new ArrayList<>();
+                    Map<String, EmployeeInfoRes> employeeInfoResMap = new HashMap<>();
+                    for (EmployeeInfoRes emp : employeeInfoRes
+                    ) {
+                        employeeIds.add(emp.getEmployeeId());
+                        employeeInfoResMap.put(emp.getEmployeeId(), emp);
+                    }
+
+                    //查询员工卡
+                    EmployeeCardQueryReq employeeCardQueryReq = EmployeeCardQueryReq.builder()
+                            .employeeIds(employeeIds)
+                            .cardNo(item.getCardNo())
+                            .build();
+                    List<EmployeeCardDTO> cardDTOS = employeeCardFeignService.query(employeeCardQueryReq);
+                    if (null == cardDTOS || cardDTOS.size() <= 0) {
+                        EmployeeCardDTO employeeCardDTO = cardDTOS.get(0);
+
+                        //插卡人
+                        EmployeeInfoRes employee = employeeInfoResMap.get(employeeCardDTO.getEmployeeId());
+                        if (null != employee) {
+                            item.setUserName(employee.getEmployeeName());
+
+                            //查询首次添加的机构
+                            GroupInfoDTO groupInfoDTO = groupInfoFeignService.findById(employee.getGroupId());
+                            item.setGroupName(null == groupInfoDTO ? null : groupInfoDTO.getGroupName());
+
+                            //查询首次添加的企业
+                            EntErpriseInfoDTO erpriseInfoDTO = enterpriseFeignService.findById(employee.getEntId());
+                            item.setEntName(null == erpriseInfoDTO ? null : erpriseInfoDTO.getEntName());
+                        }
+                    }
                 }
             }
             log.info("加密返回empCard.payrollBankCardDTOS:[{}]", JacksonUtil.objectToJson(payrollBankCardDTOS));
