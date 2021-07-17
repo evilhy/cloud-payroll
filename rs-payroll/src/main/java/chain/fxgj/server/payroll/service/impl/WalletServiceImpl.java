@@ -122,6 +122,7 @@ public class WalletServiceImpl implements WalletService {
                 .idNumber(idNumber)
                 .custName(custName)
                 .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                .type(EmpVirtualAccountTypeEnum.ElectronicWallet)
                 .build();
         List<EmployeeWalletDTO> walletDTOS = employeeWalletInfoServiceFeign.list(walletQueryReq);
         if (null == walletDTOS || walletDTOS.size() <= 0) {
@@ -185,6 +186,7 @@ public class WalletServiceImpl implements WalletService {
                 .idNumber(idNumber)
                 .custName(name)
                 .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                .type(EmpVirtualAccountTypeEnum.ElectronicWallet)
                 .build();
         List<EmployeeWalletDTO> walletDTOS = employeeWalletInfoServiceFeign.list(walletQueryReq);
 
@@ -372,6 +374,7 @@ public class WalletServiceImpl implements WalletService {
         EntErpriseInfoDTO erpriseInfoDTO = enterpriseFeignService.findById(entId);
 
         return WithdrawalLedgerDetailRes.builder()
+                .walletNumber(employeeWalletDTO.getWalletNumber())
                 .withdrawStatus(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getCode())
                 .withdrawStatusVal(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getDesc())
                 .year(ledgerDTO.getYear())

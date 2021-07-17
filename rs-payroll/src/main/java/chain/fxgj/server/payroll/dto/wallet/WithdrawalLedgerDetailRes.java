@@ -105,6 +105,10 @@ public class WithdrawalLedgerDetailRes {
      */
     private String idNumber;
     /**
+     * 收款钱包帐号/二类户账号
+     */
+    private String walletNumber;
+    /**
      * 收款金额
      */
     private String transAmount;
