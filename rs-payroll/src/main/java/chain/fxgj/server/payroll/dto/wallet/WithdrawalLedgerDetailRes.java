@@ -33,6 +33,14 @@ public class WithdrawalLedgerDetailRes {
      */
     private String entId;
     /**
+     *是否启用员工提现（0.停用 1.启用）
+     */
+    private Integer withdrawStatus;
+    /**
+     *是否启用员工提现  描述
+     */
+    private String withdrawStatusVal;
+    /**
      * 方案名称
      */
     private String wageSheetName;

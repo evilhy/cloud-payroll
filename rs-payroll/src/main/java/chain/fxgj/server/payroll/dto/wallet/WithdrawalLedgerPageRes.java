@@ -77,6 +77,10 @@ public class WithdrawalLedgerPageRes {
      */
     private String openBank;
     /**
+     * 方案名称
+     */
+    private String wageSheetName;
+    /**
      * 发放时间
      */
     private Long issueTime;
@@ -128,17 +132,14 @@ public class WithdrawalLedgerPageRes {
      * 修改时间
      */
     private Long updDateTime;
-
     /**
      * 付款账户状态(0:正常、1:异常)
      */
     private Integer accountStatus;
-
     /**
      * 付款账户状态 描述
      */
     private String accountStatusVal;
-
     /**
      * 是否收市
      */
@@ -147,7 +148,6 @@ public class WithdrawalLedgerPageRes {
      * salt
      */
     private String salt;
-
     /**
      * password
      */

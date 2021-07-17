@@ -9,9 +9,7 @@ import chain.fxgj.server.payroll.service.WalletService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.payroll.client.feign.*;
 import chain.utils.commons.JsonUtil;
-import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
-import chain.utils.fxgj.constant.DictEnums.TransDealStatusEnum;
-import chain.utils.fxgj.constant.DictEnums.WithdrawalStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.*;
 import chain.wage.manager.core.dto.response.entAccount.EntAccountDTO;
 import chain.wage.manager.core.dto.response.enterprise.EntErpriseInfoDTO;
 import core.dto.ErrorConstant;
@@ -26,6 +24,7 @@ import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogQueryReq;
 import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogSaveReq;
 import core.dto.response.employee.EmployeeDTO;
 import core.dto.response.employeeWallet.EmployeeWalletDTO;
+import core.dto.response.groupAttach.GroupAttachInfoDTO;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.response.withdrawalLedger.WithdrawalLedgerDTO;
 import core.dto.response.withdrawalRecordLog.WithdrawalRecordLogDTO;
@@ -251,6 +250,13 @@ public class WalletServiceImpl implements WalletService {
                 //账户信息
                 String accountId = res.getAccountId();
                 EntAccountDTO entAccountDTO = entAccountInfoFeignService.findById(accountId);
+                //账户状态
+                Integer accountStatus = 0;
+                String accountStatusVal = "正常";
+                if (null != entAccountDTO && AccountStatusEnum.FROZENFROZEN.getCode().equals(entAccountDTO.getAccountStatus())) {
+                    accountStatus = 1;
+                    accountStatusVal = "异常";
+                }
 
                 WithdrawalLedgerPageRes pageRes = WithdrawalLedgerPageRes.builder()
                         .year(res.getYear())
@@ -270,12 +276,13 @@ public class WalletServiceImpl implements WalletService {
                         .fundType(null == wageSheetDTO ? null : wageSheetDTO.getFundType())
                         .fundDateVal(null == wageSheetDTO ? null : wageSheetDTO.getFundDate().getDesc())
                         .fundDate(null == wageSheetDTO ? null : wageSheetDTO.getFundDate().getCode())
+                        .wageSheetName(null == wageSheetDTO ? null : wageSheetDTO.getWageName())
                         .entId(res.getEntId())
                         .employeeCardNo(employeeCardNo)
                         .custName(EncrytorUtils.encryptField(res.getCustName(), salt, passwd))
                         .crtDateTime(null == res.getCrtDateTime() ? null : res.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-                        .accountStatus(null == entAccountDTO ? null : entAccountDTO.getAccountStatus())
-                        .accountStatusVal(null == entAccountDTO ? null : entAccountDTO.getAccountStatusVal())
+                        .accountStatus(accountStatus)
+                        .accountStatusVal(accountStatusVal)
                         .accountOpenBank(null == entAccountDTO ? null : entAccountDTO.getAccountOpenBank())
                         .accountStar(null == entAccountDTO ? null : entAccountDTO.getAccountStar())
                         .accountName(null == entAccountDTO ? null : entAccountDTO.getAccountName())
@@ -358,6 +365,8 @@ public class WalletServiceImpl implements WalletService {
         EntErpriseInfoDTO erpriseInfoDTO = enterpriseFeignService.findById(entId);
 
         return WithdrawalLedgerDetailRes.builder()
+                .withdrawStatus(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getCode())
+                .withdrawStatusVal(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getDesc())
                 .year(ledgerDTO.getYear())
                 .withdrawalStatusVal(null == ledgerDTO.getWithdrawalStatus() ? null : ledgerDTO.getWithdrawalStatus().getDesc())
                 .withdrawalStatus(null == ledgerDTO.getWithdrawalStatus() ? null : ledgerDTO.getWithdrawalStatus().getCode())
@@ -491,10 +500,18 @@ public class WalletServiceImpl implements WalletService {
         }
         BigDecimal transAmount = ledgerDTO.getTransAmount();
 
+        //单位是否开启提现功能
+        String groupId = ledgerDTO.getGroupId();
+        GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
+        if (null == groupAttachInfoDTO || ModelStatusEnum.ENSABLE != groupAttachInfoDTO.getWalletStatus()) {
+            log.info("=====> 当前用工单位提现功能已关闭 groupId:{}, groupAttachInfoDTO:{}", groupId, JsonUtil.objectToJson(groupAttachInfoDTO));
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("当前用工单位提现功能已关闭"));
+        }
+
         //查询钱包
         String employeeWalletId = ledgerDTO.getEmployeeWalletId();
         EmployeeWalletDTO employeeWalletDTO = employeeWalletInfoServiceFeign.findById(employeeWalletId);
-        if(null == employeeWalletDTO){
+        if (null == employeeWalletDTO) {
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("钱包信息不存在"));
         }
 
@@ -562,12 +579,12 @@ public class WalletServiceImpl implements WalletService {
         EmployeeWalletDTO walletDTO = employeeWalletInfoServiceFeign.save(walletSaveReq);
 
         //TODO 调用接口发送到银行
-
-
         //预计到帐时间
         LocalDateTime predictDateTime = null;
         //流水号
-        String transNo =null;
+        String transNo = null;
+
+
 
         //更新提现记录
         WithdrawalRecordLogSaveReq logSaveReq = WithdrawalRecordLogSaveReq.builder()
