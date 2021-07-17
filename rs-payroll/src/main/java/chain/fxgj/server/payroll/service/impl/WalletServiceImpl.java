@@ -349,6 +349,13 @@ public class WalletServiceImpl implements WalletService {
         //账户信息
         String accountId = ledgerDTO.getAccountId();
         EntAccountDTO entAccountDTO = entAccountInfoFeignService.findById(accountId);
+        //账户状态
+        Integer accountStatus = 0;
+        String accountStatusVal = "正常";
+        if (null != entAccountDTO && AccountStatusEnum.FROZENFROZEN.getCode().equals(entAccountDTO.getAccountStatus())) {
+            accountStatus = 1;
+            accountStatusVal = "异常";
+        }
 
         //获取最后一次的提现记录
         WithdrawalRecordLogQueryReq logQueryReq = WithdrawalRecordLogQueryReq.builder()
@@ -391,6 +398,8 @@ public class WalletServiceImpl implements WalletService {
                 .accountName(null == entAccountDTO ? null : entAccountDTO.getAccountName())
                 .account(null == entAccountDTO ? null : entAccountDTO.getAccount())
                 .accountId(null == entAccountDTO ? null : entAccountDTO.getId())
+                .accountStatus(accountStatus)
+                .accountStatusVal(accountStatusVal)
                 .salt(salt)
                 .passwd(passwd)
                 .withdrawalRecordLogId(ledgerDTO.getWithdrawalRecordLogId())

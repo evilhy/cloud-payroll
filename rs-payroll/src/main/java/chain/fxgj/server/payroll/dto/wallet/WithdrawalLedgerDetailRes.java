@@ -33,6 +33,14 @@ public class WithdrawalLedgerDetailRes {
      */
     private String entId;
     /**
+     * 付款账户状态(0:正常、1:异常)
+     */
+    private Integer accountStatus;
+    /**
+     * 付款账户状态 描述
+     */
+    private String accountStatusVal;
+    /**
      *是否启用员工提现（0.停用 1.启用）
      */
     private Integer withdrawStatus;
