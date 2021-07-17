@@ -231,7 +231,7 @@ public class WalletController {
         String jsessionId = currentUser.getSessionId();
         return Mono.fromCallable(() -> {
 
-            log.info("=====> /wallet/withdraw 确认提现 entId:{}, jsessionId:{}", entId, jsessionId);
+            log.info("=====> /wallet/withdraw 确认提现 entId:{}, jsessionId:{}, req:{}", entId, jsessionId,JsonUtil.objectToJson(req));
 
             //查询当前登陆人信息
             EmployeeWechatDTO dto = findByJsessionId(jsessionId);

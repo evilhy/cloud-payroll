@@ -10,6 +10,7 @@ import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.payroll.client.feign.*;
 import chain.utils.commons.JsonUtil;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.TransDealStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.WithdrawalStatusEnum;
 import chain.wage.manager.core.dto.response.entAccount.EntAccountDTO;
 import chain.wage.manager.core.dto.response.enterprise.EntErpriseInfoDTO;
@@ -18,8 +19,11 @@ import core.dto.request.BaseReqDTO;
 import core.dto.request.empCard.EmployeeCardQueryReq;
 import core.dto.request.employee.EmployeeQueryReq;
 import core.dto.request.employeeWallet.EmployeeWalletQueryReq;
+import core.dto.request.employeeWallet.EmployeeWalletSaveReq;
 import core.dto.request.withdrawalLedger.WithdrawalLedgerQueryReq;
+import core.dto.request.withdrawalLedger.WithdrawalLedgerSaveReq;
 import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogQueryReq;
+import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogSaveReq;
 import core.dto.response.employee.EmployeeDTO;
 import core.dto.response.employeeWallet.EmployeeWalletDTO;
 import core.dto.response.wagesheet.WageSheetDTO;
@@ -35,6 +39,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -338,6 +343,7 @@ public class WalletServiceImpl implements WalletService {
         String accountId = ledgerDTO.getAccountId();
         EntAccountDTO entAccountDTO = entAccountInfoFeignService.findById(accountId);
 
+        //获取最后一次的提现记录
         WithdrawalRecordLogQueryReq logQueryReq = WithdrawalRecordLogQueryReq.builder()
                 .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
                 .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
@@ -426,12 +432,150 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public List<EmployeeCardDTO> employeeCardList(String entId, EmployeeWechatDTO dto, String salt, String passwd) {
-        return null;
+        List<EmployeeCardDTO> list = new ArrayList<>();
+        //员工信息
+        EmployeeQueryReq employeeQueryReq = EmployeeQueryReq.builder()
+                .entId(entId)
+                .idNumber(dto.getIdNumber())
+                .employeeName(dto.getName())
+                .build();
+        List<EmployeeDTO> employeeDTOList = employeeFeignController.query(employeeQueryReq);
+
+        if (null != employeeDTOList && employeeDTOList.size() > 0) {
+            List<String> employeeIds = new ArrayList<>();
+            for (EmployeeDTO employeeDTO : employeeDTOList) {
+                employeeIds.add(employeeDTO.getEmployeeId());
+            }
+
+            //收款卡
+            EmployeeCardQueryReq cardQueryReq = EmployeeCardQueryReq.builder()
+                    .employeeIds(employeeIds)
+                    .build();
+            List<core.dto.response.empCard.EmployeeCardDTO> cardDTOS = employeeCardFeignService.query(cardQueryReq);
+            if (null != cardDTOS && cardDTOS.size() > 0) {
+                for (core.dto.response.empCard.EmployeeCardDTO cardDTO : cardDTOS
+                ) {
+                    EmployeeCardDTO employeeCardDTO = EmployeeCardDTO.builder()
+                            .issuerName(cardDTO.getIssuerName())
+                            .employeeCardId(cardDTO.getEmployeeId())
+                            .issuerBankId(cardDTO.getIssuerBankId())
+                            .cardNo(cardDTO.getCardNo())
+                            .build();
+                    list.add(employeeCardDTO);
+                }
+            }
+        }
+        return list;
     }
 
     @Override
     public void withdraw(String entId, EmployeeWechatDTO dto, WithdrawalReq req) {
+        String cardNo = req.getCardNo();
+        String withdrawalLedgerId = req.getWithdrawalLedgerId();
+        String issuerName = req.getIssuerName();
 
+        //查询台账
+        WithdrawalLedgerDTO ledgerDTO = withdrawalLedgerInfoServiceFeign.findById(withdrawalLedgerId);
+        if (null == ledgerDTO) {
+            log.info("=====> 未找到台账信息，提现失败, withdrawalLedgerId:{}", withdrawalLedgerId);
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到台账信息，提现失败"));
+        }
+        switch (ledgerDTO.getWithdrawalStatus()) {
+            case Ing:
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("提现进行中，请勿重复提交"));
+            case Success:
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("提现已完成，请勿重复提交"));
+            default:
+                log.info("=====> 开始提现 req：{}, ledgerDTO:{}", JsonUtil.objectToJson(req), JsonUtil.objectToJson(ledgerDTO));
+                break;
+        }
+        BigDecimal transAmount = ledgerDTO.getTransAmount();
+
+        //查询钱包
+        String employeeWalletId = ledgerDTO.getEmployeeWalletId();
+        EmployeeWalletDTO employeeWalletDTO = employeeWalletInfoServiceFeign.findById(employeeWalletId);
+        if(null == employeeWalletDTO){
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("钱包信息不存在"));
+        }
+
+        //员工信息
+        EmployeeQueryReq employeeQueryReq = EmployeeQueryReq.builder()
+                .entId(entId)
+                .idNumber(ledgerDTO.getIdNumber())
+                .employeeName(ledgerDTO.getCustName())
+                .build();
+        List<EmployeeDTO> employeeDTOList = employeeFeignController.query(employeeQueryReq);
+
+        core.dto.response.empCard.EmployeeCardDTO employeeCardDTO = null;
+        if (null != employeeDTOList && employeeDTOList.size() > 0) {
+            List<String> employeeIds = new ArrayList<>();
+            for (EmployeeDTO employeeDTO : employeeDTOList) {
+                employeeIds.add(employeeDTO.getEmployeeId());
+            }
+
+            //收款卡
+            EmployeeCardQueryReq cardQueryReq = EmployeeCardQueryReq.builder()
+                    .employeeIds(employeeIds)
+                    .cardNo(cardNo)
+                    .build();
+            List<core.dto.response.empCard.EmployeeCardDTO> cardDTOS = employeeCardFeignService.query(cardQueryReq);
+            if (null != cardDTOS && cardDTOS.size() > 0) {
+                employeeCardDTO = cardDTOS.get(0);
+            }
+        }
+
+        //生成提现记录
+        WithdrawalRecordLogSaveReq build = WithdrawalRecordLogSaveReq.builder()
+                .applyDateTime(LocalDateTime.now())
+                .delStatusEnum(DelStatusEnum.normal)
+                .employeeCardNo(employeeCardDTO.getCardNo())
+                .openBank(employeeCardDTO.getCardNo())
+                .transAmount(transAmount)
+                .transStatus(TransDealStatusEnum.ING)
+                .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
+//                .withdrawalRecordLogId()
+//                .failDesc()
+//                .payDateTime()
+//                .predictDateTime()
+//                .remark()
+//                .transNo()
+                .build();
+        WithdrawalRecordLogDTO logDTO = withdrawalRecordLogServiceFeign.save(build);
+
+        //更新提现台账
+        WithdrawalLedgerSaveReq ledgerSaveReq = WithdrawalLedgerSaveReq.builder()
+                .employeeCardNo(employeeCardDTO.getCardNo())
+                .openBank(employeeCardDTO.getIssuerName())
+                .build();
+        WithdrawalLedgerDTO ledgerDTO1 = withdrawalLedgerInfoServiceFeign.save(ledgerSaveReq);
+
+        //查询当前钱包余额
+        core.dto.response.employeeWallet.WalletBalanceDTO balance = withdrawalLedgerInfoServiceFeign.balance(employeeWalletId);
+
+        //修改钱包余额
+        EmployeeWalletSaveReq walletSaveReq = EmployeeWalletSaveReq.builder()
+                .totalAmount(balance.getTotalAmount())
+                .frozenAmount(balance.getFrozenAmount())
+                .availableAmount(balance.getAvailableAmount())
+                .employeeWalletId(employeeWalletId)
+                .build();
+        EmployeeWalletDTO walletDTO = employeeWalletInfoServiceFeign.save(walletSaveReq);
+
+        //TODO 调用接口发送到银行
+
+
+        //预计到帐时间
+        LocalDateTime predictDateTime = null;
+        //流水号
+        String transNo =null;
+
+        //更新提现记录
+        WithdrawalRecordLogSaveReq logSaveReq = WithdrawalRecordLogSaveReq.builder()
+                .withdrawalRecordLogId(logDTO.getWithdrawalRecordLogId())
+                .predictDateTime(predictDateTime)
+                .transNo(transNo)
+                .build();
+        withdrawalRecordLogServiceFeign.save(logSaveReq);
     }
 
     /**

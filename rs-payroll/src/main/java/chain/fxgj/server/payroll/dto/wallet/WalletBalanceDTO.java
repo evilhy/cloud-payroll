@@ -39,7 +39,7 @@ public class WalletBalanceDTO {
     /**
      * salt
      */
-    private String salt;\
+    private String salt;
     /**
      * password
      */
