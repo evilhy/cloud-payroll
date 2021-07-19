@@ -398,11 +398,13 @@ public class WalletServiceImpl implements WalletService {
         EntErpriseInfoDTO erpriseInfoDTO = enterpriseFeignService.findById(entId);
 
         //机构附件
-        String groupId = wageSheetDTO.getGroupId();
-        GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
         ModelStatusEnum withdrawStatus = ModelStatusEnum.DISABLE;
-        if (null != groupAttachInfoDTO) {
-            withdrawStatus = groupAttachInfoDTO.getWithdrawStatus();
+        if (null != wageSheetDTO) {
+            String groupId = wageSheetDTO.getGroupId();
+            GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
+            if (null != groupAttachInfoDTO) {
+                withdrawStatus = groupAttachInfoDTO.getWithdrawStatus();
+            }
         }
 
         return WithdrawalLedgerDetailRes.builder()
@@ -528,7 +530,6 @@ public class WalletServiceImpl implements WalletService {
     public void withdraw(String entId, EmployeeWechatDTO dto, WithdrawalReq req) {
         String cardNo = req.getCardNo();
         String withdrawalLedgerId = req.getWithdrawalLedgerId();
-        String issuerName = req.getIssuerName();
 
         //查询台账
         WithdrawalLedgerDTO ledgerDTO = withdrawalLedgerInfoServiceFeign.findById(withdrawalLedgerId);
