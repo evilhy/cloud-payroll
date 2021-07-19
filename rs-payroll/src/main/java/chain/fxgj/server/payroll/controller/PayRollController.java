@@ -503,6 +503,8 @@ public class PayRollController {
                     item.setOldCardNo(EncrytorUtils.encryptField(item.getOldCardNo(), salt, passwd));
                     item.setSalt(salt);
                     item.setPasswd(passwd);
+                    item.setCardType(0);
+                    item.setCardTypeVal("工资卡");
 
                     //查询员工
                     EmployeeQueryRequest employeeQueryRequest = EmployeeQueryRequest.builder()
