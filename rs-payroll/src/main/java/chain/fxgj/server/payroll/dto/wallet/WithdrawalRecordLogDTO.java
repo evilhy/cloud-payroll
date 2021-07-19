@@ -34,9 +34,17 @@ public class WithdrawalRecordLogDTO {
      */
     private String transAmount;
     /**
+     * 收款人姓名
+     */
+    private String custName;
+    /**
      * 收款卡号
      */
     private String employeeCardNo;
+    /**
+     * 收款卡号带
+     */
+    private String employeeCardStar;
     /**
      * 收款卡开卡银行
      */

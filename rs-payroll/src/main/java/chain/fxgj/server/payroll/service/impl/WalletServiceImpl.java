@@ -394,6 +394,7 @@ public class WalletServiceImpl implements WalletService {
                 .fundDate(null == wageSheetDTO ? null : wageSheetDTO.getFundDate().getCode())
                 .entId(ledgerDTO.getEntId())
                 .employeeCardNo(EncrytorUtils.encryptField(employeeCardNo, salt, passwd))
+                .employeeCardStar(employeeCardNo.substring(0, 4) + "****" + employeeCardNo.substring(employeeCardNo.length() - 4, employeeCardNo.length()))
                 .custName(EncrytorUtils.encryptField(ledgerDTO.getCustName(), salt, passwd))
                 .crtDateTime(null == ledgerDTO.getCrtDateTime() ? null : ledgerDTO.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                 .accountOpenBank(null == entAccountDTO ? null : entAccountDTO.getAccountOpenBank())
@@ -412,7 +413,6 @@ public class WalletServiceImpl implements WalletService {
                 .openBank(null == employeeCardDTO ? null : employeeCardDTO.getIssuerName())
                 .entName(null == erpriseInfoDTO ? null : erpriseInfoDTO.getEntName())
                 .entId(entId)
-                .employeeCardStar(employeeCardNo.substring(0, 4) + "****" + employeeCardNo.substring(employeeCardNo.length() - 4, employeeCardNo.length()))
                 .build();
     }
 
@@ -431,6 +431,7 @@ public class WalletServiceImpl implements WalletService {
                         .transStatus(logDTO.getTransStatus().getCode())
                         .transStatusVal(logDTO.getTransStatus().getDesc())
                         .transNo(logDTO.getTransNo())
+                        .custName(ledgerDetail.getCustName())
                         .transAmount(EncrytorUtils.encryptField(logDTO.getTransAmount().toString(), salt, passwd))
                         .remark(logDTO.getRemark())
                         .predictDateTime(null == logDTO.getPredictDateTime() ? null : logDTO.getPredictDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
@@ -438,6 +439,7 @@ public class WalletServiceImpl implements WalletService {
                         .openBank(logDTO.getOpenBank())
                         .failDesc(logDTO.getFailDesc())
                         .employeeCardNo(EncrytorUtils.encryptField(logDTO.getEmployeeCardNo().toString(), salt, passwd))
+                        .employeeCardStar(logDTO.getEmployeeCardNo().substring(0, 4) + "****" + logDTO.getEmployeeCardNo().substring(logDTO.getEmployeeCardNo().length() - 4, logDTO.getEmployeeCardNo().length()))
                         .delStatus(logDTO.getTransStatus().getCode())
                         .crtDateTime(null == logDTO.getCrtDateTime() ? null : logDTO.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .applyDateTime(null == logDTO.getApplyDateTime() ? null : logDTO.getApplyDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
