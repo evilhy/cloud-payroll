@@ -33,6 +33,14 @@ public class WithdrawalLedgerPageRes {
      */
     private String entId;
     /**
+     * 薪资发放组全称
+     */
+    private String groupName;
+    /**
+     * 薪资发放组简称（机构简称）
+     */
+    private String shortGroupName;
+    /**
      * 付款账户ID(企业出帐的帐户)
      */
     private String accountId;

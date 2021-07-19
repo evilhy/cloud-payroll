@@ -24,6 +24,7 @@ import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogQueryReq;
 import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogSaveReq;
 import core.dto.response.employee.EmployeeDTO;
 import core.dto.response.employeeWallet.EmployeeWalletDTO;
+import core.dto.response.group.GroupDTO;
 import core.dto.response.groupAttach.GroupAttachInfoDTO;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.response.withdrawalLedger.WithdrawalLedgerDTO;
@@ -260,6 +261,10 @@ public class WalletServiceImpl implements WalletService {
                     accountStatusVal = "异常";
                 }
 
+                //机构信息
+                String groupId = res.getGroupId();
+                GroupDTO groupDTO = groupFeignController.findById(groupId);
+
                 WithdrawalLedgerPageRes pageRes = WithdrawalLedgerPageRes.builder()
                         .year(res.getYear())
                         .withdrawalStatusVal(null == res.getWithdrawalStatus() ? null : res.getWithdrawalStatus().getDesc())
@@ -291,6 +296,8 @@ public class WalletServiceImpl implements WalletService {
                         .account(null == entAccountDTO ? null : EncrytorUtils.encryptField(entAccountDTO.getAccount(), salt, passwd))
                         .accountId(null == entAccountDTO ? null : entAccountDTO.getId())
                         .bankClose(isCloseBank())
+                        .groupName(null == groupDTO ? null :groupDTO.getGroupName())
+                        .shortGroupName(null == groupDTO ? null :groupDTO.getShortGroupName())
                         .salt(salt)
                         .passwd(passwd)
                         .build();
