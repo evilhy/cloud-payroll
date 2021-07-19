@@ -24,6 +24,7 @@ import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogQueryReq;
 import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogSaveReq;
 import core.dto.response.employee.EmployeeDTO;
 import core.dto.response.employeeWallet.EmployeeWalletDTO;
+import core.dto.response.entAttach.EnterpriseAttachRes;
 import core.dto.response.group.GroupDTO;
 import core.dto.response.groupAttach.GroupAttachInfoDTO;
 import core.dto.response.wagesheet.WageSheetDTO;
@@ -157,6 +158,13 @@ public class WalletServiceImpl implements WalletService {
         //查询钱包
         EmployeeWalletDTO employeeWalletDTO = getEmployeeWallet(entId, dto.getIdNumber(), dto.getName());
 
+        //企业提现配置
+        EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(entId);
+        ModelStatusEnum withdrawStatus = ModelStatusEnum.DISABLE;
+        if (null != enterpriseAttachRes) {
+            withdrawStatus = enterpriseAttachRes.getWithdrawStatus();
+        }
+
         String walletNumber = StringUtils.isBlank(employeeWalletDTO.getWalletNumber()) ? "" : employeeWalletDTO.getWalletNumber();
         BigDecimal balance = null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
         BigDecimal availableAmount = null == employeeWalletDTO.getAvailableAmount() ? BigDecimal.ZERO : employeeWalletDTO.getAvailableAmount();
@@ -168,8 +176,8 @@ public class WalletServiceImpl implements WalletService {
                 .availableAmount(EncrytorUtils.encryptField(availableAmount.toString(), salt, passwd))
                 .frozenAmount(EncrytorUtils.encryptField(frozenAmount.toString(), salt, passwd))
                 .cardNum(empCardResDTO.getCardNum())
-                .withdrawStatus(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getCode())
-                .withdrawStatusVal(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getDesc())
+                .withdrawStatus(withdrawStatus.getCode())
+                .withdrawStatusVal(withdrawStatus.getDesc())
                 .salt(salt)
                 .passwd(passwd)
                 .build();
@@ -265,12 +273,21 @@ public class WalletServiceImpl implements WalletService {
                 String groupId = res.getGroupId();
                 GroupDTO groupDTO = groupFeignController.findById(groupId);
 
+                //机构附件
+                GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
+                ModelStatusEnum withdrawStatus = ModelStatusEnum.DISABLE;
+                if (null != groupAttachInfoDTO) {
+                    withdrawStatus = groupAttachInfoDTO.getWithdrawStatus();
+                }
+
                 WithdrawalLedgerPageRes pageRes = WithdrawalLedgerPageRes.builder()
                         .year(res.getYear())
                         .withdrawalStatusVal(null == res.getWithdrawalStatus() ? null : res.getWithdrawalStatus().getDesc())
                         .withdrawalStatus(null == res.getWithdrawalStatus() ? null : res.getWithdrawalStatus().getCode())
                         .withdrawalLedgerId(res.getWithdrawalLedgerId())
                         .walletNumber(encryptWalletNumber)
+                        .withdrawStatus(withdrawStatus.getCode())
+                        .withdrawStatusVal(withdrawStatus.getDesc())
                         .updDateTime(null == res.getUpdDateTime() ? null : res.getUpdDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .transAmount(EncrytorUtils.encryptField(res.getTransAmount().toString(), salt, passwd))
                         .remark(res.getRemark())
@@ -296,8 +313,8 @@ public class WalletServiceImpl implements WalletService {
                         .account(null == entAccountDTO ? null : EncrytorUtils.encryptField(entAccountDTO.getAccount(), salt, passwd))
                         .accountId(null == entAccountDTO ? null : entAccountDTO.getId())
                         .bankClose(isCloseBank())
-                        .groupName(null == groupDTO ? null :groupDTO.getGroupName())
-                        .shortGroupName(null == groupDTO ? null :groupDTO.getShortGroupName())
+                        .groupName(null == groupDTO ? null : groupDTO.getGroupName())
+                        .shortGroupName(null == groupDTO ? null : groupDTO.getShortGroupName())
                         .salt(salt)
                         .passwd(passwd)
                         .build();
@@ -380,10 +397,18 @@ public class WalletServiceImpl implements WalletService {
         //企业
         EntErpriseInfoDTO erpriseInfoDTO = enterpriseFeignService.findById(entId);
 
+        //机构附件
+        String groupId = wageSheetDTO.getGroupId();
+        GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
+        ModelStatusEnum withdrawStatus = ModelStatusEnum.DISABLE;
+        if (null != groupAttachInfoDTO) {
+            withdrawStatus = groupAttachInfoDTO.getWithdrawStatus();
+        }
+
         return WithdrawalLedgerDetailRes.builder()
                 .walletNumber(EncrytorUtils.encryptField(employeeWalletDTO.getWalletNumber(), salt, passwd))
-                .withdrawStatus(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getCode())
-                .withdrawStatusVal(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getDesc())
+                .withdrawStatus(withdrawStatus.getCode())
+                .withdrawStatusVal(withdrawStatus.getDesc())
                 .year(ledgerDTO.getYear())
                 .withdrawalStatusVal(null == ledgerDTO.getWithdrawalStatus() ? null : ledgerDTO.getWithdrawalStatus().getDesc())
                 .withdrawalStatus(null == ledgerDTO.getWithdrawalStatus() ? null : ledgerDTO.getWithdrawalStatus().getCode())
