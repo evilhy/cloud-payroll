@@ -273,14 +273,14 @@ public class WalletServiceImpl implements WalletService {
                         .openBank(null == employeeCardDTO ? null : employeeCardDTO.getIssuerName())
                         .month(res.getMonth())
                         .issueTime(null == res.getIssueTime() ? null : res.getIssueTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-                        .idNumber(res.getIdNumber())
+                        .idNumber(EncrytorUtils.encryptField(res.getIdNumber(), salt, passwd))
                         .fundTypeVal(null == wageSheetDTO ? null : wageSheetDTO.getFundTypeDesc())
                         .fundType(null == wageSheetDTO ? null : wageSheetDTO.getFundType())
                         .fundDateVal(null == wageSheetDTO ? null : wageSheetDTO.getFundDate().getDesc())
                         .fundDate(null == wageSheetDTO ? null : wageSheetDTO.getFundDate().getCode())
                         .wageSheetName(null == wageSheetDTO ? null : wageSheetDTO.getWageName())
                         .entId(res.getEntId())
-                        .employeeCardNo(employeeCardNo)
+                        .employeeCardNo(EncrytorUtils.encryptField(employeeCardNo, salt, passwd))
                         .custName(EncrytorUtils.encryptField(res.getCustName(), salt, passwd))
                         .crtDateTime(null == res.getCrtDateTime() ? null : res.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .accountStatus(accountStatus)
@@ -288,7 +288,7 @@ public class WalletServiceImpl implements WalletService {
                         .accountOpenBank(null == entAccountDTO ? null : entAccountDTO.getAccountOpenBank())
                         .accountStar(null == entAccountDTO ? null : entAccountDTO.getAccountStar())
                         .accountName(null == entAccountDTO ? null : entAccountDTO.getAccountName())
-                        .account(null == entAccountDTO ? null : entAccountDTO.getAccount())
+                        .account(null == entAccountDTO ? null : EncrytorUtils.encryptField(entAccountDTO.getAccount(), salt, passwd))
                         .accountId(null == entAccountDTO ? null : entAccountDTO.getId())
                         .bankClose(isCloseBank())
                         .salt(salt)
@@ -374,7 +374,7 @@ public class WalletServiceImpl implements WalletService {
         EntErpriseInfoDTO erpriseInfoDTO = enterpriseFeignService.findById(entId);
 
         return WithdrawalLedgerDetailRes.builder()
-                .walletNumber(employeeWalletDTO.getWalletNumber())
+                .walletNumber(EncrytorUtils.encryptField(employeeWalletDTO.getWalletNumber(), salt, passwd))
                 .withdrawStatus(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getCode())
                 .withdrawStatusVal(null == employeeWalletDTO.getDelStatusEnum() ? null : employeeWalletDTO.getDelStatusEnum().getDesc())
                 .year(ledgerDTO.getYear())
@@ -387,7 +387,7 @@ public class WalletServiceImpl implements WalletService {
                 .payDateTime(null == ledgerDTO.getPayDateTime() ? null : ledgerDTO.getPayDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                 .month(ledgerDTO.getMonth())
                 .issueTime(null == ledgerDTO.getIssueTime() ? null : ledgerDTO.getIssueTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-                .idNumber(ledgerDTO.getIdNumber())
+                .idNumber(EncrytorUtils.encryptField(ledgerDTO.getIdNumber(), salt, passwd))
                 .fundTypeVal(null == wageSheetDTO ? null : wageSheetDTO.getFundTypeDesc())
                 .fundType(null == wageSheetDTO ? null : wageSheetDTO.getFundType())
                 .fundDateVal(null == wageSheetDTO ? null : wageSheetDTO.getFundDate().getDesc())
@@ -400,7 +400,7 @@ public class WalletServiceImpl implements WalletService {
                 .accountOpenBank(null == entAccountDTO ? null : entAccountDTO.getAccountOpenBank())
                 .accountStar(null == entAccountDTO ? null : entAccountDTO.getAccountStar())
                 .accountName(null == entAccountDTO ? null : entAccountDTO.getAccountName())
-                .account(null == entAccountDTO ? null : entAccountDTO.getAccount())
+                .account(null == entAccountDTO ? null : EncrytorUtils.encryptField(entAccountDTO.getAccount(), salt, passwd))
                 .accountId(null == entAccountDTO ? null : entAccountDTO.getId())
                 .accountStatus(accountStatus)
                 .accountStatusVal(accountStatusVal)
@@ -427,10 +427,11 @@ public class WalletServiceImpl implements WalletService {
                         .updDateTime(null == logDTO.getUpdDateTime() ? null : logDTO.getUpdDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .withdrawalRecordLogId(logDTO.getWithdrawalRecordLogId())
                         .withdrawalLedgerId(logDTO.getWithdrawalLedgerId())
-                        .transStatusVal(logDTO.getTransNo())
-                        .transStatus(logDTO.getTransStatus().getCode())
-                        .transStatusVal(logDTO.getTransStatus().getDesc())
                         .transNo(logDTO.getTransNo())
+                        .transStatus(logDTO.getTransStatus().getCode())
+                        .transStatusVal(TransDealStatusEnum.SUCCESS == logDTO.getTransStatus() ? "提现成功"
+                                : (TransDealStatusEnum.FAIL == logDTO.getTransStatus() ? "提现失败"
+                                : (TransDealStatusEnum.ING == logDTO.getTransStatus() ? "提现处理中" : "未知")))
                         .custName(ledgerDetail.getCustName())
                         .transAmount(EncrytorUtils.encryptField(logDTO.getTransAmount().toString(), salt, passwd))
                         .remark(logDTO.getRemark())
@@ -482,7 +483,7 @@ public class WalletServiceImpl implements WalletService {
                             .issuerName(cardDTO.getIssuerName())
                             .employeeCardId(cardDTO.getEmployeeId())
                             .issuerBankId(cardDTO.getIssuerBankId())
-                            .cardNo(cardDTO.getCardNo())
+                            .cardNo(EncrytorUtils.encryptField(cardDTO.getCardNo(), salt, passwd))
                             .build();
                     list.add(employeeCardDTO);
                 }
@@ -597,7 +598,6 @@ public class WalletServiceImpl implements WalletService {
         LocalDateTime predictDateTime = null;
         //流水号
         String transNo = null;
-
 
 
         //更新提现记录
