@@ -22,6 +22,7 @@ import core.dto.request.withdrawalLedger.WithdrawalLedgerQueryReq;
 import core.dto.request.withdrawalLedger.WithdrawalLedgerSaveReq;
 import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogQueryReq;
 import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogSaveReq;
+import core.dto.request.withdrawalSchedule.WithdrawalScheduleSaveReq;
 import core.dto.response.employee.EmployeeDTO;
 import core.dto.response.employeeWallet.EmployeeWalletDTO;
 import core.dto.response.entAttach.EnterpriseAttachRes;
@@ -87,6 +88,8 @@ public class WalletServiceImpl implements WalletService {
     VirtualAccountConnectInfoFeignService virtualAccountConnectInfoFeignService;
     @Autowired
     EmployeeCardFeignService employeeCardFeignService;
+    @Autowired
+    WithdrawalScheduleFeignService withdrawalScheduleFeignService;
 
     @Autowired
     EmpWechatService empWechatService;
@@ -626,20 +629,14 @@ public class WalletServiceImpl implements WalletService {
                 .build();
         EmployeeWalletDTO walletDTO = employeeWalletInfoServiceFeign.save(walletSaveReq);
 
-        //TODO 调用接口发送到银行
-        //预计到帐时间
-        LocalDateTime predictDateTime = null;
-        //流水号
-        String transNo = null;
-
-
-        //更新提现记录
-        WithdrawalRecordLogSaveReq logSaveReq = WithdrawalRecordLogSaveReq.builder()
+        //写入提现记录，等待发送银行
+        WithdrawalScheduleSaveReq saveReq = WithdrawalScheduleSaveReq.builder()
+                .delStatusEnum(DelStatusEnum.normal)
+                .withdrawalLedgerId(ledgerDTO1.getWithdrawalLedgerId())
                 .withdrawalRecordLogId(logDTO.getWithdrawalRecordLogId())
-                .predictDateTime(predictDateTime)
-                .transNo(transNo)
+                .withdrawalStatus(WithdrawalStatusEnum.Ing)
                 .build();
-        withdrawalRecordLogServiceFeign.save(logSaveReq);
+        withdrawalScheduleFeignService.save(saveReq);
     }
 
     /**
