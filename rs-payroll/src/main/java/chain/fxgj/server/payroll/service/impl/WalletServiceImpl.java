@@ -635,6 +635,7 @@ public class WalletServiceImpl implements WalletService {
                 .withdrawalLedgerId(ledgerDTO1.getWithdrawalLedgerId())
                 .withdrawalRecordLogId(logDTO.getWithdrawalRecordLogId())
                 .withdrawalStatus(WithdrawalStatusEnum.Ing)
+                .wageSheetId(ledgerDTO1.getWageSheetId())
                 .build();
         withdrawalScheduleFeignService.save(saveReq);
     }
