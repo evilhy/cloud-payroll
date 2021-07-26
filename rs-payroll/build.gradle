@@ -235,7 +235,7 @@ dependencies {
 asciidoctor {
     outputDir "${buildDir}/asciidoc"
     sources {
-        include 'insideAPI.adoc'
+        include 'index.adoc'
     }
     options doctype: 'book', ruby: 'erubis'
     attributes 'snippets': docsSnippetsDir,
