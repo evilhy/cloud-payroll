@@ -8,6 +8,7 @@ import chain.fxgj.server.payroll.service.EmpWechatService;
 import chain.fxgj.server.payroll.service.WalletService;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.payroll.client.feign.*;
+import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.fxgj.constant.DictEnums.*;
 import chain.wage.manager.core.dto.response.entAccount.EntAccountDTO;
@@ -22,6 +23,7 @@ import core.dto.request.withdrawalLedger.WithdrawalLedgerQueryReq;
 import core.dto.request.withdrawalLedger.WithdrawalLedgerSaveReq;
 import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogQueryReq;
 import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogSaveReq;
+import core.dto.request.withdrawalSchedule.WithdrawalScheduleQueryReq;
 import core.dto.request.withdrawalSchedule.WithdrawalScheduleSaveReq;
 import core.dto.response.employee.EmployeeDTO;
 import core.dto.response.employeeWallet.EmployeeWalletDTO;
@@ -31,6 +33,7 @@ import core.dto.response.groupAttach.GroupAttachInfoDTO;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.response.withdrawalLedger.WithdrawalLedgerDTO;
 import core.dto.response.withdrawalRecordLog.WithdrawalRecordLogDTO;
+import core.dto.response.withdrawalSchedule.WithdrawalScheduleDTO;
 import core.dto.wechat.CacheUserPrincipal;
 import core.dto.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -557,8 +560,20 @@ public class WalletServiceImpl implements WalletService {
         //是否超时
         LocalDateTime cutoffTime = ledgerDTO.getCutoffTime();
         LocalDateTime localDateTime = LocalDateTime.now();
-        if (localDateTime.isAfter(cutoffTime)){
+        if (localDateTime.isAfter(cutoffTime)) {
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("当前提现台账已超时，提现失败！"));
+        }
+
+        //是否生成“处理中”或“提现成功”的提现进度表
+        WithdrawalScheduleQueryReq scheduleQueryReq = WithdrawalScheduleQueryReq.builder()
+                .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
+                .withdrawalStatus(Arrays.asList(WithdrawalStatusEnum.Ing, WithdrawalStatusEnum.Success))
+                .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                .build();
+        List<WithdrawalScheduleDTO> scheduleDTOS = withdrawalScheduleFeignService.list(scheduleQueryReq);
+        if (null != scheduleDTOS && scheduleDTOS.size() > 0) {
+            log.info("====> 提现已处理   scheduleDTOS:{}", JacksonUtil.objectToJson(scheduleDTOS));
+            throw new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("提现已处理"));
         }
 
         BigDecimal transAmount = ledgerDTO.getTransAmount();
@@ -609,7 +624,7 @@ public class WalletServiceImpl implements WalletService {
                 .applyDateTime(LocalDateTime.now())
                 .delStatusEnum(DelStatusEnum.normal)
                 .employeeCardNo(employeeCardDTO.getCardNo())
-                .openBank(employeeCardDTO.getCardNo())
+                .openBank(employeeCardDTO.getIssuerName())
                 .transAmount(transAmount)
                 .transStatus(TransDealStatusEnum.ING)
                 .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
@@ -626,6 +641,7 @@ public class WalletServiceImpl implements WalletService {
         WithdrawalLedgerSaveReq ledgerSaveReq = WithdrawalLedgerSaveReq.builder()
                 .employeeCardNo(employeeCardDTO.getCardNo())
                 .openBank(employeeCardDTO.getIssuerName())
+                .withdrawalStatus(WithdrawalStatusEnum.Ing)
                 .build();
         WithdrawalLedgerDTO ledgerDTO1 = withdrawalLedgerInfoServiceFeign.save(ledgerSaveReq);
 
