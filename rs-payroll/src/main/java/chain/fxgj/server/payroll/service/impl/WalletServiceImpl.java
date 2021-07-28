@@ -284,8 +284,8 @@ public class WalletServiceImpl implements WalletService {
                 }
 
                 WithdrawalLedgerPageRes pageRes = WithdrawalLedgerPageRes.builder()
-                        .withdrawalMethod(null == res.getWithdrawalMethod() ? null : res.getWithdrawalMethod().getCode())
-                        .withdrawStatusVal(null == res.getWithdrawalMethod() ? null : res.getWithdrawalMethod().getDesc())
+                        .dealType(null == res.getDealType() ? null : res.getDealType().getCode())
+                        .dealTypeVal(null == res.getDealType() ? null : res.getDealType().getDesc())
                         .cutoffTime(null == res.getCutoffTime() ? null : res.getCutoffTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .systemTime(System.currentTimeMillis())
                         .year(res.getYear())
@@ -553,6 +553,14 @@ public class WalletServiceImpl implements WalletService {
                 log.info("=====> 开始提现 req：{}, ledgerDTO:{}", JsonUtil.objectToJson(req), JsonUtil.objectToJson(ledgerDTO));
                 break;
         }
+
+        //是否超时
+        LocalDateTime cutoffTime = ledgerDTO.getCutoffTime();
+        LocalDateTime localDateTime = LocalDateTime.now();
+        if (localDateTime.isAfter(cutoffTime)){
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("当前提现台账已超时，提现失败！"));
+        }
+
         BigDecimal transAmount = ledgerDTO.getTransAmount();
 
         //单位是否开启提现功能

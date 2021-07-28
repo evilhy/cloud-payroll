@@ -169,13 +169,13 @@ public class WithdrawalLedgerPageRes {
     private String passwd;
 
     /**
-     * 提现方式(0:手动提现、1:自动提现)
+     * 失效未提现处理类型（0：自动转到员工银行卡、1：撤回未提现资金至单位账户）
      */
-    private Integer withdrawalMethod;
+    private Integer dealType;
     /**
-     * 提现方式 描述
+     * 失效未提现处理类型    描述
      */
-    private String withdrawalMethodVal;
+    private String dealTypeVal;
     /**
      * 提现截止日期
      */
