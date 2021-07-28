@@ -169,7 +169,7 @@ public class WithdrawalLedgerPageRes {
     private String passwd;
 
     /**
-     * 提现方式(0:手动提现、0:自动提现)
+     * 提现方式(0:手动提现、1:自动提现)
      */
     private Integer withdrawalMethod;
     /**
