@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
-
 /**
  * @Description:提现分页列表
  * @Author: du
@@ -113,7 +111,7 @@ public class WithdrawalLedgerPageRes {
      */
     private Long payDateTime;
     /**
-     * 提现状态（0:待提现、1:提现成功、2:提现失败、3:处理中）
+     * 提现状态（0:待提现、1:提现成功、2:提现失败、3:处理中、4:超时未提现）
      */
     private Integer withdrawalStatus;
     /**
@@ -149,12 +147,12 @@ public class WithdrawalLedgerPageRes {
      */
     private String accountStatusVal;
     /**
-     *是否启用员工提现（0.停用 1.启用）
+     * 是否启用员工提现（0.停用 1.启用）
      */
     private Integer withdrawStatus;
 
     /**
-     *是否启用员工提现  描述
+     * 是否启用员工提现  描述
      */
     private String withdrawStatusVal;
     /**
@@ -169,4 +167,21 @@ public class WithdrawalLedgerPageRes {
      * password
      */
     private String passwd;
+
+    /**
+     * 提现方式(0:手动提现、0:自动提现)
+     */
+    private Integer withdrawalMethod;
+    /**
+     * 提现方式 描述
+     */
+    private String withdrawalMethodVal;
+    /**
+     * 提现截止日期
+     */
+    private Long cutoffTime;
+    /**
+     * 系统时间
+     */
+    private Long systemTime;
 }

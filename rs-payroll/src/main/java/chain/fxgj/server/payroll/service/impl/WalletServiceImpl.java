@@ -284,6 +284,10 @@ public class WalletServiceImpl implements WalletService {
                 }
 
                 WithdrawalLedgerPageRes pageRes = WithdrawalLedgerPageRes.builder()
+                        .withdrawalMethod(null == res.getWithdrawalMethod() ? null : res.getWithdrawalMethod().getCode())
+                        .withdrawStatusVal(null == res.getWithdrawalMethod() ? null : res.getWithdrawalMethod().getDesc())
+                        .cutoffTime(null == res.getCutoffTime() ? null : res.getCutoffTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                        .systemTime(System.currentTimeMillis())
                         .year(res.getYear())
                         .withdrawalStatusVal(null == res.getWithdrawalStatus() ? null : res.getWithdrawalStatus().getDesc())
                         .withdrawalStatus(null == res.getWithdrawalStatus() ? null : res.getWithdrawalStatus().getCode())
