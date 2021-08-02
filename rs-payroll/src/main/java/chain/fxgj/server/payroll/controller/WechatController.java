@@ -216,10 +216,22 @@ public class WechatController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("getJsapiSignature url:[{}]", url);
-            //todo 需要与前端同时修改上线 增加入参 AppPartnerEnum
-            String name = "FXGJ";
-            core.dto.wechat.WeixinJsapiDTO weixinJsapiDTO = wechatFeignController.getJsapiSignature(url);
-            log.info("wechatJsapiRequestDTO:[{}]", JacksonUtil.objectToJson(weixinJsapiDTO));
+
+            AppPartnerEnum id = AppPartnerEnum.FXGJ;
+            WechatGroupEnum wechatGroup = WechatGroupEnum.valueOf(id.name());
+            WechatJsapiRequestDTO wechatJsapiRequestDTO = wechatFeignClient.jsapiSignature(wechatGroup, url);
+            log.info("wechatJsapiRequestDTO:[{}]", JacksonUtil.objectToJson(wechatJsapiRequestDTO));
+
+            //设置返回参数
+            core.dto.wechat.WeixinJsapiDTO weixinJsapiDTO = new core.dto.wechat.WeixinJsapiDTO();
+            weixinJsapiDTO.setAppid(wechatJsapiRequestDTO.getAppid());
+            weixinJsapiDTO.setExpiresIn(wechatJsapiRequestDTO.getExpiresIn());
+            weixinJsapiDTO.setJsapiTicket(wechatJsapiRequestDTO.getJsapiTicket());
+            weixinJsapiDTO.setNoncestr(wechatJsapiRequestDTO.getNoncestr());
+            weixinJsapiDTO.setRedirectUrl(wechatJsapiRequestDTO.getRedirectUrl());
+            weixinJsapiDTO.setSignature(wechatJsapiRequestDTO.getSignature());
+            weixinJsapiDTO.setTimestamp(wechatJsapiRequestDTO.getTimestamp());
+            weixinJsapiDTO.setUrl(wechatJsapiRequestDTO.getUrl());
             return weixinJsapiDTO;
         }).subscribeOn(Schedulers.elastic());
     }
