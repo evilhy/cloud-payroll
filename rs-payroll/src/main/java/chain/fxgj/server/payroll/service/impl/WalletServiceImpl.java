@@ -519,6 +519,8 @@ public class WalletServiceImpl implements WalletService {
                         .crtDateTime(null == logDTO.getCrtDateTime() ? null : logDTO.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .applyDateTime(null == logDTO.getApplyDateTime() ? null : logDTO.getApplyDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .delStatusVal(logDTO.getEmployeeCardNo())
+                        .salt(salt)
+                        .passwd(passwd)
                         .build();
             }
         }

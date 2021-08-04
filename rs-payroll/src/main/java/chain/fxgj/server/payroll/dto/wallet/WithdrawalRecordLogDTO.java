@@ -97,4 +97,13 @@ public class WithdrawalRecordLogDTO {
      * 删除状态     描述
      */
     private String delStatusVal;
+    /**
+     * salt
+     */
+    private String salt;
+
+    /**
+     * password
+     */
+    private String passwd;
 }
