@@ -454,7 +454,7 @@ public class WalletServiceImpl implements WalletService {
                 .entId(ledgerDTO.getEntId())
                 .employeeCardNo(EncrytorUtils.encryptField(employeeCardNo, salt, passwd))
                 .employeeCardStar(employeeCardNo.substring(0, 4) + "****" + employeeCardNo.substring(employeeCardNo.length() - 4, employeeCardNo.length()))
-                .custName(ledgerDTO.getCustName())
+                .custName(EncrytorUtils.encryptField(ledgerDTO.getCustName(), salt, passwd))
                 .crtDateTime(null == ledgerDTO.getCrtDateTime() ? null : ledgerDTO.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                 .accountOpenBank(null == entAccountDTO ? null : entAccountDTO.getAccountOpenBank())
                 .accountStar(null == entAccountDTO ? null : entAccountDTO.getAccountStar())
