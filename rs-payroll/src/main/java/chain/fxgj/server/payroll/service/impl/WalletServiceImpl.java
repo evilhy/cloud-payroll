@@ -178,11 +178,11 @@ public class WalletServiceImpl implements WalletService {
         BigDecimal availableAmount = null == employeeWalletDTO || null == employeeWalletDTO.getAvailableAmount() ? BigDecimal.ZERO : employeeWalletDTO.getAvailableAmount();
         BigDecimal frozenAmount = null == employeeWalletDTO || null == employeeWalletDTO.getFrozenAmount() ? BigDecimal.ZERO : employeeWalletDTO.getFrozenAmount();
         return EmpCardAndBalanceResDTO.builder()
-                .employeeWalletId(employeeWalletDTO.getEmployeeWalletId())
-                .walletNumber(EncrytorUtils.encryptField(walletNumber, salt, passwd))
-                .balance(EncrytorUtils.encryptField(balance.toString(), salt, passwd))
-                .availableAmount(EncrytorUtils.encryptField(availableAmount.toString(), salt, passwd))
-                .frozenAmount(EncrytorUtils.encryptField(frozenAmount.toString(), salt, passwd))
+                .employeeWalletId(null  == employeeWalletDTO ? null :employeeWalletDTO.getEmployeeWalletId())
+                .walletNumber(StringUtils.isBlank(walletNumber) ? null : EncrytorUtils.encryptField(walletNumber, salt, passwd))
+                .balance(null == balance ? null : EncrytorUtils.encryptField(balance.toString(), salt, passwd))
+                .availableAmount(null == availableAmount ? null : EncrytorUtils.encryptField(availableAmount.toString(), salt, passwd))
+                .frozenAmount(null == frozenAmount ? null : EncrytorUtils.encryptField(frozenAmount.toString(), salt, passwd))
                 .cardNum(empCardResDTO.getCardNum())
                 .withdrawStatus(withdrawStatus.getCode())
                 .withdrawStatusVal(withdrawStatus.getDesc())
