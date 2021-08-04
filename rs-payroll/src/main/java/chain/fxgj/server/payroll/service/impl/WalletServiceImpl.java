@@ -418,9 +418,13 @@ public class WalletServiceImpl implements WalletService {
         EntErpriseInfoDTO erpriseInfoDTO = enterpriseFeignService.findById(entId);
 
         //机构附件
+        String groupName = null;
         ModelStatusEnum withdrawStatus = ModelStatusEnum.DISABLE;
         if (null != wageSheetDTO) {
             String groupId = wageSheetDTO.getGroupId();
+            GroupDTO groupDTO = groupFeignController.findById(groupId);
+            groupName = groupDTO.getGroupName();
+
             GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
             if (null != groupAttachInfoDTO) {
                 withdrawStatus = groupAttachInfoDTO.getWithdrawStatus();
@@ -428,6 +432,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         return WithdrawalLedgerDetailRes.builder()
+                .groupName(groupName)
                 .walletNumber(EncrytorUtils.encryptField(employeeWalletDTO.getWalletNumber(), salt, passwd))
                 .withdrawStatus(withdrawStatus.getCode())
                 .withdrawStatusVal(withdrawStatus.getDesc())
