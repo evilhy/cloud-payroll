@@ -529,7 +529,7 @@ public class PayRollController {
                             .cardNo(item.getCardNo())
                             .build();
                     List<EmployeeCardDTO> cardDTOS = employeeCardFeignService.query(employeeCardQueryReq);
-                    if (null == cardDTOS || cardDTOS.size() <= 0) {
+                    if (null != cardDTOS && cardDTOS.size() > 0) {
                         EmployeeCardDTO employeeCardDTO = cardDTOS.get(0);
 
                         //插卡人
