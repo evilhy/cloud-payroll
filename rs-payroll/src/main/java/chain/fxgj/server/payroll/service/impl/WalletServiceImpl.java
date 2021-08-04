@@ -514,7 +514,7 @@ public class WalletServiceImpl implements WalletService {
                         .openBank(ledgerDetail.getOpenBank())
                         .failDesc(logDTO.getFailDesc())
                         .employeeCardNo(StringUtils.isBlank(logDTO.getEmployeeCardNo()) ? null : EncrytorUtils.encryptField(logDTO.getEmployeeCardNo().toString(), salt, passwd))
-                        .employeeCardStar(logDTO.getEmployeeCardNo().substring(0, 4) + "****" + logDTO.getEmployeeCardNo().substring(logDTO.getEmployeeCardNo().length() - 4, logDTO.getEmployeeCardNo().length()))
+                        .employeeCardStar(StringUtils.isBlank(logDTO.getEmployeeCardNo()) ? null :logDTO.getEmployeeCardNo().substring(0, 4) + "****" + logDTO.getEmployeeCardNo().substring(logDTO.getEmployeeCardNo().length() - 4, logDTO.getEmployeeCardNo().length()))
                         .delStatus(logDTO.getTransStatus().getCode())
                         .crtDateTime(null == logDTO.getCrtDateTime() ? null : logDTO.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .applyDateTime(null == logDTO.getApplyDateTime() ? null : logDTO.getApplyDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
