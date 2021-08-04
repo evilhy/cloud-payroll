@@ -26,7 +26,7 @@ import java.time.LocalTime;
 @SuppressWarnings("unchecked")
 public class JsonConfig {
 
-    @Bean
+//    @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
