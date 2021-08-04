@@ -269,6 +269,14 @@ public class WalletServiceImpl implements WalletService {
                 //账户信息
                 String accountId = res.getAccountId();
                 EntAccountDTO entAccountDTO = entAccountInfoFeignService.findById(accountId);
+
+                //企业信息
+                EntErpriseInfoDTO infoDTO = enterpriseFeignService.findById(entId);
+                String liquidationDesc = null;
+                if (null != infoDTO.getLiquidation()){
+                    liquidationDesc = infoDTO.getLiquidation().getDesc();
+                }
+
                 //账户状态
                 Integer accountStatus = 0;
                 String accountStatusVal = "正常";
@@ -319,7 +327,7 @@ public class WalletServiceImpl implements WalletService {
                         .crtDateTime(null == res.getCrtDateTime() ? null : res.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .accountStatus(accountStatus)
                         .accountStatusVal(accountStatusVal)
-                        .accountOpenBank(null == entAccountDTO ? null : entAccountDTO.getAccountOpenBank())
+                        .accountOpenBank(liquidationDesc)
                         .accountStar(null == entAccountDTO ? null : entAccountDTO.getAccountStar())
                         .accountName(null == entAccountDTO ? null : entAccountDTO.getAccountName())
                         .account(null == entAccountDTO ? null : EncrytorUtils.encryptField(entAccountDTO.getAccount(), salt, passwd))
