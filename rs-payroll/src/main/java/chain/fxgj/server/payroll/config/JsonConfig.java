@@ -1,6 +1,6 @@
 package chain.fxgj.server.payroll.config;
 
-import chain.fxgj.ent.core.constant.DateFormatConstants;
+import chain.fxgj.data.common.constant.DateFormatConstants;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.json.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
