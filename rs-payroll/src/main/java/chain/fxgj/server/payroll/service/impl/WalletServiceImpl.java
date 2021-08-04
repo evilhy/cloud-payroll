@@ -643,6 +643,7 @@ public class WalletServiceImpl implements WalletService {
                 .transAmount(transAmount)
                 .transStatus(TransDealStatusEnum.ING)
                 .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
+                .withdrawalMethod(WithdrawalMethodEnum.Manual)
 //                .withdrawalRecordLogId()
 //                .failDesc()
 //                .payDateTime()
