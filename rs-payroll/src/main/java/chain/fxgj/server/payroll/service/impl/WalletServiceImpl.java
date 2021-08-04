@@ -247,7 +247,7 @@ public class WalletServiceImpl implements WalletService {
                 .withdrawalStatus(withdrawalStatus)
                 .build();
         core.dto.PageDTO<WithdrawalLedgerDTO> page = withdrawalLedgerInfoServiceFeign.page(ledgerQueryReq);
-        if (null == page.getContent() || page.getContent().size() <= 0) {
+        if (null != page.getContent() && page.getContent().size() > 0) {
             for (WithdrawalLedgerDTO res : page.getContent()
             ) {
                 //收款卡
