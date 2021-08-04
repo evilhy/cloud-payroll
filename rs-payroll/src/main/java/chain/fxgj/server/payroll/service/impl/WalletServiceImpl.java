@@ -103,9 +103,9 @@ public class WalletServiceImpl implements WalletService {
         //查询钱包
         EmployeeWalletDTO employeeWalletDTO = getEmployeeWallet(entId, dto.getIdNumber(), dto.getName());
 
-        BigDecimal balance = null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
-        BigDecimal availableAmount = null == employeeWalletDTO.getAvailableAmount() ? BigDecimal.ZERO : employeeWalletDTO.getAvailableAmount();
-        BigDecimal frozenAmount = null == employeeWalletDTO.getFrozenAmount() ? BigDecimal.ZERO : employeeWalletDTO.getFrozenAmount();
+        BigDecimal balance = null == employeeWalletDTO || null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
+        BigDecimal availableAmount = null == employeeWalletDTO || null == employeeWalletDTO.getAvailableAmount() ? BigDecimal.ZERO : employeeWalletDTO.getAvailableAmount();
+        BigDecimal frozenAmount = null == employeeWalletDTO || null == employeeWalletDTO.getFrozenAmount() ? BigDecimal.ZERO : employeeWalletDTO.getFrozenAmount();
 
         return WalletBalanceDTO.builder()
                 .totalAmount(EncrytorUtils.encryptField(balance.toString(), salt, passwd))
@@ -134,8 +134,9 @@ public class WalletServiceImpl implements WalletService {
                 .build();
         List<EmployeeWalletDTO> walletDTOS = employeeWalletInfoServiceFeign.list(walletQueryReq);
         if (null == walletDTOS || walletDTOS.size() <= 0) {
-            log.info("=====> 钱包信息未找到！walletQueryReq:{}，walletDTOS:{}",JsonUtil.objectToJson(walletQueryReq), JsonUtil.objectToJson(walletDTOS));
+            log.info("=====> 钱包信息未找到！walletQueryReq:{}，walletDTOS:{}", JsonUtil.objectToJson(walletQueryReq), JsonUtil.objectToJson(walletDTOS));
 //            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("钱包信息未找到！"));
+            return null;
         }
         return walletDTOS.get(0);
     }
@@ -172,10 +173,10 @@ public class WalletServiceImpl implements WalletService {
             withdrawStatus = enterpriseAttachRes.getWithdrawStatus();
         }
 
-        String walletNumber = StringUtils.isBlank(employeeWalletDTO.getWalletNumber()) ? "" : employeeWalletDTO.getWalletNumber();
-        BigDecimal balance = null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
-        BigDecimal availableAmount = null == employeeWalletDTO.getAvailableAmount() ? BigDecimal.ZERO : employeeWalletDTO.getAvailableAmount();
-        BigDecimal frozenAmount = null == employeeWalletDTO.getFrozenAmount() ? BigDecimal.ZERO : employeeWalletDTO.getFrozenAmount();
+        String walletNumber = null == employeeWalletDTO || StringUtils.isBlank(employeeWalletDTO.getWalletNumber()) ? "" : employeeWalletDTO.getWalletNumber();
+        BigDecimal balance = null == employeeWalletDTO || null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
+        BigDecimal availableAmount = null == employeeWalletDTO || null == employeeWalletDTO.getAvailableAmount() ? BigDecimal.ZERO : employeeWalletDTO.getAvailableAmount();
+        BigDecimal frozenAmount = null == employeeWalletDTO || null == employeeWalletDTO.getFrozenAmount() ? BigDecimal.ZERO : employeeWalletDTO.getFrozenAmount();
         return EmpCardAndBalanceResDTO.builder()
                 .employeeWalletId(employeeWalletDTO.getEmployeeWalletId())
                 .walletNumber(EncrytorUtils.encryptField(walletNumber, salt, passwd))
