@@ -469,8 +469,8 @@ public class WalletServiceImpl implements WalletService {
                 .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
                 .wageSheetName(null == wageSheetDTO ? null : wageSheetDTO.getWageName())
                 .transNo(null == logDTO ? null : logDTO.getTransNo())
-                .openBank(null == employeeCardDTO ? null : employeeCardDTO.getIssuerName())
                 .entName(null == erpriseInfoDTO ? null : erpriseInfoDTO.getEntName())
+                .openBank(null == erpriseInfoDTO || null == erpriseInfoDTO.getLiquidation() ? null : erpriseInfoDTO.getLiquidation().getDesc())
                 .entId(entId)
                 .build();
     }
