@@ -641,6 +641,7 @@ public class WalletServiceImpl implements WalletService {
 
         //更新提现台账
         WithdrawalLedgerSaveReq ledgerSaveReq = WithdrawalLedgerSaveReq.builder()
+                .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
                 .employeeCardNo(employeeCardDTO.getCardNo())
                 .openBank(employeeCardDTO.getIssuerName())
                 .withdrawalStatus(WithdrawalStatusEnum.Ing)
