@@ -178,7 +178,7 @@ public class WalletServiceImpl implements WalletService {
         BigDecimal availableAmount = null == employeeWalletDTO || null == employeeWalletDTO.getAvailableAmount() ? BigDecimal.ZERO : employeeWalletDTO.getAvailableAmount();
         BigDecimal frozenAmount = null == employeeWalletDTO || null == employeeWalletDTO.getFrozenAmount() ? BigDecimal.ZERO : employeeWalletDTO.getFrozenAmount();
         return EmpCardAndBalanceResDTO.builder()
-                .employeeWalletId(null  == employeeWalletDTO ? null :employeeWalletDTO.getEmployeeWalletId())
+                .employeeWalletId(null == employeeWalletDTO ? null : employeeWalletDTO.getEmployeeWalletId())
                 .walletNumber(StringUtils.isBlank(walletNumber) ? null : EncrytorUtils.encryptField(walletNumber, salt, passwd))
                 .balance(null == balance ? null : EncrytorUtils.encryptField(balance.toString(), salt, passwd))
                 .availableAmount(null == availableAmount ? null : EncrytorUtils.encryptField(availableAmount.toString(), salt, passwd))
@@ -273,7 +273,7 @@ public class WalletServiceImpl implements WalletService {
                 //企业信息
                 EntErpriseInfoDTO infoDTO = enterpriseFeignService.findById(entId);
                 String liquidationDesc = null;
-                if (null != infoDTO.getLiquidation()){
+                if (null != infoDTO.getLiquidation()) {
                     liquidationDesc = infoDTO.getLiquidation().getDesc();
                 }
 
@@ -477,11 +477,26 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public WithdrawalRecordDetailRes withdrawalRecordDetail(String withdrawalLedgerId, String entId, EmployeeWechatDTO dto, String salt, String passwd) {
+        //台账详情
         WithdrawalLedgerDetailRes ledgerDetail = withdrawalLedgerDetail(withdrawalLedgerId, entId, dto, salt, passwd);
+
+        //提现流水
         chain.fxgj.server.payroll.dto.wallet.WithdrawalRecordLogDTO withdrawalRecordLogDTO = null;
-        if (null != ledgerDetail && StringUtils.isNotBlank(ledgerDetail.getWithdrawalRecordLogId())) {
-            WithdrawalRecordLogDTO logDTO = withdrawalRecordLogServiceFeign.findById(ledgerDetail.getWithdrawalRecordLogId());
-            if (null != logDTO) {
+        WithdrawalStatusEnum withdrawalStatusEnum = WithdrawalStatusEnum.values()[ledgerDetail.getWithdrawalStatus()];
+        if (null != withdrawalStatusEnum && WithdrawalStatusEnum.Await != withdrawalStatusEnum && WithdrawalStatusEnum.TimeOut != withdrawalStatusEnum) {
+            TransDealStatusEnum transDealStatusEnum = WithdrawalStatusEnum.Success == withdrawalStatusEnum ? TransDealStatusEnum.SUCCESS
+                    : (WithdrawalStatusEnum.Fail == withdrawalStatusEnum ? TransDealStatusEnum.FAIL
+                    : TransDealStatusEnum.ING);
+            WithdrawalRecordLogQueryReq recordLogQueryReq = WithdrawalRecordLogQueryReq.builder()
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .withdrawalLedgerId(ledgerDetail.getWithdrawalLedgerId())
+                    .transStatus(transDealStatusEnum)
+                    .build();
+            List<WithdrawalRecordLogDTO> list = withdrawalRecordLogServiceFeign.list(recordLogQueryReq);
+            if (null != list && list.size() > 0) {
+                WithdrawalRecordLogDTO logDTO = list.get(0);
+
+                //数据组转
                 withdrawalRecordLogDTO = chain.fxgj.server.payroll.dto.wallet.WithdrawalRecordLogDTO.builder()
                         .updDateTime(null == logDTO.getUpdDateTime() ? null : logDTO.getUpdDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .withdrawalRecordLogId(logDTO.getWithdrawalRecordLogId())
