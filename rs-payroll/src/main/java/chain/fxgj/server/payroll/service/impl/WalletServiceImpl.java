@@ -134,7 +134,8 @@ public class WalletServiceImpl implements WalletService {
                 .build();
         List<EmployeeWalletDTO> walletDTOS = employeeWalletInfoServiceFeign.list(walletQueryReq);
         if (null == walletDTOS || walletDTOS.size() <= 0) {
-            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("钱包信息未找到！"));
+            log.info("=====> 钱包信息未找到！walletQueryReq:{}，walletDTOS:{}",JsonUtil.objectToJson(walletQueryReq), JsonUtil.objectToJson(walletDTOS));
+//            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("钱包信息未找到！"));
         }
         return walletDTOS.get(0);
     }
