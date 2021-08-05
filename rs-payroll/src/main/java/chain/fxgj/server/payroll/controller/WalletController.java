@@ -132,6 +132,7 @@ public class WalletController {
             //查询当前登陆人信息
             EmployeeWechatDTO dto = findByJsessionId(jsessionId);
             PageDTO<WithdrawalLedgerPageRes> pageDTO = walletService.withdrawalLedgerPage(entId, dto, req, salt, passwd, pageRequest);
+            log.info("=====> /wallet/withdrawalLedgerPage 提现台账分页列表 返回：{}",JsonUtil.objectToJson(pageDTO));
             return pageDTO;
         }).subscribeOn(Schedulers.elastic());
     }
