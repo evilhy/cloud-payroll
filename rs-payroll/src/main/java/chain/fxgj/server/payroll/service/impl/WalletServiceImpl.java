@@ -629,7 +629,7 @@ public class WalletServiceImpl implements WalletService {
         EmployeeQueryReq employeeQueryReq = EmployeeQueryReq.builder()
                 .entId(entId)
                 .idNumber(ledgerDTO.getIdNumber())
-                .employeeName(ledgerDTO.getCustName())
+//                .employeeName(ledgerDTO.getCustName())
                 .build();
         List<EmployeeDTO> employeeDTOList = employeeFeignController.query(employeeQueryReq);
 
