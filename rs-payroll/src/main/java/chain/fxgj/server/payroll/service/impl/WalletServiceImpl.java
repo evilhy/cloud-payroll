@@ -673,10 +673,12 @@ public class WalletServiceImpl implements WalletService {
         //更新提现台账
         WithdrawalLedgerSaveReq ledgerSaveReq = WithdrawalLedgerSaveReq.builder()
                 .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
-                .employeeCardNo(employeeCardDTO.getCardNo())
-                .openBank(employeeCardDTO.getIssuerName())
                 .withdrawalStatus(WithdrawalStatusEnum.Ing)
                 .build();
+        if (!ledgerDTO.getEmployeeCardNo().equals(cardNo)){
+            ledgerSaveReq.setEmployeeCardNo(employeeCardDTO.getCardNo());
+            ledgerSaveReq.setOpenBank(employeeCardDTO.getIssuerName());
+        }
         WithdrawalLedgerDTO ledgerDTO1 = withdrawalLedgerInfoServiceFeign.save(ledgerSaveReq);
 
         //查询当前钱包余额
