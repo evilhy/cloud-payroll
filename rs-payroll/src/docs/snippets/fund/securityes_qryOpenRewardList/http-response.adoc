@@ -1,8 +1,0 @@
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Length: 192
-Content-Type: application/json;charset=UTF-8
-
-[{"companyId":"E20202020","companyName":"新时代证券","standard":0,"standardVal":"未达标"},{"companyId":"E20202021","companyName":"安信证券","standard":1,"standardVal":"已达标"}]
-----

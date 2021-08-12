@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /base/WithdrawalStatusEnum/dictItem HTTP/1.1
+jsessionId: 30ee1315af1e4cada219c27b27e97eb7
+Host: localhost:8080
+
+----

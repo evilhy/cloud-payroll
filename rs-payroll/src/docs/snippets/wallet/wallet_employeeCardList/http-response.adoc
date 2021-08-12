@@ -1,8 +1,0 @@
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 135
-
-[{"employeeCardId":"ba2276ff674a429f9467241c1c57a4c4","issuerBankId":"034049","issuerName":"华夏银行","cardNo":"6230200013873745"}]
-----

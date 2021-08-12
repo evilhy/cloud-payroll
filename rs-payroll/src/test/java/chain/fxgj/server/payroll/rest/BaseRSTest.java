@@ -39,7 +39,6 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
-@Transactional
 @Rollback(false)
 @Slf4j
 public class BaseRSTest {

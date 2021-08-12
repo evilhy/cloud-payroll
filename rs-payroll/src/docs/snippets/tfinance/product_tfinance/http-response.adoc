@@ -1,8 +1,0 @@
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Length: 1905
-Content-Type: application/json;charset=UTF-8
-
-{"wechatId":"8a8581226977377301697737d4280000","entId":"ff8080816899924301689e0288c50000","productId":"ff808081671710a301671bc90aaf0005","productName":"测试测试","productImg":"https://sitwxp.cardpu.com/operate/image/1542359298557.jpg","productDesc":"阿哈哈哈哈哈","intentFlag":null,"promote":"<p>一、参与同事满足对应人数标准，系统自动按对应档位计算收益，<span style=\"color: rgb(252, 53, 53);\">人数越多收益越高</span></p><p>二、完成预约后，认购期<span style=\"color: rgb(252, 53, 53);\">认购金额</span>达到<span style=\"color: rgb(252, 53, 53); background-color: rgb(255, 255, 255);\">5万以上（含5万）</span>将获得<span style=\"color: rgb(252, 53, 53);\">100华夏金豆</span>奖励，华夏金豆可兑换<span style=\"color: rgb(252, 53, 53);\">话费、各大视频平台月卡会员</span>（例：100金豆可兑换100元话费、20金豆可兑换爱奇艺黄金会员月卡*1）<br></p><p>三、金豆兑换请通过<span style=\"color: rgb(252, 53, 53);\">【福利活动</span>】-<span style=\"color: rgb(252, 53, 53);\">【薪有所属</span>】进行查看兑换</p>","nowDate":1552565897743,"intentStartDate":1542297600000,"intentEndDate":1554123600000,"subscribeStartDate":1542373321000,"subscribeEndDate":1542380400000,"productTerm":1111,"maxLimit":1111,"minIntentAmt":10000,"nowMark":null,"intentNum":0,"intentStatus":null,"bindStatus":1,"followStatus":null,"show":null,"subscribeEndDate1":"2018-11-16T23:00:00","markList":[{"markLevel":1,"markRemark":"发互粉","levelRate":3.0,"minPeople":1,"maxPeople":1,"amt":913.15,"sucess":null,"nowMark":null},{"markLevel":2,"markRemark":"发发发","levelRate":4.0,"minPeople":2,"maxPeople":2,"amt":1217.53,"sucess":null,"nowMark":null},{"markLevel":3,"markRemark":"阿斯顿撒","levelRate":5.0,"minPeople":3,"maxPeople":1111,"amt":1521.92,"sucess":null,"nowMark":null}]}
-----

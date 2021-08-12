@@ -1,8 +1,0 @@
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Length: 172
-Content-Type: text/plain;charset=UTF-8
-
-https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx5d62562cc467fe38&redirect_uri=www.baidu.com&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect
-----

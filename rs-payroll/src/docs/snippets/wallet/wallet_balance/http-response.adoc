@@ -1,8 +1,0 @@
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 75
-
-{"totalAmount":30000.00,"availableAmount":50000.00,"frozenAmount":20000.00}
-----

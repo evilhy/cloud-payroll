@@ -1,8 +1,0 @@
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Length: 281
-Content-Type: application/json;charset=UTF-8
-
-{"headimgurl":"http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTK2TdCQXNqUrzY9u3SFgRLdI5kOs0yh3jHrwEzic8n5tB9RDHHMqNsOX8l06rVAibVHHsrA273wwwjw/132","name":"123","idNumber":"420704199304164673","phone":"15527689216","idNumberStar":"4207*****4673","phoneStar":"155*****9216","isNew":1}
-----
