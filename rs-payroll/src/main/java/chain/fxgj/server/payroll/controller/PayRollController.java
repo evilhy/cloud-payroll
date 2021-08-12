@@ -128,7 +128,7 @@ public class PayRollController {
     public Mono<Long> serverDateTime() {
         return Mono.fromCallable(
                 () -> LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        ).subscribeOn(Schedulers.elastic());
+        ).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -151,7 +151,7 @@ public class PayRollController {
             List<core.dto.response.NewestWageLogDTO> newestWageLogDTOS = payrollFeignController.empGroupList(cacheUserPrincipal);
             log.info("NewestWageLogDTOList:[{}]", JacksonUtil.objectToJson(newestWageLogDTOS));
             return newestWageLogDTOS;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -205,7 +205,7 @@ public class PayRollController {
             }
             log.info("entEmp.res100701:[{}]", JacksonUtil.objectToJson(res100701));
             return res100701;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -236,7 +236,7 @@ public class PayRollController {
                 }
             }
             return res100708;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -269,7 +269,7 @@ public class PayRollController {
                 }
             }
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -306,7 +306,7 @@ public class PayRollController {
                 log.error("免密入缓存失败:[{}]", e.getMessage());
             }
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -335,7 +335,7 @@ public class PayRollController {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
             }
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
 
@@ -366,7 +366,7 @@ public class PayRollController {
             }
             log.info("返回脱敏数据emp.empInfoDTO.ret:[{}]", JacksonUtil.objectToJson(empInfoDTO));
             return empInfoDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -469,7 +469,7 @@ public class PayRollController {
             }
             log.info("empEnt.list:[{}]", JacksonUtil.objectToJson(list));
             return list.get(0);
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -550,7 +550,7 @@ public class PayRollController {
             }
             log.info("加密返回empCard.payrollBankCardDTOS:[{}]", JacksonUtil.objectToJson(payrollBankCardDTOS));
             return payrollBankCardDTOS;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -582,7 +582,7 @@ public class PayRollController {
             }
             log.info("脱敏数据empCardLog.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -622,7 +622,7 @@ public class PayRollController {
             }
             log.info("返回脱敏数据entPhone.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -649,7 +649,7 @@ public class PayRollController {
                 }
             }
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -762,7 +762,7 @@ public class PayRollController {
             }
             log.info("根据idNumberEncrytor:[{}]查询到登录记录,value:[{}]", idNumberEncrytor, value);
             return true;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -830,7 +830,7 @@ public class PayRollController {
             }
             log.info("调用wageList返回时间::[{}]", LocalDateTime.now());
             return res100703;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -937,7 +937,7 @@ public class PayRollController {
 
             log.info("web.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -1028,7 +1028,7 @@ public class PayRollController {
             //回执确认
 //            receipt(wageDetail.getId());
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -1254,6 +1254,6 @@ public class PayRollController {
                     .issuerFullName(cardbinQueRes.getIssuerFullName())
                     .issuerName(cardbinQueRes.getIssuerName())
                     .build();
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }

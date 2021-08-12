@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @Slf4j
+@SuppressWarnings("unchecked")
 public class PasswordServiceImpl implements PaswordService {
 
     @Autowired

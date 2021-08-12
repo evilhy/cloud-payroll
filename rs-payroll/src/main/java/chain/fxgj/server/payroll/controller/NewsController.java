@@ -45,7 +45,7 @@ public class NewsController {
 
             NewsInfoReq req = NewsInfoReq.builder().entId(userPrincipal.getEntId()).idNumber(userPrincipal.getIdNumber()).build();
             return newsNoticeServiceFeign.bulletInfo(req);
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -62,7 +62,7 @@ public class NewsController {
 
             NewsInfoReq req = NewsInfoReq.builder().entId(userPrincipal.getEntId()).idNumber(userPrincipal.getIdNumber()).build();
             return newsNoticeServiceFeign.statisticInfo(req);
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -81,7 +81,7 @@ public class NewsController {
             req.setEntId(userPrincipal.getEntId());
             req.setIdNumber(userPrincipal.getIdNumber());
             return newsNoticeServiceFeign.pageList(req);
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -101,7 +101,7 @@ public class NewsController {
             req.setIdNumber(userPrincipal.getIdNumber());
             newsNoticeServiceFeign.operate(req);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
 

@@ -27,6 +27,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/base")
 @Slf4j
+@SuppressWarnings("unchecked")
 public class BaseRS {
 
     /**
@@ -64,6 +65,6 @@ public class BaseRS {
             } catch (Exception e) {
                 throw new ParamsIllegalException(ErrorConstant.MISS_PARAM.getErrorMsg());
             }
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }

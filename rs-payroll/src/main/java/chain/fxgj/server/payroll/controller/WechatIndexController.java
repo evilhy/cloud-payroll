@@ -123,7 +123,7 @@ public class WechatIndexController {
             loginLogService.saveLoginLog(openId, "wxCallback");
 
             return res100705;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 }

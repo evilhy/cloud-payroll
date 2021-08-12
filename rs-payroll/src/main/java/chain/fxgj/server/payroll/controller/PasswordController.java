@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 @Validated
 @RequestMapping(value = "/password")
 @Slf4j
+@SuppressWarnings("unchecked")
 public class PasswordController {
 
     @Autowired
@@ -70,7 +71,7 @@ public class PasswordController {
             Optional.ofNullable(wechatId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到登录用户可用标识")));
             log.info("=====> /admin/queryHandPassword 查询用户是否开启手势密码 wechatId:{}", wechatId);
             return paswordService.queryHandPassword(wechatId);
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -91,7 +92,7 @@ public class PasswordController {
 
             EmployeeWechatDTO dto = paswordService.closeHandPassword(wechatId);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -128,7 +129,7 @@ public class PasswordController {
             }
 
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
 
@@ -173,7 +174,7 @@ public class PasswordController {
             }
 
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -222,7 +223,7 @@ public class PasswordController {
                 log.error("免密入缓存失败:[{}]", e.getMessage());
             }
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -258,7 +259,7 @@ public class PasswordController {
             }
 
             return CrateNumericKeypadRes.builder().numberBase(keyboardResponse.getNumberBase64()).build();
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -318,7 +319,7 @@ public class PasswordController {
             secretFreeRes.setPwdType(pwdTyp);
 
             return secretFreeRes;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 

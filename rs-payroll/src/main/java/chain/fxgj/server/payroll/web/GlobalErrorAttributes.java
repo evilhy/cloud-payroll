@@ -30,6 +30,7 @@ import java.util.Map;
 @Component
 @Slf4j
 @Order(-2)
+@SuppressWarnings("unchecked")
 public class GlobalErrorAttributes extends DefaultErrorAttributes {
     @Override
     public Map<String, Object> getErrorAttributes(ServerRequest request,

@@ -76,7 +76,7 @@ public class WalletController {
             //业务处理
             WalletBalanceDTO balanceDTO = walletService.balance(entId, dto, salt, passwd);
             return balanceDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -104,7 +104,7 @@ public class WalletController {
             EmployeeWechatDTO dto = findByJsessionId(jsessionId);
             EmpCardAndBalanceResDTO resDTO = walletService.empCardAdnBalance(entId, salt, passwd, dto);
             return resDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -134,7 +134,7 @@ public class WalletController {
             PageDTO<WithdrawalLedgerPageRes> pageDTO = walletService.withdrawalLedgerPage(entId, dto, req, salt, passwd, pageRequest);
             log.info("=====> /wallet/withdrawalLedgerPage 提现台账分页列表 返回：{}",JsonUtil.objectToJson(pageDTO));
             return pageDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -162,7 +162,7 @@ public class WalletController {
             EmployeeWechatDTO dto = findByJsessionId(jsessionId);
             WithdrawalLedgerDetailRes res = walletService.withdrawalLedgerDetail(withdrawalLedgerId, entId, dto, salt, passwd);
             return res;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -190,7 +190,7 @@ public class WalletController {
             EmployeeWechatDTO dto = findByJsessionId(jsessionId);
             WithdrawalRecordDetailRes res = walletService.withdrawalRecordDetail(withdrawalLedgerId, entId, dto, salt, passwd);
             return res;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -212,7 +212,7 @@ public class WalletController {
             EmployeeWechatDTO dto = findByJsessionId(jsessionId);
             List<EmployeeCardDTO> list = walletService.employeeCardList(entId, dto, salt, passwd);
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -238,6 +238,6 @@ public class WalletController {
             EmployeeWechatDTO dto = findByJsessionId(jsessionId);
             walletService.withdraw(entId, dto, req);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 }

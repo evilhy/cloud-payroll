@@ -52,6 +52,7 @@ import java.util.concurrent.Executor;
 @Validated
 @RequestMapping("/inside")
 @Slf4j
+@SuppressWarnings("unchecked")
 public class InsideController {
 
     @Qualifier("applicationTaskExecutor")
@@ -175,7 +176,7 @@ public class InsideController {
             res100302.setCodeId(msgCodeLogResponeDTO.getCodeId());
             log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
             return res100302;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -206,7 +207,7 @@ public class InsideController {
                 log.info("回执后,同步数据失败:[{}]", e);
             }
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -229,7 +230,7 @@ public class InsideController {
             log.info("wageReadWageDTO:[{}]", JacksonUtil.objectToJson(wageReadWageDTO));
             insideFeignController.readWage(wageReadWageDTO);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -268,7 +269,7 @@ public class InsideController {
             employeeInfoServiceFeign.updEmpInfo(empInfoUpdReq);
             log.info("更新MySql员工表绑定状态完成");
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -316,7 +317,7 @@ public class InsideController {
             log.info("更新MySql员工表绑定状态完成");
 
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
 
@@ -341,7 +342,7 @@ public class InsideController {
 
             insideFeignController.setPwd(pwd, wageUserPrincipal);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -372,7 +373,7 @@ public class InsideController {
             wageUpPwdRequestDTO.setCacheUserPrincipal(wageUserPrincipal);
             insideFeignController.updPwd(wageUpPwdRequestDTO);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -474,7 +475,7 @@ public class InsideController {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
             }
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -515,7 +516,7 @@ public class InsideController {
             employeeInfoServiceFeign.updEmpInfo(empInfoUpdReq);
 
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
 
@@ -540,7 +541,7 @@ public class InsideController {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());
             }
             return insideFeignController.updBankCard(updBankCardDTO);
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -590,7 +591,7 @@ public class InsideController {
             }
             log.info("empEntResDTOListRes:[{}]", JacksonUtil.objectToJson(empEntResDTOListRes));
             return empEntResDTOListRes;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -607,7 +608,7 @@ public class InsideController {
             MDC.setContextMap(mdcContext);
 
             return insideFeignController.getSkin(userPrincipal.getSessionId(), userPrincipal.getAppPartner().getCode().toString());
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -626,7 +627,7 @@ public class InsideController {
 
             insideFeignController.setSkin(req);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
 }

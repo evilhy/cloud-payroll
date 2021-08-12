@@ -59,7 +59,7 @@ public class WechatController {
             WechatMenuResponseDTO menuById = wechatFeignClient.createMenuById(WechatGroupEnum.valueOf(id.name()));
             log.info("微信菜单创建:[{}] ", JacksonUtil.objectToJson(menuById));
             return menuById;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -78,7 +78,7 @@ public class WechatController {
             WechatMenuResponseDTO wechatMenuResponseDTO = wechatFeignClient.deleteMenu(WechatGroupEnum.valueOf(id.name()));
             log.info("微信菜单删除:[{}] ", JacksonUtil.objectToJson(wechatMenuResponseDTO));
             return wechatMenuResponseDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -97,7 +97,7 @@ public class WechatController {
             WechatQueryMenuDTO menu = wechatFeignClient.getMenu(WechatGroupEnum.valueOf(id.name()));
             log.info("微信菜单获取:[{}] ", JacksonUtil.objectToJson(menu));
             return menu;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -137,7 +137,7 @@ public class WechatController {
             }
             log.info("====>echostrRet:[{}]，验签成功！", resultEchostr);
             return echostr;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -200,7 +200,7 @@ public class WechatController {
             String sendContent = wechatFeignController.processRequest(cacheProcessRequestDTO);
             log.info("sendContent:[{}]", sendContent);
             return sendContent;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -233,7 +233,7 @@ public class WechatController {
             weixinJsapiDTO.setTimestamp(wechatJsapiRequestDTO.getTimestamp());
             weixinJsapiDTO.setUrl(wechatJsapiRequestDTO.getUrl());
             return weixinJsapiDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -256,6 +256,6 @@ public class WechatController {
             WechatJsapiRequestDTO wechatJsapiRequestDTO = wechatFeignClient.jsapiSignature(wechatGroup, url);
             log.info("wechatJsapiRequestDTO:[{}]", JacksonUtil.objectToJson(wechatJsapiRequestDTO));
             return wechatJsapiRequestDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }
