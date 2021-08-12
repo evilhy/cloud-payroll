@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   application:
@@ -61,12 +61,6 @@ payroll:
   inside-url: http://127.0.0.1:8085/rest/
   #产品图片
   img-url: https://sitwxp.cardpu.com/
-
-  #南京银行解密使用
-  #放薪管家 sm4加密、解密key [线下分配]
-  fxgjSm4Key: 934F17AE93CB7F23BE347849C87EED51
-  #放薪管家 sm4加密、解密key [线下分配]
-  fxgjSm4Iv: 9wHFOMfs2Y8JeF8U
 
   ###签名回执地址
   signPdfPath: /webserver/www/down/emp/sign/

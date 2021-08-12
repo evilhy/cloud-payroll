@@ -22,18 +22,6 @@ public class PayrollProperties {
     private String insideUrl;
 
     /**
-     * 放薪管家 sm4加密、解密key [线下分配]
-     * sm4 对称加密
-     */
-    private String fxgjSm4Key;
-
-    /**
-     * 放薪管家 sm4  CBC模式下 vi [线下分配]
-     * sm4 对称加密
-     */
-    private String fxgjSm4Iv;
-
-    /**
      * 签名回执地址
      */
     private String signPdfPath;

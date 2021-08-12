@@ -187,7 +187,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-amqp'
     compile('chain:utils-mq:1.0.0')
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.22.1'
-    compile('mysql:mysql-connector-java:5.1.38')
+    //compile('mysql:mysql-connector-java:5.1.38')
     //compile 'org.springframework.cloud:spring-cloud-starter-zipkin'
     // redis 连接池
     implementation group: 'org.apache.commons', name: 'commons-pool2', version: '2.9.0'
