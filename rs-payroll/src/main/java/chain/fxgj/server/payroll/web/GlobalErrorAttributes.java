@@ -9,6 +9,7 @@ import chain.fxgj.server.payroll.dto.base.ErrorDTO;
 import chain.fxgj.server.payroll.exception.ForbiddenServiceException;
 import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -32,9 +33,10 @@ import java.util.Map;
 @Order(-2)
 @SuppressWarnings("unchecked")
 public class GlobalErrorAttributes extends DefaultErrorAttributes {
+
     @Override
     public Map<String, Object> getErrorAttributes(ServerRequest request,
-                                                  boolean includeStackTrace) {
+                                                  ErrorAttributeOptions options) {
         return assembleError(request);
     }
 
