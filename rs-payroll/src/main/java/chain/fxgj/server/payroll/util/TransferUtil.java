@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.util;
 
-import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
