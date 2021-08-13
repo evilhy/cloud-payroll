@@ -502,6 +502,7 @@ public class PayRollController {
             if (!CollectionUtils.isEmpty(payrollBankCardDTOS)) {
                 //数据转换及加密处理
                 for (PayrollBankCardDTO item : payrollBankCardDTOS) {
+                    String cardNo = item.getCardNo();
                     item.setCardNo(EncrytorUtils.encryptField(item.getCardNo(), salt, passwd));
                     item.setOldCardNo(EncrytorUtils.encryptField(item.getOldCardNo(), salt, passwd));
                     item.setSalt(salt);
@@ -529,7 +530,7 @@ public class PayRollController {
                     //查询员工卡
                     EmployeeCardQueryReq employeeCardQueryReq = EmployeeCardQueryReq.builder()
                             .employeeIds(employeeIds)
-                            .cardNo(employeeEncrytorService.decryptCardNo(item.getCardNo()))
+                            .cardNo(cardNo)
                             .build();
                     List<EmployeeCardDTO> cardDTOS = employeeCardFeignService.query(employeeCardQueryReq);
                     if (null != cardDTOS && cardDTOS.size() > 0) {
