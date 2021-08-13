@@ -23,6 +23,7 @@ import chain.fxgj.server.payroll.dto.response.GroupInvoiceDTO;
 import chain.fxgj.server.payroll.dto.response.Res100701;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.EmpWechatService;
+import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.util.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -116,6 +117,8 @@ public class PayRollController {
     EnterpriseFeignService enterpriseFeignService;
     @Autowired
     CardBinFeignService cardBinFeignService;
+    @Autowired
+    EmployeeEncrytorService employeeEncrytorService;
 
     /**
      * 服务当前时间
@@ -526,7 +529,7 @@ public class PayRollController {
                     //查询员工卡
                     EmployeeCardQueryReq employeeCardQueryReq = EmployeeCardQueryReq.builder()
                             .employeeIds(employeeIds)
-                            .cardNo(item.getCardNo())
+                            .cardNo(employeeEncrytorService.decryptCardNo(item.getCardNo()))
                             .build();
                     List<EmployeeCardDTO> cardDTOS = employeeCardFeignService.query(employeeCardQueryReq);
                     if (null != cardDTOS && cardDTOS.size() > 0) {
