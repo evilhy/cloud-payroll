@@ -531,7 +531,7 @@ public class InsideController {
     @TrackLog
     public Mono<String> updBankCard(@RequestBody UpdBankCardDTO updBankCardDTO) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-
+        String idNumber = WebContext.getCurrentUser().getIdNumber();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -540,7 +540,7 @@ public class InsideController {
             if (!updBankCardDTO.getCardNo().matches(regex)) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());
             }
-            return insideFeignController.updBankCard(updBankCardDTO);
+            return insideFeignController.updBankCard(updBankCardDTO,idNumber);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
