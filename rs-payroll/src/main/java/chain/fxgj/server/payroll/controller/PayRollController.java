@@ -32,6 +32,7 @@ import chain.payroll.client.feign.*;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
+import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
 import chain.wage.manager.core.dto.response.WageRes100708;
 import chain.wage.manager.core.dto.response.enterprise.EntErpriseInfoDTO;
@@ -42,10 +43,12 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
+import core.dto.request.empCard.EmployeeCardLogQueryReq;
 import core.dto.request.empCard.EmployeeCardQueryReq;
 import core.dto.response.*;
 import core.dto.response.cardbin.CardbinQueRes;
 import core.dto.response.empCard.EmployeeCardDTO;
+import core.dto.response.empCard.EmployeeCardLogDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -111,6 +114,8 @@ public class PayRollController {
     EmployeeCardFeignService employeeCardFeignService;
     @Autowired
     EmployeeInfoServiceFeign employeeInfoServiceFeign;
+    @Autowired
+    EmployeeCardLogFeignService employeeCardLogFeignService;
     @Autowired
     GroupInfoFeignService groupInfoFeignService;
     @Autowired
@@ -527,15 +532,41 @@ public class PayRollController {
                         employeeInfoResMap.put(emp.getEmployeeId(), emp);
                     }
 
+                    //查询文件修改记录
+                    LocalDateTime logCrtDateTime = null;
+                    EmployeeCardLogDTO dto = null;
+                    EmployeeCardLogQueryReq logQueryReq = EmployeeCardLogQueryReq.builder()
+                            .cardNo(cardNo)
+                            .delStatus(Arrays.asList(DelStatusEnum.normal))
+                            .build();
+                    List<EmployeeCardLogDTO> logDTOS = employeeCardLogFeignService.query(logQueryReq);
+                    if (null != logDTOS && logDTOS.size() > 0) {
+                        int index = logDTOS.size() - 1;
+                        dto = logDTOS.get(index);
+                        logCrtDateTime = dto.getCrtDateTime();
+                    }
+
                     //查询员工卡
                     EmployeeCardQueryReq employeeCardQueryReq = EmployeeCardQueryReq.builder()
                             .employeeIds(employeeIds)
                             .cardNo(cardNo)
                             .build();
                     List<EmployeeCardDTO> cardDTOS = employeeCardFeignService.query(employeeCardQueryReq);
+                    EmployeeCardDTO employeeCardDTO = null;
+                    LocalDateTime crtDateTime = null;
                     if (null != cardDTOS && cardDTOS.size() > 0) {
-                        EmployeeCardDTO employeeCardDTO = cardDTOS.get(0);
+                        employeeCardDTO = cardDTOS.get(0);
+                        employeeCardDTO.getCrtDateTime();
 
+                    }
+
+                    if ((null != logCrtDateTime && null != crtDateTime && logCrtDateTime.isBefore(crtDateTime))
+                            || (null != logCrtDateTime && null == crtDateTime)) {
+                        String bankCardId = dto.getBankCardId();
+                        employeeCardDTO = employeeCardFeignService.findById(bankCardId);
+                    }
+
+                    if (null != employeeCardDTO) {
                         //插卡人
                         EmployeeInfoRes employee = employeeInfoResMap.get(employeeCardDTO.getEmployeeId());
                         if (null != employee) {
