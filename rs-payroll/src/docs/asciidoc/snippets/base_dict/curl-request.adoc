@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/base/WithdrawalStatusEnum/dictItem' -i -X GET \
+    -H 'jsessionId: 30ee1315af1e4cada219c27b27e97eb7'
+----

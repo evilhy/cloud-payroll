@@ -3,8 +3,13 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ErrorMsg;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
+import chain.feign.hxinside.ent.service.EmployeeInfoServiceFeign;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.core.common.constant.PayrollDBConstant;
+import chain.fxgj.ent.core.dto.request.EmployeeQueryRequest;
+import chain.fxgj.ent.core.dto.response.EmployeeInfoRes;
+import chain.fxgj.feign.client.EnterpriseFeignService;
+import chain.fxgj.feign.client.GroupInfoFeignService;
 import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.payroll.CheckPwdDTO;
@@ -18,6 +23,7 @@ import chain.fxgj.server.payroll.dto.response.GroupInvoiceDTO;
 import chain.fxgj.server.payroll.dto.response.Res100701;
 import chain.fxgj.server.payroll.dto.response.*;
 import chain.fxgj.server.payroll.service.EmpWechatService;
+import chain.fxgj.server.payroll.service.EmployeeEncrytorService;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.util.*;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -26,15 +32,23 @@ import chain.payroll.client.feign.*;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
+import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
 import chain.wage.manager.core.dto.response.WageRes100708;
+import chain.wage.manager.core.dto.response.enterprise.EntErpriseInfoDTO;
+import chain.wage.manager.core.dto.response.group.GroupInfoDTO;
 import chain.wage.manager.core.dto.web.WageUserPrincipal;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
+import core.dto.request.empCard.EmployeeCardLogQueryReq;
+import core.dto.request.empCard.EmployeeCardQueryReq;
 import core.dto.response.*;
+import core.dto.response.cardbin.CardbinQueRes;
+import core.dto.response.empCard.EmployeeCardDTO;
+import core.dto.response.empCard.EmployeeCardLogDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -58,10 +72,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -98,6 +110,20 @@ public class PayRollController {
     WageDetailYearFeignController wageDetailYearFeignController;
     @Autowired
     SignedReceiptFeignController signedReceiptFeignController;
+    @Autowired
+    EmployeeCardFeignService employeeCardFeignService;
+    @Autowired
+    EmployeeInfoServiceFeign employeeInfoServiceFeign;
+    @Autowired
+    EmployeeCardLogFeignService employeeCardLogFeignService;
+    @Autowired
+    GroupInfoFeignService groupInfoFeignService;
+    @Autowired
+    EnterpriseFeignService enterpriseFeignService;
+    @Autowired
+    CardBinFeignService cardBinFeignService;
+    @Autowired
+    EmployeeEncrytorService employeeEncrytorService;
 
     /**
      * 服务当前时间
@@ -110,7 +136,7 @@ public class PayRollController {
     public Mono<Long> serverDateTime() {
         return Mono.fromCallable(
                 () -> LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        ).subscribeOn(Schedulers.elastic());
+        ).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -133,7 +159,7 @@ public class PayRollController {
             List<core.dto.response.NewestWageLogDTO> newestWageLogDTOS = payrollFeignController.empGroupList(cacheUserPrincipal);
             log.info("NewestWageLogDTOList:[{}]", JacksonUtil.objectToJson(newestWageLogDTOS));
             return newestWageLogDTOS;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -187,7 +213,7 @@ public class PayRollController {
             }
             log.info("entEmp.res100701:[{}]", JacksonUtil.objectToJson(res100701));
             return res100701;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -218,7 +244,7 @@ public class PayRollController {
                 }
             }
             return res100708;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -251,7 +277,7 @@ public class PayRollController {
                 }
             }
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -288,7 +314,7 @@ public class PayRollController {
                 log.error("免密入缓存失败:[{}]", e.getMessage());
             }
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -317,7 +343,7 @@ public class PayRollController {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_006.getErrorMsg());
             }
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
 
@@ -348,7 +374,7 @@ public class PayRollController {
             }
             log.info("返回脱敏数据emp.empInfoDTO.ret:[{}]", JacksonUtil.objectToJson(empInfoDTO));
             return empInfoDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -451,7 +477,7 @@ public class PayRollController {
             }
             log.info("empEnt.list:[{}]", JacksonUtil.objectToJson(list));
             return list.get(0);
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -481,15 +507,85 @@ public class PayRollController {
             if (!CollectionUtils.isEmpty(payrollBankCardDTOS)) {
                 //数据转换及加密处理
                 for (PayrollBankCardDTO item : payrollBankCardDTOS) {
+                    String cardNo = item.getCardNo();
                     item.setCardNo(EncrytorUtils.encryptField(item.getCardNo(), salt, passwd));
                     item.setOldCardNo(EncrytorUtils.encryptField(item.getOldCardNo(), salt, passwd));
                     item.setSalt(salt);
                     item.setPasswd(passwd);
+                    item.setCardType(0);
+                    item.setCardTypeVal("工资卡");
+
+                    //查询员工
+                    EmployeeQueryRequest employeeQueryRequest = EmployeeQueryRequest.builder()
+                            .entId(entId1)
+                            .idNumber(idNumber1)
+                            .build();
+                    List<EmployeeInfoRes> employeeInfoRes = employeeInfoServiceFeign.empInfoList(employeeQueryRequest);
+                    if (null == employeeInfoRes || employeeInfoRes.size() <= 0) {
+                        continue;
+                    }
+                    List<String> employeeIds = new ArrayList<>();
+                    Map<String, EmployeeInfoRes> employeeInfoResMap = new HashMap<>();
+                    for (EmployeeInfoRes emp : employeeInfoRes
+                    ) {
+                        employeeIds.add(emp.getEmployeeId());
+                        employeeInfoResMap.put(emp.getEmployeeId(), emp);
+                    }
+
+                    //查询文件修改记录
+                    LocalDateTime logCrtDateTime = null;
+                    EmployeeCardLogDTO dto = null;
+                    EmployeeCardLogQueryReq logQueryReq = EmployeeCardLogQueryReq.builder()
+                            .cardNo(cardNo)
+                            .delStatus(Arrays.asList(DelStatusEnum.normal))
+                            .build();
+                    List<EmployeeCardLogDTO> logDTOS = employeeCardLogFeignService.query(logQueryReq);
+                    if (null != logDTOS && logDTOS.size() > 0) {
+                        int index = logDTOS.size() - 1;
+                        dto = logDTOS.get(index);
+                        logCrtDateTime = dto.getCrtDateTime();
+                    }
+
+                    //查询员工卡
+                    EmployeeCardQueryReq employeeCardQueryReq = EmployeeCardQueryReq.builder()
+                            .employeeIds(employeeIds)
+                            .cardNo(cardNo)
+                            .build();
+                    List<EmployeeCardDTO> cardDTOS = employeeCardFeignService.query(employeeCardQueryReq);
+                    EmployeeCardDTO employeeCardDTO = null;
+                    LocalDateTime crtDateTime = null;
+                    if (null != cardDTOS && cardDTOS.size() > 0) {
+                        employeeCardDTO = cardDTOS.get(0);
+                        employeeCardDTO.getCrtDateTime();
+
+                    }
+
+                    if ((null != logCrtDateTime && null != crtDateTime && logCrtDateTime.isBefore(crtDateTime))
+                            || (null != logCrtDateTime && null == crtDateTime)) {
+                        String bankCardId = dto.getBankCardId();
+                        employeeCardDTO = employeeCardFeignService.findById(bankCardId);
+                    }
+
+                    if (null != employeeCardDTO) {
+                        //插卡人
+                        EmployeeInfoRes employee = employeeInfoResMap.get(employeeCardDTO.getEmployeeId());
+                        if (null != employee) {
+                            item.setUserName(employee.getEmployeeName());
+
+                            //查询首次添加的机构
+                            GroupInfoDTO groupInfoDTO = groupInfoFeignService.findById(employee.getGroupId());
+                            item.setGroupName(null == groupInfoDTO ? null : groupInfoDTO.getGroupName());
+
+                            //查询首次添加的企业
+                            EntErpriseInfoDTO erpriseInfoDTO = enterpriseFeignService.findById(employee.getEntId());
+                            item.setEntName(null == erpriseInfoDTO ? null : erpriseInfoDTO.getEntName());
+                        }
+                    }
                 }
             }
             log.info("加密返回empCard.payrollBankCardDTOS:[{}]", JacksonUtil.objectToJson(payrollBankCardDTOS));
             return payrollBankCardDTOS;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -521,7 +617,7 @@ public class PayRollController {
             }
             log.info("脱敏数据empCardLog.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -561,7 +657,7 @@ public class PayRollController {
             }
             log.info("返回脱敏数据entPhone.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -588,7 +684,7 @@ public class PayRollController {
                 }
             }
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -701,7 +797,7 @@ public class PayRollController {
             }
             log.info("根据idNumberEncrytor:[{}]查询到登录记录,value:[{}]", idNumberEncrytor, value);
             return true;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -769,7 +865,7 @@ public class PayRollController {
             }
             log.info("调用wageList返回时间::[{}]", LocalDateTime.now());
             return res100703;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -876,7 +972,7 @@ public class PayRollController {
 
             log.info("web.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -967,98 +1063,7 @@ public class PayRollController {
             //回执确认
 //            receipt(wageDetail.getId());
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
-    }
-
-    /**
-     * 保存发工资条用户签名
-     *
-     * @param req
-     * @return
-     */
-    @PostMapping("/saveSigned1")
-    @TrackLog
-    public Mono<Void> saveSigned1(@RequestBody SignedSaveReq req) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-
-            Optional.ofNullable(req.getWageSheetId()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("代发方案ID不能为空")));
-            Optional.ofNullable(req.getWageDetailId()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("企代发明细ID不能为空")));
-            Optional.ofNullable(req.getSign()).orElseThrow(() -> new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.SYS_ERROR.format("签名不能为空")));
-
-            log.info("=====> 保存发工资条用户签名 req:{}", JsonUtil.objectToJson(req));
-
-            //获取方案
-            WageSheetDTO wageSheet = wageSheetFeignController.findById(req.getWageSheetId());
-            if (null == wageSheet) {
-                throw new ParamsIllegalException(ErrorConstant.Error0001.format("代发方案"));
-            }
-
-            //获取明细
-            int year = wageSheet.getCrtDateTime().getYear();
-            core.dto.response.wageDetail.WageDetailDTO wageDetail = wageDetailYearFeignController.findById(req.getWageDetailId(), year);
-            if (null == wageDetail) {
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到方案明细"));
-            }
-
-            String url = payrollProperties.getSignPdfPath() + DateTimeUtils.getDate() + "/";
-            File file1 = new File(url);
-            if (!file1.exists()) {//如果文件夹不存在
-                file1.mkdir();//创建文件夹
-            }
-
-            //生成签名图片
-            String imgStr = req.getSign().replace("data:image/png;base64,", "");
-            String signImg = url + UUIDUtil.createUUID32() + ".jpg";
-            boolean b = ImageBase64Utils.base64ToImageFile(imgStr, signImg);
-            if (!b) {
-                log.info("====> 生成电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getDetailId(), signImg);
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("生成电子签名失败"));
-            }
-
-            //生成的PDF存放路径
-            String pdfUrl = url + wageSheet.getWageSheetId() + "/";
-            File file2 = new File(pdfUrl);
-            if (!file2.exists()) {//如果文件夹不存在
-                file2.mkdir();//创建文件夹
-            }
-
-            //生成PDF
-            String pdfPath = createPDF(signImg, pdfUrl, wageSheet, wageDetail);
-
-            //删除签名图片
-            boolean delete = new File(signImg).delete();
-            if (!delete) {
-                log.info("====> 删除电子签名失败，wageSheetId:{}, wageDetailId:{}, signImg:{}", wageSheet.getWageSheetId(), wageDetail.getDetailId(), signImg);
-            }
-
-            //替换目录
-            log.info("=====> 替换前目录：{}", pdfPath);
-            log.info("=====> 需要替换的目录：{}", payrollProperties.getSignReplacePath());
-            String replace = pdfPath.replace(payrollProperties.getSignReplacePath(), "");
-            log.info("=====> 替换后目录：{}", replace);
-
-            //保存签名
-            SignedReceiptSaveReq saveReq = SignedReceiptSaveReq.builder()
-                    .crtDateTime(LocalDateTime.now())
-                    .employeeSid(wageDetail.getEmployeeSid())
-                    .entId(wageSheet.getEntId())
-                    .groupId(wageSheet.getGroupId())
-                    .idNumber(wageDetail.getIdNumber())
-                    .receiptPath(replace)
-                    .signedReceiptId("0dd0672a0ab84edca20d7c1c61720ae2")
-                    .signImg(req.getSign())
-                    .updDateTime(LocalDateTime.now())
-                    .wageDetailId(wageDetail.getDetailId())
-                    .wageSheetId(wageSheet.getWageSheetId())
-                    .build();
-            signedReceiptFeignController.save(saveReq);
-
-            //回执确认
-//            receipt(wageDetail.getId());
-            return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -1255,5 +1260,35 @@ public class PayRollController {
             log.error("个人pdf【电子签名回执】生成失败", e);
             throw new ParamsIllegalException(chain.wage.core.constant.ErrorConstant.WZWAGE_013.getErrorMsg());
         }
+    }
+
+
+    /**
+     * 查询银行卡卡bin信息
+     *
+     * @param cardNo
+     * @return
+     */
+    @GetMapping("/checkCardBin/{cardNo}")
+    @TrackLog
+    @PermitAll
+    public Mono<CheckCardBinRes> checkCardBin(@PathVariable("cardNo") String cardNo) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            Optional.ofNullable(cardNo).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("银行卡号不能为空")));
+            log.info("=====> /roll/checkCardBin 查询银行卡卡bin信息 cardNo:{}", cardNo);
+
+            CardbinQueRes cardbinQueRes = cardBinFeignService.cardBinByBankCard(cardNo);
+
+            return CheckCardBinRes.builder()
+                    .binNum(cardbinQueRes.getBinNum())
+                    .cardName(cardbinQueRes.getCardName())
+                    .cardNoLen(cardbinQueRes.getCardNoLen())
+                    .issuerCode(cardbinQueRes.getIssuerCode())
+                    .issuerFullName(cardbinQueRes.getIssuerFullName())
+                    .issuerName(cardbinQueRes.getIssuerName())
+                    .build();
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }

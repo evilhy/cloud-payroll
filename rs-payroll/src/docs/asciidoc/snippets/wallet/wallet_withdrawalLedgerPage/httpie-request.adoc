@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ echo '{"withdrawalStatus":[0,1,2,3]}' | http POST 'http://localhost:8080/wallet/withdrawalLedgerPage' \
+    'jsession_id:5d856794f2304f9786969ce409c94b17' \
+    'ent-id:a0f60ab285fb4fc997fc1d7da0822d3b' \
+    'Content-Type:application/json'
+----

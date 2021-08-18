@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.util;
 
-import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
@@ -109,7 +108,14 @@ public class TransferUtil {
             userPrincipal.setTimeOutMinute(cacheUserPrincipal.getTimeOutMinute());
             userPrincipal.setUid(cacheUserPrincipal.getUid());
             userPrincipal.setUserName(cacheUserPrincipal.getUserName());
-            userPrincipal.setWechatId(cacheUserPrincipal.getWechatId());
+            //涉及到 密码键盘 使用
+            if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(cacheUserPrincipal.getWechatId()))) {
+                //用户 已绑定
+                userPrincipal.setWechatId(cacheUserPrincipal.getWechatId());
+            } else {
+                //用户 初次绑定时
+                userPrincipal.setWechatId(cacheUserPrincipal.getSessionId());
+            }
         }
         log.info("userPrincipal:[{}]", JacksonUtil.objectToJson(cacheUserPrincipal));
         return userPrincipal;

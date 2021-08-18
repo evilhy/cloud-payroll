@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"issuerCode":"03060000","issuerName":"广发银行","issuerFullName":"广东发展银行股份有限公司","cardName":"广发银行股份有限公司","cardNoLen":6,"binNum":"406365"}
+----

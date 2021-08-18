@@ -1,8 +1,0 @@
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Length: 93
-Content-Type: application/json;charset=UTF-8
-
-[{"productId":"ff8080816900035b016904d3b6e2003d","entId":"ff80808168effcdb0168fe90c0d50005"}]
-----

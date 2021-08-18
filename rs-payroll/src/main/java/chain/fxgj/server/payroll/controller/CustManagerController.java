@@ -57,7 +57,7 @@ public class CustManagerController {
                 BeanUtils.copyProperties(wageManagerInfoDTO, managerInfoDTO);
             }
             return managerInfoDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -75,7 +75,7 @@ public class CustManagerController {
             MDC.setContextMap(mdcContext);
             custManagerFeignService.distribute(entId);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -100,7 +100,7 @@ public class CustManagerController {
             OpeningTipsDTO openingTipsDTO = custManagerFeignService.openingTips(idNumber, entId);
             log.info("openingTips.openingTipsDTO:[{}]", JacksonUtil.objectToJson(openingTipsDTO));
             return openingTipsDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -135,7 +135,7 @@ public class CustManagerController {
             }
             log.info("qryManagerInfo.managerInfoDTO:[{}]", JacksonUtil.objectToJson(managerInformationDTO));
             return managerInformationDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 }

@@ -20,38 +20,38 @@
 :sectnumlevels: 5
 
 
-include::password.adoc[]
+include::chapter/password.adoc[]
 
-include::advertising.adoc[]
+include::chapter/advertising.adoc[]
 
-include::custmanager.adoc[]
+include::chapter/custmanager.adoc[]
 
-include::inside.adoc[]
+include::chapter/inside.adoc[]
 
-include::advertising.adoc[] ## 对第三方提供接口(待提供
+include::chapter/advertising.adoc[] ## 对第三方提供接口(待提供
 
-include::roll.adoc[]
+include::chapter/roll.adoc[]
 
-include::securities.adoc[]
+include::chapter/securities.adoc[]
 
-include::tfinance.adoc[]
+include::chapter/tfinance.adoc[]
 
-include::virus.adoc[]
+include::chapter/virus.adoc[]
 
-include::wallet.adoc[]
+include::chapter/wallet.adoc[]
 
-include::wechat.adoc[]
+include::chapter/wechat.adoc[]
 
-include::advertising.adoc[] ## 微信回调(待提供
+include::chapter/advertising.adoc[] ## 微信回调(待提供
 
-include::wisales.adoc[]
+include::chapter/wisales.adoc[]
 
-include::mini.adoc[]
+include::chapter/mini.adoc[]
 
-include::merchant.adoc[]
+include::chapter/merchant.adoc[]
 
-include::news.adoc[]
+include::chapter/news.adoc[]
 
-include::fund.adoc[]
+include::chapter/fund.adoc[]
 
-include::bill.adoc[]
+include::chapter/bill.adoc[]

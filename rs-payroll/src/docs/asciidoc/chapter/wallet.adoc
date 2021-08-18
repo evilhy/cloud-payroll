@@ -1,0 +1,163 @@
+:snippets: ../snippets
+== 放薪钱包
+
+=== 钱包余额查询
+==== 接口定义
+* Part Parameters:
++
+无
+* Response Body:
++
+include::{snippets}/wallet/wallet_balance/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wallet/wallet_balance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wallet/wallet_balance/http-response.adoc[]
+
+
+=== 员工银行卡数和钱包余额
+==== 接口定义
+* Part Parameters:
++
+无
+* Response Body:
++
+include::{snippets}/wallet/wallet_empCardAndBalance/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wallet/wallet_empCardAndBalance/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wallet/wallet_empCardAndBalance/http-response.adoc[]
+
+
+=== 提现台账分页列表
+==== 接口定义
+* Part Parameters:
++
+include::{snippets}/wallet/wallet_withdrawalLedgerPage/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/wallet/wallet_withdrawalLedgerPage/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wallet/wallet_withdrawalLedgerPage/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wallet/wallet_withdrawalLedgerPage/http-response.adoc[]
+
+
+=== 提现台账详情
+==== 接口定义
+* Part Parameters:
++
+include::{snippets}/wallet/wallet_withdrawalLedgerDetail/path-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wallet/wallet_withdrawalLedgerDetail/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wallet/wallet_withdrawalLedgerDetail/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wallet/wallet_withdrawalLedgerDetail/http-response.adoc[]
+
+
+=== 提现进度详情
+==== 接口定义
+* Part Parameters:
++
+include::{snippets}/wallet/wallet_withdrawalRecordDetail/path-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wallet/wallet_withdrawalRecordDetail/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wallet/wallet_withdrawalRecordDetail/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wallet/wallet_withdrawalRecordDetail/http-response.adoc[]
+
+
+=== 收款账户列表
+==== 接口定义
+* Part Parameters:
++
+无
+* Response Body:
++
+include::{snippets}/wallet/wallet_employeeCardList/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wallet/wallet_employeeCardList/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wallet/wallet_employeeCardList/http-response.adoc[]
+
+
+=== 确认提现
+==== 接口定义
+* Part Parameters:
++
+include::{snippets}/wallet/wallet_withdraw/request-fields.adoc[]
+* Response Body:
++
+无
+
+==== 示例
+* Request:
++
+include::{snippets}/wallet/wallet_withdraw/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wallet/wallet_withdraw/http-response.adoc[]
+
+
+=== 数据字典
+==== 接口定义
+* Part Parameters:
++
+include::{snippets}/wallet/base_dict/path-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wallet/base_dict/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wallet/base_dict/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wallet/base_dict/http-response.adoc[]
+
+
+=== 查询银行卡卡bin信息
+==== 接口定义
+* Part Parameters:
++
+include::{snippets}/roll_checkCardBin/path-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/wallet/roll_checkCardBin/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/wallet/roll_checkCardBin/curl-request.adoc[]
+* Response:
++
+include::{snippets}/wallet/roll_checkCardBin/http-response.adoc[]

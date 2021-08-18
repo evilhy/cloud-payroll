@@ -14,6 +14,8 @@ spring:
         service-name: ${spring.application.name}
         instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}  #实例ID
         prefer-ip-address: true
+        # 健康检查失败多长时间后，取消注册
+        health-check-critical-timeout: 3s
   main:
     allow-bean-definition-overriding: true
 

@@ -73,7 +73,7 @@ public class TFinanceController {
             }
             log.info("ret.list:[{}]", JacksonUtil.objectToJson(list));
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -108,7 +108,7 @@ public class TFinanceController {
             }
             log.info("ret.productInfoDTO:[{}]", JacksonUtil.objectToJson(productInfoDTO));
             return productInfoDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -134,7 +134,7 @@ public class TFinanceController {
                 BeanUtils.copyProperties(wageIntentListDTO,intentListDTO);
             }
             return intentListDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -171,7 +171,7 @@ public class TFinanceController {
                 BeanUtils.copyProperties(responseDTO,response);
             }
             return response;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -199,7 +199,7 @@ public class TFinanceController {
                 BeanUtils.copyProperties(wageIntentInfoDTO,intentInfoDTO);
             }
             return intentInfoDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -227,7 +227,7 @@ public class TFinanceController {
                 BeanUtils.copyProperties(wageUserInfoDTO,userInfoDTO);
             }
             return userInfoDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -269,7 +269,7 @@ public class TFinanceController {
                 financeFeignService.addIntent(intentDTO);
             }
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
 
     }
 
@@ -303,6 +303,6 @@ public class TFinanceController {
             authorizeurl = authorizeurl.replace("SCOPE", PayrollConstants.SNSAPI_USERINFO);
             log.info("authorizeurl:[{}]",authorizeurl);
             return authorizeurl;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }

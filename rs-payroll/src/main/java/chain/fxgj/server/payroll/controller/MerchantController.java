@@ -231,7 +231,7 @@ public class MerchantController {
             response.getHeaders().set("clientTime", String.valueOf(timeStamp));
             log.info("merchantAccess:[{}]", JacksonUtil.objectToJson(merchantAccess));
             return merchantAccess;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -287,7 +287,7 @@ public class MerchantController {
             }
             log.info("wxCallback.res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 

@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"withdrawalLedgerId":"4bffeb5b11354e9cb84709ddf8884f17","entId":"7c32bf3cff9649169220ebf3724a6062","wageSheetName":"开科唯识云中心1月工资","fundType":0,"fundTypeVal":"工资","fundDate":0,"fundDateVal":"1月份","accountId":"d426d2cb3b8e447bbb656bec7c49adba","account":"10250000003208171","accountStar":"1025********8171","accountName":"张三","accountOpenBank":"华夏银行","entName":"北京开科唯识技术有限公司","groupName":"北京开科唯识技术有限公司武汉分公司","custName":"张三","idNumber":"370782199612200038","transAmount":12000.00,"employeeCardNo":"6230200013873745","employeeCardStar":"6230*******3745","openBank":"华夏银行","issueTime":1626330976449,"payDateTime":192375995382000,"withdrawalRecordLogId":"86c409c357c24e8b83410b5cec173c62","withdrawalStatus":0,"withdrawalStatusVal":"待提现","remark":"这是备注......","year":2021,"month":2,"crtDateTime":1626330976449,"updDateTime":192375995416200,"transNo":"5e697761ebfe448d90be9aa40f2b3eff"}
+----

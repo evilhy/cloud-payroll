@@ -132,7 +132,7 @@ public class ActivityConfigureRS {
                     .jsessionId(jsessionId)
                     .build();
             return activityCallBackDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -254,7 +254,7 @@ public class ActivityConfigureRS {
             log.info("checkPhone.setUserRedis jsessionId:[{}], :[{}]", jsessionId, JacksonUtil.objectToJson(userRedisDTO));
             activityConfigureService.setUserRedis(jsessionId, userRedisDTO);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -304,7 +304,7 @@ public class ActivityConfigureRS {
             log.info("登录后redis:[{}]", JacksonUtil.objectToJson(userRedisDTO));
 
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
 
     }
 
@@ -338,7 +338,7 @@ public class ActivityConfigureRS {
             }
             log.info("entGroups:[{}]", JacksonUtil.objectToJson(entGroups));
             return entGroups;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -402,7 +402,7 @@ public class ActivityConfigureRS {
                                 }
                                 return entAccountDTO;
                             }
-                    ).subscribeOn(Schedulers.elastic()), 5)
+                    ).subscribeOn(Schedulers.boundedElastic()), 5)
                     .onErrorContinue((err, n) -> log.error("【代发账户】远程调用出现异常: {}" , err.getMessage()))
                     .toIterable()
                     .iterator();
@@ -411,7 +411,7 @@ public class ActivityConfigureRS {
 
             log.info("accountDTOList:[{}]", JacksonUtil.objectToJson(convert));
             return convert;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -484,7 +484,7 @@ public class ActivityConfigureRS {
                                 }
                                 return activityListDTO;
                             }
-                    ).subscribeOn(Schedulers.elastic()), 5)
+                    ).subscribeOn(Schedulers.boundedElastic()), 5)
                     .flatMapSequential(activityListDTO -> Mono.fromCallable(() ->
                             {
                                 mdcContext.put(PayrollConstants.SUB_TOKEN, UUIDUtil.createUUID8());
@@ -512,7 +512,7 @@ public class ActivityConfigureRS {
                                 activityListDTO.setActivityFlowList(activityFlowList);
                                 return activityListDTO;
                             }
-                    ).subscribeOn(Schedulers.elastic()), 5)
+                    ).subscribeOn(Schedulers.boundedElastic()), 5)
                     .toIterable()
                     .iterator();
 
@@ -521,7 +521,7 @@ public class ActivityConfigureRS {
             PageResponseDTO<ActivityListDTO> response = new PageResponseDTO<>(convert,
                     activityInfoResPageDTO.getTotalPages(), activityInfoResPageDTO.getTotalElements(), pageNum, size);
             return response;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     public ActivityListDTO activityInfoResToActivityListDTO(ActivityInfoRes activityInfoRes) {
@@ -585,7 +585,7 @@ public class ActivityConfigureRS {
                 list.add(activityIngDTO);
             }
             return list;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -618,7 +618,7 @@ public class ActivityConfigureRS {
                     activityRainDTO, redisDTO.getEntId(), redisDTO.getUserId(), redisDTO.getOpenId());
             log.info("addActivityRain.id:[{}]", id);
             return id;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -706,7 +706,7 @@ public class ActivityConfigureRS {
             activityConfigureService.addActivityFlowLog(activityId, redisDTO.getOpenId(), redisDTO.getUserId());
 
         return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
 
     }
 
@@ -793,7 +793,7 @@ public class ActivityConfigureRS {
             activityRainDTO.setGroupsList(groupDTOList);
             log.info("activityRainDTO:[{}]", JacksonUtil.objectToJson(activityRainDTO));
             return activityRainDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -821,7 +821,7 @@ public class ActivityConfigureRS {
                     activityRandomDTO, redisDTO.getEntId(), redisDTO.getUserId(), redisDTO.getOpenId());
 
             return id;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -906,7 +906,7 @@ public class ActivityConfigureRS {
             activityConfigureService.addActivityFlowLog(activityId, redisDTO.getOpenId(), redisDTO.getUserId());
 
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
 
     }
 
@@ -999,7 +999,7 @@ public class ActivityConfigureRS {
             activityRandom.setGroupsList(groupDTOList);
             log.info("activityRandom:[{}]", JacksonUtil.objectToJson(activityRandom));
             return activityRandom;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -1030,7 +1030,7 @@ public class ActivityConfigureRS {
             String id = activityConfigureService.saveActivityAnswer(ActivityStatusEnum.SUBMIT,
                     activityAnswerDTO, redisDTO.getEntId(), redisDTO.getUserId(), redisDTO.getOpenId());
             return id;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
 
     }
 
@@ -1115,7 +1115,7 @@ public class ActivityConfigureRS {
             activityConfigureService.addActivityFlowLog(activityId, redisDTO.getOpenId(), redisDTO.getUserId());
 
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
 
     }
 
@@ -1210,7 +1210,7 @@ public class ActivityConfigureRS {
             log.info("activityAnswerDTO:[{}]", JacksonUtil.objectToJson(activityAnswerDTO));
 
             return activityAnswerDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     private void check(Long startTime) {

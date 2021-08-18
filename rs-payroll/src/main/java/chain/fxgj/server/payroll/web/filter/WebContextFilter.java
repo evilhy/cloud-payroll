@@ -44,7 +44,7 @@ public class WebContextFilter implements WebFilter, Ordered {
             logToken = UUIDUtil.createUUID8();
 
         }
-
+        MDC.clear();
         MDC.put(REQ, reqId);
         MDC.put(PayrollDBConstant.LOG_TOKEN, logToken);
 

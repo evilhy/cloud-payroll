@@ -138,7 +138,7 @@ public class ActivityStartRS {
             res100705.setHeadimgurl(headImgurl);
             log.info("activity.res100705:[{}]", JacksonUtil.objectToJson(res100705));
             return res100705;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
     /**
      * 员工是否参与此活动
@@ -199,7 +199,7 @@ public class ActivityStartRS {
             }
 
             return isRandom;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -304,7 +304,7 @@ public class ActivityStartRS {
                                 }
                                 return entInfo;
                             }
-                    ).subscribeOn(Schedulers.elastic()), 5)
+                    ).subscribeOn(Schedulers.boundedElastic()), 5)
                     .toIterable()
                     .iterator();
 
@@ -312,7 +312,7 @@ public class ActivityStartRS {
             entInfoActivityDTO.setEntInfoList(convert);
             entInfoActivityDTO.setBindStatus("1");
             return entInfoActivityDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -373,7 +373,7 @@ public class ActivityStartRS {
             }
 
             return analyses;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -482,7 +482,7 @@ public class ActivityStartRS {
             responseDTO.setResponeList(dtolist);
 
             return responseDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 /////////////////////////////红包雨////////红包雨////////////////////红包雨///////////////////////////////////
@@ -535,7 +535,7 @@ public class ActivityStartRS {
             activityStartService.checkAccedeActivityInfo(activityInfoRequestDTO, activityRainResponseDTO);
 
             return activityRainResponseDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -588,7 +588,7 @@ public class ActivityStartRS {
 //            activityAccedeFeignService.accedeRain(request);
 
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
 
@@ -698,7 +698,7 @@ public class ActivityStartRS {
             }
 
             return dto;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -770,7 +770,7 @@ public class ActivityStartRS {
 
 
             return responseDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 ////////////答题/////////////////答题//////答题/////////////////////////////////////////////////////////
@@ -832,7 +832,7 @@ public class ActivityStartRS {
             }
 
             return dto;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -948,7 +948,7 @@ public class ActivityStartRS {
 //            }
 
             return dto;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -1044,7 +1044,7 @@ public class ActivityStartRS {
             }
 
             return dto;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -1110,7 +1110,7 @@ public class ActivityStartRS {
 
 
             return responseDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /////////////////////////////手气红包////////手气红包////////////////////手气红包///////////////////////////////////
@@ -1172,7 +1172,7 @@ public class ActivityStartRS {
             }
 
             return dto;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -1252,7 +1252,7 @@ public class ActivityStartRS {
                 //dto.setGrade();   //中奖等级（-1 未中奖 数字越大 等级越高
             }
             return dto;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -1338,7 +1338,7 @@ public class ActivityStartRS {
             long prizeTimeLong = duration.toMillis();
             dto.setPrizeTime(prizeTimeLong);
             return dto;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -1404,7 +1404,7 @@ public class ActivityStartRS {
 
 
             return responseDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 

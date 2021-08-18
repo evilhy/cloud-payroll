@@ -65,7 +65,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             PageDTO<WelfareActivityPayRollInfoDTO> welfareActivityPayRollInfoDTOPageDTO = welfareActivityFeignService.listByPayRoll(pageNum, limit, idNum, phone);
             return welfareActivityPayRollInfoDTOPageDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -81,7 +81,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             byte[] bytes = welfareActivityFeignService.lookImg(id);
             return bytes;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
     /**
      * 福利领取活动详情
@@ -99,7 +99,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             WelfareActivityPayRollDetailDTO welfareActivityPayRollDetailDTO = welfareActivityFeignService.detailByPayRoll(idNum, activityId);
             return welfareActivityPayRollDetailDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
     /**
      * 福利活动商品列表
@@ -134,7 +134,7 @@ public class WisalesController {
                     , goodsNo, goodsName, activityId, fItemCatId, sItemCatId, tItemCatId, minAmt, maxAmt, pickFlag,
                     null);
             return welfareGoodsInfoAllResDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -155,7 +155,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             WelfareGoodsDetailDTO detail = welfareActivityFeignService.detail(idNum, activityId, new ObjectId(goodsInfoId));
             return detail;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     // 兑换
@@ -180,7 +180,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             AddCustTransOrderInfoDTO addCustTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchangeGoods(addCustTransOrderInfoDTO);
             return addCustTransOrderInfoDTO1;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -200,7 +200,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             AddCustTransOrderInfoDTO addCustTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchange(addCustTransOrderInfoDTO);
             return addCustTransOrderInfoDTO1;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -220,7 +220,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             AddCustTransOrderInfoDTO addCustTransOrderInfoDTO1 = welfareActivityFeignService.welfareExchangePhone(addCustTransOrderInfoDTO);
             return addCustTransOrderInfoDTO1;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 
@@ -260,7 +260,7 @@ public class WisalesController {
             log.info("查询客户收货地址:[{}]", JacksonUtil.objectToJson(welfareCustAddressInfoDTONewList));
 
             return custAddress;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -302,7 +302,7 @@ public class WisalesController {
             }
             log.info("getCustAddressById.custAddressById:[{}]", JacksonUtil.objectToJson(custAddressById));
             return payrllWelfareCustAddressInfoDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -323,7 +323,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             welfareActivityFeignService.addressSave(welfareCustAddressInfoDTO);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -345,7 +345,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             Void aVoid = welfareActivityFeignService.addressDelete(welfareCustAddressInfoDTO);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
     /**
@@ -362,7 +362,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             List<WelfareAreaInfoDTO> areaaseQuery = welfareActivityFeignService.findAreaaseQuery(areaType, code);
             return areaaseQuery;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -377,7 +377,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             List<WelfareAreaInfoDTO> areaQuery = welfareActivityFeignService.findAreaQuery(code);
             return areaQuery;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     //兑换记录
@@ -396,7 +396,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             PageDTO<CustTransOrderInfoDTO> allByPage = welfareActivityFeignService.findAllByPage(idNumber, activityId);
             return allByPage;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -412,7 +412,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             CustTransOrderInfoDetailDTO transDtailById = welfareActivityFeignService.findTransDtailById(transOrderId);
             return transDtailById;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -427,7 +427,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             CustExchangeTransTrackResultDataDTO orderTrack = welfareActivityFeignService.findOrderTrack(transOrderId);
             return orderTrack;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -443,7 +443,7 @@ public class WisalesController {
             MDC.setContextMap(mdcContext);
             WelfareEmpTicketCountDTO welfareEmpTicketCountDTO = welfareActivityFeignService.countWelfareEmpTicket(idNumber);
             return welfareEmpTicketCountDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 

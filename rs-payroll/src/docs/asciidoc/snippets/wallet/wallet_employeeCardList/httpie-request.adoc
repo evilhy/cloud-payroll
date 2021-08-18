@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/wallet/employeeCardList' \
+    'ent-id:c9b44a2d411e427c8bfe994da4cd040d'
+----

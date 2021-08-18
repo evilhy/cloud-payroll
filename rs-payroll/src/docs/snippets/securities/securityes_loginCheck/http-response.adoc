@@ -1,8 +1,0 @@
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Length: 84
-Content-Type: application/json;charset=UTF-8
-
-{"jsessionId":"123123","phone":"13400000000","loginStatus":1,"loginStatusVal":"是"}
-----

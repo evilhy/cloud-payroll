@@ -3,6 +3,7 @@ package chain.fxgj.server.payroll.service;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.dto.wechat.UserInfoDTO;
 import chain.pub.common.enums.WechatGroupEnum;
+import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
 import core.dto.response.PayrollRes100703DTO;
 import core.dto.response.PayrollWageDetailDTO;
 import core.dto.sync.WageDetailInfoDTO;
@@ -23,7 +24,7 @@ public interface WechatRedisService {
      * @param year
      * @return
      */
-//    @Cacheable(cacheNames = "wechat", key = "'wageListMongo:'.concat(#idNumber).concat(#groupId).concat(#year).concat(#type)")
+    //@Cacheable(cacheNames = "wechat", key = "'wageListMongo:'.concat(#idNumber).concat(#groupId).concat(#year).concat(#type)")
     PayrollRes100703DTO wageListByMongo(String idNumber, String groupId, String year, String type);
 
     /**
@@ -31,7 +32,7 @@ public interface WechatRedisService {
      *
      * @return
      */
-//    @Cacheable(cacheNames = "wechat", key = "'wageDetailMongo:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
+    //@Cacheable(cacheNames = "wechat", key = "'wageDetailMongo:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
     List<PayrollWageDetailDTO> getWageDetailByMongo(String idNumber, String groupId, String wageSheetId);
 
     /**
@@ -39,23 +40,25 @@ public interface WechatRedisService {
      *
      * @return
      */
-//    @Cacheable(cacheNames = "wechat", key = "'wageDetailMysql:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
+    //@Cacheable(cacheNames = "wechat", key = "'wageDetailMysql:'.concat(#idNumber).concat(#groupId).concat(#wageSheetId)")
     List<WageDetailInfoDTO> getWageDetailByMysql(String idNumber, String groupId, String wageSheetId);
 
     /**
      * 根据code获取凭证
      * 缓存 有效期为 5分钟
+     *
      * @param wechatGroupEnum
      * @param code
      * @return
      */
-//    @Cacheable(value = "weixinOauth2", key = "#root.methodName+':'+#code")
+    //@Cacheable(value = "weixinOauth2", key = "#root.methodName+':'+#code")
     AccessTokenDTO oauth2AccessToken(WechatGroupEnum wechatGroupEnum, String code);
 
     /**
      * 根据网页授权openId、accessToken获取用户信息
      * access_token 有效期为  7200秒 ，2个小时，
      * 如果在 2个小时内，获取用户信息，从缓存中查取
+     *
      * @param accessToken
      * @param openId
      * @return
@@ -67,7 +70,7 @@ public interface WechatRedisService {
      * 工资条登录
      */
     @CachePut(cacheNames = "wechat", key = "'jsession:'.concat(#jsessionId)")
-    CacheUserPrincipal registeWechatPayroll(String jsessionId, String openId, String nickName, String headImgurl, String idNumber, chain.utils.fxgj.constant.DictEnums.AppPartnerEnum appPartner) throws Exception;
+    CacheUserPrincipal registeWechatPayroll(String jsessionId, String openId, String nickName, String headImgurl, String idNumber, AppPartnerEnum appPartner) throws Exception;
 
     /**
      * 年会红包设置超时时间

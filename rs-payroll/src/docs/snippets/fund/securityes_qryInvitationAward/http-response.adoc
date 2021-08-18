@@ -1,8 +1,0 @@
-[source,http,options="nowrap"]
-----
-HTTP/1.1 200 OK
-Content-Length: 508
-Content-Type: application/json;charset=UTF-8
-
-[{"custId":"202002230020750","custActivityParticId":"5e51d507e6f6b154a91c4720","phoneNo":"13400000000","standard":"SUBSTANDARD","securitiesPlatform":"NO","goldenBean":0},{"custId":"202002230020751","custActivityParticId":"5e51d507e6f6b154a91c4721","phoneNo":"13400000001","standard":"SUBSTANDARD","securitiesPlatform":"NO","goldenBean":0},{"custId":"202002230020752","custActivityParticId":"5e51d507e6f6b154a91c4722","phoneNo":"13400000002","standard":"SUBSTANDARD","securitiesPlatform":"NO","goldenBean":0}]
-----

@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"withdrawalStatus":[0,1,2,3]}
+----

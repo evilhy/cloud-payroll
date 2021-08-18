@@ -19,6 +19,7 @@ public enum ErrorConstant {
     WECHAR_003("r003", "未完成工资条认证"),
     FINANCE_003("f003", "请勾选团购协议！"),
     FINANCE_004("f004", "参数不完整!"),
+    MISS_PARAM("1400", "参数不完整！"),
     ;
 
     private String errorCode;

@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/wallet/withdrawalLedgerPage' -i -X POST \
+    -H 'jsession_id: 5d856794f2304f9786969ce409c94b17' \
+    -H 'ent-id: a0f60ab285fb4fc997fc1d7da0822d3b' \
+    -H 'Content-Type: application/json' \
+    -d '{"withdrawalStatus":[0,1,2,3]}'
+----

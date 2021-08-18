@@ -1,24 +1,25 @@
 package chain.fxgj.server.payroll.controller;
 
+import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.server.payroll.service.EmpWechatService;
-import chain.fxgj.server.payroll.util.EncrytorUtils;
+import chain.fxgj.server.payroll.constant.ErrorConstant;
+import chain.fxgj.server.payroll.dto.PageDTO;
+import chain.fxgj.server.payroll.dto.wallet.*;
+import chain.fxgj.server.payroll.service.WalletService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
-import chain.payroll.client.feign.WalletFeignController;
-import core.dto.request.BaseReqDTO;
-import core.dto.response.wagesheet.WageSheetDTO;
-import core.dto.response.wallet.EmpCardAndBalanceResDTO;
-import core.dto.wechat.CacheUserPrincipal;
+import chain.payroll.client.feign.WechatFeignController;
+import chain.utils.commons.JsonUtil;
+import core.dto.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,70 +31,213 @@ import java.util.Map;
 public class WalletController {
 
     @Autowired
-    WalletFeignController walletFeignController;
+    WalletService walletService;
+
     @Autowired
-    EmpWechatService empWechatService;
+    WechatFeignController wechatFeignController;
 
     /**
-     * 钱包余额</p>
+     * 获取登陆人信息
      *
-     * @param baseReqDTO
+     * @param jsessionId
      * @return
      */
-    @PostMapping("/balance")
-    @TrackLog
-    public Mono<BigDecimal> balance(@RequestBody BaseReqDTO baseReqDTO) throws Exception {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
+    public EmployeeWechatDTO findByJsessionId(String jsessionId) {
+        log.info("=====> 根据JsessionId查询用户信息 jsessionId:{}", jsessionId);
+        EmployeeWechatDTO dto = wechatFeignController.findByJsessionId(jsessionId);
+        if (null == dto) {
+            throw new ParamsIllegalException(ErrorConstant.Error0001.format("登录人"));
+        }
+        return dto;
 
-            //暂时固定返回0
-            return BigDecimal.ZERO;
-        }).subscribeOn(Schedulers.elastic());
     }
 
+    /**
+     * 查询当前用户钱包余额
+     *
+     * @param entId
+     * @return
+     */
+    @GetMapping("/balance")
+    @TrackLog
+    public Mono<WalletBalanceDTO> balance(@RequestHeader(value = "encry-salt", required = false) String salt,
+                                          @RequestHeader(value = "encry-passwd", required = false) String passwd,
+                                          @RequestHeader(value = "ent-id") String entId) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String jsessionId = currentUser.getSessionId();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("=====> /wallet/balance 查询当前用户钱包余额 entId:{}, jsessionId:{}, salt:{}, passwd:{}", entId, jsessionId, salt, passwd);
+
+            //查询当前登陆人信息
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+
+            //业务处理
+            WalletBalanceDTO balanceDTO = walletService.balance(entId, dto, salt, passwd);
+            return balanceDTO;
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
 
 
     /**
      * 查询
      * 1.员工银行卡</p>
      * 2.钱包余额</p>
-     *      查询当前企业下的银行卡数，去重
+     * 查询当前企业下的钱包余额、银行卡数(去重)
      *
      * @return
      */
     @GetMapping("/empCardAndBalance")
     @TrackLog
     public Mono<EmpCardAndBalanceResDTO> empCardAdnBalance(@RequestHeader(value = "encry-salt", required = false) String salt,
-                                                            @RequestHeader(value = "encry-passwd", required = false) String passwd,
+                                                           @RequestHeader(value = "encry-passwd", required = false) String passwd,
                                                            @RequestHeader(value = "ent-id") String entId) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String jsessionId = currentUser.getSessionId();
         return Mono.fromCallable(() -> {
-            BaseReqDTO baseReqDTO = BaseReqDTO.builder()
-                    .idNumber(currentUser.getIdNumber())
-                    .entId(entId)
-                    .build();
             MDC.setContextMap(mdcContext);
-            EmpCardAndBalanceResDTO empCardResDTO = walletFeignController.empCardAndBalance(baseReqDTO);
-            empCardResDTO.setBalance(EncrytorUtils.encryptField(empCardResDTO.getBalance(), salt, passwd));
-            empCardResDTO.setPasswd(passwd);
-            empCardResDTO.setSalt(salt);
+            log.info("=====> /wallet/empCardAndBalance 查询当前企业下的钱包余额、银行卡数(去重) entId:{}, jsessionId:{}, salt:{}, passwd:{}", entId, jsessionId, salt, passwd);
 
-            //查询完成之后,更新缓存中的entId
-            if (StringUtils.isNotBlank(jsessionId)) {
-                CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
-                empWechatService.upWechatInfoDetail(jsessionId, entId, wechatInfoDetail);
-            }else {
-                log.info("empCardAndBalance未更新缓存中的entId");
-            }
-            return empCardResDTO;
-        }).subscribeOn(Schedulers.elastic());
+            //查询当前登陆人信息
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            EmpCardAndBalanceResDTO resDTO = walletService.empCardAdnBalance(entId, salt, passwd, dto);
+            return resDTO;
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
+    /**
+     * 提现台账分页列表
+     *
+     * @param entId
+     * @param req
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/withdrawalLedgerPage")
+    @TrackLog
+    public Mono<PageDTO<WithdrawalLedgerPageRes>> withdrawalLedgerPage(@RequestHeader(value = "ent-id") String entId,
+                                                                       @RequestHeader(value = "encry-salt", required = false) String salt,
+                                                                       @RequestHeader(value = "encry-passwd", required = false) String passwd,
+                                                                       @RequestBody WithdrawalLedgerPageReq req) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        PageRequest pageRequest = WebContext.getPageRequest();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String jsessionId = currentUser.getSessionId();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("=====> /wallet/withdrawalLedgerPage 提现台账分页列表 entId:{}, jsessionId:{}, salt:{}, passwd:{}, req:{}", entId, jsessionId, salt, passwd, JsonUtil.objectToJson(req));
 
+            //查询当前登陆人信息
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            PageDTO<WithdrawalLedgerPageRes> pageDTO = walletService.withdrawalLedgerPage(entId, dto, req, salt, passwd, pageRequest);
+            log.info("=====> /wallet/withdrawalLedgerPage 提现台账分页列表 返回：{}",JsonUtil.objectToJson(pageDTO));
+            return pageDTO;
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
 
+    /**
+     * 提现台账详情
+     *
+     * @param entId
+     * @param withdrawalLedgerId 提现台账ID
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/withdrawalLedgerDetail/{withdrawalLedgerId}")
+    @TrackLog
+    public Mono<WithdrawalLedgerDetailRes> withdrawalLedgerDetail(@RequestHeader(value = "ent-id") String entId,
+                                                                  @RequestHeader(value = "encry-salt", required = false) String salt,
+                                                                  @RequestHeader(value = "encry-passwd", required = false) String passwd,
+                                                                  @PathVariable(value = "withdrawalLedgerId") String withdrawalLedgerId) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String jsessionId = currentUser.getSessionId();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("=====> /wallet/withdrawalLedgerDetail/{} 提现台账详情 entId:{}, jsessionId:{}, salt:{}, passwd:{}", withdrawalLedgerId, entId, jsessionId, salt, passwd);
 
+            //查询当前登陆人信息
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            WithdrawalLedgerDetailRes res = walletService.withdrawalLedgerDetail(withdrawalLedgerId, entId, dto, salt, passwd);
+            return res;
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
 
+    /**
+     * 提现进度详情
+     *
+     * @param entId
+     * @param withdrawalLedgerId
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/withdrawalRecordDetail/{withdrawalLedgerId}")
+    @TrackLog
+    public Mono<WithdrawalRecordDetailRes> withdrawalRecordDetail(@RequestHeader(value = "ent-id") String entId,
+                                                                  @RequestHeader(value = "encry-salt", required = false) String salt,
+                                                                  @RequestHeader(value = "encry-passwd", required = false) String passwd,
+                                                                  @PathVariable(value = "withdrawalLedgerId") String withdrawalLedgerId) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String jsessionId = currentUser.getSessionId();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("=====> /wallet/withdrawalRecordDetail/{} 提现进度详情 entId:{}, jsessionId:{}, salt:{}, passwd:{}", withdrawalLedgerId, entId, jsessionId, salt, passwd);
+
+            //查询当前登陆人信息
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            WithdrawalRecordDetailRes res = walletService.withdrawalRecordDetail(withdrawalLedgerId, entId, dto, salt, passwd);
+            return res;
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    /**
+     * 收款账户列表
+     */
+    @GetMapping("/employeeCardList")
+    @TrackLog
+    public Mono<List<EmployeeCardDTO>> employeeCardList(@RequestHeader(value = "encry-salt", required = false) String salt,
+                                                        @RequestHeader(value = "encry-passwd", required = false) String passwd,
+                                                        @RequestHeader(value = "ent-id") String entId) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String jsessionId = currentUser.getSessionId();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("=====> /wallet/employeeCardList 收款账户列表 entId:{}, jsessionId:{}, salt:{}, passwd:{}", entId, jsessionId, salt, passwd);
+
+            //查询当前登陆人信息
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            List<EmployeeCardDTO> list = walletService.employeeCardList(entId, dto, salt, passwd);
+            return list;
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    /**
+     * 确认提现
+     *
+     * @param entId
+     * @param req
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/withdraw")
+    @TrackLog
+    public Mono<Void> withdraw(@RequestHeader(value = "ent-id") String entId,
+                               @RequestBody WithdrawalReq req) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String jsessionId = currentUser.getSessionId();
+        return Mono.fromCallable(() -> {
+
+            log.info("=====> /wallet/withdraw 确认提现 entId:{}, jsessionId:{}, req:{}", entId, jsessionId,JsonUtil.objectToJson(req));
+
+            //查询当前登陆人信息
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            walletService.withdraw(entId, dto, req);
+            return null;
+        }).subscribeOn(Schedulers.boundedElastic()).then();
+    }
 }

@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+year+`
+|`+Integer+`
+|年份
+
+|`+month+`
+|`+Integer+`
+|月份
+
+|`+withdrawalStatus+`
+|`+List+`
+|提现状态（0:待提现、1:提现成功、2:提现失败、3:处理中）
+
+|===

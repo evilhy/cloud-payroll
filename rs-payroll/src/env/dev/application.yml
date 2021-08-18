@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   application:
@@ -19,7 +19,7 @@ spring:
     port: 6380
     password:
     timeout: 1s
-    jedis:
+    lettuce:
       pool:
         max-active: 8
         max-idle: 50
@@ -28,6 +28,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://fxgjlogs:123456@10.5.0.182:27017/fxgjlogs
+
   #  #消息队列
   rabbitmq:
     host: 10.5.0.182
@@ -62,12 +63,6 @@ payroll:
   #产品图片
   img-url: https://sitwxp.cardpu.com/
 
-  #南京银行解密使用
-  #放薪管家 sm4加密、解密key [线下分配]
-  fxgjSm4Key: 934F17AE93CB7F23BE347849C87EED51
-  #放薪管家 sm4加密、解密key [线下分配]
-  fxgjSm4Iv: 9wHFOMfs2Y8JeF8U
-
   ###签名回执地址
   signPdfPath: /webserver/www/down/emp/sign/
   ###签名回执地址入库需要替换掉的路径
@@ -84,7 +79,7 @@ management:
         include: ["*"]
 
 
-# mongodb 日志记录
+# mongodb 日志记录-
 logcss:
   sysId: rs-payroll
   activateMongodb: true
@@ -117,7 +112,7 @@ merchants:
       #rsa 私钥 -> 平台自已
       rsaPrivateKey: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIZgcYY+Vm8TgMTsTFMEwM3AmUMpcGJBhqmu/EZn6t/tiomHE7TxSd5xMcqk90DQoZ7q8zCBPnwA3cKPVazK0hDpjbJuKpLCWmOUVBo1veOKITiCdIyQy/HHNFodD5jXRC1+KXjvCpWrZMIowxauBJ8w0g2hNtISnXQUVuFtWvGlAgMBAAECgYAjwCzz5kngq3Oq8KMtwyn4k7Ey6Sd5PK2zH1cG9EbM5Mni5QkdLsTUZZE1tMYDfH5DZYbl9LzHCQP262OD4UIZz2mhotBzT6UaZPhdMNsHzNojIwQa+syHTBgFMe39AuDyyes+0pG4rAlolPDMuywgb5yIK+1eMvPiW8nXZvg9AQJBAPOInM/ybSt7iqzL0Am9GOsOsvBXAlKxzUvEAdPi7YcFn5pmHTVQeymeDj+qlMYm56lB14UcTakEdwL/5SYLRXUCQQCNQWJAwDDdKcFw6vtH5WoDh4KeDGupLCQ89g1RpLoZtwq0oe46VexC59EfhG1Kz9zTi2YVrfRnc+lH5WpTLgVxAkEAqENOnXrRpQaB5SwY/HGT4uzQA7EKYNqKjvvJi32yQeVHxiUhrzGBN1sGW0Tf8Bz3WQGuCEFrAwmbtQ3bZLLK9QJAXU6yc2lBHebGNCvUfyKJC/nIi1RTDbXt3iL+m06/69qghL9umTRG089DsZkNhNyX11l+vpVhG7FSiL5/pKCC0QJAMHErhJK0pHG1e64bVbMQNhTPBPlt7WwMMkNU7iewNglPAwUzzeTHbf0wAHfHSo2vpz4BKrKRU6F2HxMOyzaTnQ==df723820
       #rsa 公钥 -> 合作平台
-      paraRsaPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwofGjqSENb4lkQS3hkfAs95775WC9SrOnHZhTdjTJPn29G7y/Ex+9fluDnT1xuELcEtf1vbMSVQBFBdV8g2vqKCp25eeexxBZ8iBKGQ3PJPNCIh1SOD7tYV6iHKsjM3ZceS4r/yYPU07AD6EQC9hb1CmhpaEac3y6C0C5gXc0U9m5aSbWqt+ySSyYkhTajZSq5VhEgqvesgi50yx7Ks7iSktCe9kEte5xlWsF//RmPDIUlNYk5YdlnOx6cXQr0XOYEIlQ5GqUoNDAbLtABrKzyW+oNczG/WEEhBaI0YT3wZWhIfF/cRSV/NokvlQa3bZ8t3dkkBKxvIf+1Rzq2qNlQIDAQAB
+      paraRsaPublicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD8GdTjtQi8lwmboggiKNdsmMJ1ElvvIGV4J43QCRR/KE6uUYn2TdULVvSbc5LDOlGMQT3sf5/eDQXEZLT5hKOB70Lm1+yrKP0wcbmuIxc6u6UDvlOuJSDL9h6zCmHLPfK8QxYElKhKgF35ZbhLpvGWKdmFjxAdIcg6XHGFnSC9twIDAQAB
       #备注说明
       remarks:
          # 请求前端页面： https://wxp.cardpu.com/fx-payroll/#/token?accessToken=tww9WR8f
@@ -127,20 +122,46 @@ merchants:
         - NEWUP
 
 #设置feign调用超时时间
-ribbon:
-  ReadTimeout: 8000
-  ConnectTimeout: 8000
+#ribbon:
+#  ReadTimeout: 30000
+#  ConnectTimeout: 30000
+#  maxAutoRetries: 0
 
-#禁用feign熔断
+##禁用feign熔断
+#feign:
+#  hystrix:
+#    enabled: false
+#  client:
+#    config:
+#      default:
+#        connectTimeout: 20000
+#        readTimeout: 20000
+#
+##熔断超时时间设置
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 120000
+#      timeout:
+#        enabled: false
+
 feign:
+  client:
+    config:
+      default:
+        connectTimeout: 300000
+        readTimeout: 120000
+        # NONE  BASIC   HEADRES  FULL
+        loggerLevel: FULL
+  #使用httpclient 连接池
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+  # Hystrix支持，如果为true，hystrix库必须在classpath中
+  # 开始熔断、超时时间
   hystrix:
     enabled: false
-
-#熔断超时时间设置
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 120000

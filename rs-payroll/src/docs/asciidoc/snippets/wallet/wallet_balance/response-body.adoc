@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"totalAmount":30000.00,"availableAmount":50000.00,"frozenAmount":20000.00}
+----
