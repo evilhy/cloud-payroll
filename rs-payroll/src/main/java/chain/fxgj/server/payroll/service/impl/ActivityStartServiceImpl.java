@@ -11,7 +11,6 @@ import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
 import chain.fxgj.server.payroll.dto.activity.ActivityInfoRequestDTO;
 import chain.fxgj.server.payroll.dto.activity.ActivityResponseDTO;
-import chain.fxgj.server.payroll.dto.ent.EntInfoDTO;
 import chain.fxgj.server.payroll.service.ActivityStartService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.utils.commons.JacksonUtil;

@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /roll/checkCardBin/4063650000065623 HTTP/1.1
+jsession-id: e6f008a9611c4b209cdf506f4b05dd4d
+Host: localhost:8080
+
+----

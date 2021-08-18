@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /wallet/withdrawalLedgerDetail/9fd251e303914eb890e7449e3ab14fcd HTTP/1.1
+ent-id: 7c32bf3cff9649169220ebf3724a6062
+Host: localhost:8080
+
+----

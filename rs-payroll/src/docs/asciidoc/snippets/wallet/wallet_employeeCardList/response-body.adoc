@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+[{"employeeCardId":"ba2276ff674a429f9467241c1c57a4c4","issuerBankId":"034049","issuerName":"华夏银行","cardNo":"6230200013873745"}]
+----

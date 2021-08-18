@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+totalAmount+`
+|`+BigDecimal+`
+|总余额
+
+|`+availableAmount+`
+|`+BigDecimal+`
+|可用余额
+
+|`+frozenAmount+`
+|`+BigDecimal+`
+|冻结金额
+
+|===

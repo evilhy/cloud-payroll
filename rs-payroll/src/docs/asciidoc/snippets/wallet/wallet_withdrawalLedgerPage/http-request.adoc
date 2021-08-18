@@ -1,0 +1,11 @@
+[source,http,options="nowrap"]
+----
+POST /wallet/withdrawalLedgerPage HTTP/1.1
+jsession_id: 5d856794f2304f9786969ce409c94b17
+ent-id: a0f60ab285fb4fc997fc1d7da0822d3b
+Content-Type: application/json
+Content-Length: 30
+Host: localhost:8080
+
+{"withdrawalStatus":[0,1,2,3]}
+----

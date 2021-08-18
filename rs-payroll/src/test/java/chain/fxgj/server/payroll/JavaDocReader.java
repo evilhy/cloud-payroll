@@ -81,7 +81,8 @@ public class JavaDocReader extends Doclet {
 //                "-cp",
 //                "/workspaces/cloud/kjb/core-fbo/build/classes/java/main:/Users/chain/.m2/repository/org/projectlombok/lombok/1.18.2/lombok-1.18.2.jar",
 //                System.getProperty("user.dir") + "/src/main/java/" +
-                "D:/Code/cloud-payroll/rs-payroll/src/main/java/" +
+//                "D:/Code/cloud-payroll/rs-payroll/src/main/java/" +
+                "/Users/lius/pro/cloudMicro/cloud-payroll/rs-payroll/src/main/java/" +
                         clas.getPackage().getName().replace(".", "/") + "/" +
                         clas.getSimpleName() + ".java"};
 

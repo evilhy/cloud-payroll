@@ -45,6 +45,7 @@ import java.util.Set;
 
 @Configuration
 @Slf4j
+@SuppressWarnings("unchecked")
 public class PayrollRedisConfig {
 
     @Bean

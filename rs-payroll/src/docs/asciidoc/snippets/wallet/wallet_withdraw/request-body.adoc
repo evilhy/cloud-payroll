@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"withdrawalLedgerId":"1e41848a3deb4aa7a4a4c11f1453423e","employeeCardId":"a6827eff197b4d92898f17a22b30b494","issuerBankId":"023320","issuerName":"张三","cardNo":"21342423213"}
+----

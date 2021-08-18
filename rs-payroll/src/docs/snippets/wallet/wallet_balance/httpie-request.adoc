@@ -1,5 +1,0 @@
-[source,bash]
-----
-$ echo '{"idNumber":"330123198604198875"}' | http POST 'http://localhost:8080/wallet/balance' \
-    'Content-Type:application/json'
-----

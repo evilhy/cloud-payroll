@@ -1,4 +1,0 @@
-[source,options="nowrap"]
-----
-{"idNumber":"330123198604198875"}
-----

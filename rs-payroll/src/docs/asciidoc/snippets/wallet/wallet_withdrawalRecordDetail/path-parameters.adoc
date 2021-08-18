@@ -1,0 +1,8 @@
+.+/wallet/withdrawalRecordDetail/{withdrawalLedgerId}+
+|===
+|Parameter|Description
+
+|`+withdrawalLedgerId+`
+|提现台账ID
+
+|===

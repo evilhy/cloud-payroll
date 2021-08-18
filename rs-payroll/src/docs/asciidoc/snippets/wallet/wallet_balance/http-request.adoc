@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+GET /wallet/balance HTTP/1.1
+jsessionId: 646ddb2ab67f484f95f64bcfba675986
+ent-id: 4a474f558c644407b9c55ba4d884d1db
+Host: localhost:8080
+
+----

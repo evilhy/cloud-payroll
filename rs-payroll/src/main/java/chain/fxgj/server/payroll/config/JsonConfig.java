@@ -1,6 +1,6 @@
 package chain.fxgj.server.payroll.config;
 
-import chain.fxgj.ent.core.constant.DateFormatConstants;
+import chain.fxgj.data.common.constant.DateFormatConstants;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.json.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,7 +26,7 @@ import java.time.LocalTime;
 @SuppressWarnings("unchecked")
 public class JsonConfig {
 
-    //@Bean
+    @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);

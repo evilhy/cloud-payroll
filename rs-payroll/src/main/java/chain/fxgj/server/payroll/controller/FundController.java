@@ -78,7 +78,7 @@ public class FundController {
             fundAppointmentInfoDTO.setPasswd(passwd);
             log.info("fundAppointmentInfoDTO:[{}]", JacksonUtil.objectToJson(fundAppointmentInfoDTO));
             return fundAppointmentInfoDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -120,7 +120,7 @@ public class FundController {
             fundAppointmentInfoDTO.setSalt(salt);
             fundAppointmentInfoDTO.setPasswd(passwd);
             return fundAppointmentInfoDTORes;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -163,6 +163,6 @@ public class FundController {
             fundAppointmentInfoDTO.setSalt(salt);
             fundAppointmentInfoDTO.setPasswd(passwd);
             return fundAppointmentInfoDTORes;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }

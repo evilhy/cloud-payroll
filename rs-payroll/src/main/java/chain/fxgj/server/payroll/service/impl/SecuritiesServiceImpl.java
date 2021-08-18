@@ -1,13 +1,10 @@
 package chain.fxgj.server.payroll.service.impl;
 
-import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.wisales.client.feign.SecuritiesActivityFeignService;
-import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
-import chain.wisales.core.constant.dictEnum.StandardEnum;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

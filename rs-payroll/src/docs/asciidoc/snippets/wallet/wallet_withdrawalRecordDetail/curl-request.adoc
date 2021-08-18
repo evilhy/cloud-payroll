@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/wallet/withdrawalRecordDetail/34a9ca0c41424886b82a4be378875785' -i -X GET \
+    -H 'ent-id: 2dead011d2f44763bb4ffcb235185634'
+----

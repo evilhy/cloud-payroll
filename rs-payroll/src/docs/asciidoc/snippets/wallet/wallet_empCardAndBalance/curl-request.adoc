@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/wallet/empCardAndBalance' -i -X GET \
+    -H 'encry-salt: 73c6f7ae1b0545ad95dbd8630c4a06c8' \
+    -H 'encry-passwd: c65888c1cced414082990e1edea92d2f' \
+    -H 'ent-id: 51efdb343f0749019ce7f7ba3e91da6d'
+----

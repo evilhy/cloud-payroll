@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/roll/checkCardBin/4063650000065623' -i -X GET \
+    -H 'jsession-id: e6f008a9611c4b209cdf506f4b05dd4d'
+----

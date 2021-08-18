@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+GET /wallet/empCardAndBalance HTTP/1.1
+encry-salt: 73c6f7ae1b0545ad95dbd8630c4a06c8
+encry-passwd: c65888c1cced414082990e1edea92d2f
+ent-id: 51efdb343f0749019ce7f7ba3e91da6d
+Host: localhost:8080
+
+----

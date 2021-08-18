@@ -121,7 +121,7 @@ public class SecuritiesController {
             securitiesRedisDTO.setPasswd(passwd);
             log.info("loginCheck.securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
             return securitiesRedisDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -165,7 +165,7 @@ public class SecuritiesController {
             securitiesRedisDTO.setPasswd(passwd);
             log.info("loginCheck.securitiesRedisDTO:[{}]", JacksonUtil.objectToJson(securitiesRedisDTO));
             return securitiesRedisDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
     /**
      * 证券登录
@@ -207,7 +207,7 @@ public class SecuritiesController {
             resSecuritiesLoginDTO.setCustId(custId);
             resSecuritiesLoginDTO.setLoginStatus(1);
             return resSecuritiesLoginDTO;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -237,7 +237,7 @@ public class SecuritiesController {
             }
             log.info("qryInvitationAward.securitiesInvitationAwardDTONewList:[{}]", JacksonUtil.objectToJson(securitiesInvitationAwardDTONewList));
             return securitiesInvitationAwardDTONewList;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -262,7 +262,7 @@ public class SecuritiesController {
             }
             BigDecimal goldenBean = securitiesService.qryGoldenBean(custId, userTypeEnum);
             return goldenBean;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -291,7 +291,7 @@ public class SecuritiesController {
             // LocalDateTime 转 Long
 //            Long dataSynTimeLong = dataSynTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
             return dataSynTime;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -307,7 +307,7 @@ public class SecuritiesController {
             MDC.setContextMap(mdcContext);
             List<SecuritiesOpenRewardDTO> securitiesOpenRewardDTOList = securitiesService.qryOpenRewardList(custId);
             return securitiesOpenRewardDTOList;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -323,7 +323,7 @@ public class SecuritiesController {
             MDC.setContextMap(mdcContext);
             List<SecuritiesRewardResDTO> securitiesRewardResDTOList = securitiesService.qryInvestmentRewardList(custId);
             return securitiesRewardResDTOList;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -340,7 +340,7 @@ public class SecuritiesController {
             MDC.setContextMap(mdcContext);
 
             return principal.getCustId();
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -357,7 +357,7 @@ public class SecuritiesController {
             CaptchaDTO captcha = captchaFeignClient.captcha();
             log.info("captcha:[{}]", JacksonUtil.objectToJson(captcha));
             return captcha;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**
@@ -374,7 +374,7 @@ public class SecuritiesController {
             log.info("imageCodeId:[{}], code:[{}]", imageCodeId, code);
             captchaFeignClient.validate(imageCodeId, code);
             return null;
-        }).subscribeOn(Schedulers.elastic()).then();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
 }

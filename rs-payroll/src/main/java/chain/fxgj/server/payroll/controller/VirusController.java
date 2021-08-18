@@ -59,7 +59,7 @@ public class VirusController {
             MDC.setContextMap(mdcContext);
 
             return virusFeignService.list(pageNum,size,openid);
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @PostMapping
@@ -71,7 +71,7 @@ public class VirusController {
             MDC.setContextMap(mdcContext);
 
             return virusFeignService.post(virusRequestDto);
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @GetMapping("/userInfo")
@@ -100,7 +100,7 @@ public class VirusController {
                 log.info("根据openId、accessToken获取用户信息失败");
             }
         return userInfo;
-        }).subscribeOn(Schedulers.elastic());
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
 }

@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.service;
 
-import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
 import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
 import core.dto.response.wechat.EmployeeWechatDTO;

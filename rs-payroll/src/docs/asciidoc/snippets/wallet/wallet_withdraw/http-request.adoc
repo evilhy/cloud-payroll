@@ -1,0 +1,11 @@
+[source,http,options="nowrap"]
+----
+POST /wallet/withdraw HTTP/1.1
+jsession_id: bd30c704dc32467f9a9d613d83ca792c
+ent-id: e5edd25aa9a44cda8d1417aeaaf4a253
+Content-Type: application/json
+Content-Length: 178
+Host: localhost:8080
+
+{"withdrawalLedgerId":"1e41848a3deb4aa7a4a4c11f1453423e","employeeCardId":"a6827eff197b4d92898f17a22b30b494","issuerBankId":"023320","issuerName":"张三","cardNo":"21342423213"}
+----

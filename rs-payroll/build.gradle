@@ -124,8 +124,8 @@ dependencies {
     compile("chain:pub-client:1.1.7")
     //compile('chain:payroll-client:1.1.10')
     //compile('chain:wage-client:1.1.4')
-    compile('chain:wage-client:2.0.0-SNAPSHOT')
-    compile('chain:payroll-client:2.0.0')
+    compile('chain:wage-client:2.0.1-SNAPSHOT')
+    compile('chain:payroll-client:2.0.1-SNAPSHOT')
     
     compile 'chain.wisales:wisales-client:1.0.2.75'
     compile('chain.fxgj:fxgj-ent-client:1.0.24')
@@ -187,7 +187,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-amqp'
     compile('chain:utils-mq:1.0.0')
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.22.1'
-    compile('mysql:mysql-connector-java:5.1.38')
+    //compile('mysql:mysql-connector-java:5.1.38')
     //compile 'org.springframework.cloud:spring-cloud-starter-zipkin'
     // redis 连接池
     implementation group: 'org.apache.commons', name: 'commons-pool2', version: '2.9.0'
@@ -210,7 +210,7 @@ asciidoctor {
     outputDir file("build/docs/")
     inputs.dir docsSnippetsDir
     sources {
-        include 'insideAPI.adoc'
+        include 'index.adoc'
     }
     baseDirFollowsSourceDir()
     configurations("asciidoctor")
@@ -232,10 +232,25 @@ asciidoctor {
         }
     }
 }
+//asciidoctor {
+//    outputDir "${buildDir}/asciidoc"
+//    sources {
+//        include 'index.adoc'
+//    }
+//    options doctype: 'book', ruby: 'erubis'
+//    attributes 'snippets': docsSnippetsDir,
+//            'backends': "pdf"
+//}
 /** end asciidoc **/
 
 test {
-    enabled = true
+    outputs.dir snippetsDir
+    doLast {
+        copy {
+            from "${snippetsDir}"
+            into "${docsSnippetsDir}"
+        }
+    }
 }
 
 //打包
