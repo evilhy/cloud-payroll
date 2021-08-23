@@ -4,11 +4,11 @@ POST /tax/signResultPush HTTP/1.1
 Content-Type: application/json
 encry-salt: 123456
 encry-passwd: 234567
-Content-Length: 84
+Content-Length: 78
 Host: localhost:8080
 
 {
-  "transUserId" : "496eae3f1f764a9b850082aed314ccdc",
-  "rntCode" : "success"
+  "transUserId" : "482a6ca59449469699703e37cc19b9a7",
+  "isAuth" : true
 }
 ----

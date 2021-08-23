@@ -1,8 +1,8 @@
 [source,bash]
 ----
 $ echo '{
-  "transUserId" : "496eae3f1f764a9b850082aed314ccdc",
-  "rntCode" : "success"
+  "transUserId" : "482a6ca59449469699703e37cc19b9a7",
+  "isAuth" : true
 }' | http POST 'http://localhost:8080/tax/signResultPush' \
     'Content-Type:application/json' \
     'encry-salt:123456' \

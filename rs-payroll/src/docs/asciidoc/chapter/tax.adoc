@@ -1,4 +1,4 @@
-:snippets: ../snippets/bill
+:snippets: ../snippets/tax
 == 个税
 
 === 签约详情
@@ -62,7 +62,7 @@ include::{snippets}/tax/tax_signing/http-response.adoc[]
 include::{snippets}/tax/tax_signResultPush/request-fields.adoc[]
 * Response Body:
 +
-无
+include::{snippets}/tax/tax_signResultPush/response-fields.adoc[]
 
 ==== 示例
 * Request:

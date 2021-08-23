@@ -1,6 +1,7 @@
 package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.server.payroll.JavaDocReader;
+import chain.fxgj.server.payroll.dto.tax.SealUserRes;
 import chain.fxgj.server.payroll.dto.tax.SignResultPushReq;
 import chain.fxgj.server.payroll.dto.tax.SigningDetailsReq;
 import chain.fxgj.server.payroll.dto.tax.UploadDto;
@@ -125,7 +126,7 @@ public class TaxControllerTest extends BaseTestCase {
     @Test
     public void signResultPush() throws Exception {
         SignResultPushReq build = SignResultPushReq.builder()
-                .rntCode("success")
+                .isAuth(true)
                 .transUserId(UUIDUtil.createUUID32())
                 .build();
 
@@ -140,7 +141,8 @@ public class TaxControllerTest extends BaseTestCase {
                 .expectBody()//返回是什么类型的对象
                 .consumeWith(document("tax_signResultPush",
                         //相应文档
-                        relaxedRequestFields(JavaDocReader.javaDoc(SigningDetailsReq.class))
+                        relaxedRequestFields(JavaDocReader.javaDoc(SignResultPushReq.class)),
+                        relaxedResponseFields(JavaDocReader.javaDoc(SealUserRes.class))
                 ));
     }
 }

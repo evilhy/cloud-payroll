@@ -30,7 +30,7 @@ public class SignResultPushReq {
      */
     String transUserId;
     /**
-     * 签约状态（success：成功、fail：失败）
+     * 签约状态
      */
-    String rntCode;
+    Boolean isAuth;
 }

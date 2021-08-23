@@ -4,6 +4,7 @@ import chain.css.exception.BusiVerifyException;
 import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
+import chain.fxgj.server.payroll.dto.tax.SealUserRes;
 import chain.fxgj.server.payroll.dto.tax.SignResultPushReq;
 import chain.fxgj.server.payroll.dto.tax.SigningDetailsReq;
 import chain.fxgj.server.payroll.dto.tax.UploadDto;
@@ -134,13 +135,16 @@ public class TaxController {
      */
     @PostMapping("/signResultPush")
     @TrackLog
-    public Mono<Void> signResultPush(@RequestBody SignResultPushReq req) {
+    public Mono<SealUserRes> signResultPush(@RequestBody SignResultPushReq req) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 //        UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            return null;
-        }).subscribeOn(Schedulers.boundedElastic()).then();
+            return SealUserRes.builder()
+                    .rntCode("success")
+                    .rntMsg("成功")
+                    .build();
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }
