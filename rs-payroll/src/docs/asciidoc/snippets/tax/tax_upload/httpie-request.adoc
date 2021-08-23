@@ -1,0 +1,9 @@
+[source,bash]
+----
+$ echo '{
+  "file" : "D://test.jpg"
+}' | http POST 'http://localhost:8080/tax/upload' \
+    'Content-Type:application/json' \
+    'encry-salt:123456' \
+    'encry-passwd:234567'
+----

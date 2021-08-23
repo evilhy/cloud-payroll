@@ -54,6 +54,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
             "/manager/qryManagerInfo",
             "/activityStart/wxCallback",
             "/nj/callback",
+            "/tax/walletH5"
     };
 
     @Autowired
@@ -71,64 +72,64 @@ public class AuthorizationFilter implements WebFilter, Ordered {
         String req_id = exchange.getRequest().getHeaders().getFirst("req-id");
         log.info("--------------->req_id:[{}]", req_id);
         log.info("--------------->jsessionId:[{}]", jsessionId);
-        ServerHttpRequest serverHttpRequest = exchange.getRequest();
-        String requestUrl = serverHttpRequest.getURI().getPath();
-        for (String url : excludeUrls) {
-            if (StringUtils.indexOf(requestUrl, url) > -1) {
-                log.info("[{}]不需要验证jsessionId", requestUrl);
-                return chain.filter(exchange);
-            }
-        }
-        log.info("[{}]需要验证jsessionId", requestUrl);
-        CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
-        UserPrincipal principal = TransferUtil.WageUserPrincipalToUserPrincipal(wechatInfoDetail);
-        if (principal == null) {
-            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
-        }
-        LocalDateTime sessionTimeOut = principal.getSessionTimeOut();
-        if (LocalDateTime.now().isAfter(sessionTimeOut)) {
-            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
-        }
-
-        //请求头中entId不为空的时候设置到缓存中，为空的时候就不用设置
-        if (!StringUtils.equals("undefined", entId) && StringUtils.isNotBlank(entId)) {
-            principal.setEntId(entId);
-        }
-
-        WebContext.setCurrentUser(principal);
-
-        String pageNumStr = exchange.getRequest().getHeaders().getFirst("page-num");
-        String limitStr = exchange.getRequest().getHeaders().getFirst("limit");
-        String sortField = exchange.getRequest().getHeaders().getFirst("sort-field");
-        String direction = exchange.getRequest().getHeaders().getFirst("direction");
-        String liquidation = exchange.getRequest().getHeaders().getFirst("liquidation");
-        String version = exchange.getRequest().getHeaders().getFirst("version");
-        String subVersion = exchange.getRequest().getHeaders().getFirst("subVersion");
-        MDC.put("path", requestUrl);
-        MDC.put("log-token", req_id);
-        MDC.put("jsessionId", jsessionId);
-        MDC.put("pageNum", pageNumStr);
-        MDC.put("limit", limitStr);
-        MDC.put("liquidation", liquidation);
-        MDC.put("sort-field", sortField);
-        MDC.put("direction", direction);
-        MDC.put("version", version);
-        MDC.put("subVersion", subVersion);
-        MDC.put("entId", entId);
-        MDC.put("idNumber", wechatInfoDetail.getIdNumber());
-        MDC.put("idNumberEncrytor", wechatInfoDetail.getIdNumberEncrytor());
-
-        HeaderDTO headerDTO = HeaderDTO.builder()
-                .limit(StringUtils.isBlank(limitStr) ? 30 : Integer.parseInt(limitStr))
-                .pageNum(StringUtils.isBlank(pageNumStr) ? 30 : Integer.parseInt(pageNumStr))
-                .direction(direction)
-                .sortField(sortField)
-                .jsessionId(jsessionId)
-                .liquidation(StringUtils.isBlank(liquidation) ? null : Integer.parseInt(liquidation))
-                .version(StringUtils.isBlank(version) ? null : Integer.parseInt(version))
-                .subVersion(StringUtils.isBlank(subVersion) ? null : Integer.parseInt(subVersion))
-                .build();
-        WebContext.setCurrentHeader(headerDTO);
+//        ServerHttpRequest serverHttpRequest = exchange.getRequest();
+//        String requestUrl = serverHttpRequest.getURI().getPath();
+//        for (String url : excludeUrls) {
+//            if (StringUtils.indexOf(requestUrl, url) > -1) {
+//                log.info("[{}]不需要验证jsessionId", requestUrl);
+//                return chain.filter(exchange);
+//            }
+//        }
+//        log.info("[{}]需要验证jsessionId", requestUrl);
+//        CacheUserPrincipal wechatInfoDetail = empWechatService.getWechatInfoDetail(jsessionId);
+//        UserPrincipal principal = TransferUtil.WageUserPrincipalToUserPrincipal(wechatInfoDetail);
+//        if (principal == null) {
+//            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
+//        }
+//        LocalDateTime sessionTimeOut = principal.getSessionTimeOut();
+//        if (LocalDateTime.now().isAfter(sessionTimeOut)) {
+//            throw new ParamsIllegalException(ErrorConstant.WECHAT_OUT.getErrorMsg());
+//        }
+//
+//        //请求头中entId不为空的时候设置到缓存中，为空的时候就不用设置
+//        if (!StringUtils.equals("undefined", entId) && StringUtils.isNotBlank(entId)) {
+//            principal.setEntId(entId);
+//        }
+//
+//        WebContext.setCurrentUser(principal);
+//
+//        String pageNumStr = exchange.getRequest().getHeaders().getFirst("page-num");
+//        String limitStr = exchange.getRequest().getHeaders().getFirst("limit");
+//        String sortField = exchange.getRequest().getHeaders().getFirst("sort-field");
+//        String direction = exchange.getRequest().getHeaders().getFirst("direction");
+//        String liquidation = exchange.getRequest().getHeaders().getFirst("liquidation");
+//        String version = exchange.getRequest().getHeaders().getFirst("version");
+//        String subVersion = exchange.getRequest().getHeaders().getFirst("subVersion");
+//        MDC.put("path", requestUrl);
+//        MDC.put("log-token", req_id);
+//        MDC.put("jsessionId", jsessionId);
+//        MDC.put("pageNum", pageNumStr);
+//        MDC.put("limit", limitStr);
+//        MDC.put("liquidation", liquidation);
+//        MDC.put("sort-field", sortField);
+//        MDC.put("direction", direction);
+//        MDC.put("version", version);
+//        MDC.put("subVersion", subVersion);
+//        MDC.put("entId", entId);
+//        MDC.put("idNumber", wechatInfoDetail.getIdNumber());
+//        MDC.put("idNumberEncrytor", wechatInfoDetail.getIdNumberEncrytor());
+//
+//        HeaderDTO headerDTO = HeaderDTO.builder()
+//                .limit(StringUtils.isBlank(limitStr) ? 30 : Integer.parseInt(limitStr))
+//                .pageNum(StringUtils.isBlank(pageNumStr) ? 30 : Integer.parseInt(pageNumStr))
+//                .direction(direction)
+//                .sortField(sortField)
+//                .jsessionId(jsessionId)
+//                .liquidation(StringUtils.isBlank(liquidation) ? null : Integer.parseInt(liquidation))
+//                .version(StringUtils.isBlank(version) ? null : Integer.parseInt(version))
+//                .subVersion(StringUtils.isBlank(subVersion) ? null : Integer.parseInt(subVersion))
+//                .build();
+//        WebContext.setCurrentHeader(headerDTO);
         return chain.filter(exchange);
     }
 

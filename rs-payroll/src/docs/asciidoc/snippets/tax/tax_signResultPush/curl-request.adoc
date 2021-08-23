@@ -1,0 +1,11 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/tax/signResultPush' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'encry-salt: 123456' \
+    -H 'encry-passwd: 234567' \
+    -d '{
+  "transUserId" : "496eae3f1f764a9b850082aed314ccdc",
+  "rntCode" : "success"
+}'
+----

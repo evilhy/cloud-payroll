@@ -1,0 +1,7 @@
+[source,options="nowrap"]
+----
+{
+  "transUserId" : "496eae3f1f764a9b850082aed314ccdc",
+  "rntCode" : "success"
+}
+----

@@ -30,4 +30,9 @@ public class PayrollProperties {
      * 签名回执地址
      */
     private String signReplacePath;
+
+    /**
+     * 报税签约上传身份证图片地址
+     */
+    private String signUploadPath;
 }

@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class SecuritiesRedisDTO {
-
     /**
      * jsessionId
      */
