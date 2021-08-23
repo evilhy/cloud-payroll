@@ -73,3 +73,21 @@ include::{snippets}/tax/tax_signResultPush/curl-request.adoc[]
 include::{snippets}/tax/tax_signResultPush/http-response.adoc[]
 
 
+
+=== 是否允许提现
+==== 接口定义
+* Path Parameters:
++
+无
+* Response Body:
++
+include::{snippets}/tax/wallet_isAllowWithdraw/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/wallet_isAllowWithdraw/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/wallet_isAllowWithdraw/http-response.adoc[]
+

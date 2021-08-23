@@ -1,0 +1,12 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 110
+
+{
+  "entId" : "d073facb5ca247d48270493a320af1e6",
+  "idNumber" : "420117199909095678",
+  "status" : true
+}
+----

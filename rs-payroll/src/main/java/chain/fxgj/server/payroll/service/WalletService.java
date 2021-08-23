@@ -90,4 +90,13 @@ public interface WalletService {
      * @param req
      */
     void withdraw(String entId, EmployeeWechatDTO dto, WithdrawalReq req);
+
+    /**
+     * 是否允许提现
+     *
+     * @param entId
+     * @param dto
+     * @return
+     */
+    IsAllowWithdrawRes isAllowWithdraw(String entId, EmployeeWechatDTO dto);
 }
