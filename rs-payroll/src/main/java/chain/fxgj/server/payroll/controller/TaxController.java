@@ -189,6 +189,8 @@ public class TaxController {
                     .build();
             EmployeeTaxSignDTO taxSignDTO = employeeTaxSignFeignService.save(signSaveReq);
 
+            //TODO 图片压缩
+
             //身份证照片
             String idCardFront = ImageBase64Utils.imageToBase64(req.getIdCardFront());
             String idCardNegative = ImageBase64Utils.imageToBase64(req.getIdCardNegative());
@@ -296,13 +298,13 @@ public class TaxController {
     }
 
     /**
-     * 签约结果推送
+     * 签约记录查看
      *
      * @return
      */
-    @PostMapping("/signResultPush")
+    @GetMapping("/signRecord")
     @TrackLog
-    public Mono<H5UrlDto> signResultPush(@RequestParam("taxSignId") String taxSignId) {
+    public Mono<H5UrlDto> signRecord(@RequestParam("taxSignId") String taxSignId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);

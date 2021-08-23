@@ -445,7 +445,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <span id="author" class="author">author</span><br>
 <span id="email" class="email"><a href="mailto:kayak@kayak.com">kayak@kayak.com</a></span><br>
 <span id="revnumber">version ,</span>
-<span id="revdate">2021-08-23T18:41:58.478+08:00</span>
+<span id="revdate">2021-08-23T21:04:10.151+08:00</span>
 <br><span id="revremark">适用于8月切库版本</span>
 </div>
 <div id="toc" class="toc2">
@@ -1139,6 +1139,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#id_接口定义_104">17.5.1. 接口定义</a></li>
 <li><a href="#id_示例_104">17.5.2. 示例</a></li>
+</ul>
+</li>
+<li><a href="#id_签约记录查看">17.6. 签约记录查看</a>
+<ul class="sectlevel3">
+<li><a href="#id_接口定义_105">17.6.1. 接口定义</a></li>
+<li><a href="#id_示例_105">17.6.2. 示例</a></li>
 </ul>
 </li>
 </ul>
@@ -14544,9 +14550,27 @@ Content-Length: 95
 </li>
 <li>
 <p>Response Body:</p>
-<div class="paragraph">
-<p>无</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">跳转链接</p></td>
+</tr>
+</tbody>
+</table>
 </li>
 </ul>
 </div>
@@ -14564,7 +14588,7 @@ Content-Length: 95
     -H 'encry-salt: 123456' \
     -H 'encry-passwd: 234567' \
     -d '{
-  "taxSignId" : "8745df98ad774affbecc3019fc0664e6",
+  "taxSignId" : "58154790680848d387d2c2ae17e126c8",
   "userName" : "李慕白",
   "idType" : "1",
   "idNumber" : "420110199809095678",
@@ -14579,7 +14603,13 @@ Content-Length: 95
 <p>Response:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK</code></pre>
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 31
+
+{
+  "url" : "www.baidu.com"
+}</code></pre>
 </div>
 </div>
 </li>
@@ -14733,7 +14763,7 @@ Content-Length: 53
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">shi是否允许提现</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否允许提现</p></td>
 </tr>
 </tbody>
 </table>
@@ -14767,6 +14797,90 @@ Content-Length: 110
   "entId" : "d073facb5ca247d48270493a320af1e6",
   "idNumber" : "420117199909095678",
   "status" : true
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="id_签约记录查看"><a class="anchor" href="#id_签约记录查看"></a><a class="link" href="#id_签约记录查看">17.6. 签约记录查看</a></h3>
+<div class="sect3">
+<h4 id="id_接口定义_105"><a class="anchor" href="#id_接口定义_105"></a><a class="link" href="#id_接口定义_105">17.6.1. 接口定义</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Path Parameters:</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>taxSignId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">签约信息ID</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Response Body:</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">跳转链接</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="id_示例_105"><a class="anchor" href="#id_示例_105"></a><a class="link" href="#id_示例_105">17.6.2. 示例</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Request:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/tax/signRecord?taxSignId=b1610e49e63a692c5543f9dc000058ec75b4aeb7' -i -X GET</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Response:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 31
+
+{
+  "url" : "www.baidu.com"
 }</code></pre>
 </div>
 </div>

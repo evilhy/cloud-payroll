@@ -44,7 +44,7 @@ include::{snippets}/tax/tax_upload/http-response.adoc[]
 include::{snippets}/tax/tax_signing/request-fields.adoc[]
 * Response Body:
 +
-无
+include::{snippets}/tax/tax_signing/response-fields.adoc[]
 
 ==== 示例
 * Request:
@@ -91,3 +91,20 @@ include::{snippets}/tax/wallet_isAllowWithdraw/curl-request.adoc[]
 +
 include::{snippets}/tax/wallet_isAllowWithdraw/http-response.adoc[]
 
+
+=== 签约记录查看
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/tax/tax_signRecord/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/tax/tax_signRecord/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_signRecord/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_signRecord/http-response.adoc[]

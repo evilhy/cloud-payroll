@@ -1,6 +1,4 @@
 [source,options="nowrap"]
 ----
-{
-  "url" : "www.baidu.com"
-}
+
 ----

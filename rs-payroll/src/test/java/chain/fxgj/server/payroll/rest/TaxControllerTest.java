@@ -1,11 +1,11 @@
 package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.server.payroll.JavaDocReader;
-import chain.fxgj.server.payroll.dto.tax.SealUserRes;
-import chain.fxgj.server.payroll.dto.tax.SignResultPushReq;
-import chain.fxgj.server.payroll.dto.tax.SigningDetailsReq;
-import chain.fxgj.server.payroll.dto.tax.UploadDto;
+import chain.fxgj.server.payroll.dto.response.ResMiniUserInfo;
+import chain.fxgj.server.payroll.dto.tax.*;
+import chain.fxgj.server.payroll.dto.wallet.WithdrawalReq;
 import chain.utils.commons.UUIDUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -19,8 +19,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 
 /**
@@ -28,6 +28,7 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
  * @Author: du
  * @Date: 2021/8/23 15:13
  */
+@Slf4j
 @FixMethodOrder(MethodSorters.JVM)
 public class TaxControllerTest extends BaseTestCase {
 
@@ -114,7 +115,8 @@ public class TaxControllerTest extends BaseTestCase {
                 .expectBody()//返回是什么类型的对象
                 .consumeWith(document("tax_signing",
                         //相应文档
-                        relaxedRequestFields(JavaDocReader.javaDoc(SigningDetailsReq.class))
+                        relaxedRequestFields(JavaDocReader.javaDoc(SigningDetailsReq.class)),
+                        relaxedResponseFields(JavaDocReader.javaDoc(H5UrlDto.class))
                 ));
     }
 
@@ -143,6 +145,25 @@ public class TaxControllerTest extends BaseTestCase {
                         //相应文档
                         relaxedRequestFields(JavaDocReader.javaDoc(SignResultPushReq.class)),
                         relaxedResponseFields(JavaDocReader.javaDoc(SealUserRes.class))
+                ));
+    }
+
+    /**
+     * 签约记录查看
+     *
+     */
+    @Test
+    public void signRecord() throws Exception {
+        webTestClient.get()
+                .uri("/tax/signRecord?taxSignId={taxSignId}", "b1610e49e63a692c5543f9dc000058ec75b4aeb7")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(String.class)//返回是什么类型的对象
+                .consumeWith(body -> log.info(body.getResponseBody()))
+                .consumeWith(document("tax_signRecord",
+                        relaxedRequestParameters( parameterWithName("taxSignId").description("签约信息ID")),
+                        relaxedResponseFields(JavaDocReader.javaDoc(H5UrlDto.class))//出参对象描述
                 ));
     }
 }
