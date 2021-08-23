@@ -9,6 +9,7 @@ import chain.fxgj.server.payroll.dto.tax.*;
 import chain.fxgj.server.payroll.service.EmployeeWechatService;
 import chain.fxgj.server.payroll.service.TaxService;
 import chain.fxgj.server.payroll.util.ImageBase64Utils;
+import chain.fxgj.server.payroll.util.ImgPicUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.EmployeeTaxSignFeignService;
@@ -31,6 +32,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -189,7 +191,13 @@ public class TaxController {
                     .build();
             EmployeeTaxSignDTO taxSignDTO = employeeTaxSignFeignService.save(signSaveReq);
 
-            //TODO 图片压缩
+            //图片压缩
+            if (new File(req.getIdCardFront()).length() > 1024 * 160) {
+                ImgPicUtils.compression(req.getIdCardFront(), req.getIdCardFront());
+            }
+            if (new File(req.getIdCardNegative()).length() > 1024 * 160) {
+                ImgPicUtils.compression(req.getIdCardNegative(), req.getIdCardNegative());
+            }
 
             //身份证照片
             String idCardFront = ImageBase64Utils.imageToBase64(req.getIdCardFront());

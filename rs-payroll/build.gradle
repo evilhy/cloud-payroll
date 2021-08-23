@@ -192,6 +192,11 @@ dependencies {
     compile('org.apache.pdfbox:pdfbox:1.5.0')
     compile('com.itextpdf:itextpdf:5.5.13')
     compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
+
+    //google 图片压缩插件
+    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
+
 }
 
 
