@@ -53,9 +53,4 @@ public class WalletH5Req {
      * 用工单位
      */
     String ygOrg;
-
-    /**
-     * 请求日期 yyyyMMdd
-     */
-    String date;
 }

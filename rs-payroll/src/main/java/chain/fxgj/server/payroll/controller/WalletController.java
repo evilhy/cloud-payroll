@@ -232,7 +232,7 @@ public class WalletController {
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String jsessionId = currentUser.getSessionId();
         return Mono.fromCallable(() -> {
-
+            MDC.setContextMap(mdcContext);
             log.info("=====> /wallet/withdraw 确认提现 entId:{}, jsessionId:{}, req:{}", entId, jsessionId,JsonUtil.objectToJson(req));
 
             //查询当前登陆人信息
@@ -253,21 +253,17 @@ public class WalletController {
     @TrackLog
     public Mono<IsAllowWithdrawRes> isAllowWithdraw(@RequestHeader(value = "ent-id") String entId) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//        UserPrincipal currentUser = WebContext.getCurrentUser();
-//        String jsessionId = currentUser.getSessionId();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String jsessionId = currentUser.getSessionId();
         return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("=====> /wallet/isAllowWithdraw 是否允许提现 entId:{}, jsessionId:{}", entId, jsessionId);
 
-//            log.info("=====> /wallet/isAllowWithdraw 是否允许提现 entId:{}, jsessionId:{}", entId, jsessionId);
-//
-//            //查询当前登陆人信息
-//            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
-//            IsAllowWithdrawRes res = walletService.isAllowWithdraw(entId, dto);
-//            return res;
-            return IsAllowWithdrawRes.builder()
-                    .status(true)
-                    .entId(UUIDUtil.createUUID32())
-                    .idNumber("420117199909095678")
-                    .build();
+            //查询当前登陆人信息
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+
+            IsAllowWithdrawRes res = walletService.isAllowWithdraw(entId, dto);
+            return res;
         }).subscribeOn(Schedulers.boundedElastic());
     }
 }

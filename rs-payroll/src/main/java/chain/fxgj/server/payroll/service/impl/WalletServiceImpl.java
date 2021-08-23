@@ -725,6 +725,8 @@ public class WalletServiceImpl implements WalletService {
             EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()
                     .entId(entId)
                     .idNumber(idNumber)
+                    .status(Arrays.asList(TransDealStatusEnum.ING,TransDealStatusEnum.SUCCESS))
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
                     .build();
             List<EmployeeTaxSignDTO> list = employeeTaxSignFeignService.list(signQueryReq);
             EmployeeTaxSignDTO employeeTaxSignDTO = null;
