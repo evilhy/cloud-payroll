@@ -1,7 +1,7 @@
 [source,bash]
 ----
 $ http GET 'http://localhost:8080/tax/signingDetails' \
-    'encry-salt:9d01d8a1422c477db427c908b28c5a00' \
-    'encry-passwd:7e4832492dc746768087ebda5efcbb1d' \
-    'ent-id:12ea2436b89c4039b71a97f8070a689c'
+    'encry-salt:d224d2c312cd4403992f467aa76e68e4' \
+    'encry-passwd:c9c77d1f66494ba7a20c017dda590cb2' \
+    'ent-id:25ef266e47b448128c983b2cbe292f31'
 ----

@@ -48,9 +48,9 @@ public class SigningDetailsReq {
     /**
      *身份证正面
      */
-    String IdCardFront;
+    String idCardFront;
     /**
      *身份证反面
      */
-    String IdCardNegative;
+    String idCardNegative;
 }

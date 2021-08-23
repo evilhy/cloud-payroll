@@ -21,11 +21,11 @@
 |`+String+`
 |手机号
 
-|`+IdCardFront+`
+|`+idCardFront+`
 |`+String+`
 |身份证正面
 
-|`+IdCardNegative+`
+|`+idCardNegative+`
 |`+String+`
 |身份证反面
 
