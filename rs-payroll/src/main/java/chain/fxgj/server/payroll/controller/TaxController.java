@@ -8,6 +8,7 @@ import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.server.payroll.dto.tax.*;
 import chain.fxgj.server.payroll.service.EmployeeWechatService;
 import chain.fxgj.server.payroll.service.TaxService;
+import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.ImageBase64Utils;
 import chain.fxgj.server.payroll.util.ImgPicUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
@@ -72,7 +73,8 @@ public class TaxController {
      */
     @GetMapping("/signingDetails")
     @TrackLog
-    public Mono<SigningDetailsReq> signingDetails() {
+    public Mono<SigningDetailsReq> signingDetails(@RequestHeader(value = "encry-salt", required = false) String salt,
+                                                  @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         String jsessionId = userPrincipal.getSessionId();
@@ -89,9 +91,9 @@ public class TaxController {
 //                    .taxSignId()
                     .idType("1")
                     .idTypeVal("身份证")
-                    .userName(employeeWechatDTO.getName())
-                    .phone(employeeWechatDTO.getPhone())
-                    .idNumber(employeeWechatDTO.getIdNumber())
+                    .userName(EncrytorUtils.encryptField(employeeWechatDTO.getName(), salt, passwd))
+                    .phone(EncrytorUtils.encryptField(employeeWechatDTO.getPhone(), salt, passwd))
+                    .idNumber(EncrytorUtils.encryptField(employeeWechatDTO.getIdNumber(), salt, passwd))
                     .build();
 
             //查询签约信息
