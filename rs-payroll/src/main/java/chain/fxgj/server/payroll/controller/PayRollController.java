@@ -32,7 +32,9 @@ import chain.payroll.client.feign.*;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.UUIDUtil;
+import chain.utils.fxgj.constant.DictEnums.AttestStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
 import chain.wage.manager.core.dto.response.WageEntUserDTO;
 import chain.wage.manager.core.dto.response.WageRes100708;
 import chain.wage.manager.core.dto.response.enterprise.EntErpriseInfoDTO;
@@ -45,10 +47,12 @@ import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.request.empCard.EmployeeCardLogQueryReq;
 import core.dto.request.empCard.EmployeeCardQueryReq;
+import core.dto.request.employeeTaxSign.EmployeeTaxSignQueryReq;
 import core.dto.response.*;
 import core.dto.response.cardbin.CardbinQueRes;
 import core.dto.response.empCard.EmployeeCardDTO;
 import core.dto.response.empCard.EmployeeCardLogDTO;
+import core.dto.response.employeeTaxSign.EmployeeTaxSignDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -124,6 +128,8 @@ public class PayRollController {
     CardBinFeignService cardBinFeignService;
     @Autowired
     EmployeeEncrytorService employeeEncrytorService;
+    @Autowired
+    EmployeeTaxSignFeignService employeeTaxSignFeignService;
 
     /**
      * 服务当前时间
@@ -373,6 +379,23 @@ public class PayRollController {
                 empInfoDTO.setPhone(empInfoDTO.getPhoneStar());
             }
             log.info("返回脱敏数据emp.empInfoDTO.ret:[{}]", JacksonUtil.objectToJson(empInfoDTO));
+
+            //查询认证信息
+            EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()
+                    .idNumber(userPrincipal.getIdNumber())
+                    .entId(userPrincipal.getEntId())
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .build();
+            List<EmployeeTaxSignDTO> taxSignDTOS = employeeTaxSignFeignService.list(signQueryReq);
+            if (null != taxSignDTOS && taxSignDTOS.size()  >0){
+                EmployeeTaxSignDTO employeeTaxSignDTO = taxSignDTOS.get(0);
+                empInfoDTO.setTaxSignId(employeeTaxSignDTO.getId());
+                empInfoDTO.setSignStatus(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSignDTO.getSignStatus().getCode());
+                empInfoDTO.setSignStatusVal(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSignDTO.getSignStatus().getDesc());
+                empInfoDTO.setAttestStatus(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxSignDTO.getAttestStatus().getCode());
+                empInfoDTO.setAttestStatusVal(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxSignDTO.getAttestStatus().getDesc());
+            }
+
             return empInfoDTO;
         }).subscribeOn(Schedulers.boundedElastic());
 

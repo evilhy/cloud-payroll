@@ -725,19 +725,16 @@ public class WalletServiceImpl implements WalletService {
             EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()
                     .entId(entId)
                     .idNumber(idNumber)
-                    .status(Arrays.asList(TransDealStatusEnum.ING,TransDealStatusEnum.SUCCESS))
+                    .attestStatus(Arrays.asList(AttestStatusEnum.SUCCESS))
+                    .signStatus(IsStatusEnum.YES)
                     .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
                     .build();
             List<EmployeeTaxSignDTO> list = employeeTaxSignFeignService.list(signQueryReq);
-            EmployeeTaxSignDTO employeeTaxSignDTO = null;
             if (null != list && list.size() > 0) {
-                employeeTaxSignDTO = list.get(0);
+                build.setStatus(true);
             }
+            build.setStatus(false);
 
-            //未签约或未签约成功
-            if (null == employeeTaxSignDTO || TransDealStatusEnum.SUCCESS != employeeTaxSignDTO.getStatus()) {
-                build.setStatus(false);
-            }
         }
         return build;
     }

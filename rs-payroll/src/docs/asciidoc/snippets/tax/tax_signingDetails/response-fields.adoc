@@ -29,4 +29,20 @@
 |`+String+`
 |身份证反面
 
+|`+attestStatus+`
+|`+Integer+`
+|认证状态（0：未认证、1：认证中、2：认证失败、3：认证成功）
+
+|`+attestStatusVal+`
+|`+String+`
+|认证状态描述
+
+|`+signStatus+`
+|`+Integer+`
+|是否完成签约 (0:未签约、1：已签约)
+
+|`+signStatusVal+`
+|`+String+`
+|是否完成签约描述
+
 |===

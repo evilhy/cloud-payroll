@@ -445,7 +445,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <span id="author" class="author">author</span><br>
 <span id="email" class="email"><a href="mailto:kayak@kayak.com">kayak@kayak.com</a></span><br>
 <span id="revnumber">version ,</span>
-<span id="revdate">2021-08-23T21:04:10.151+08:00</span>
+<span id="revdate">2021-08-24T12:57:55.164+08:00</span>
 <br><span id="revremark">适用于8月切库版本</span>
 </div>
 <div id="toc" class="toc2">
@@ -1123,28 +1123,34 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#id_示例_101">17.2.2. 示例</a></li>
 </ul>
 </li>
-<li><a href="#id_确认签约">17.3. 确认签约</a>
+<li><a href="#id_签约">17.3. 签约</a>
 <ul class="sectlevel3">
 <li><a href="#id_接口定义_102">17.3.1. 接口定义</a></li>
 <li><a href="#id_示例_102">17.3.2. 示例</a></li>
 </ul>
 </li>
-<li><a href="#id_签约结果推送">17.4. 签约结果推送</a>
+<li><a href="#id_身份认证">17.4. 身份认证</a>
 <ul class="sectlevel3">
 <li><a href="#id_接口定义_103">17.4.1. 接口定义</a></li>
 <li><a href="#id_示例_103">17.4.2. 示例</a></li>
 </ul>
 </li>
-<li><a href="#id_是否允许提现">17.5. 是否允许提现</a>
+<li><a href="#id_签约结果推送">17.5. 签约结果推送</a>
 <ul class="sectlevel3">
 <li><a href="#id_接口定义_104">17.5.1. 接口定义</a></li>
 <li><a href="#id_示例_104">17.5.2. 示例</a></li>
 </ul>
 </li>
-<li><a href="#id_签约记录查看">17.6. 签约记录查看</a>
+<li><a href="#id_是否允许提现">17.6. 是否允许提现</a>
 <ul class="sectlevel3">
 <li><a href="#id_接口定义_105">17.6.1. 接口定义</a></li>
 <li><a href="#id_示例_105">17.6.2. 示例</a></li>
+</ul>
+</li>
+<li><a href="#id_签约记录查看">17.7. 签约记录查看</a>
+<ul class="sectlevel3">
+<li><a href="#id_接口定义_106">17.7.1. 接口定义</a></li>
+<li><a href="#id_示例_106">17.7.2. 示例</a></li>
 </ul>
 </li>
 </ul>
@@ -14350,6 +14356,26 @@ jsession_id: 07e027921805403dbfe83fc1a7ac9c0e
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">身份证反面</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>attestStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Integer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证状态（0：未认证、1：认证中、2：认证失败、3：认证成功）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>attestStatusVal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证状态描述</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>signStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Integer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否完成签约 (0:未签约、1：已签约)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>signStatusVal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否完成签约描述</p></td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -14365,9 +14391,9 @@ jsession_id: 07e027921805403dbfe83fc1a7ac9c0e
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/tax/signingDetails' -i -X GET \
-    -H 'encry-salt: d224d2c312cd4403992f467aa76e68e4' \
-    -H 'encry-passwd: c9c77d1f66494ba7a20c017dda590cb2' \
-    -H 'ent-id: 25ef266e47b448128c983b2cbe292f31'</code></pre>
+    -H 'encry-salt: fddbf1243436413280b98f2de46d2b9c' \
+    -H 'encry-passwd: 7bc37466b231447587d3bbb67c090792' \
+    -H 'ent-id: ab885160cb2746ff9336fd9fa7b0860d'</code></pre>
 </div>
 </div>
 </li>
@@ -14377,16 +14403,20 @@ jsession_id: 07e027921805403dbfe83fc1a7ac9c0e
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 754
+Content-Length: 862
 
 {
-  "taxSignId" : "dca4c924bb1b4e9c87ca825afb6fb5ad",
+  "taxSignId" : "88b34a6547674404be65086f8db0069f",
   "userName" : "李慕白",
   "idType" : "1",
   "idNumber" : "420110199809095678",
   "phone" : "18600020000",
   "idCardFront" : "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fnewpic.jxnews.com.cn%2F0%2F11%2F41%2F88%2F11418823_708254.jpg&amp;refer=http%3A%2F%2Fnewpic.jxnews.com.cn&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg?sec=1632293398&amp;t=cecf694f548c5a955b1a523ef9f62bf0",
-  "idCardNegative" : "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.legaldaily.com.cn%2Flocality%2Fimages%2F2012-05%2F03%2F002511f36021110c6ade26.jpg&amp;refer=http%3A%2F%2Fwww.legaldaily.com.cn&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg?sec=1632293440&amp;t=bf974772ad97bbdd3d4f905f1a2b9f89"
+  "idCardNegative" : "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.legaldaily.com.cn%2Flocality%2Fimages%2F2012-05%2F03%2F002511f36021110c6ade26.jpg&amp;refer=http%3A%2F%2Fwww.legaldaily.com.cn&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg?sec=1632293440&amp;t=bf974772ad97bbdd3d4f905f1a2b9f89",
+  "attestStatus" : 1,
+  "attestStatusVal" : "认证中",
+  "signStatus" : 1,
+  "signStatusVal" : "是"
 }</code></pre>
 </div>
 </div>
@@ -14489,7 +14519,7 @@ Content-Length: 95
 </div>
 </div>
 <div class="sect2">
-<h3 id="id_确认签约"><a class="anchor" href="#id_确认签约"></a><a class="link" href="#id_确认签约">17.3. 确认签约</a></h3>
+<h3 id="id_签约"><a class="anchor" href="#id_签约"></a><a class="link" href="#id_签约">17.3. 签约</a></h3>
 <div class="sect3">
 <h4 id="id_接口定义_102"><a class="anchor" href="#id_接口定义_102"></a><a class="link" href="#id_接口定义_102">17.3.1. 接口定义</a></h4>
 <div class="ulist">
@@ -14545,6 +14575,26 @@ Content-Length: 95
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">身份证反面</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>attestStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Integer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证状态（0：未认证、1：认证中、2：认证失败、3：认证成功）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>attestStatusVal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证状态描述</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>signStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Integer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否完成签约 (0:未签约、1：已签约)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>signStatusVal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否完成签约描述</p></td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -14588,7 +14638,7 @@ Content-Length: 95
     -H 'encry-salt: 123456' \
     -H 'encry-passwd: 234567' \
     -d '{
-  "taxSignId" : "58154790680848d387d2c2ae17e126c8",
+  "taxSignId" : "b269e3498d6b4703b1185b82221934c7",
   "userName" : "李慕白",
   "idType" : "1",
   "idNumber" : "420110199809095678",
@@ -14618,9 +14668,134 @@ Content-Length: 31
 </div>
 </div>
 <div class="sect2">
-<h3 id="id_签约结果推送"><a class="anchor" href="#id_签约结果推送"></a><a class="link" href="#id_签约结果推送">17.4. 签约结果推送</a></h3>
+<h3 id="id_身份认证"><a class="anchor" href="#id_身份认证"></a><a class="link" href="#id_身份认证">17.4. 身份认证</a></h3>
 <div class="sect3">
 <h4 id="id_接口定义_103"><a class="anchor" href="#id_接口定义_103"></a><a class="link" href="#id_接口定义_103">17.4.1. 接口定义</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Path Parameters:</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>taxSignId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">签约信息ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">姓名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">证件类型 1：身份证、 2：外国护照</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idNumber</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">证件号码</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>phone</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">手机号</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idCardFront</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">身份证正面</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idCardNegative</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">身份证反面</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>attestStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Integer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证状态（0：未认证、1：认证中、2：认证失败、3：认证成功）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>attestStatusVal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证状态描述</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>signStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Integer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否完成签约 (0:未签约、1：已签约)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>signStatusVal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否完成签约描述</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Response Body:</p>
+<div class="paragraph">
+<p>Unresolved directive in chapter/tax.adoc - include::D:\kayak\2020\cloud-payroll\rs-payroll\src\docs\asciidoc\snippets/tax/tax_attest/response-fields.adoc[]</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="id_示例_103"><a class="anchor" href="#id_示例_103"></a><a class="link" href="#id_示例_103">17.4.2. 示例</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Request:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/tax/attest' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'encry-salt: 123456' \
+    -H 'encry-passwd: 234567' \
+    -d '{
+  "taxSignId" : "e76d974190ae4e4886dec4b2e01a67e4",
+  "userName" : "李慕白",
+  "idType" : "1",
+  "idNumber" : "420110199809095678",
+  "phone" : "18600020000",
+  "idCardFront" : "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fnewpic.jxnews.com.cn%2F0%2F11%2F41%2F88%2F11418823_708254.jpg&amp;refer=http%3A%2F%2Fnewpic.jxnews.com.cn&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg?sec=1632293398&amp;t=cecf694f548c5a955b1a523ef9f62bf0",
+  "idCardNegative" : "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.legaldaily.com.cn%2Flocality%2Fimages%2F2012-05%2F03%2F002511f36021110c6ade26.jpg&amp;refer=http%3A%2F%2Fwww.legaldaily.com.cn&amp;app=2002&amp;size=f9999,10000&amp;q=a80&amp;n=0&amp;g=0n&amp;fmt=jpeg?sec=1632293440&amp;t=bf974772ad97bbdd3d4f905f1a2b9f89"
+}'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Response:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="id_签约结果推送"><a class="anchor" href="#id_签约结果推送"></a><a class="link" href="#id_签约结果推送">17.5. 签约结果推送</a></h3>
+<div class="sect3">
+<h4 id="id_接口定义_104"><a class="anchor" href="#id_接口定义_104"></a><a class="link" href="#id_接口定义_104">17.5.1. 接口定义</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -14685,7 +14860,7 @@ Content-Length: 31
 </div>
 </div>
 <div class="sect3">
-<h4 id="id_示例_103"><a class="anchor" href="#id_示例_103"></a><a class="link" href="#id_示例_103">17.4.2. 示例</a></h4>
+<h4 id="id_示例_104"><a class="anchor" href="#id_示例_104"></a><a class="link" href="#id_示例_104">17.5.2. 示例</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -14723,9 +14898,9 @@ Content-Length: 53
 </div>
 </div>
 <div class="sect2">
-<h3 id="id_是否允许提现"><a class="anchor" href="#id_是否允许提现"></a><a class="link" href="#id_是否允许提现">17.5. 是否允许提现</a></h3>
+<h3 id="id_是否允许提现"><a class="anchor" href="#id_是否允许提现"></a><a class="link" href="#id_是否允许提现">17.6. 是否允许提现</a></h3>
 <div class="sect3">
-<h4 id="id_接口定义_104"><a class="anchor" href="#id_接口定义_104"></a><a class="link" href="#id_接口定义_104">17.5.1. 接口定义</a></h4>
+<h4 id="id_接口定义_105"><a class="anchor" href="#id_接口定义_105"></a><a class="link" href="#id_接口定义_105">17.6.1. 接口定义</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -14772,7 +14947,7 @@ Content-Length: 53
 </div>
 </div>
 <div class="sect3">
-<h4 id="id_示例_104"><a class="anchor" href="#id_示例_104"></a><a class="link" href="#id_示例_104">17.5.2. 示例</a></h4>
+<h4 id="id_示例_105"><a class="anchor" href="#id_示例_105"></a><a class="link" href="#id_示例_105">17.6.2. 示例</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -14806,9 +14981,9 @@ Content-Length: 110
 </div>
 </div>
 <div class="sect2">
-<h3 id="id_签约记录查看"><a class="anchor" href="#id_签约记录查看"></a><a class="link" href="#id_签约记录查看">17.6. 签约记录查看</a></h3>
+<h3 id="id_签约记录查看"><a class="anchor" href="#id_签约记录查看"></a><a class="link" href="#id_签约记录查看">17.7. 签约记录查看</a></h3>
 <div class="sect3">
-<h4 id="id_接口定义_105"><a class="anchor" href="#id_接口定义_105"></a><a class="link" href="#id_接口定义_105">17.6.1. 接口定义</a></h4>
+<h4 id="id_接口定义_106"><a class="anchor" href="#id_接口定义_106"></a><a class="link" href="#id_接口定义_106">17.7.1. 接口定义</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -14860,7 +15035,7 @@ Content-Length: 110
 </div>
 </div>
 <div class="sect3">
-<h4 id="id_示例_105"><a class="anchor" href="#id_示例_105"></a><a class="link" href="#id_示例_105">17.6.2. 示例</a></h4>
+<h4 id="id_示例_106"><a class="anchor" href="#id_示例_106"></a><a class="link" href="#id_示例_106">17.7.2. 示例</a></h4>
 <div class="ulist">
 <ul>
 <li>

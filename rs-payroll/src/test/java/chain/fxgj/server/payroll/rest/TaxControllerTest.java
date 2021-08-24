@@ -88,7 +88,7 @@ public class TaxControllerTest extends BaseTestCase {
     }
 
     /**
-     * 确认签约
+     * 签约
      *
      * @throws Exception
      */

@@ -76,6 +76,7 @@ public class TaxController {
         String entId = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            log.info("=====> /tax/signingDetails 签约详情查询 userPrincipal：{}",JacksonUtil.objectToJson(userPrincipal));
 
             //查询登陆信息
             EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId);
@@ -124,6 +125,7 @@ public class TaxController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            log.info("=====> /tax/upload    身份证上传 ");
 
             String fileName = uploadfile.filename();
             log.info("身份证上传 fileName:[{}]", fileName);
@@ -157,40 +159,28 @@ public class TaxController {
     @TrackLog
     public Mono<H5UrlDto> signing(@RequestBody SigningDetailsReq req) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal userPrincipal = WebContext.getCurrentUser();
-        String jsessionId = userPrincipal.getSessionId();
-        String entId = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-
-            //查询登陆信息
-            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId);
+            log.info("=====> /tax/signing 确认签约 req：{}",JacksonUtil.objectToJson(req));
 
             //查询签约信息
-            EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()
-                    .entId(entId)
-                    .idNumber(employeeWechatDTO.getIdNumber())
-                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
-                    .build();
-            List<EmployeeTaxSignDTO> list = employeeTaxSignFeignService.list(signQueryReq);
-            String id = UUIDUtil.createUUID32();
-            if (null != list && list.size() > 0){
-                EmployeeTaxSignDTO employeeTaxSignDTO = list.get(0);
-                if (IsStatusEnum.YES == employeeTaxSignDTO.getSignStatus()) {
-                    log.info("=====> 用户在当前企业已进行签约 employeeWechatDTO:{}, signQueryReq:{}", JacksonUtil.objectToJson(employeeTaxSignDTO), JacksonUtil.objectToJson(signQueryReq));
-                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户在当前企业已进行签约"));
-                }
-                id = employeeTaxSignDTO.getId();
+            EmployeeTaxSignDTO employeeTaxSignDTO = employeeTaxSignFeignService.findById(req.getTaxSignId());
+            if (null == employeeTaxSignDTO){
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请先认证再签约"));
+            }
+            if (IsStatusEnum.YES == employeeTaxSignDTO.getSignStatus()) {
+                log.info("=====> 用户在当前企业已进行签约 employeeWechatDTO:{}, req:{}", JacksonUtil.objectToJson(employeeTaxSignDTO), JacksonUtil.objectToJson(req));
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户在当前企业已进行签约"));
             }
 
             //验证身份信息成功，进入签约
             WalletH5Req walletH5Req = WalletH5Req.builder()
-                    .fwOrg(userPrincipal.getEntName())
-                    .idCardNo(req.getIdNumber())
+                    .fwOrg(employeeTaxSignDTO.getEntName())
+                    .idCardNo(employeeTaxSignDTO.getIdNumber())
                     .idType("SFZ")
-                    .phoneNo(req.getPhone())
-                    .transUserId(id)
-                    .userName(req.getUserName())
+                    .phoneNo(employeeTaxSignDTO.getPhone())
+                    .transUserId(employeeTaxSignDTO.getId())
+                    .userName(employeeTaxSignDTO.getUserName())
 //                    .ygOrg()
                     .build();
             WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
@@ -231,6 +221,7 @@ public class TaxController {
         String entId = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            log.info("=====> /tax/attest 身份认证 userPrincipal：{}，req：{}",JacksonUtil.objectToJson(userPrincipal),JacksonUtil.objectToJson(req));
 
             //查询登陆信息
             EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId);
@@ -313,6 +304,7 @@ public class TaxController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            log.info("=====> /tax/signResultPush 认证结果推送 req：{}",JacksonUtil.objectToJson(req));
 
             try {
                 Optional.ofNullable(req).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请求参数不能为空")));
@@ -364,6 +356,7 @@ public class TaxController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(taxSignId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户ID不能不管为空")));
+            log.info("=====> /tax/signRecord    签约记录查看   taxSignId：{}",taxSignId);
 
             String sealH5 = taxService.sealH5(taxSignId);
             return H5UrlDto.builder()

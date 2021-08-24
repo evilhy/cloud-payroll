@@ -5,7 +5,7 @@ $ curl 'http://localhost:8080/tax/signing' -i -X POST \
     -H 'encry-salt: 123456' \
     -H 'encry-passwd: 234567' \
     -d '{
-  "taxSignId" : "58154790680848d387d2c2ae17e126c8",
+  "taxSignId" : "b269e3498d6b4703b1185b82221934c7",
   "userName" : "李慕白",
   "idType" : "1",
   "idNumber" : "420110199809095678",

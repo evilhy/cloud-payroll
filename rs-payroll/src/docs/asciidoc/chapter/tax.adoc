@@ -37,7 +37,7 @@ include::{snippets}/tax/tax_upload/curl-request.adoc[]
 include::{snippets}/tax/tax_upload/http-response.adoc[]
 
 
-=== 确认签约
+=== 签约
 ==== 接口定义
 * Path Parameters:
 +
@@ -53,6 +53,24 @@ include::{snippets}/tax/tax_signing/curl-request.adoc[]
 * Response:
 +
 include::{snippets}/tax/tax_signing/http-response.adoc[]
+
+
+=== 身份认证
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/tax/tax_attest/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/tax/tax_attest/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_attest/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_attest/http-response.adoc[]
 
 
 === 签约结果推送
