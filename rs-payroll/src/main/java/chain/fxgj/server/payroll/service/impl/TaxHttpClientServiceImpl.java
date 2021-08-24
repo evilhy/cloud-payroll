@@ -76,7 +76,7 @@ public class TaxHttpClientServiceImpl implements TaxHttpClientService {
         log.info("=====> 报税平台接口 请求地址 ：{}", taxProperties.getRequestUrl() + url);
         log.info("=====> 报税平台接口 请求信息 ：{}", JacksonUtil.objectToJson(paramMap));
         HttpResponse request = request(taxProperties.getRequestUrl() + url, JacksonUtil.objectToJson(paramMap), taxProperties.getChannel(), timestamp, cipherKey, cipherMac);
-        log.info("=====> 报税平台接口 返回信息 ：{}", JacksonUtil.objectToJson(request));
+//        log.info("=====> 报税平台接口 返回信息 ：{}", JacksonUtil.objectToJson(request));
         if (null == request) {
             log.info("=====> 发送交易请求失败");
         }
