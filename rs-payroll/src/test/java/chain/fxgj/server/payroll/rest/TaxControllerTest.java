@@ -121,6 +121,37 @@ public class TaxControllerTest extends BaseTestCase {
     }
 
     /**
+     * 身份认证
+     * @throws Exception
+     */
+    @Test
+    public void attest() throws Exception {
+        SigningDetailsReq build = SigningDetailsReq.builder()
+                .idCardFront("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fnewpic.jxnews.com.cn%2F0%2F11%2F41%2F88%2F11418823_708254.jpg&refer=http%3A%2F%2Fnewpic.jxnews.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1632293398&t=cecf694f548c5a955b1a523ef9f62bf0")
+                .idCardNegative("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.legaldaily.com.cn%2Flocality%2Fimages%2F2012-05%2F03%2F002511f36021110c6ade26.jpg&refer=http%3A%2F%2Fwww.legaldaily.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1632293440&t=bf974772ad97bbdd3d4f905f1a2b9f89")
+                .idNumber("420110199809095678")
+                .idType("1")
+                .phone("18600020000")
+                .userName("李慕白")
+                .taxSignId(UUIDUtil.createUUID32())
+                .build();
+
+        webTestClient.post().uri("/tax/attest")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("encry-salt", "123456")
+                .header("encry-passwd", "234567")
+                .syncBody(build)//入参
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody()//返回是什么类型的对象
+                .consumeWith(document("tax_attest",
+                        //相应文档
+                        relaxedRequestFields(JavaDocReader.javaDoc(SigningDetailsReq.class))
+                ));
+    }
+
+    /**
      * 签约结果推送
      *
      * @throws Exception

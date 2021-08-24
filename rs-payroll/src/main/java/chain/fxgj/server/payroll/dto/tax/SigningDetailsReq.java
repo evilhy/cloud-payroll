@@ -1,11 +1,14 @@
 package chain.fxgj.server.payroll.dto.tax;
 
+import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.TransDealStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.time.LocalDateTime;
 
 /**
  * @Description:
@@ -53,4 +56,20 @@ public class SigningDetailsReq {
      *身份证反面
      */
     String idCardNegative;
+    /**
+     * 认证状态（0：未认证、1：认证中、2：认证失败、3：认证成功）
+     */
+     Integer attestStatus;
+    /**
+     * 认证状态描述
+     */
+    String attestStatusVal;
+    /**
+     * 是否完成签约 (0:未签约、1：已签约)
+     */
+     Integer signStatus;
+    /**
+     * 是否完成签约描述
+     */
+    String signStatusVal;
 }
