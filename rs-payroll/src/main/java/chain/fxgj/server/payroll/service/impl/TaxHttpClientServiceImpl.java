@@ -1,10 +1,12 @@
 package chain.fxgj.server.payroll.service.impl;
 
+import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.server.payroll.config.properties.ProxyProperties;
 import chain.fxgj.server.payroll.config.properties.TaxProperties;
 import chain.fxgj.server.payroll.service.TaxHttpClientService;
 import chain.fxgj.server.payroll.util.RSAUtils;
 import chain.utils.commons.JacksonUtil;
+import core.dto.ErrorConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -22,7 +24,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.client.Client;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.Charset;
@@ -75,15 +76,19 @@ public class TaxHttpClientServiceImpl implements TaxHttpClientService {
 
         log.info("=====> 报税平台接口 请求地址 ：{}", taxProperties.getRequestUrl() + url);
         log.info("=====> 报税平台接口 请求信息 ：{}", JacksonUtil.objectToJson(paramMap));
-        HttpResponse request = request(taxProperties.getRequestUrl() + url, JacksonUtil.objectToJson(paramMap), taxProperties.getChannel(), timestamp, cipherKey, cipherMac);
+        HttpResponse response = request(taxProperties.getRequestUrl() + url, JacksonUtil.objectToJson(paramMap), taxProperties.getChannel(), timestamp, cipherKey, cipherMac);
 //        log.info("=====> 报税平台接口 返回信息 ：{}", JacksonUtil.objectToJson(request));
-        if (null == request) {
+        if (null == response) {
             log.info("=====> 发送交易请求失败");
         }
-        if (null != request && null != request.getEntity()) {
-            return EntityUtils.toString(request.getEntity());
+        if (null != response && null != response.getStatusLine() && 200 != response.getStatusLine().getStatusCode()) {
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format(response.getStatusLine().getReasonPhrase()));
         }
-        return null;
+        String result = null;
+        if (null != response && null != response.getEntity()) {
+            result = EntityUtils.toString(response.getEntity());
+        }
+        return result;
     }
 
     private HttpResponse request(String requestUrl, String reqParam, String channel, String timestamp, String cipherKey, String cipherMac) {

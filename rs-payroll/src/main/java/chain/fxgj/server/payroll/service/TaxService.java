@@ -12,21 +12,21 @@ import chain.fxgj.server.payroll.dto.tax.WalletH5Res;
  */
 public interface TaxService {
 
-    void file();
+    void file()throws Exception ;
 
     /**
      * 用户签约h5
      *
      * @param req
      */
-    WalletH5Res walletH5(WalletH5Req req);
+    WalletH5Res walletH5(WalletH5Req req)throws Exception ;
 
     /**
      * 用户签约记录
      *
      * @param transUserId
      */
-    String sealH5(String transUserId);
+    String sealH5(String transUserId)throws Exception ;
 
     /**
      * 推送用户实名认证信息至零工平台
@@ -34,5 +34,5 @@ public interface TaxService {
      * @param req
      * @return
      */
-    SealUserRes user(SealUserReq req);
+    SealUserRes user(SealUserReq req)throws Exception ;
 }
