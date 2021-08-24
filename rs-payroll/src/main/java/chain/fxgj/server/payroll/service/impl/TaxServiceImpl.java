@@ -4,6 +4,7 @@ import chain.fxgj.server.payroll.dto.tax.SealUserReq;
 import chain.fxgj.server.payroll.dto.tax.SealUserRes;
 import chain.fxgj.server.payroll.dto.tax.WalletH5Req;
 import chain.fxgj.server.payroll.dto.tax.WalletH5Res;
+import chain.fxgj.server.payroll.service.TaxHttpClientService;
 import chain.fxgj.server.payroll.service.TaxService;
 import chain.fxgj.server.payroll.util.RSAUtils;
 import chain.utils.commons.JacksonUtil;
@@ -20,6 +21,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,9 @@ import java.util.Map;
 @Slf4j
 @Service
 public class TaxServiceImpl implements TaxService {
+
+    @Autowired
+    TaxHttpClientService taxHttpClientService;
     //渠道
 //    private final static String channel="xingxuan";
     private final static String channel = "XAYK";
@@ -58,11 +63,12 @@ public class TaxServiceImpl implements TaxService {
         paramMap.put("date", "20210714");
         try {
             //h5
-            send(paramMap, url);
+            taxHttpClientService.send(paramMap, url);
         } catch (Exception e) {
             e.printStackTrace();
             log.info("=====> 发送交易请求失败，url:{}，paramMap:{}", url, JacksonUtil.objectToJson(paramMap));
         }
+
     }
 
     @Override
@@ -78,7 +84,7 @@ public class TaxServiceImpl implements TaxService {
         paramMap.put("ygOrg", req.getYgOrg());
         try {
             //h5
-            String result = send(paramMap, url);
+            String result = taxHttpClientService.send(paramMap, url);
             if (StringUtils.isNotBlank(result)) {
                 return JacksonUtil.jsonToBean(result, WalletH5Res.class);
             }
@@ -96,7 +102,7 @@ public class TaxServiceImpl implements TaxService {
         paramMap.put("transUserId", transUserId);
         try {
             //h5
-            String result = send(paramMap, url);
+            String result = taxHttpClientService.send(paramMap, url);
             if (StringUtils.isNotBlank(result)) {
                 Map<String, String> map = (Map<String, String>) JacksonUtil.jsonToMap(result);
                 return map.get("url");
@@ -123,7 +129,7 @@ public class TaxServiceImpl implements TaxService {
         paramMap.put("ygOrg", req.getYgOrg());
         try {
             //h5
-            String result = send(paramMap, url);
+            String result = taxHttpClientService.send(paramMap, url);
             if (StringUtils.isNotBlank(result)) {
                 return JacksonUtil.jsonToBean(result, SealUserRes.class);
             }
@@ -208,7 +214,7 @@ public class TaxServiceImpl implements TaxService {
 //            String result = EntityUtils.toString(response.getEntity());
 //            log.debug(result);
 
-            FileUtils.copyInputStreamToFile(response.getEntity().getContent(), new File("D:/tmp/payroll/sign/11.txt"));
+//            FileUtils.copyInputStreamToFile(response.getEntity().getContent(), new File("D:/tmp/payroll/sign/11.txt"));
 
             return response;
         } catch (Exception e) {

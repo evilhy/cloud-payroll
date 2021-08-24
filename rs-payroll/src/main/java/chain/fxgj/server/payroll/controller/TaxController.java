@@ -15,7 +15,10 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.EmployeeTaxSignFeignService;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.UUIDUtil;
-import chain.utils.fxgj.constant.DictEnums.*;
+import chain.utils.fxgj.constant.DictEnums.AttestStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.CertTypeEnum;
+import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
 import core.dto.ErrorConstant;
 import core.dto.request.employeeTaxSign.EmployeeTaxSignQueryReq;
 import core.dto.request.employeeTaxSign.EmployeeTaxSignSaveReq;
@@ -76,7 +79,7 @@ public class TaxController {
         String entId = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.info("=====> /tax/signingDetails 签约详情查询 userPrincipal：{}",JacksonUtil.objectToJson(userPrincipal));
+            log.info("=====> /tax/signingDetails 签约详情查询 userPrincipal：{}", JacksonUtil.objectToJson(userPrincipal));
 
             //查询登陆信息
             EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId);
@@ -161,11 +164,11 @@ public class TaxController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.info("=====> /tax/signing 确认签约 req：{}",JacksonUtil.objectToJson(req));
+            log.info("=====> /tax/signing 确认签约 req：{}", JacksonUtil.objectToJson(req));
 
             //查询签约信息
             EmployeeTaxSignDTO employeeTaxSignDTO = employeeTaxSignFeignService.findById(req.getTaxSignId());
-            if (null == employeeTaxSignDTO){
+            if (null == employeeTaxSignDTO) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请先认证再签约"));
             }
             if (IsStatusEnum.YES == employeeTaxSignDTO.getSignStatus()) {
@@ -221,7 +224,7 @@ public class TaxController {
         String entId = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.info("=====> /tax/attest 身份认证 userPrincipal：{}，req：{}",JacksonUtil.objectToJson(userPrincipal),JacksonUtil.objectToJson(req));
+            log.info("=====> /tax/attest 身份认证 userPrincipal：{}，req：{}", JacksonUtil.objectToJson(userPrincipal), JacksonUtil.objectToJson(req));
 
             //查询登陆信息
             EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId);
@@ -304,7 +307,7 @@ public class TaxController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.info("=====> /tax/signResultPush 认证结果推送 req：{}",JacksonUtil.objectToJson(req));
+            log.info("=====> /tax/signResultPush 认证结果推送 req：{}", JacksonUtil.objectToJson(req));
 
             try {
                 Optional.ofNullable(req).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请求参数不能为空")));
@@ -356,7 +359,7 @@ public class TaxController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(taxSignId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户ID不能不管为空")));
-            log.info("=====> /tax/signRecord    签约记录查看   taxSignId：{}",taxSignId);
+            log.info("=====> /tax/signRecord    签约记录查看   taxSignId：{}", taxSignId);
 
             String sealH5 = taxService.sealH5(taxSignId);
             return H5UrlDto.builder()
