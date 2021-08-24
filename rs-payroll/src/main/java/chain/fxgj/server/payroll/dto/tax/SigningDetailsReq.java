@@ -76,4 +76,12 @@ public class SigningDetailsReq {
      * 是否完成签约描述
      */
     String signStatusVal;
+    /**
+     * salt
+     */
+    private String salt;
+    /**
+     * password
+     */
+    private String passwd;
 }

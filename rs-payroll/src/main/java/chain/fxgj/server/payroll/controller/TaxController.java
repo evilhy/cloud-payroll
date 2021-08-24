@@ -276,9 +276,10 @@ public class TaxController {
 //                    .ygOrg()
                     .build();
             SealUserRes userResult = taxService.user(userReq);
-            if (null == userResult) {
+            if (null != userResult && "fail".equals(userResult.getRntCode())) {
                 //验证失败或网络异常
                 log.info("=====> 身份信息验证过程发生异常 userReq:{}", JacksonUtil.objectToJson(userReq));
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format(userResult.getRntMsg()));
             }
 
             //保存
