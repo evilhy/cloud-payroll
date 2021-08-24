@@ -149,16 +149,18 @@ public class TaxController {
                 Files.createDirectories(path);
             }
             Path tempFile = Files.createTempFile(path, filePathName, suffix);
+            File file = tempFile.toFile();
             try {
                 //存放文件
                 uploadfile.transferTo(tempFile);
-                log.info("IdCard upload Success! fileName:{},fileSystem:{}", tempFile.getFileName(), tempFile.getFileSystem());
+
+                log.info("IdCard upload Success! fileName:{},path:{}", file.getName(), file.getPath());
             } catch (Exception e) {
                 throw new ServiceHandleException(e, ErrorConstant.SYS_ERROR.format("文件上传处理异常"));
             }
 
             return UploadDto.builder()
-                    .filepath(tempFile.toString())
+                    .filepath(file.getPath())
                     .build();
         }).subscribeOn(Schedulers.elastic());
     }
