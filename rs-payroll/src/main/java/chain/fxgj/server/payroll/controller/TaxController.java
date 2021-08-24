@@ -95,6 +95,10 @@ public class TaxController {
                     .userName(EncrytorUtils.encryptField(employeeWechatDTO.getName(), salt, passwd))
                     .phone(EncrytorUtils.encryptField(employeeWechatDTO.getPhone(), salt, passwd))
                     .idNumber(EncrytorUtils.encryptField(employeeWechatDTO.getIdNumber(), salt, passwd))
+                    .signStatus(IsStatusEnum.NO.getCode())
+                    .signStatusVal(IsStatusEnum.NO.getDesc())
+                    .attestStatus(AttestStatusEnum.NOT.getCode())
+                    .attestStatusVal(AttestStatusEnum.NOT.getDesc())
                     .passwd(passwd)
                     .salt(salt)
                     .build();
