@@ -277,8 +277,8 @@ public class TaxController {
                     .phoneNo(req.getPhone())
                     .userName(req.getUserName())
                     .transUserId(transUserId)
-                    .idCardImg1(idCardFront)
-                    .idCardImg2(idCardNegative)
+                    .idCardImg1("data:image/jpg;base64," + idCardFront)
+                    .idCardImg2("data:image/jpg;base64," + idCardNegative)
 //                    .ygOrg()
                     .build();
             SealUserRes userResult = taxService.user(userReq);
