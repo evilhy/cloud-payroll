@@ -73,7 +73,8 @@ public class TaxServiceImpl implements TaxService {
 
     @Override
     public WalletH5Res walletH5(WalletH5Req req) {
-        String url = "/sys/unAuth/file";
+        log.info("=====> 用户签约h5 req:{}", JacksonUtil.objectToJson(req));
+        String url = "/sys/walletH5";
         Map<String, Object> paramMap = new HashMap();
         paramMap.put("transUserId", req.getTransUserId());
         paramMap.put("userName", req.getUserName());
@@ -97,7 +98,8 @@ public class TaxServiceImpl implements TaxService {
 
     @Override
     public String sealH5(String transUserId) {
-        String url = "/sys/unAuth/file";
+        log.info("=====> 用户签约记录 transUserId:{}", transUserId);
+        String url = "/sys/sealH5";
         Map<String, Object> paramMap = new HashMap();
         paramMap.put("transUserId", transUserId);
         try {
@@ -116,7 +118,8 @@ public class TaxServiceImpl implements TaxService {
 
     @Override
     public SealUserRes user(SealUserReq req) {
-        String url = "/sys/unAuth/file";
+        log.info("=====> 推送用户实名认证信息至零工平台 req:{}", JacksonUtil.objectToJson(req));
+        String url = "/sys/user";
         Map<String, Object> paramMap = new HashMap();
         paramMap.put("transUserId", req.getTransUserId());
         paramMap.put("userName", req.getUserName());

@@ -41,6 +41,10 @@ public class SigningDetailsReq {
      */
     String idType;
     /**
+     *证件类型 描述
+     */
+    String idTypeVal;
+    /**
      *证件号码
      */
     String idNumber;

@@ -88,6 +88,7 @@ public class TaxController {
 //                    .idCardFront()
 //                    .taxSignId()
                     .idType("1")
+                    .idTypeVal("身份证")
                     .userName(employeeWechatDTO.getName())
                     .phone(employeeWechatDTO.getPhone())
                     .idNumber(employeeWechatDTO.getIdNumber())
@@ -365,6 +366,69 @@ public class TaxController {
             return H5UrlDto.builder()
                     .url(sealH5)
                     .build();
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    /**
+     * 接口测试
+     *
+     * @param interfaceName 接口名称
+     * @return
+     */
+    @GetMapping("/interfaceTest")
+    @TrackLog
+    public Mono<String> interfaceTest(@RequestParam("interfaceName") String interfaceName) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            Optional.ofNullable(interfaceName).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("接口名称不能不管为空")));
+            log.info("=====> /tax/interfaceTest    接口测试   interfaceName：{}", interfaceName);
+
+            String transUserId = "deyun_00000000000000001";
+            String idCardNo = "420104199108240015";
+            String userName = "张三";
+            String phoneNo = "18600000000";
+            String idType = "SFZ";
+            String fwOrg = "武汉德运人力资源有限公司";
+            String ygOrg = "武汉德运人力资源有限公司";
+
+            String result= null;
+            switch (interfaceName){
+                case "walletH5":
+                    WalletH5Req h5Req = WalletH5Req.builder()
+                            .transUserId(transUserId)
+                            .ygOrg(ygOrg)
+                            .userName(userName)
+                            .phoneNo(phoneNo)
+                            .idType(idType)
+                            .idCardNo(idCardNo)
+                            .fwOrg(fwOrg)
+                            .build();
+                    WalletH5Res walletH5Res = taxService.walletH5(h5Req);
+                    result = JacksonUtil.objectToJson(walletH5Res);
+                    break;
+                case "sealH5":
+                    result =taxService.sealH5(transUserId);
+                    break;
+                case "user":
+                    SealUserReq userReq = SealUserReq.builder()
+                            .idCardImg2(ImageBase64Utils.imageToBase64("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fnewpic.jxnews.com.cn%2F0%2F11%2F41%2F88%2F11418823_708254.jpg&refer=http%3A%2F%2Fnewpic.jxnews.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1632293398&t=cecf694f548c5a955b1a523ef9f62bf0"))
+                            .idCardImg1(ImageBase64Utils.imageToBase64("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwww.legaldaily.com.cn%2Flocality%2Fimages%2F2012-05%2F03%2F002511f36021110c6ade26.jpg&refer=http%3A%2F%2Fwww.legaldaily.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1632293440&t=bf974772ad97bbdd3d4f905f1a2b9f89"))
+                            .transUserId(transUserId)
+                            .ygOrg(ygOrg)
+                            .userName(userName)
+                            .phoneNo(phoneNo)
+                            .idType(idType)
+                            .idCardNo(idCardNo)
+                            .fwOrg(fwOrg)
+                            .build();
+                    SealUserRes user = taxService.user(userReq);
+                    result = JacksonUtil.objectToJson(user);
+                    break;
+                default:
+                    result = "不存在的接口！";
+            }
+            return result;
         }).subscribeOn(Schedulers.boundedElastic());
     }
 }

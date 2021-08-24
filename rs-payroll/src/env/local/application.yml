@@ -75,6 +75,7 @@ encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
   passwd: MvEpyqjedb4Hvai3vnFakmYxQsebEVCe84RNcVxw79USzc85channelFPAmbA9NuPxqfGsMh5pPuyzL
 
+#报税服务设置
 tax:
   channel: FXGJ
   signSalt: zxyh7572
