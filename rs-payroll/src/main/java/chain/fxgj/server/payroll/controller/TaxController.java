@@ -32,11 +32,15 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -161,6 +165,46 @@ public class TaxController {
                     .filepath(tempFile.toString())
                     .build();
         }).subscribeOn(Schedulers.elastic());
+    }
+
+    /**
+     * 身份证上传
+     *
+     * @param uploadfile 文件流
+     * @return
+     * @throws BusiVerifyException
+     */
+    @PostMapping("/upload1")
+    @TrackLog
+    public Mono<UploadDto> upload1(@NotNull @RequestPart("file") MultipartFile uploadfile) throws BusiVerifyException {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("=====> /tax/upload    身份证上传 ");
+
+            String fileNamePath = payrollProperties.getSignUploadPath() + uploadfile.getName();
+            boolean blobImgFile = uploadBlobImgFile(uploadfile, fileNamePath);
+            if(!blobImgFile){
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("文件上传失败"));
+            }
+
+            return UploadDto.builder()
+                    .filepath(fileNamePath)
+                    .build();
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    public boolean uploadBlobImgFile(MultipartFile file, String fileNamePath){
+        try {
+            OutputStream out = new FileOutputStream(fileNamePath);
+            out.write(file.getBytes());
+            out.flush();
+            out.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
