@@ -78,7 +78,7 @@ public class TaxServiceImpl implements TaxService {
         Map<String, Object> paramMap = new HashMap();
         paramMap.put("transUserId", req.getTransUserId());
         paramMap.put("userName", req.getUserName());
-        paramMap.put("phoneNo", req.getPhoneNo());
+        paramMap.put("phone", req.getPhoneNo());
         paramMap.put("idType", req.getIdType());
         paramMap.put("idCardNo", req.getIdCardNo());
         paramMap.put("fwOrg", req.getFwOrg());
@@ -123,7 +123,7 @@ public class TaxServiceImpl implements TaxService {
         Map<String, Object> paramMap = new HashMap();
         paramMap.put("transUserId", req.getTransUserId());
         paramMap.put("userName", req.getUserName());
-        paramMap.put("phoneNo", req.getPhoneNo());
+        paramMap.put("phone", req.getPhoneNo());
         paramMap.put("idType", req.getIdType());
         paramMap.put("idCardNo", req.getIdCardNo());
         paramMap.put("idCardImg1", req.getIdCardImg1());
