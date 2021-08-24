@@ -95,6 +95,8 @@ public class TaxController {
                     .userName(EncrytorUtils.encryptField(employeeWechatDTO.getName(), salt, passwd))
                     .phone(EncrytorUtils.encryptField(employeeWechatDTO.getPhone(), salt, passwd))
                     .idNumber(EncrytorUtils.encryptField(employeeWechatDTO.getIdNumber(), salt, passwd))
+                    .passwd(passwd)
+                    .salt(salt)
                     .build();
 
             //查询签约信息
