@@ -132,8 +132,8 @@ public class TaxHttpClientServiceImpl implements TaxHttpClientService {
                     .build();
             HttpResponse response = httpClient.execute(httpPost);
             log.debug("response:{},{}", response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
-//            String result = EntityUtils.toString(response.getEntity());
-//            log.debug(result);
+            String result = EntityUtils.toString(response.getEntity());
+            log.debug(result);
 
 //            FileUtils.copyInputStreamToFile(response.getEntity().getContent(), new File("D:/tmp/payroll/sign/11.txt"));
 

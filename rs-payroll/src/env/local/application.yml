@@ -77,12 +77,19 @@ encrypt:
 
 #报税服务设置
 tax:
+  #渠道
   channel: FXGJ
+  #signSalt混淆
   signSalt: zxyh7572
+  #公钥
   publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCNotSn72NFXy92LCc09MjZOAlhngjbUGrDcj8y8pTUMy1tM9NvTjWTMc9OU+bN9pnBzS7sFPJ+aSDaC81p6LeetHwovSkZGdxXMogFow3PPvnc+oc/19oeqsrMrB/bDxjF4sWVNgn+RhXjuOmBLn43WS10ZZ7zEV9DwT8WiyZVqQIDAQAB
+  #私钥
   privateKey: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAI2i1KfvY0VfL3YsJzT0yNk4CWGeCNtQasNyPzLylNQzLW0z029ONZMxz05T5s32mcHNLuwU8n5pINoLzWnot560fCi9KRkZ3FcyiAWjDc8++dz6hz/X2h6qysysH9sPGMXixZU2Cf5GFeO46YEufjdZLXRlnvMRX0PBPxaLJlWpAgMBAAECgYB2H2Pdfu+6zmyl0KMOLkxHpM1mJUfbqJCx2dlNYzSuWNQ86+kdPgu+a98pwx2NjmmjUL0eVUX8GS81ynwRJO3lZr4VzAzOzYO9gmY+KzSACMW87SfskrmXZa4MV5OD5YsH/ijEG3OJEutG0sVNv4G+5jiDpnCe/wdpvDfha3ywkQJBAM0wCENfUSVFUB5i9cBEhHdxV2iOhSC+DeHhJXry4mHz1btjGWugq1mZOJPKmmcZPHvwjecyWbGScpschUBbyG0CQQCwteqTDxUlmlf4npftmkaEFDO9pff6/ZLhKI5KUsuRG5A6ymaZsCAzhhuFqWNo6VOv5a9M+f61emOBBTm7ePStAkA8gqC9NZvZkPJKs8ZjeBFUpCEx3W3XNRUk+t+xvXUTi/QI+fWiLtS5bJ0pwIL+SovyxQMkHk4jNtwDcEq/qxGVAkAJD/tMuWxLNmQmkvOVsuDE60hQBI/4JkL/GxZZB2/7LB+0dCbY4Oh12/3TWAGKItUw4yWfW/7NDc7Gkh8I10YtAkEAr0NoeJl3SKUjB870V4PCjDNG3pyxrsTb+LAreRQjaH/Y4mUUow0ZHbsflQHzGkan1uTOvH77onNfpcf7xN/OPg==df723820
+  #tax 服务地址
   requestUrl: https://sitapi.lgabc.cn/exgateway/lgb
+  #证书名称
   certificateName: api-client.p12
+  #证书密码
   password: f2xKYRosKEy5W31r
 
 #正向代理
