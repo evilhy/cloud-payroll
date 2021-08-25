@@ -128,15 +128,29 @@ public class TaxController {
                 if (AttestStatusEnum.FAIL != employeeTaxSignDTO.getAttestStatus()) {
                     //正面照
                     if (StringUtils.isNotBlank(employeeTaxSignDTO.getIdCardFront())) {
-                        String replace1 = employeeTaxSignDTO.getIdCardFront().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
-                        log.info("=====> 替换后目录：getIdCardFront{}", replace1);
-                        signingDetail.setIdCardFront(employeeTaxSignDTO.getIdCardFront());
+                        String filePath = employeeTaxSignDTO.getIdCardFront();
+                        //图片压缩
+                        if (new File(filePath).length() > 1024 * 160) {
+                            ImgPicUtils.compression(filePath, filePath);
+                        }
+
+                        //身份证照片
+                        String base64 = ImageBase64Utils.imageToBase64(filePath);
+
+                        signingDetail.setIdCardFront("data:image/jpg;base64," + base64);
                     }
                     //反面照
                     if (StringUtils.isNotBlank(employeeTaxSignDTO.getIdCardNegative())) {
-                        String replace1 = employeeTaxSignDTO.getIdCardNegative().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
-                        log.info("=====> 替换后目录：getIdCardNegative{}", replace1);
-                        signingDetail.setIdCardNegative(employeeTaxSignDTO.getIdCardNegative());
+                        String filePath = employeeTaxSignDTO.getIdCardNegative();
+                        //图片压缩
+                        if (new File(filePath).length() > 1024 * 160) {
+                            ImgPicUtils.compression(filePath, filePath);
+                        }
+
+                        //身份证照片
+                        String base64 = ImageBase64Utils.imageToBase64(filePath);
+
+                        signingDetail.setIdCardNegative("data:image/jpg;base64," + base64);
                     }
                 }
                 signingDetail.setSignStatus(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSignDTO.getSignStatus().getCode());
