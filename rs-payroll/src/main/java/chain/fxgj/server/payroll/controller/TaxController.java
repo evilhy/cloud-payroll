@@ -8,6 +8,7 @@ import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.server.payroll.dto.tax.*;
 import chain.fxgj.server.payroll.service.EmployeeWechatService;
 import chain.fxgj.server.payroll.service.TaxService;
+import chain.fxgj.server.payroll.util.DateTimeUtils;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.ImageBase64Utils;
 import chain.fxgj.server.payroll.util.ImgPicUtils;
@@ -33,15 +34,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -172,48 +169,6 @@ public class TaxController {
     }
 
     /**
-     * 身份证上传
-     *
-     * @param uploadfile 文件流
-     * @return
-     * @throws BusiVerifyException
-     */
-    @PostMapping("/upload1")
-    @TrackLog
-    public Mono<UploadDto> upload1(@NotNull @RequestParam("file") MultipartFile uploadfile) throws BusiVerifyException {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            log.info("=====> /tax/upload    身份证上传 ");
-            long size = uploadfile.getSize();
-            String name = uploadfile.getName();
-
-            String fileNamePath = payrollProperties.getSignUploadPath() + uploadfile.getName();
-            boolean blobImgFile = uploadBlobImgFile(uploadfile, fileNamePath);
-            if (!blobImgFile) {
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("文件上传失败"));
-            }
-
-            return UploadDto.builder()
-                    .filepath(fileNamePath)
-                    .build();
-        }).subscribeOn(Schedulers.elastic());
-    }
-
-    public boolean uploadBlobImgFile(MultipartFile file, String fileNamePath) {
-        try {
-            OutputStream out = new FileOutputStream(fileNamePath);
-            out.write(file.getBytes());
-            out.flush();
-            out.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
      * 确认签约
      *
      * @return
@@ -284,7 +239,12 @@ public class TaxController {
         String entId = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
+            //TODO
+            SealUserReq front = front();
+
             log.info("=====> /tax/attest 身份认证 userPrincipal：{}，req：{}", JacksonUtil.objectToJson(userPrincipal), JacksonUtil.objectToJson(req));
+            Optional.ofNullable(req.getIdCardFront()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证正面照不能为空")));
+            Optional.ofNullable(req.getIdCardNegative()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证反面照不能为空")));
 
             //查询登陆信息
             EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId);
@@ -307,6 +267,26 @@ public class TaxController {
                 transUserId = employeeTaxSignDTO.getId();
             }
 
+            //生成身份证照片
+            String url = payrollProperties.getSignUploadPath() + DateTimeUtils.getDate() + "/";
+            File file1 = new File(url);
+            if (!file1.exists()) {//如果文件夹不存在
+                file1.mkdir();//创建文件夹
+            }
+            String frontPath = url + UUIDUtil.createUUID24() + "front.jpg";
+            String negativePath = url + UUIDUtil.createUUID24() + "negative.jpg";
+
+            boolean b1 = ImageBase64Utils.base64ToImageFile(req.getIdCardFront(), frontPath);
+            if (!b1) {
+                log.info("====> 生成身份证正面照失败，frontPath:{}", frontPath);
+                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证正面照失败"));
+            }
+            boolean b2 = ImageBase64Utils.base64ToImageFile(req.getIdCardNegative(), negativePath);
+            if (!b2) {
+                log.info("====> 生成身份证反面照失败，negativePath:{}", negativePath);
+                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证反面照失败"));
+            }
+
             //保存
             EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
                     .certTypeEnum(CertTypeEnum.PERSONAL_1)
@@ -319,14 +299,16 @@ public class TaxController {
                     .attestStatus(AttestStatusEnum.ING)
                     .userName(req.getUserName())
                     .attestFailMsg("")
+                    .idCardFront(frontPath)
+                    .idCardNegative(negativePath)
                     .build();
             EmployeeTaxSignDTO taxSignDTO = employeeTaxSignFeignService.save(signSaveReq);
 
             //图片压缩
-            if (new File(req.getIdCardFront()).length() > 1024 * 160) {
+            if (new File(frontPath).length() > 1024 * 160) {
                 ImgPicUtils.compression(req.getIdCardFront(), req.getIdCardFront());
             }
-            if (new File(req.getIdCardNegative()).length() > 1024 * 160) {
+            if (new File(negativePath).length() > 1024 * 160) {
                 ImgPicUtils.compression(req.getIdCardNegative(), req.getIdCardNegative());
             }
 
@@ -500,5 +482,19 @@ public class TaxController {
             }
             return result;
         }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    public SealUserReq front() {
+        try {
+            File file1 = new ClassPathResource("1.jpg").getFile();
+            File file2 = new ClassPathResource("2.jpg").getFile();
+            return SealUserReq.builder()
+                    .idCardImg2("data:image/jpg;base64," + ImageBase64Utils.imageToBase64(file2.getPath()))
+                    .idCardImg1("data:image/jpg;base64," + ImageBase64Utils.imageToBase64(file1.getPath()))
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

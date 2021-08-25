@@ -70,6 +70,10 @@ payroll:
 
   ###报税签约上传身份证图片地址
   signUploadPath: /webserver/www/upload/sign/
+  ###报税签约上传身份证图片需要替换掉的地址
+  signUploadUrl: /webserver/www/
+  ###报税签约上传身份证图片文件访问地址
+  signUploadReplaceUrl: https://sitwxp.cardpu.com/
 
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg

@@ -69,7 +69,7 @@ payroll:
   signReplacePath: /home/easysp/www/
 
   ###报税签约上传身份证图片地址
-  signUploadPath: /home/easysp/www/upload/sign/
+  signUploadPath: D://temp/
 
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
