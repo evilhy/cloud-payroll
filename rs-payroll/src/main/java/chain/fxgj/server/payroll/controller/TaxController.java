@@ -314,15 +314,15 @@ public class TaxController {
 
             //图片压缩
             if (new File(frontPath).length() > 1024 * 160) {
-                ImgPicUtils.compression(req.getIdCardFront(), req.getIdCardFront());
+                ImgPicUtils.compression(frontPath, frontPath);
             }
             if (new File(negativePath).length() > 1024 * 160) {
-                ImgPicUtils.compression(req.getIdCardNegative(), req.getIdCardNegative());
+                ImgPicUtils.compression(negativePath, negativePath);
             }
 
             //身份证照片
-            String idCardFront = ImageBase64Utils.imageToBase64(req.getIdCardFront());
-            String idCardNegative = ImageBase64Utils.imageToBase64(req.getIdCardNegative());
+            String idCardFront = ImageBase64Utils.imageToBase64(frontPath);
+            String idCardNegative = ImageBase64Utils.imageToBase64(negativePath);
 
             //验证身份信息
             SealUserReq userReq = SealUserReq.builder()
