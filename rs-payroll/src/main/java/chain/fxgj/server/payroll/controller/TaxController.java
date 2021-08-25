@@ -2,6 +2,7 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.BusiVerifyException;
 import chain.css.exception.ParamsIllegalException;
+import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.server.payroll.dto.tax.*;
@@ -28,6 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,11 +42,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * @Description:
@@ -125,45 +130,45 @@ public class TaxController {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-//    /**
-//     * 身份证上传
-//     *
-//     * @param uploadfile 文件流
-//     * @return
-//     * @throws BusiVerifyException
-//     */
-//    @PostMapping("/upload")
-//    @TrackLog
-//    public Mono<UploadDto> upload(@NotNull @RequestPart("file") FilePart uploadfile) throws BusiVerifyException {
-//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//        return Mono.fromCallable(() -> {
-//            MDC.setContextMap(mdcContext);
-//            log.info("=====> /tax/upload    身份证上传 ");
-//
-//            String fileName = uploadfile.filename();
-//            log.info("身份证上传 fileName:[{}]", fileName);
-//            String suffix = fileName.substring(fileName.lastIndexOf("."));
-//            String filePathName = "idCard-" + Calendar.getInstance().getTimeInMillis();
-//            Path path = Paths.get(payrollProperties.getSignUploadPath() + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "/");
-//            if (!Files.exists(path)) {
-//                Files.createDirectories(path);
-//            }
-//            Path tempFile = Files.createTempFile(path, filePathName, suffix);
-//            File file = tempFile.toFile();
-//            try {
-//                //存放文件
-//                uploadfile.transferTo(tempFile);
-//
-//                log.info("IdCard upload Success! fileName:{},path:{}", file.getName(), file.getPath());
-//            } catch (Exception e) {
-//                throw new ServiceHandleException(e, ErrorConstant.SYS_ERROR.format("文件上传处理异常"));
-//            }
-//
-//            return UploadDto.builder()
-//                    .filepath(file.getPath())
-//                    .build();
-//        }).subscribeOn(Schedulers.elastic());
-//    }
+    /**
+     * 身份证上传
+     *
+     * @param uploadfile 文件流
+     * @return
+     * @throws BusiVerifyException
+     */
+    @PostMapping(value = "/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @TrackLog
+    public Mono<UploadDto> upload(@NotNull @RequestPart("file") FilePart uploadfile) throws BusiVerifyException {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("=====> /tax/upload    身份证上传 ");
+
+            String fileName = uploadfile.filename();
+            log.info("身份证上传 fileName:[{}]", fileName);
+            String suffix = fileName.substring(fileName.lastIndexOf("."));
+            String filePathName = "idCard-" + Calendar.getInstance().getTimeInMillis();
+            Path path = Paths.get(payrollProperties.getSignUploadPath() + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + "/");
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+            Path tempFile = Files.createTempFile(path, filePathName, suffix);
+            File file = tempFile.toFile();
+            try {
+                //存放文件
+                uploadfile.transferTo(tempFile);
+
+                log.info("IdCard upload Success! fileName:{},path:{}", file.getName(), file.getPath());
+            } catch (Exception e) {
+                throw new ServiceHandleException(e, ErrorConstant.SYS_ERROR.format("文件上传处理异常"));
+            }
+
+            return UploadDto.builder()
+                    .filepath(file.getPath())
+                    .build();
+        }).subscribeOn(Schedulers.elastic());
+    }
 
     /**
      * 身份证上传
@@ -172,7 +177,7 @@ public class TaxController {
      * @return
      * @throws BusiVerifyException
      */
-    @PostMapping("/upload")
+    @PostMapping("/upload1")
     @TrackLog
     public Mono<UploadDto> upload1(@NotNull @RequestParam("file") MultipartFile uploadfile) throws BusiVerifyException {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
