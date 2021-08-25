@@ -16,6 +16,7 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.EmployeeTaxSignFeignService;
 import chain.utils.commons.JacksonUtil;
+import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
 import chain.utils.fxgj.constant.DictEnums.AttestStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.CertTypeEnum;
@@ -120,8 +121,18 @@ public class TaxController {
             if (null != list && list.size() > 0) {
                 employeeTaxSignDTO = list.get(0);
                 signingDetail.setTaxSignId(employeeTaxSignDTO.getId());
-                signingDetail.setIdCardFront(employeeTaxSignDTO.getIdCardFront());
-                signingDetail.setIdCardNegative(employeeTaxSignDTO.getIdCardNegative());
+                //正面照
+                if(StringUtils.isNotBlank(employeeTaxSignDTO.getIdCardFront())){
+                    String replace1 = employeeTaxSignDTO.getIdCardFront().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
+                    log.info("=====> 替换后目录：getIdCardFront{}", replace1);
+                    signingDetail.setIdCardFront(employeeTaxSignDTO.getIdCardFront());
+                }
+                //反面照
+                if(StringUtils.isNotBlank(employeeTaxSignDTO.getIdCardNegative())){
+                    String replace1 = employeeTaxSignDTO.getIdCardNegative().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
+                    log.info("=====> 替换后目录：getIdCardNegative{}", replace1);
+                    signingDetail.setIdCardNegative(employeeTaxSignDTO.getIdCardNegative());
+                }
                 signingDetail.setSignStatus(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSignDTO.getSignStatus().getCode());
                 signingDetail.setSignStatusVal(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSignDTO.getSignStatus().getDesc());
                 signingDetail.setAttestStatus(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxSignDTO.getAttestStatus().getCode());
