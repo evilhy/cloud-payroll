@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
@@ -40,9 +41,12 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.io.IOException;
+import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -121,17 +125,19 @@ public class TaxController {
             if (null != list && list.size() > 0) {
                 employeeTaxSignDTO = list.get(0);
                 signingDetail.setTaxSignId(employeeTaxSignDTO.getId());
-                //正面照
-                if(StringUtils.isNotBlank(employeeTaxSignDTO.getIdCardFront())){
-                    String replace1 = employeeTaxSignDTO.getIdCardFront().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
-                    log.info("=====> 替换后目录：getIdCardFront{}", replace1);
-                    signingDetail.setIdCardFront(employeeTaxSignDTO.getIdCardFront());
-                }
-                //反面照
-                if(StringUtils.isNotBlank(employeeTaxSignDTO.getIdCardNegative())){
-                    String replace1 = employeeTaxSignDTO.getIdCardNegative().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
-                    log.info("=====> 替换后目录：getIdCardNegative{}", replace1);
-                    signingDetail.setIdCardNegative(employeeTaxSignDTO.getIdCardNegative());
+                if (AttestStatusEnum.FAIL != employeeTaxSignDTO.getAttestStatus()) {
+                    //正面照
+                    if (StringUtils.isNotBlank(employeeTaxSignDTO.getIdCardFront())) {
+                        String replace1 = employeeTaxSignDTO.getIdCardFront().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
+                        log.info("=====> 替换后目录：getIdCardFront{}", replace1);
+                        signingDetail.setIdCardFront(employeeTaxSignDTO.getIdCardFront());
+                    }
+                    //反面照
+                    if (StringUtils.isNotBlank(employeeTaxSignDTO.getIdCardNegative())) {
+                        String replace1 = employeeTaxSignDTO.getIdCardNegative().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
+                        log.info("=====> 替换后目录：getIdCardNegative{}", replace1);
+                        signingDetail.setIdCardNegative(employeeTaxSignDTO.getIdCardNegative());
+                    }
                 }
                 signingDetail.setSignStatus(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSignDTO.getSignStatus().getCode());
                 signingDetail.setSignStatusVal(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSignDTO.getSignStatus().getDesc());
@@ -157,28 +163,40 @@ public class TaxController {
             MDC.setContextMap(mdcContext);
             log.info("=====> /tax/upload    身份证上传 ");
 
-            String fileName = uploadfile.filename();
-            log.info("身份证上传 fileName:[{}]", fileName);
-            String suffix = fileName.substring(fileName.lastIndexOf("."));
-            String filePathName = "idCard-" + Calendar.getInstance().getTimeInMillis();
-            Path path = Paths.get(payrollProperties.getSignUploadPath() + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + "/");
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
-            Path tempFile = Files.createTempFile(path, filePathName, suffix);
-            String filepath = null;
+            Path tempFile = null;
+            String filePath = null;
             try {
-                //存放文件
-                uploadfile.transferTo(tempFile);
-                File file = tempFile.toFile();
-                filepath = file.getPath();
-                log.info("IdCard upload Success! fileName:{},path:{}", file.getName(), file.getPath());
-            } catch (Exception e) {
-                throw new ServiceHandleException(e, ErrorConstant.SYS_ERROR.format("文件上传处理异常"));
+                String url = payrollProperties.getSignUploadPath() + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;
+                File urlfile = new File(url);
+                urlfile.mkdirs();
+
+                Path path = Paths.get(url);
+                tempFile = Files.createTempFile(path, "IDCARD-", uploadfile.filename());
+                filePath =tempFile.toFile().getPath();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            AsynchronousFileChannel channel = null;
+            try {
+                channel = AsynchronousFileChannel.open(tempFile, StandardOpenOption.WRITE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            DataBufferUtils.write(uploadfile.content(), channel, 0).doOnComplete(() -> {
+                System.out.println("finish");
+            }).subscribe();
+
+            //图片压缩
+            if (new File(filePath).length() > 1024 * 160) {
+                ImgPicUtils.compression(filePath, filePath);
             }
 
+            //身份证照片
+            String base64 = ImageBase64Utils.imageToBase64(filePath);
+
             return UploadDto.builder()
-                    .filepath(filepath)
+                    .filepath(filePath)
+                    .imgBase(base64)
                     .build();
         }).subscribeOn(Schedulers.elastic());
     }
@@ -282,29 +300,29 @@ public class TaxController {
                 transUserId = employeeTaxSignDTO.getId();
             }
 
-            //生成身份证照片
-            String url = payrollProperties.getSignUploadPath() + DateTimeUtils.getDate() + "/";
-            File file1 = new File(url);
-            if (!file1.exists()) {//如果文件夹不存在
-                file1.mkdir();//创建文件夹
-            }
-            String frontPath = url + UUIDUtil.createUUID24() + "front.jpg";
-            String negativePath = url + UUIDUtil.createUUID24() + "negative.jpg";
-
-            String replace1 = req.getIdCardFront().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
-            log.info("=====> 替换后目录：getIdCardFront{}", replace1);
-            boolean b1 = ImageBase64Utils.base64ToImageFile(replace1, frontPath);
-            if (!b1) {
-                log.info("====> 生成身份证正面照失败，frontPath:{}", frontPath);
-                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证正面照失败"));
-            }
-            String replace2 = req.getIdCardNegative().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
-            log.info("=====> 替换后目录：getIdCardNegative{}", replace2);
-            boolean b2 = ImageBase64Utils.base64ToImageFile(replace2, negativePath);
-            if (!b2) {
-                log.info("====> 生成身份证反面照失败，negativePath:{}", negativePath);
-                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证反面照失败"));
-            }
+//            //生成身份证照片
+//            String url = payrollProperties.getSignUploadPath() + DateTimeUtils.getDate() + "/";
+//            File file1 = new File(url);
+//            if (!file1.exists()) {//如果文件夹不存在
+//                file1.mkdir();//创建文件夹
+//            }
+//            String frontPath = url + UUIDUtil.createUUID24() + "front.jpg";
+//            String negativePath = url + UUIDUtil.createUUID24() + "negative.jpg";
+//
+//            String replace1 = req.getIdCardFront().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
+//            log.info("=====> 替换后目录：getIdCardFront{}", replace1);
+//            boolean b1 = ImageBase64Utils.base64ToImageFile(replace1, frontPath);
+//            if (!b1) {
+//                log.info("====> 生成身份证正面照失败，frontPath:{}", frontPath);
+//                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证正面照失败"));
+//            }
+//            String replace2 = req.getIdCardNegative().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
+//            log.info("=====> 替换后目录：getIdCardNegative{}", replace2);
+//            boolean b2 = ImageBase64Utils.base64ToImageFile(replace2, negativePath);
+//            if (!b2) {
+//                log.info("====> 生成身份证反面照失败，negativePath:{}", negativePath);
+//                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证反面照失败"));
+//            }
 
             //保存
             EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
@@ -318,22 +336,14 @@ public class TaxController {
                     .attestStatus(AttestStatusEnum.ING)
                     .userName(req.getUserName())
                     .attestFailMsg("")
-                    .idCardFront(frontPath)
-                    .idCardNegative(negativePath)
+                    .idCardFront(req.getIdCardFront())
+                    .idCardNegative(req.getIdCardNegative())
                     .build();
             EmployeeTaxSignDTO taxSignDTO = employeeTaxSignFeignService.save(signSaveReq);
 
-            //图片压缩
-            if (new File(frontPath).length() > 1024 * 160) {
-                ImgPicUtils.compression(frontPath, frontPath);
-            }
-            if (new File(negativePath).length() > 1024 * 160) {
-                ImgPicUtils.compression(negativePath, negativePath);
-            }
-
             //身份证照片
-            String idCardFront = ImageBase64Utils.imageToBase64(frontPath);
-            String idCardNegative = ImageBase64Utils.imageToBase64(negativePath);
+            String idCardFront = ImageBase64Utils.imageToBase64(req.getIdCardFront());
+            String idCardNegative = ImageBase64Utils.imageToBase64(req.getIdCardNegative());
 
             //验证身份信息
             SealUserReq userReq = SealUserReq.builder()

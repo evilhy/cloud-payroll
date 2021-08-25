@@ -29,4 +29,8 @@ public class UploadDto {
      * 文件路径
      */
     String filepath;
+    /**
+     *
+     */
+    String imgBase;
 }
