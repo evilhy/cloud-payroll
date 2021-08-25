@@ -338,6 +338,7 @@ public class TaxController {
 
             //保存
             EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
+                    .id(transUserId)
                     .certTypeEnum(CertTypeEnum.PERSONAL_1)
                     .delStatusEnum(DelStatusEnum.normal)
                     .entId(entId)
