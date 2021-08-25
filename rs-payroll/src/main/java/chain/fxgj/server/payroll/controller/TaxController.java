@@ -174,7 +174,7 @@ public class TaxController {
      */
     @PostMapping("/upload")
     @TrackLog
-    public Mono<UploadDto> upload1(@NotNull @RequestPart("file") MultipartFile uploadfile) throws BusiVerifyException {
+    public Mono<UploadDto> upload1(@NotNull @RequestParam("file") MultipartFile uploadfile) throws BusiVerifyException {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
