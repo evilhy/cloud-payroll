@@ -137,7 +137,7 @@ public class TaxController {
      * @return
      * @throws BusiVerifyException
      */
-    @PostMapping(value = "/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @TrackLog
     public Mono<UploadDto> upload(@NotNull @RequestPart("file") FilePart uploadfile) throws BusiVerifyException {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
@@ -154,18 +154,19 @@ public class TaxController {
                 Files.createDirectories(path);
             }
             Path tempFile = Files.createTempFile(path, filePathName, suffix);
-            File file = tempFile.toFile();
+            String filepath = null;
             try {
                 //存放文件
-                uploadfile.transferTo(file);
-
+                uploadfile.transferTo(tempFile);
+                File file = tempFile.toFile();
+                filepath = file.getPath();
                 log.info("IdCard upload Success! fileName:{},path:{}", file.getName(), file.getPath());
             } catch (Exception e) {
                 throw new ServiceHandleException(e, ErrorConstant.SYS_ERROR.format("文件上传处理异常"));
             }
 
             return UploadDto.builder()
-                    .filepath(file.getPath())
+                    .filepath(filepath)
                     .build();
         }).subscribeOn(Schedulers.elastic());
     }
