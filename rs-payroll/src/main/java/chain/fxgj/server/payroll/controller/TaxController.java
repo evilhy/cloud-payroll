@@ -157,7 +157,7 @@ public class TaxController {
             File file = tempFile.toFile();
             try {
                 //存放文件
-                uploadfile.transferTo(tempFile);
+                uploadfile.transferTo(file);
 
                 log.info("IdCard upload Success! fileName:{},path:{}", file.getName(), file.getPath());
             } catch (Exception e) {
