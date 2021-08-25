@@ -196,7 +196,7 @@ public class TaxController {
 
             return UploadDto.builder()
                     .filepath(filePath)
-                    .imgBase(base64)
+                    .imgBase("data:image/jpg;base64,"+base64)
                     .build();
         }).subscribeOn(Schedulers.elastic());
     }
@@ -272,8 +272,6 @@ public class TaxController {
         String entId = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            //TODO
-            SealUserReq front = front();
 
             log.info("=====> /tax/attest 身份认证 userPrincipal：{}，req：{}", JacksonUtil.objectToJson(userPrincipal), JacksonUtil.objectToJson(req));
             Optional.ofNullable(req.getIdCardFront()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证正面照不能为空")));
