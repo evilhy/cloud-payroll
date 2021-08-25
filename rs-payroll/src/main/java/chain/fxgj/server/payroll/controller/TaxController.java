@@ -110,10 +110,6 @@ public class TaxController {
                     .salt(salt)
                     .build();
 
-            //TODO
-            signingDetail.setIdCardNegative("https://sitwxp.cardpu.com/upload/sign/202108/1.jpg");
-            signingDetail.setIdCardFront("https://sitwxp.cardpu.com/upload/sign/202108/3.jpg");
-
             //查询签约信息
             EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()
                     .entId(entId)
