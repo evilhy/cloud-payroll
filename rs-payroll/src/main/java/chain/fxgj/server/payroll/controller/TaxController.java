@@ -280,12 +280,16 @@ public class TaxController {
             String frontPath = url + UUIDUtil.createUUID24() + "front.jpg";
             String negativePath = url + UUIDUtil.createUUID24() + "negative.jpg";
 
-            boolean b1 = ImageBase64Utils.base64ToImageFile(req.getIdCardFront(), frontPath);
+            String replace1 = req.getIdCardFront().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
+            log.info("=====> 替换后目录：getIdCardFront{}", replace1);
+            boolean b1 = ImageBase64Utils.base64ToImageFile(replace1, frontPath);
             if (!b1) {
                 log.info("====> 生成身份证正面照失败，frontPath:{}", frontPath);
                 throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证正面照失败"));
             }
-            boolean b2 = ImageBase64Utils.base64ToImageFile(req.getIdCardNegative(), negativePath);
+            String replace2 = req.getIdCardNegative().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
+            log.info("=====> 替换后目录：getIdCardNegative{}", replace2);
+            boolean b2 = ImageBase64Utils.base64ToImageFile(replace2, negativePath);
             if (!b2) {
                 log.info("====> 生成身份证反面照失败，negativePath:{}", negativePath);
                 throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证反面照失败"));

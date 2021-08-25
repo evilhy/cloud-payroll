@@ -387,7 +387,12 @@ public class PayRollController {
                     .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
                     .build();
             List<EmployeeTaxSignDTO> taxSignDTOS = employeeTaxSignFeignService.list(signQueryReq);
-            if (null != taxSignDTOS && taxSignDTOS.size()  >0){
+            empInfoDTO.setSignStatus(IsStatusEnum.NO.getCode());
+            empInfoDTO.setSignStatusVal(IsStatusEnum.NO.getDesc());
+            empInfoDTO.setAttestStatus(AttestStatusEnum.NOT.getCode());
+            empInfoDTO.setAttestStatusVal(AttestStatusEnum.NOT.getDesc());
+
+            if (null != taxSignDTOS && taxSignDTOS.size() > 0) {
                 EmployeeTaxSignDTO employeeTaxSignDTO = taxSignDTOS.get(0);
                 empInfoDTO.setTaxSignId(employeeTaxSignDTO.getId());
                 empInfoDTO.setSignStatus(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSignDTO.getSignStatus().getCode());
