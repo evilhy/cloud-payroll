@@ -298,7 +298,7 @@ public class TaxController {
                     .build();
             List<EmployeeTaxSignDTO> list = employeeTaxSignFeignService.list(signQueryReq);
 
-            String transUserId = UUIDUtil.createUUID32();
+            String transUserId = null;
             if (null != list && list.size() > 0) {
                 EmployeeTaxSignDTO employeeTaxSignDTO = list.get(0);
                 if (AttestStatusEnum.SUCCESS == employeeTaxSignDTO.getAttestStatus() || AttestStatusEnum.ING == employeeTaxSignDTO.getAttestStatus()) {
@@ -349,6 +349,7 @@ public class TaxController {
                     .idCardNegative(req.getIdCardNegative())
                     .build();
             EmployeeTaxSignDTO taxSignDTO = employeeTaxSignFeignService.save(signSaveReq);
+            transUserId = taxSignDTO.getId();
 
             //身份证照片
             String idCardFront = ImageBase64Utils.imageToBase64(req.getIdCardFront());
