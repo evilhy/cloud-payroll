@@ -2,7 +2,6 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.BusiVerifyException;
 import chain.css.exception.ParamsIllegalException;
-import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.server.payroll.dto.tax.*;
@@ -29,21 +28,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @Description:
@@ -125,6 +125,46 @@ public class TaxController {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
+//    /**
+//     * 身份证上传
+//     *
+//     * @param uploadfile 文件流
+//     * @return
+//     * @throws BusiVerifyException
+//     */
+//    @PostMapping("/upload")
+//    @TrackLog
+//    public Mono<UploadDto> upload(@NotNull @RequestPart("file") FilePart uploadfile) throws BusiVerifyException {
+//        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+//        return Mono.fromCallable(() -> {
+//            MDC.setContextMap(mdcContext);
+//            log.info("=====> /tax/upload    身份证上传 ");
+//
+//            String fileName = uploadfile.filename();
+//            log.info("身份证上传 fileName:[{}]", fileName);
+//            String suffix = fileName.substring(fileName.lastIndexOf("."));
+//            String filePathName = "idCard-" + Calendar.getInstance().getTimeInMillis();
+//            Path path = Paths.get(payrollProperties.getSignUploadPath() + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "/");
+//            if (!Files.exists(path)) {
+//                Files.createDirectories(path);
+//            }
+//            Path tempFile = Files.createTempFile(path, filePathName, suffix);
+//            File file = tempFile.toFile();
+//            try {
+//                //存放文件
+//                uploadfile.transferTo(tempFile);
+//
+//                log.info("IdCard upload Success! fileName:{},path:{}", file.getName(), file.getPath());
+//            } catch (Exception e) {
+//                throw new ServiceHandleException(e, ErrorConstant.SYS_ERROR.format("文件上传处理异常"));
+//            }
+//
+//            return UploadDto.builder()
+//                    .filepath(file.getPath())
+//                    .build();
+//        }).subscribeOn(Schedulers.elastic());
+//    }
+
     /**
      * 身份证上传
      *
@@ -134,35 +174,37 @@ public class TaxController {
      */
     @PostMapping("/upload")
     @TrackLog
-    public Mono<UploadDto> upload(@NotNull @RequestPart("file") FilePart uploadfile) throws BusiVerifyException {
+    public Mono<UploadDto> upload1(@NotNull @RequestPart("file") MultipartFile uploadfile) throws BusiVerifyException {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("=====> /tax/upload    身份证上传 ");
+            long size = uploadfile.getSize();
+            String name = uploadfile.getName();
 
-            String fileName = uploadfile.filename();
-            log.info("身份证上传 fileName:[{}]", fileName);
-            String suffix = fileName.substring(fileName.lastIndexOf("."));
-            String filePathName = "idCard-" + Calendar.getInstance().getTimeInMillis();
-            Path path = Paths.get(payrollProperties.getSignUploadPath() + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + "/");
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
-            Path tempFile = Files.createTempFile(path, filePathName, suffix);
-            File file = tempFile.toFile();
-            try {
-                //存放文件
-                uploadfile.transferTo(tempFile);
-
-                log.info("IdCard upload Success! fileName:{},path:{}", file.getName(), file.getPath());
-            } catch (Exception e) {
-                throw new ServiceHandleException(e, ErrorConstant.SYS_ERROR.format("文件上传处理异常"));
+            String fileNamePath = payrollProperties.getSignUploadPath() + uploadfile.getName();
+            boolean blobImgFile = uploadBlobImgFile(uploadfile, fileNamePath);
+            if (!blobImgFile) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("文件上传失败"));
             }
 
             return UploadDto.builder()
-                    .filepath(file.getPath())
+                    .filepath(fileNamePath)
                     .build();
         }).subscribeOn(Schedulers.elastic());
+    }
+
+    public boolean uploadBlobImgFile(MultipartFile file, String fileNamePath) {
+        try {
+            OutputStream out = new FileOutputStream(fileNamePath);
+            out.write(file.getBytes());
+            out.flush();
+            out.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -302,7 +344,7 @@ public class TaxController {
             if (null != userResult && "fail".equals(userResult.getRntCode())) {
                 //验证失败或网络异常
                 log.info("=====> 身份信息验证过程发生异常 userReq:{}", JacksonUtil.objectToJson(userReq));
-                 signSaveReq = EmployeeTaxSignSaveReq.builder()
+                signSaveReq = EmployeeTaxSignSaveReq.builder()
                         .id(taxSignDTO.getId())
                         .attestStatus(AttestStatusEnum.FAIL)
                         .attestFailMsg(userResult.getRntMsg())
