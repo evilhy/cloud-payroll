@@ -153,29 +153,34 @@ public class TaxController {
                 signingDetail.setSignStatusVal(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSignDTO.getSignStatus().getDesc());
                 signingDetail.setAttestStatus(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxSignDTO.getAttestStatus().getCode());
                 signingDetail.setAttestStatusVal(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxSignDTO.getAttestStatus().getDesc());
+
                 //是否签约
-                if (IsStatusEnum.YES != employeeTaxSignDTO.getSignStatus()) {
-                    //验证身份信息成功，进入签约
-                    WalletH5Req walletH5Req = WalletH5Req.builder()
-                            .fwOrg(employeeTaxSignDTO.getEntName())
-                            .idCardNo(employeeTaxSignDTO.getIdNumber())
-                            .idType("SFZ")
-                            .phoneNo(employeeTaxSignDTO.getPhone())
-                            .transUserId(employeeTaxSignDTO.getId())
-                            .userName(employeeTaxSignDTO.getUserName())
+                try {
+                    if (IsStatusEnum.YES != employeeTaxSignDTO.getSignStatus()) {
+                        //验证身份信息成功，进入签约
+                        WalletH5Req walletH5Req = WalletH5Req.builder()
+                                .fwOrg(employeeTaxSignDTO.getEntName())
+                                .idCardNo(employeeTaxSignDTO.getIdNumber())
+                                .idType("SFZ")
+                                .phoneNo(employeeTaxSignDTO.getPhone())
+                                .transUserId(employeeTaxSignDTO.getId())
+                                .userName(employeeTaxSignDTO.getUserName())
 //                    .ygOrg()
-                            .build();
-                    WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
-                    if (null !=walletH5Res && walletH5Res.getIsSeal()){
-                        //已签约
-                        EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
-                                .signStatus(IsStatusEnum.YES)
-                                .signDateTime(LocalDateTime.now())
                                 .build();
-                        employeeTaxSignFeignService.save(signSaveReq);
-                        signingDetail.setSignStatus(IsStatusEnum.YES.getCode());
-                        signingDetail.setSignStatusVal(IsStatusEnum.YES.getDesc());
+                        WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
+                        if (null !=walletH5Res && walletH5Res.getIsSeal()){
+                            //已签约
+                            EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
+                                    .signStatus(IsStatusEnum.YES)
+                                    .signDateTime(LocalDateTime.now())
+                                    .build();
+                            employeeTaxSignFeignService.save(signSaveReq);
+                            signingDetail.setSignStatus(IsStatusEnum.YES.getCode());
+                            signingDetail.setSignStatusVal(IsStatusEnum.YES.getDesc());
+                        }
                     }
+                }catch (Exception e){
+                    log.info("=====> 验证是否签约成功失败");
                 }
             }
             return signingDetail;
