@@ -230,7 +230,7 @@ public class TaxController {
             File file = new File(filePath);
             String path = file.getPath();
             String fileName = file.getName();
-            String replace = path.replace(fileName, fileName+"_mini" );
+            String replace = path.replace(fileName, "mini_"+fileName );
             if (file.length() > 1024 * 160) {
                 ImgPicUtils.compression(filePath, replace);
             }
