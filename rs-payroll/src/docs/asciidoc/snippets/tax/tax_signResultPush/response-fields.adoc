@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+rntCode+`
+|`+String+`
+|响应信息（success：成功、fail：失败）
+
+|`+rntMsg+`
+|`+String+`
+|响应描述
+
+|===

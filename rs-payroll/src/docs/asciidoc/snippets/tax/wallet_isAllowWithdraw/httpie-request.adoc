@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/wallet/isAllowWithdraw' \
+    'jsessionId:c7ef2ad37f764fca91ef786bfcf19497' \
+    'ent-id:58f52751fd8f40028de768a9002abc68'
+----

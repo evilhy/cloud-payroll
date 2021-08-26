@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/wallet/isAllowWithdraw' -i -X GET \
+    -H 'jsessionId: c7ef2ad37f764fca91ef786bfcf19497' \
+    -H 'ent-id: 58f52751fd8f40028de768a9002abc68'
+----

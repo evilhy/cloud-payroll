@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+entId+`
+|`+String+`
+|企业ID
+
+|`+idNumber+`
+|`+String+`
+|身份证号码
+
+|`+status+`
+|`+Boolean+`
+|是否允许提现
+
+|===

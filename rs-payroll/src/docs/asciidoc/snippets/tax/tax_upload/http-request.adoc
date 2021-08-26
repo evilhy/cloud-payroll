@@ -1,0 +1,13 @@
+[source,http,options="nowrap"]
+----
+POST /tax/upload HTTP/1.1
+Content-Type: application/json
+encry-salt: 123456
+encry-passwd: 234567
+Content-Length: 31
+Host: localhost:8080
+
+{
+  "file" : "D://test.jpg"
+}
+----

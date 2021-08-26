@@ -1,0 +1,128 @@
+:snippets: ../snippets/tax
+== 个税
+
+=== 签约详情
+==== 接口定义
+* Path Parameters:
++
+无
+* Response Body:
++
+include::{snippets}/tax/tax_signingDetails/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_signingDetails/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_signingDetails/http-response.adoc[]
+
+
+=== 身份证上传
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/tax/tax_upload/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/tax/tax_upload/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_upload/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_upload/http-response.adoc[]
+
+
+=== 签约
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/tax/tax_signing/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/tax/tax_signing/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_signing/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_signing/http-response.adoc[]
+
+
+=== 身份认证
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/tax/tax_attest/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/tax/tax_attest/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_attest/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_attest/http-response.adoc[]
+
+
+=== 签约结果推送
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/tax/tax_signResultPush/request-fields.adoc[]
+* Response Body:
++
+include::{snippets}/tax/tax_signResultPush/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_signResultPush/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_signResultPush/http-response.adoc[]
+
+
+
+=== 是否允许提现
+==== 接口定义
+* Path Parameters:
++
+无
+* Response Body:
++
+include::{snippets}/tax/wallet_isAllowWithdraw/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/wallet_isAllowWithdraw/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/wallet_isAllowWithdraw/http-response.adoc[]
+
+
+=== 签约记录查看
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/tax/tax_signRecord/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/tax/tax_signRecord/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_signRecord/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_signRecord/http-response.adoc[]

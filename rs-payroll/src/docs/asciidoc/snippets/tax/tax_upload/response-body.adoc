@@ -1,0 +1,6 @@
+[source,options="nowrap"]
+----
+{
+  "filepath" : "https://img0.baidu.com/it/u=352646117,3930036145&fm=26&fmt=auto&gp=0.jpg"
+}
+----

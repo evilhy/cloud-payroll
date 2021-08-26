@@ -45,4 +45,24 @@ public class EmpInfoDTO {
      */
     private Integer isNew;
 
+    /**
+     *签约信息ID
+     */
+    String taxSignId;
+    /**
+     * 认证状态（0：未认证、1：认证中、2：认证失败、3：认证成功）
+     */
+    Integer attestStatus;
+    /**
+     * 认证状态描述
+     */
+    String attestStatusVal;
+    /**
+     * 是否完成签约 (0:未签约、1：已签约)
+     */
+    Integer signStatus;
+    /**
+     * 是否完成签约描述
+     */
+    String signStatusVal;
 }

@@ -122,7 +122,7 @@ dependencies {
     compile("chain:ids-client:1.1.10")
     compile("chain:pub-client:1.1.7")
     compile('chain:wage-client:2.0.1')
-    compile('chain:payroll-client:2.0.1')
+    compile('chain:payroll-client:2.0.2')
     
     compile 'chain.wisales:wisales-client:1.0.2.75'
     compile('chain.fxgj:fxgj-ent-client:1.0.24')
@@ -192,6 +192,11 @@ dependencies {
     compile('org.apache.pdfbox:pdfbox:1.5.0')
     compile('com.itextpdf:itextpdf:5.5.13')
     compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
+
+    //google 图片压缩插件
+    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
+
 }
 
 

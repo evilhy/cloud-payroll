@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+GET /wallet/isAllowWithdraw HTTP/1.1
+jsessionId: c7ef2ad37f764fca91ef786bfcf19497
+ent-id: 58f52751fd8f40028de768a9002abc68
+Host: localhost:8080
+
+----
