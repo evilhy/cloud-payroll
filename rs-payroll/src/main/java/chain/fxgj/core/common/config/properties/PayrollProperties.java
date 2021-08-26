@@ -35,12 +35,4 @@ public class PayrollProperties {
      * 报税签约上传身份证图片地址
      */
     private String signUploadPath;
-    /**
-     * 报税签约上传身份证图片需要替换掉的地址
-     */
-    private String signUploadUrl;
-    /**
-     * 报税签约上传身份证图片文件访问地址
-     */
-    private String signUploadReplaceUrl;
 }

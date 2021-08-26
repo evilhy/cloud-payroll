@@ -27,10 +27,6 @@ public class TaxProperties {
      */
     private String publicKey;
     /**
-     * 私钥
-     */
-    private String privateKey;
-    /**
      * 测试地址
      */
     private String requestUrl;
