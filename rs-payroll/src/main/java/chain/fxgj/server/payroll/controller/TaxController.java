@@ -227,15 +227,19 @@ public class TaxController {
             }).subscribe();
 
             //图片压缩
-            if (new File(filePath).length() > 1024 * 160) {
-                ImgPicUtils.compression(filePath, filePath);
+            File file = new File(filePath);
+            String path = file.getPath();
+            String fileName = file.getName();
+            String replace = path.replace(fileName, fileName+"_mini" );
+            if (file.length() > 1024 * 160) {
+                ImgPicUtils.compression(filePath, replace);
             }
 
             //身份证照片
-            String base64 = ImageBase64Utils.imageToBase64(filePath);
+            String base64 = ImageBase64Utils.imageToBase64(replace);
 
             return UploadDto.builder()
-                    .filepath(filePath)
+                    .filepath(replace)
                     .imgBase("data:image/jpg;base64," + base64)
                     .build();
         }).subscribeOn(Schedulers.elastic());
