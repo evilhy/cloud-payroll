@@ -164,24 +164,26 @@ public class TaxController {
                         .userName(employeeTaxSignDTO.getUserName())
 //                    .ygOrg()
                         .build();
-                try {
-                    if (IsStatusEnum.YES != employeeTaxSignDTO.getSignStatus()) {
-                        WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
-                        if (null != walletH5Res && walletH5Res.getIsSeal()) {
-                            //已签约
-                            EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
-                                    .id(employeeTaxSignDTO.getId())
-                                    .signStatus(IsStatusEnum.YES)
-                                    .signDateTime(LocalDateTime.now())
-                                    .build();
-                            employeeTaxSignFeignService.save(signSaveReq);
-                            signingDetail.setSignStatus(IsStatusEnum.YES.getCode());
-                            signingDetail.setSignStatusVal(IsStatusEnum.YES.getDesc());
-                        }
-                    }
-                } catch (Exception e) {
-                    log.info("=====> 验证是否签约成功失败，walletH5Req：{}",JacksonUtil.objectToJson(walletH5Req));
-                }
+
+                //TODO 临时注销
+//                try {
+//                    if (IsStatusEnum.YES != employeeTaxSignDTO.getSignStatus()) {
+//                        WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
+//                        if (null != walletH5Res && walletH5Res.getIsSeal()) {
+//                            //已签约
+//                            EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
+//                                    .id(employeeTaxSignDTO.getId())
+//                                    .signStatus(IsStatusEnum.YES)
+//                                    .signDateTime(LocalDateTime.now())
+//                                    .build();
+//                            employeeTaxSignFeignService.save(signSaveReq);
+//                            signingDetail.setSignStatus(IsStatusEnum.YES.getCode());
+//                            signingDetail.setSignStatusVal(IsStatusEnum.YES.getDesc());
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    log.info("=====> 验证是否签约成功失败，walletH5Req：{}",JacksonUtil.objectToJson(walletH5Req));
+//                }
             }
             return signingDetail;
         }).subscribeOn(Schedulers.boundedElastic());
