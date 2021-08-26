@@ -1,0 +1,7 @@
+[source,options="nowrap"]
+----
+{
+  "transUserId" : "482a6ca59449469699703e37cc19b9a7",
+  "isAuth" : true
+}
+----

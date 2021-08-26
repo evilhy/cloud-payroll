@@ -17,6 +17,7 @@ import core.dto.ErrorConstant;
 import core.dto.request.BaseReqDTO;
 import core.dto.request.empCard.EmployeeCardQueryReq;
 import core.dto.request.employee.EmployeeQueryReq;
+import core.dto.request.employeeTaxSign.EmployeeTaxSignQueryReq;
 import core.dto.request.employeeWallet.EmployeeWalletQueryReq;
 import core.dto.request.employeeWallet.EmployeeWalletSaveReq;
 import core.dto.request.withdrawalLedger.WithdrawalLedgerQueryReq;
@@ -26,6 +27,7 @@ import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogSaveReq;
 import core.dto.request.withdrawalSchedule.WithdrawalScheduleQueryReq;
 import core.dto.request.withdrawalSchedule.WithdrawalScheduleSaveReq;
 import core.dto.response.employee.EmployeeDTO;
+import core.dto.response.employeeTaxSign.EmployeeTaxSignDTO;
 import core.dto.response.employeeWallet.EmployeeWalletDTO;
 import core.dto.response.entAttach.EnterpriseAttachRes;
 import core.dto.response.group.GroupDTO;
@@ -93,6 +95,8 @@ public class WalletServiceImpl implements WalletService {
     EmployeeCardFeignService employeeCardFeignService;
     @Autowired
     WithdrawalScheduleFeignService withdrawalScheduleFeignService;
+    @Autowired
+    EmployeeTaxSignFeignService employeeTaxSignFeignService;
 
     @Autowired
     EmpWechatService empWechatService;
@@ -514,7 +518,7 @@ public class WalletServiceImpl implements WalletService {
                         .openBank(ledgerDetail.getOpenBank())
                         .failDesc(logDTO.getFailDesc())
                         .employeeCardNo(StringUtils.isBlank(logDTO.getEmployeeCardNo()) ? null : EncrytorUtils.encryptField(logDTO.getEmployeeCardNo().toString(), salt, passwd))
-                        .employeeCardStar(StringUtils.isBlank(logDTO.getEmployeeCardNo()) ? null :logDTO.getEmployeeCardNo().substring(0, 4) + "****" + logDTO.getEmployeeCardNo().substring(logDTO.getEmployeeCardNo().length() - 4, logDTO.getEmployeeCardNo().length()))
+                        .employeeCardStar(StringUtils.isBlank(logDTO.getEmployeeCardNo()) ? null : logDTO.getEmployeeCardNo().substring(0, 4) + "****" + logDTO.getEmployeeCardNo().substring(logDTO.getEmployeeCardNo().length() - 4, logDTO.getEmployeeCardNo().length()))
                         .delStatus(logDTO.getTransStatus().getCode())
                         .crtDateTime(null == logDTO.getCrtDateTime() ? null : logDTO.getCrtDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .applyDateTime(null == logDTO.getApplyDateTime() ? null : logDTO.getApplyDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
@@ -655,8 +659,8 @@ public class WalletServiceImpl implements WalletService {
         WithdrawalRecordLogSaveReq build = WithdrawalRecordLogSaveReq.builder()
                 .applyDateTime(LocalDateTime.now())
                 .delStatusEnum(DelStatusEnum.normal)
-                .employeeCardNo(null  == employeeCardDTO ? null : employeeCardDTO.getCardNo())
-                .openBank(null  == employeeCardDTO ? null : employeeCardDTO.getIssuerName())
+                .employeeCardNo(null == employeeCardDTO ? null : employeeCardDTO.getCardNo())
+                .openBank(null == employeeCardDTO ? null : employeeCardDTO.getIssuerName())
                 .transAmount(transAmount)
                 .transStatus(TransDealStatusEnum.ING)
                 .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
@@ -675,7 +679,7 @@ public class WalletServiceImpl implements WalletService {
                 .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
                 .withdrawalStatus(WithdrawalStatusEnum.Ing)
                 .build();
-        if (!ledgerDTO.getEmployeeCardNo().equals(cardNo)){
+        if (!ledgerDTO.getEmployeeCardNo().equals(cardNo)) {
             ledgerSaveReq.setEmployeeCardNo(employeeCardDTO.getCardNo());
             ledgerSaveReq.setOpenBank(employeeCardDTO.getIssuerName());
         }
@@ -702,6 +706,37 @@ public class WalletServiceImpl implements WalletService {
                 .wageSheetId(ledgerDTO1.getWageSheetId())
                 .build();
         withdrawalScheduleFeignService.save(saveReq);
+    }
+
+    @Override
+    public IsAllowWithdrawRes isAllowWithdraw(String entId, EmployeeWechatDTO dto) {
+        String idNumber = dto.getIdNumber();
+        IsAllowWithdrawRes build = IsAllowWithdrawRes.builder()
+                .entId(entId)
+                .idNumber(idNumber)
+                .status(true)
+                .build();
+        EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(entId);
+
+        //附件表记录不为空，并且必须签约才能提现
+        if (null != enterpriseAttachRes && IsStatusEnum.YES == enterpriseAttachRes.getIsSign()) {
+
+            //查询签约记录
+            EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()
+                    .entId(entId)
+                    .idNumber(idNumber)
+                    .attestStatus(Arrays.asList(AttestStatusEnum.SUCCESS))
+                    .signStatus(IsStatusEnum.YES)
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .build();
+            List<EmployeeTaxSignDTO> list = employeeTaxSignFeignService.list(signQueryReq);
+            if (null != list && list.size() > 0) {
+                build.setStatus(true);
+            }
+            build.setStatus(false);
+
+        }
+        return build;
     }
 
     /**

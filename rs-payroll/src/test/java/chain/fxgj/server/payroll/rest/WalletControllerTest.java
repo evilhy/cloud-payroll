@@ -247,4 +247,23 @@ public class WalletControllerTest extends BaseTestCase {
                         relaxedResponseFields(JavaDocReader.javaDoc(SelectListDTO.class))
                 ));
     }
+
+    /**
+     * 是否允许提现
+     *
+     * @throws Exception
+     */
+    @Test
+    public void isAllowWithdraw() throws Exception {
+        String entId = UUIDUtil.createUUID32();
+        String sessionId = UUIDUtil.createUUID32();
+        webTestClient.get().uri("/wallet/isAllowWithdraw")
+                .header("jsessionId", sessionId)
+                .header("ent-id", entId)
+                .exchange().expectStatus().isOk()
+                .expectBody()
+                .consumeWith(document("wallet_isAllowWithdraw",
+                        relaxedResponseFields(JavaDocReader.javaDoc(IsAllowWithdrawRes.class))
+                ));
+    }
 }

@@ -10,6 +10,7 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.WechatFeignController;
 import chain.utils.commons.JsonUtil;
+import chain.utils.commons.UUIDUtil;
 import core.dto.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -231,7 +232,7 @@ public class WalletController {
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String jsessionId = currentUser.getSessionId();
         return Mono.fromCallable(() -> {
-
+            MDC.setContextMap(mdcContext);
             log.info("=====> /wallet/withdraw 确认提现 entId:{}, jsessionId:{}, req:{}", entId, jsessionId,JsonUtil.objectToJson(req));
 
             //查询当前登陆人信息
@@ -239,5 +240,30 @@ public class WalletController {
             walletService.withdraw(entId, dto, req);
             return null;
         }).subscribeOn(Schedulers.boundedElastic()).then();
+    }
+
+    /**
+     * 是否允许提现
+     *
+     * @param entId
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/isAllowWithdraw")
+    @TrackLog
+    public Mono<IsAllowWithdrawRes> isAllowWithdraw(@RequestHeader(value = "ent-id") String entId) throws Exception {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal currentUser = WebContext.getCurrentUser();
+        String jsessionId = currentUser.getSessionId();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            log.info("=====> /wallet/isAllowWithdraw 是否允许提现 entId:{}, jsessionId:{}", entId, jsessionId);
+
+            //查询当前登陆人信息
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+
+            IsAllowWithdrawRes res = walletService.isAllowWithdraw(entId, dto);
+            return res;
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }

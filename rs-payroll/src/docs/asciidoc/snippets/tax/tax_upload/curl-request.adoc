@@ -1,0 +1,10 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/tax/upload' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'encry-salt: 123456' \
+    -H 'encry-passwd: 234567' \
+    -d '{
+  "file" : "D://test.jpg"
+}'
+----

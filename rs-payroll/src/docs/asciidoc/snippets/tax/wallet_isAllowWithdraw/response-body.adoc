@@ -1,0 +1,8 @@
+[source,options="nowrap"]
+----
+{
+  "entId" : "d073facb5ca247d48270493a320af1e6",
+  "idNumber" : "420117199909095678",
+  "status" : true
+}
+----

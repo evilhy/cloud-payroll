@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+GET /tax/signingDetails HTTP/1.1
+encry-salt: fddbf1243436413280b98f2de46d2b9c
+encry-passwd: 7bc37466b231447587d3bbb67c090792
+ent-id: ab885160cb2746ff9336fd9fa7b0860d
+Host: localhost:8080
+
+----

@@ -1,0 +1,7 @@
+[source,options="nowrap"]
+----
+{
+  "rntCode" : "success",
+  "rntMsg" : "成功"
+}
+----

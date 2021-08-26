@@ -1,0 +1,12 @@
+|===
+|Path|Type|Description
+
+|`+transUserId+`
+|`+String+`
+|交易用户id
+
+|`+isAuth+`
+|`+Boolean+`
+|签约状态
+
+|===

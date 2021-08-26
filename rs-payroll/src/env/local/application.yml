@@ -68,9 +68,33 @@ payroll:
   ###签名回执地址入库需要替换掉的路径
   signReplacePath: /webserver/
 
+  ###报税签约上传身份证图片地址
+  signUploadPath: /webserver/www/upload/sign/
+
 encrypt:
   salt: GUPxMCeBWXw3TteCYVikKVXvH5WLiqZg
-  passwd: MvEpyqjedb4Hvai3vnFakmYxQsebEVCe84RNcVxw79USzc85FPAmbA9NuPxqfGsMh5pPuyzL
+  passwd: MvEpyqjedb4Hvai3vnFakmYxQsebEVCe84RNcVxw79USzc85channelFPAmbA9NuPxqfGsMh5pPuyzL
+
+#报税服务设置
+tax:
+  #渠道
+  channel: FXGJ
+  #signSalt混淆
+  signSalt: zxyh7572
+  #公钥
+  publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCNotSn72NFXy92LCc09MjZOAlhngjbUGrDcj8y8pTUMy1tM9NvTjWTMc9OU+bN9pnBzS7sFPJ+aSDaC81p6LeetHwovSkZGdxXMogFow3PPvnc+oc/19oeqsrMrB/bDxjF4sWVNgn+RhXjuOmBLn43WS10ZZ7zEV9DwT8WiyZVqQIDAQAB
+  #tax 服务地址
+  requestUrl: https://sitapi.lgabc.cn/exgateway/lgb
+  #证书名称
+  certificateName: api-client.p12
+  #证书密码
+  password: f2xKYRosKEy5W31r
+
+#正向代理
+proxy:
+  ip: 17.166.221.1
+  port: 3128
+  schemeName: http
 
 management:
   endpoints:
