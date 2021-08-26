@@ -2,13 +2,11 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.exception.BusiVerifyException;
 import chain.css.exception.ParamsIllegalException;
-import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.server.payroll.dto.tax.*;
 import chain.fxgj.server.payroll.service.EmployeeWechatService;
 import chain.fxgj.server.payroll.service.TaxService;
-import chain.fxgj.server.payroll.util.DateTimeUtils;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.ImageBase64Utils;
 import chain.fxgj.server.payroll.util.ImgPicUtils;
@@ -17,7 +15,6 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.EmployeeTaxSignFeignService;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
-import chain.utils.commons.UUIDUtil;
 import chain.utils.fxgj.constant.DictEnums.AttestStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.CertTypeEnum;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
@@ -50,7 +47,10 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @Description:
@@ -153,6 +153,30 @@ public class TaxController {
                 signingDetail.setSignStatusVal(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSignDTO.getSignStatus().getDesc());
                 signingDetail.setAttestStatus(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxSignDTO.getAttestStatus().getCode());
                 signingDetail.setAttestStatusVal(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxSignDTO.getAttestStatus().getDesc());
+                //是否签约
+                if (IsStatusEnum.YES != employeeTaxSignDTO.getSignStatus()) {
+                    //验证身份信息成功，进入签约
+                    WalletH5Req walletH5Req = WalletH5Req.builder()
+                            .fwOrg(employeeTaxSignDTO.getEntName())
+                            .idCardNo(employeeTaxSignDTO.getIdNumber())
+                            .idType("SFZ")
+                            .phoneNo(employeeTaxSignDTO.getPhone())
+                            .transUserId(employeeTaxSignDTO.getId())
+                            .userName(employeeTaxSignDTO.getUserName())
+//                    .ygOrg()
+                            .build();
+                    WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
+                    if (null !=walletH5Res && walletH5Res.getIsSeal()){
+                        //已签约
+                        EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
+                                .signStatus(IsStatusEnum.YES)
+                                .signDateTime(LocalDateTime.now())
+                                .build();
+                        employeeTaxSignFeignService.save(signSaveReq);
+                        signingDetail.setSignStatus(IsStatusEnum.YES.getCode());
+                        signingDetail.setSignStatusVal(IsStatusEnum.YES.getDesc());
+                    }
+                }
             }
             return signingDetail;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -182,7 +206,7 @@ public class TaxController {
 
                 Path path = Paths.get(url);
                 tempFile = Files.createTempFile(path, "IDCARD-", uploadfile.filename());
-                filePath =tempFile.toFile().getPath();
+                filePath = tempFile.toFile().getPath();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -206,7 +230,7 @@ public class TaxController {
 
             return UploadDto.builder()
                     .filepath(filePath)
-                    .imgBase("data:image/jpg;base64,"+base64)
+                    .imgBase("data:image/jpg;base64," + base64)
                     .build();
         }).subscribeOn(Schedulers.elastic());
     }
@@ -258,13 +282,11 @@ public class TaxController {
                         .signDateTime(LocalDateTime.now())
                         .build();
                 employeeTaxSignFeignService.save(signSaveReq);
-            } else {
-                //未签约
-                return H5UrlDto.builder()
-                        .url(walletH5Res.getUrl())
-                        .build();
             }
-            return null;
+            //未签约
+            return H5UrlDto.builder()
+                    .url(walletH5Res.getUrl())
+                    .build();
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
