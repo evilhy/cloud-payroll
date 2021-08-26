@@ -234,6 +234,10 @@ public class TaxController {
 
             //身份证照片
             String base64 = ImageBase64Utils.imageToBase64(filePath);
+            if (StringUtils.isBlank(base64)) {
+                log.info("=====> 图片上传失败，请重新上传。filePath：{}", filePath);
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片上传失败，请重新上传"));
+            }
 
             return UploadDto.builder()
                     .filepath(filePath)
