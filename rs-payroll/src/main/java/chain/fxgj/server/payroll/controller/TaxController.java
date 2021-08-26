@@ -170,6 +170,7 @@ public class TaxController {
                         if (null != walletH5Res && walletH5Res.getIsSeal()) {
                             //已签约
                             EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
+                                    .id(employeeTaxSignDTO.getId())
                                     .signStatus(IsStatusEnum.YES)
                                     .signDateTime(LocalDateTime.now())
                                     .build();
@@ -282,6 +283,7 @@ public class TaxController {
             if (walletH5Res.getIsSeal()) {
                 //已签约
                 EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
+                        .id(employeeTaxSignDTO.getId())
                         .signStatus(IsStatusEnum.YES)
                         .signDateTime(LocalDateTime.now())
                         .build();
@@ -416,7 +418,7 @@ public class TaxController {
                         .build();
             }
             try {
-                //更新签约结果
+                //更新认证结果
                 EmployeeTaxSignSaveReq saveReq = null;
                 if (req.getIsAuth()) {
                     saveReq = EmployeeTaxSignSaveReq.builder()
@@ -433,7 +435,7 @@ public class TaxController {
                 employeeTaxSignFeignService.save(saveReq);
 
             } catch (Exception e) {
-                log.info("=====> 更新结果失败 req：{}", JacksonUtil.objectToJson(req));
+                log.info("=====> 更新认证结果失败 req：{}", JacksonUtil.objectToJson(req));
                 return SealUserRes.builder()
                         .rntMsg("失败")
                         .rntCode("fail")
