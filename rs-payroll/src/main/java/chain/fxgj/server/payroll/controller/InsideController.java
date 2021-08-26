@@ -583,6 +583,8 @@ public class InsideController {
                             .entName(EncrytorUtils.encryptField(empEntResDTO.getEntName(), salt, passwd))
                             .shortEntName(EncrytorUtils.encryptField(empEntResDTO.getShortEntName(), salt, passwd))
                             .liquidation(empEntResDTO.getLiquidation())
+                            .version(empEntResDTO.getVersion())
+                            .subVersion(empEntResDTO.getSubVersion())
                             .salt(salt)
                             .passwd(passwd)
                             .build();
