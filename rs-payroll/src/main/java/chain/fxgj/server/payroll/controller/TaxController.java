@@ -372,17 +372,26 @@ public class TaxController {
                     .idCardImg2("data:image/jpg;base64," + idCardNegative)
 //                    .ygOrg()
                     .build();
-            SealUserRes userResult = taxService.user(userReq);
-            if (null != userResult && "fail".equals(userResult.getRntCode())) {
+            try {
+                SealUserRes userResult = taxService.user(userReq);
+                if (null != userResult && "fail".equals(userResult.getRntCode())) {
+                    signSaveReq = EmployeeTaxSignSaveReq.builder()
+                            .id(taxSignDTO.getId())
+                            .attestStatus(AttestStatusEnum.FAIL)
+                            .attestFailMsg(userResult.getRntMsg())
+                            .build();
+                    employeeTaxSignFeignService.save(signSaveReq);
+                }
+            } catch (Exception e) {
                 //验证失败或网络异常
                 log.info("=====> 身份信息验证过程发生异常 userReq:{}", JacksonUtil.objectToJson(userReq));
                 signSaveReq = EmployeeTaxSignSaveReq.builder()
                         .id(taxSignDTO.getId())
                         .attestStatus(AttestStatusEnum.FAIL)
-                        .attestFailMsg(userResult.getRntMsg())
+                        .attestFailMsg("认证发送过程中网络或服务异常")
                         .build();
                 employeeTaxSignFeignService.save(signSaveReq);
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format(userResult.getRntMsg()));
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("认证发送过程中网络异常"));
             }
 
             return null;

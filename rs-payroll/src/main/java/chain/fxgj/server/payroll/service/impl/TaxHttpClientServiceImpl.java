@@ -82,6 +82,7 @@ public class TaxHttpClientServiceImpl implements TaxHttpClientService {
             log.info("=====> 发送交易请求失败");
         }
         if (null != response && null != response.getStatusLine() && 200 != response.getStatusLine().getStatusCode()) {
+            log.info("=====> 发送交易请求失败，网络异常 code:{}，msg：{}",response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format(response.getStatusLine().getReasonPhrase()));
         }
         String result = null;
