@@ -27,7 +27,6 @@ import core.dto.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
@@ -168,7 +167,7 @@ public class TaxController {
 //                    .ygOrg()
                                 .build();
                         WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
-                        if (null !=walletH5Res && walletH5Res.getIsSeal()){
+                        if (null != walletH5Res && walletH5Res.getIsSeal()) {
                             //已签约
                             EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
                                     .signStatus(IsStatusEnum.YES)
@@ -179,7 +178,7 @@ public class TaxController {
                             signingDetail.setSignStatusVal(IsStatusEnum.YES.getDesc());
                         }
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     log.info("=====> 验证是否签约成功失败");
                 }
             }
@@ -335,30 +334,6 @@ public class TaxController {
                 transUserId = employeeTaxSignDTO.getId();
             }
 
-//            //生成身份证照片
-//            String url = payrollProperties.getSignUploadPath() + DateTimeUtils.getDate() + "/";
-//            File file1 = new File(url);
-//            if (!file1.exists()) {//如果文件夹不存在
-//                file1.mkdir();//创建文件夹
-//            }
-//            String frontPath = url + UUIDUtil.createUUID24() + "front.jpg";
-//            String negativePath = url + UUIDUtil.createUUID24() + "negative.jpg";
-//
-//            String replace1 = req.getIdCardFront().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
-//            log.info("=====> 替换后目录：getIdCardFront{}", replace1);
-//            boolean b1 = ImageBase64Utils.base64ToImageFile(replace1, frontPath);
-//            if (!b1) {
-//                log.info("====> 生成身份证正面照失败，frontPath:{}", frontPath);
-//                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证正面照失败"));
-//            }
-//            String replace2 = req.getIdCardNegative().replace(payrollProperties.getSignUploadReplaceUrl(), payrollProperties.getSignUploadUrl());
-//            log.info("=====> 替换后目录：getIdCardNegative{}", replace2);
-//            boolean b2 = ImageBase64Utils.base64ToImageFile(replace2, negativePath);
-//            if (!b2) {
-//                log.info("====> 生成身份证反面照失败，negativePath:{}", negativePath);
-//                throw new ParamsIllegalException(chain.fxgj.server.payroll.constant.ErrorConstant.SYS_ERROR.format("生成身份证反面照失败"));
-//            }
-
             //保存
             EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
                     .id(transUserId)
@@ -425,14 +400,22 @@ public class TaxController {
             MDC.setContextMap(mdcContext);
             log.info("=====> /tax/signResultPush 认证结果推送 req：{}", JacksonUtil.objectToJson(req));
 
+            Optional.ofNullable(req).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请求参数不能为空")));
+            Optional.ofNullable(req.getIsAuth()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("签约状态不能为空")));
+            Optional.ofNullable(req.getTransUserId()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("交易用户id不能为空")));
+
+            //查询签约信息
+            EmployeeTaxSignDTO employeeTaxSignDTO = employeeTaxSignFeignService.findById(req.getTransUserId());
+            if (null == employeeTaxSignDTO) {
+//                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未查询到签约信息"));
+                log.info("=====> 更新结果失败 ");
+                log.info("=====> 未查询到签约信息，req:{}", JacksonUtil.objectToJson(req));
+                return SealUserRes.builder()
+                        .rntMsg("失败")
+                        .rntCode("fail")
+                        .build();
+            }
             try {
-                Optional.ofNullable(req).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("请求参数不能为空")));
-                Optional.ofNullable(req.getIsAuth()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("签约状态不能为空")));
-                Optional.ofNullable(req.getTransUserId()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("交易用户id不能为空")));
-
-                //查询签约信息
-                EmployeeTaxSignDTO employeeTaxSignDTO = employeeTaxSignFeignService.findById(req.getTransUserId());
-
                 //更新签约结果
                 EmployeeTaxSignSaveReq saveReq = null;
                 if (req.getIsAuth()) {
@@ -482,85 +465,5 @@ public class TaxController {
                     .url(sealH5)
                     .build();
         }).subscribeOn(Schedulers.boundedElastic());
-    }
-
-    /**
-     * 接口测试
-     *
-     * @param interfaceName 接口名称
-     * @return
-     */
-    @GetMapping("/interfaceTest")
-    @TrackLog
-    public Mono<String> interfaceTest(@RequestParam("interfaceName") String interfaceName) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            Optional.ofNullable(interfaceName).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("接口名称不能不管为空")));
-            log.info("=====> /tax/interfaceTest    接口测试   interfaceName：{}", interfaceName);
-
-            String transUserId = "deyun_00000000000000001";
-            String idCardNo = "420104199108240015";
-            String userName = "张三";
-            String phoneNo = "18600000000";
-            String idType = "SFZ";
-            String fwOrg = "武汉德运人力资源有限公司";
-            String ygOrg = "武汉德运人力资源有限公司";
-
-            String result = null;
-            switch (interfaceName) {
-                case "walletH5":
-                    WalletH5Req h5Req = WalletH5Req.builder()
-                            .transUserId(transUserId)
-                            .ygOrg(ygOrg)
-                            .userName(userName)
-                            .phoneNo(phoneNo)
-                            .idType(idType)
-                            .idCardNo(idCardNo)
-                            .fwOrg(fwOrg)
-                            .build();
-                    WalletH5Res walletH5Res = taxService.walletH5(h5Req);
-                    result = JacksonUtil.objectToJson(walletH5Res);
-                    break;
-                case "sealH5":
-                    result = taxService.sealH5(transUserId);
-                    break;
-                case "user":
-                    File file1 = new ClassPathResource("1.jpg").getFile();
-                    File file2 = new ClassPathResource("2.jpg").getFile();
-                    SealUserReq userReq = SealUserReq.builder()
-                            .idCardImg2("data:image/jpg;base64," + ImageBase64Utils.imageToBase64(file2.getPath()))
-                            .idCardImg1("data:image/jpg;base64," + ImageBase64Utils.imageToBase64(file1.getPath()))
-
-                            .transUserId(transUserId)
-//                            .ygOrg(ygOrg)
-                            .userName(userName)
-                            .phoneNo(phoneNo)
-                            .idType(idType)
-                            .idCardNo(idCardNo)
-//                            .fwOrg(fwOrg)
-                            .build();
-                    SealUserRes user = taxService.user(userReq);
-                    result = JacksonUtil.objectToJson(user);
-                    break;
-                default:
-                    result = "不存在的接口！";
-            }
-            return result;
-        }).subscribeOn(Schedulers.boundedElastic());
-    }
-
-    public SealUserReq front() {
-        try {
-            File file1 = new ClassPathResource("1.jpg").getFile();
-            File file2 = new ClassPathResource("2.jpg").getFile();
-            return SealUserReq.builder()
-                    .idCardImg2("data:image/jpg;base64," + ImageBase64Utils.imageToBase64(file2.getPath()))
-                    .idCardImg1("data:image/jpg;base64," + ImageBase64Utils.imageToBase64(file1.getPath()))
-                    .build();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }
