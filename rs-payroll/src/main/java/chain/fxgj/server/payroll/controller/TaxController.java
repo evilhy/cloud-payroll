@@ -206,7 +206,7 @@ public class TaxController {
             Path tempFile = null;
             String filePath = null;
             try {
-                String url = payrollProperties.getSignUploadPath() + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM")) + File.separator;
+                String url = payrollProperties.getSignUploadPath() + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + File.separator;
                 File urlfile = new File(url);
                 urlfile.mkdirs();
 
