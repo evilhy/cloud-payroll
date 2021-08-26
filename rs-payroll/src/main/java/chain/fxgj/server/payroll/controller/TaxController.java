@@ -154,18 +154,18 @@ public class TaxController {
                 signingDetail.setAttestStatusVal(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxSignDTO.getAttestStatus().getDesc());
 
                 //是否签约
+                //验证身份信息成功，进入签约
+                WalletH5Req walletH5Req = WalletH5Req.builder()
+                        .fwOrg(employeeTaxSignDTO.getEntName())
+                        .idCardNo(employeeTaxSignDTO.getIdNumber())
+                        .idType("SFZ")
+                        .phoneNo(employeeTaxSignDTO.getPhone())
+                        .transUserId(employeeTaxSignDTO.getId())
+                        .userName(employeeTaxSignDTO.getUserName())
+//                    .ygOrg()
+                        .build();
                 try {
                     if (IsStatusEnum.YES != employeeTaxSignDTO.getSignStatus()) {
-                        //验证身份信息成功，进入签约
-                        WalletH5Req walletH5Req = WalletH5Req.builder()
-                                .fwOrg(employeeTaxSignDTO.getEntName())
-                                .idCardNo(employeeTaxSignDTO.getIdNumber())
-                                .idType("SFZ")
-                                .phoneNo(employeeTaxSignDTO.getPhone())
-                                .transUserId(employeeTaxSignDTO.getId())
-                                .userName(employeeTaxSignDTO.getUserName())
-//                    .ygOrg()
-                                .build();
                         WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
                         if (null != walletH5Res && walletH5Res.getIsSeal()) {
                             //已签约
@@ -179,7 +179,7 @@ public class TaxController {
                         }
                     }
                 } catch (Exception e) {
-                    log.info("=====> 验证是否签约成功失败");
+                    log.info("=====> 验证是否签约成功失败，walletH5Req：{}",JacksonUtil.objectToJson(walletH5Req));
                 }
             }
             return signingDetail;
