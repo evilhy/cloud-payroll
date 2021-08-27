@@ -91,7 +91,7 @@ public class TaxController {
             log.info("=====> /tax/signingDetails 签约详情查询 userPrincipal：{}", JacksonUtil.objectToJson(userPrincipal));
 
             //查询登陆信息
-            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId);
+            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId, userPrincipal.getName());
             SigningDetailsReq signingDetail = SigningDetailsReq.builder()
 //                    .idCardNegative()
 //                    .idCardFront()
@@ -322,7 +322,7 @@ public class TaxController {
             Optional.ofNullable(req.getIdCardNegative()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证反面照不能为空")));
 
             //查询登陆信息
-            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId);
+            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId, userPrincipal.getName());
 
             //查询签约信息
             EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()

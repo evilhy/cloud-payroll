@@ -15,5 +15,5 @@ public interface EmployeeWechatService {
      * @param jsessionId
      * @return
      */
-    EmployeeWechatDTO findByJsessionId(String jsessionId);
+    EmployeeWechatDTO findByJsessionId(String jsessionId, String userName);
 }
