@@ -10,7 +10,7 @@ import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.WechatFeignController;
 import chain.utils.commons.JsonUtil;
-import chain.utils.commons.UUIDUtil;
+import chain.utils.commons.StringUtils;
 import core.dto.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -43,11 +43,14 @@ public class WalletController {
      * @param jsessionId
      * @return
      */
-    public EmployeeWechatDTO findByJsessionId(String jsessionId) {
+    public EmployeeWechatDTO findByJsessionId(String jsessionId, String name) {
         log.info("=====> 根据JsessionId查询用户信息 jsessionId:{}", jsessionId);
         EmployeeWechatDTO dto = wechatFeignController.findByJsessionId(jsessionId);
         if (null == dto) {
             throw new ParamsIllegalException(ErrorConstant.Error0001.format("登录人"));
+        }
+        if (StringUtils.isBlank(dto.getName())){
+            dto.setName(name);
         }
         return dto;
 
@@ -72,7 +75,7 @@ public class WalletController {
             log.info("=====> /wallet/balance 查询当前用户钱包余额 entId:{}, jsessionId:{}, salt:{}, passwd:{}", entId, jsessionId, salt, passwd);
 
             //查询当前登陆人信息
-            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
 
             //业务处理
             WalletBalanceDTO balanceDTO = walletService.balance(entId, dto, salt, passwd);
@@ -102,7 +105,7 @@ public class WalletController {
             log.info("=====> /wallet/empCardAndBalance 查询当前企业下的钱包余额、银行卡数(去重) entId:{}, jsessionId:{}, salt:{}, passwd:{}", entId, jsessionId, salt, passwd);
 
             //查询当前登陆人信息
-            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
             EmpCardAndBalanceResDTO resDTO = walletService.empCardAdnBalance(entId, salt, passwd, dto);
             return resDTO;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -131,9 +134,9 @@ public class WalletController {
             log.info("=====> /wallet/withdrawalLedgerPage 提现台账分页列表 entId:{}, jsessionId:{}, salt:{}, passwd:{}, req:{}", entId, jsessionId, salt, passwd, JsonUtil.objectToJson(req));
 
             //查询当前登陆人信息
-            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
             PageDTO<WithdrawalLedgerPageRes> pageDTO = walletService.withdrawalLedgerPage(entId, dto, req, salt, passwd, pageRequest);
-            log.info("=====> /wallet/withdrawalLedgerPage 提现台账分页列表 返回：{}",JsonUtil.objectToJson(pageDTO));
+            log.info("=====> /wallet/withdrawalLedgerPage 提现台账分页列表 返回：{}", JsonUtil.objectToJson(pageDTO));
             return pageDTO;
         }).subscribeOn(Schedulers.boundedElastic());
     }
@@ -160,7 +163,7 @@ public class WalletController {
             log.info("=====> /wallet/withdrawalLedgerDetail/{} 提现台账详情 entId:{}, jsessionId:{}, salt:{}, passwd:{}", withdrawalLedgerId, entId, jsessionId, salt, passwd);
 
             //查询当前登陆人信息
-            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
             WithdrawalLedgerDetailRes res = walletService.withdrawalLedgerDetail(withdrawalLedgerId, entId, dto, salt, passwd);
             return res;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -188,7 +191,7 @@ public class WalletController {
             log.info("=====> /wallet/withdrawalRecordDetail/{} 提现进度详情 entId:{}, jsessionId:{}, salt:{}, passwd:{}", withdrawalLedgerId, entId, jsessionId, salt, passwd);
 
             //查询当前登陆人信息
-            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
             WithdrawalRecordDetailRes res = walletService.withdrawalRecordDetail(withdrawalLedgerId, entId, dto, salt, passwd);
             return res;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -210,7 +213,7 @@ public class WalletController {
             log.info("=====> /wallet/employeeCardList 收款账户列表 entId:{}, jsessionId:{}, salt:{}, passwd:{}", entId, jsessionId, salt, passwd);
 
             //查询当前登陆人信息
-            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
             List<EmployeeCardDTO> list = walletService.employeeCardList(entId, dto, salt, passwd);
             return list;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -233,10 +236,10 @@ public class WalletController {
         String jsessionId = currentUser.getSessionId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            log.info("=====> /wallet/withdraw 确认提现 entId:{}, jsessionId:{}, req:{}", entId, jsessionId,JsonUtil.objectToJson(req));
+            log.info("=====> /wallet/withdraw 确认提现 entId:{}, jsessionId:{}, req:{}", entId, jsessionId, JsonUtil.objectToJson(req));
 
             //查询当前登陆人信息
-            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
             walletService.withdraw(entId, dto, req);
             return null;
         }).subscribeOn(Schedulers.boundedElastic()).then();
@@ -260,7 +263,7 @@ public class WalletController {
             log.info("=====> /wallet/isAllowWithdraw 是否允许提现 entId:{}, jsessionId:{}", entId, jsessionId);
 
             //查询当前登陆人信息
-            EmployeeWechatDTO dto = findByJsessionId(jsessionId);
+            EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
 
             IsAllowWithdrawRes res = walletService.isAllowWithdraw(entId, dto);
             return res;
