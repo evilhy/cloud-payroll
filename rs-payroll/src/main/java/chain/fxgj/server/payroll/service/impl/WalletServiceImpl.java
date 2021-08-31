@@ -222,6 +222,7 @@ public class WalletServiceImpl implements WalletService {
                 .idNumber(idNumber)
                 .custName(custName)
                 .isCountStatus(IsStatusEnum.YES)
+                .payStatus(Arrays.asList(PayStatusEnum.values()))
                 .build();
         core.dto.PageDTO<WageDetailDTO> wageDetailPage = wageDetailFeignController.page(detailQueryReq);
         if (null != wageDetailPage && null != wageDetailPage.getContent() && wageDetailPage.getContent().size() > 0) {
