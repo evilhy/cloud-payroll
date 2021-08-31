@@ -13,6 +13,9 @@ import chain.fxgj.server.payroll.util.ImgPicUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
 import chain.payroll.client.feign.EmployeeTaxSignFeignService;
+import chain.payroll.client.feign.EnterpriseAttachFeignService;
+import chain.payroll.client.feign.GroupAttachInfoServiceFeign;
+import chain.payroll.client.feign.WithdrawalLedgerInfoServiceFeign;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.fxgj.constant.DictEnums.AttestStatusEnum;
@@ -23,6 +26,8 @@ import core.dto.ErrorConstant;
 import core.dto.request.employeeTaxSign.EmployeeTaxSignQueryReq;
 import core.dto.request.employeeTaxSign.EmployeeTaxSignSaveReq;
 import core.dto.response.employeeTaxSign.EmployeeTaxSignDTO;
+import core.dto.response.groupAttach.GroupAttachInfoDTO;
+import core.dto.response.withdrawalLedger.WithdrawalLedgerDTO;
 import core.dto.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -69,6 +74,12 @@ public class TaxController {
     TaxService taxService;
     @Autowired
     EmployeeTaxSignFeignService employeeTaxSignFeignService;
+    @Autowired
+    WithdrawalLedgerInfoServiceFeign withdrawalLedgerInfoServiceFeign;
+    @Autowired
+    EnterpriseAttachFeignService enterpriseAttachFeignService;
+    @Autowired
+    GroupAttachInfoServiceFeign groupAttachInfoServiceFeign;
 
     @Autowired
     PayrollProperties payrollProperties;
@@ -80,7 +91,8 @@ public class TaxController {
      */
     @GetMapping("/signingDetails")
     @TrackLog
-    public Mono<SigningDetailsReq> signingDetails(@RequestHeader(value = "encry-salt", required = false) String salt,
+    public Mono<SigningDetailsReq> signingDetails(@RequestParam("withdrawalLedgerId") String withdrawalLedgerId,
+                                                  @RequestHeader(value = "encry-salt", required = false) String salt,
                                                   @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
@@ -184,6 +196,22 @@ public class TaxController {
                     log.info("=====> 验证是否签约成功失败，walletH5Req：{}", JacksonUtil.objectToJson(walletH5Req));
                 }
             }
+
+            //查询台站所属机构
+            WithdrawalLedgerDTO withdrawalLedgerDTO = withdrawalLedgerInfoServiceFeign.findById(withdrawalLedgerId);
+            if (null == withdrawalLedgerDTO){
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("提现台账不存在"));
+            }
+            String groupId = withdrawalLedgerDTO.getGroupId();
+            //查询是否需要签约
+            GroupAttachInfoDTO attach = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
+            IsStatusEnum isStatusEnum = IsStatusEnum.NO;
+            if (null != attach ){
+                isStatusEnum = null == attach.getIsSign() ? IsStatusEnum.NO  : attach.getIsSign();
+            }
+            signingDetail.setIsSign(isStatusEnum.getCode());
+            signingDetail.setIsSignVal(isStatusEnum.getDesc());
+
             return signingDetail;
         }).subscribeOn(Schedulers.boundedElastic());
     }
