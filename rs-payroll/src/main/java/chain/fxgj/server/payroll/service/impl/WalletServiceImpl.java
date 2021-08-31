@@ -195,7 +195,7 @@ public class WalletServiceImpl implements WalletService {
                 .cardNum(empCardResDTO.getCardNum())
                 .withdrawStatus(withdrawStatus.getCode())
                 .withdrawStatusVal(withdrawStatus.getDesc())
-                .recentlyIssuedAmt(null == bigDecimal ? "0.00" : bigDecimal.toString())
+                .recentlyIssuedAmt(null == bigDecimal ? EncrytorUtils.encryptField("0.00", salt, passwd):EncrytorUtils.encryptField(bigDecimal.toString(), salt, passwd))
                 .salt(salt)
                 .passwd(passwd)
                 .build();
