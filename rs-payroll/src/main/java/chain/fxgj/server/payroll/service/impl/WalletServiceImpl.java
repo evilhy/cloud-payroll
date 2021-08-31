@@ -180,7 +180,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         // 最近一笔收入
-        BigDecimal bigDecimal = recentlyIssued(entId, dto.getIdNumber(), dto.getName());
+        BigDecimal bigDecimal = recentlyIssued(entId, dto.getName(), dto.getIdNumber());
 
         String walletNumber = null == employeeWalletDTO || StringUtils.isBlank(employeeWalletDTO.getWalletNumber()) ? "" : employeeWalletDTO.getWalletNumber();
         BigDecimal balance = null == employeeWalletDTO || null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
