@@ -180,7 +180,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         // 最近一笔收入
-        BigDecimal bigDecimal = recentlyIssued(entId, dto.getName(), dto.getIdNumber());
+        BigDecimal bigDecimal = recentlyIssued(entId, dto.getName(), dto.getIdNumber(),employeeWalletDTO);
 
         String walletNumber = null == employeeWalletDTO || StringUtils.isBlank(employeeWalletDTO.getWalletNumber()) ? "" : employeeWalletDTO.getWalletNumber();
         BigDecimal balance = null == employeeWalletDTO || null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
@@ -213,7 +213,7 @@ public class WalletServiceImpl implements WalletService {
      * @param idNumber
      * @return
      */
-    public BigDecimal recentlyIssued(String entId, String custName, String idNumber) {
+    public BigDecimal recentlyIssued(String entId, String custName, String idNumber,EmployeeWalletDTO employeeWalletDTO ) {
         //查询方案明细
         WageDetailDTO wageDetailDTO = null;
         WageDetailQueryReq detailQueryReq = WageDetailQueryReq.builder()
@@ -228,17 +228,19 @@ public class WalletServiceImpl implements WalletService {
             wageDetailDTO = wageDetailPage.getContent().get(0);
         }
 
-        //查询钱包
         WithdrawalLedgerDTO withdrawalLedgerDTO = null;
-        WithdrawalLedgerQueryReq ledgerQueryReq = WithdrawalLedgerQueryReq.builder()
-                .entId(entId)
-                .idNumber(idNumber)
-                .custName(custName)
-                .withdrawalStatus(Arrays.asList(WithdrawalStatusEnum.Await, WithdrawalStatusEnum.Ing, WithdrawalStatusEnum.Success, WithdrawalStatusEnum.Fail))
-                .build();
-        core.dto.PageDTO<WithdrawalLedgerDTO> ledgerDTOPage = withdrawalLedgerInfoServiceFeign.page(ledgerQueryReq);
-        if (null != ledgerDTOPage && null != ledgerDTOPage.getContent() && ledgerDTOPage.getContent().size() > 0) {
-            withdrawalLedgerDTO = ledgerDTOPage.getContent().get(0);
+        if (null !=  employeeWalletDTO ) {
+            //查询钱包
+            WithdrawalLedgerQueryReq ledgerQueryReq = WithdrawalLedgerQueryReq.builder()
+                    .entId(entId)
+                    .employeeWalletId(employeeWalletDTO.getEmployeeWalletId())
+                    .withdrawalStatus(Arrays.asList(WithdrawalStatusEnum.Await, WithdrawalStatusEnum.Ing, WithdrawalStatusEnum.Success, WithdrawalStatusEnum.Fail))
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .build();
+            core.dto.PageDTO<WithdrawalLedgerDTO> ledgerDTOPage = withdrawalLedgerInfoServiceFeign.page(ledgerQueryReq);
+            if (null != ledgerDTOPage && null != ledgerDTOPage.getContent() && ledgerDTOPage.getContent().size() > 0) {
+                withdrawalLedgerDTO = ledgerDTOPage.getContent().get(0);
+            }
         }
 
         if (null == wageDetailDTO) {
