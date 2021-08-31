@@ -441,6 +441,7 @@ public class WalletServiceImpl implements WalletService {
                 .withdrawStatus(withdrawStatus.getCode())
                 .withdrawStatusVal(withdrawStatus.getDesc())
                 .year(ledgerDTO.getYear())
+                .accountOpenBank(null == erpriseInfoDTO || null == erpriseInfoDTO.getLiquidation() ? null : erpriseInfoDTO.getLiquidation().getDesc())
                 .withdrawalStatusVal(null == ledgerDTO.getWithdrawalStatus() ? null : ledgerDTO.getWithdrawalStatus().getDesc())
                 .withdrawalStatus(null == ledgerDTO.getWithdrawalStatus() ? null : ledgerDTO.getWithdrawalStatus().getCode())
                 .withdrawalLedgerId(ledgerDTO.getWithdrawalLedgerId())
