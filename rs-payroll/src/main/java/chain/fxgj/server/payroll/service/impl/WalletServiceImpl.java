@@ -148,8 +148,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public EmpCardAndBalanceResDTO
-    empCardAdnBalance(String entId, String salt, String passwd, EmployeeWechatDTO dto) {
+    public EmpCardAndBalanceResDTO empCardAdnBalance(String entId, String salt, String passwd, EmployeeWechatDTO dto) {
 
         //查询银行卡信息
         BaseReqDTO baseReqDTO = BaseReqDTO.builder()
@@ -181,7 +180,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         // 最近一笔收入
-        BigDecimal bigDecimal = recentlyIssued(employeeWalletDTO.getEntId(), employeeWalletDTO.getCustName(), employeeWalletDTO.getIdNumber());
+        BigDecimal bigDecimal = recentlyIssued(entId, dto.getIdNumber(), dto.getName());
 
         String walletNumber = null == employeeWalletDTO || StringUtils.isBlank(employeeWalletDTO.getWalletNumber()) ? "" : employeeWalletDTO.getWalletNumber();
         BigDecimal balance = null == employeeWalletDTO || null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
