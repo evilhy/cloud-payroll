@@ -771,37 +771,6 @@ public class WalletServiceImpl implements WalletService {
         withdrawalScheduleFeignService.save(saveReq);
     }
 
-    @Override
-    public IsAllowWithdrawRes isAllowWithdraw(String entId, EmployeeWechatDTO dto) {
-        String idNumber = dto.getIdNumber();
-        IsAllowWithdrawRes build = IsAllowWithdrawRes.builder()
-                .entId(entId)
-                .idNumber(idNumber)
-                .status(true)
-                .build();
-        EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(entId);
-
-        //附件表记录不为空，并且必须签约才能提现
-        if (null != enterpriseAttachRes && IsStatusEnum.YES == enterpriseAttachRes.getIsSign()) {
-
-            //查询签约记录
-            EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()
-                    .entId(entId)
-                    .idNumber(idNumber)
-                    .attestStatus(Arrays.asList(AttestStatusEnum.SUCCESS))
-                    .signStatus(IsStatusEnum.YES)
-                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
-                    .build();
-            List<EmployeeTaxSignDTO> list = employeeTaxSignFeignService.list(signQueryReq);
-            if (null != list && list.size() > 0) {
-                build.setStatus(true);
-            }
-            build.setStatus(false);
-
-        }
-        return build;
-    }
-
     /**
      * 银行是否收市
      *

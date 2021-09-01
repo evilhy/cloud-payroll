@@ -244,29 +244,4 @@ public class WalletController {
             return null;
         }).subscribeOn(Schedulers.boundedElastic()).then();
     }
-
-    /**
-     * 是否允许提现
-     *
-     * @param entId
-     * @return
-     * @throws Exception
-     */
-    @GetMapping("/isAllowWithdraw")
-    @TrackLog
-    public Mono<IsAllowWithdrawRes> isAllowWithdraw(@RequestHeader(value = "ent-id") String entId) throws Exception {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        UserPrincipal currentUser = WebContext.getCurrentUser();
-        String jsessionId = currentUser.getSessionId();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-            log.info("=====> /wallet/isAllowWithdraw 是否允许提现 entId:{}, jsessionId:{}", entId, jsessionId);
-
-            //查询当前登陆人信息
-            EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
-
-            IsAllowWithdrawRes res = walletService.isAllowWithdraw(entId, dto);
-            return res;
-        }).subscribeOn(Schedulers.boundedElastic());
-    }
 }
