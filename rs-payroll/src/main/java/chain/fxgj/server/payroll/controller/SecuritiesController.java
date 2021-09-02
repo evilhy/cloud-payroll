@@ -186,7 +186,9 @@ public class SecuritiesController {
             wageReqPhone.setCode(reqSecuritiesLoginDTO.getMsgCode());
             wageReqPhone.setCodeId(reqSecuritiesLoginDTO.getMsgCodeId());
             wageReqPhone.setPhone(phone);
-            String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
+            //TODO 短信验证
+//            String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
+            String retStr = "0000";
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
             }
