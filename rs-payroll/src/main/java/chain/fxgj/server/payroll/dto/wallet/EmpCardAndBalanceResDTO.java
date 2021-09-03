@@ -56,6 +56,11 @@ public class EmpCardAndBalanceResDTO {
     private String frozenAmount;
 
     /**
+     * 近期收入
+     */
+    private  String recentlyIssuedAmt;
+
+    /**
      *是否启用员工提现（0.停用 1.启用）
      */
     private Integer withdrawStatus;

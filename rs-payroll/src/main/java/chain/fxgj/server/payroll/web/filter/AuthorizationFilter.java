@@ -121,7 +121,7 @@ public class AuthorizationFilter implements WebFilter, Ordered {
 
         HeaderDTO headerDTO = HeaderDTO.builder()
                 .limit(StringUtils.isBlank(limitStr) ? 30 : Integer.parseInt(limitStr))
-                .pageNum(StringUtils.isBlank(pageNumStr) ? 30 : Integer.parseInt(pageNumStr))
+                .pageNum(StringUtils.isBlank(pageNumStr) ? 1 : Integer.parseInt(pageNumStr))
                 .direction(direction)
                 .sortField(sortField)
                 .jsessionId(jsessionId)

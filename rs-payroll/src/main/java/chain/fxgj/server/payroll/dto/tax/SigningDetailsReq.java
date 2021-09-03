@@ -77,6 +77,14 @@ public class SigningDetailsReq {
      */
     String signStatusVal;
     /**
+     * 是否需要签约(0:不需要签约、1:需要签约)
+     */
+    Integer isSign;
+    /**
+     * 是否需要签约 描述
+     */
+    String isSignVal;
+    /**
      * salt
      */
     private String salt;

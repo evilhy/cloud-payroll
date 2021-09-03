@@ -20,6 +20,7 @@ import core.dto.request.employee.EmployeeQueryReq;
 import core.dto.request.employeeTaxSign.EmployeeTaxSignQueryReq;
 import core.dto.request.employeeWallet.EmployeeWalletQueryReq;
 import core.dto.request.employeeWallet.EmployeeWalletSaveReq;
+import core.dto.request.wageDetail.WageDetailQueryReq;
 import core.dto.request.withdrawalLedger.WithdrawalLedgerQueryReq;
 import core.dto.request.withdrawalLedger.WithdrawalLedgerSaveReq;
 import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogQueryReq;
@@ -32,6 +33,7 @@ import core.dto.response.employeeWallet.EmployeeWalletDTO;
 import core.dto.response.entAttach.EnterpriseAttachRes;
 import core.dto.response.group.GroupDTO;
 import core.dto.response.groupAttach.GroupAttachInfoDTO;
+import core.dto.response.wageDetail.WageDetailDTO;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.response.withdrawalLedger.WithdrawalLedgerDTO;
 import core.dto.response.withdrawalRecordLog.WithdrawalRecordLogDTO;
@@ -177,6 +179,9 @@ public class WalletServiceImpl implements WalletService {
             withdrawStatus = enterpriseAttachRes.getWithdrawStatus();
         }
 
+        // 最近一笔收入
+        BigDecimal bigDecimal = recentlyIssued(entId, dto.getName(), dto.getIdNumber(),employeeWalletDTO);
+
         String walletNumber = null == employeeWalletDTO || StringUtils.isBlank(employeeWalletDTO.getWalletNumber()) ? "" : employeeWalletDTO.getWalletNumber();
         BigDecimal balance = null == employeeWalletDTO || null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
         BigDecimal availableAmount = null == employeeWalletDTO || null == employeeWalletDTO.getAvailableAmount() ? BigDecimal.ZERO : employeeWalletDTO.getAvailableAmount();
@@ -190,9 +195,67 @@ public class WalletServiceImpl implements WalletService {
                 .cardNum(empCardResDTO.getCardNum())
                 .withdrawStatus(withdrawStatus.getCode())
                 .withdrawStatusVal(withdrawStatus.getDesc())
+                .recentlyIssuedAmt(null == bigDecimal ? EncrytorUtils.encryptField("0.00", salt, passwd):EncrytorUtils.encryptField(bigDecimal.toString(), salt, passwd))
                 .salt(salt)
                 .passwd(passwd)
                 .build();
+    }
+
+    /**
+     * 最近代发金额
+     * <p>
+     * 1：直接发放到银行卡       isCountStatus=YES、payStatus=SUCCESS
+     * 2：已推送但未申请代发      isCountStatus=YES
+     * 3：发放到钱包
+     *
+     * @param entId
+     * @param custName
+     * @param idNumber
+     * @return
+     */
+    public BigDecimal recentlyIssued(String entId, String custName, String idNumber,EmployeeWalletDTO employeeWalletDTO ) {
+        //查询方案明细
+        WageDetailDTO wageDetailDTO = null;
+        WageDetailQueryReq detailQueryReq = WageDetailQueryReq.builder()
+                .entId(entId)
+                .idNumber(idNumber)
+                .custName(custName)
+                .isCountStatus(IsStatusEnum.YES)
+                .payStatus(Arrays.asList(PayStatusEnum.values()))
+                .build();
+        core.dto.PageDTO<WageDetailDTO> wageDetailPage = wageDetailFeignController.page(detailQueryReq);
+        if (null != wageDetailPage && null != wageDetailPage.getContent() && wageDetailPage.getContent().size() > 0) {
+            wageDetailDTO = wageDetailPage.getContent().get(0);
+        }
+
+        WithdrawalLedgerDTO withdrawalLedgerDTO = null;
+        if (null !=  employeeWalletDTO ) {
+            //查询钱包
+            WithdrawalLedgerQueryReq ledgerQueryReq = WithdrawalLedgerQueryReq.builder()
+                    .entId(entId)
+                    .employeeWalletId(employeeWalletDTO.getEmployeeWalletId())
+                    .withdrawalStatus(Arrays.asList(WithdrawalStatusEnum.Await, WithdrawalStatusEnum.Ing, WithdrawalStatusEnum.Success, WithdrawalStatusEnum.Fail))
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .build();
+            core.dto.PageDTO<WithdrawalLedgerDTO> ledgerDTOPage = withdrawalLedgerInfoServiceFeign.page(ledgerQueryReq);
+            if (null != ledgerDTOPage && null != ledgerDTOPage.getContent() && ledgerDTOPage.getContent().size() > 0) {
+                withdrawalLedgerDTO = ledgerDTOPage.getContent().get(0);
+            }
+        }
+
+        if (null == wageDetailDTO) {
+            if (null == withdrawalLedgerDTO) {
+                return BigDecimal.ZERO;
+            } else {
+                return withdrawalLedgerDTO.getTransAmount();
+            }
+        } else {
+            if (null != withdrawalLedgerDTO) {
+                return withdrawalLedgerDTO.getCrtDateTime().isAfter(wageDetailDTO.getCrtDateTime()) ? withdrawalLedgerDTO.getTransAmount() : wageDetailDTO.getRealTotalAmt();
+            } else {
+                return wageDetailDTO.getRealTotalAmt();
+            }
+        }
     }
 
     @Override
@@ -706,37 +769,6 @@ public class WalletServiceImpl implements WalletService {
                 .wageSheetId(ledgerDTO1.getWageSheetId())
                 .build();
         withdrawalScheduleFeignService.save(saveReq);
-    }
-
-    @Override
-    public IsAllowWithdrawRes isAllowWithdraw(String entId, EmployeeWechatDTO dto) {
-        String idNumber = dto.getIdNumber();
-        IsAllowWithdrawRes build = IsAllowWithdrawRes.builder()
-                .entId(entId)
-                .idNumber(idNumber)
-                .status(true)
-                .build();
-        EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(entId);
-
-        //附件表记录不为空，并且必须签约才能提现
-        if (null != enterpriseAttachRes && IsStatusEnum.YES == enterpriseAttachRes.getIsSign()) {
-
-            //查询签约记录
-            EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()
-                    .entId(entId)
-                    .idNumber(idNumber)
-                    .attestStatus(Arrays.asList(AttestStatusEnum.SUCCESS))
-                    .signStatus(IsStatusEnum.YES)
-                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
-                    .build();
-            List<EmployeeTaxSignDTO> list = employeeTaxSignFeignService.list(signQueryReq);
-            if (null != list && list.size() > 0) {
-                build.setStatus(true);
-            }
-            build.setStatus(false);
-
-        }
-        return build;
     }
 
     /**
