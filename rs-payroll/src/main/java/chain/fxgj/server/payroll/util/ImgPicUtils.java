@@ -37,7 +37,7 @@ public class ImgPicUtils {
     public static void compression(String imgPath, String goalPath) throws IOException {
         byte[] bytes = FileUtils.readFileToByteArray(new File(imgPath));
         long l = System.currentTimeMillis();
-        bytes = ImgPicUtils.compressPicForScale(bytes, 160, "x");// 图片小于300kb
+        bytes = ImgPicUtils.compressPicForScale(bytes, 120, "x");// 图片小于300kb
         System.out.println(System.currentTimeMillis() - l);
         FileUtils.writeByteArrayToFile(new File(goalPath), bytes);
     }
