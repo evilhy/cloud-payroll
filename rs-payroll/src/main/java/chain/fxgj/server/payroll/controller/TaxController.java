@@ -257,7 +257,15 @@ public class TaxController {
             //图片压缩
             File file = new File(filePath);
             if (file.length() > 1024 * 120) {
-                ImgPicUtils.compression(filePath, filePath);
+                //创建压缩目录
+                String name = file.getName();
+                String originalPath = filePath.replace(name,"compression/");
+                File originalUrl = new File(originalPath);
+                if (!originalUrl.exists()){
+                    originalUrl.mkdirs();
+                }
+                ImgPicUtils.compression(filePath, originalUrl + name);
+                filePath = originalUrl + name;
             }
 
             //身份证照片
