@@ -42,7 +42,7 @@ public class TaxControllerTest extends BaseTestCase {
         String salt = UUIDUtil.createUUID32();
         String passwd = UUIDUtil.createUUID32();
         String entId = UUIDUtil.createUUID32();
-        webTestClient.get().uri("/tax/signingDetails")
+        webTestClient.get().uri("/tax/signingDetails?withdrawalLedgerId={withdrawalLedgerId}",UUIDUtil.createUUID8())
                 .header("encry-salt", salt)
                 .header("encry-passwd", passwd)
                 .header("ent-id", entId)
@@ -51,7 +51,7 @@ public class TaxControllerTest extends BaseTestCase {
                 .isOk()
                 .expectBody()
                 .consumeWith(document("tax_signingDetails",
-//                        relaxedRequestParameters(parameterWithName("url").description("获取url")),
+                        relaxedRequestParameters(parameterWithName("withdrawalLedgerId").description("提现台账ID")),
                         relaxedResponseFields(JavaDocReader.javaDoc(SigningDetailsReq.class))
                 ));
     }
@@ -103,6 +103,14 @@ public class TaxControllerTest extends BaseTestCase {
                 .phone("18600020000")
                 .userName("李慕白")
                 .taxSignId(UUIDUtil.createUUID32())
+                .provinceCode("420000000000")
+                .provinceName("湖北省")
+                .cityCode("420100000000")
+                .cityName("武汉市")
+                .areaCode("420106000000")
+                .areaName("武昌区")
+                .streetCode("420106011000")
+                .streetName("中南路街道")
                 .build();
 
         webTestClient.post().uri("/tax/signing")
@@ -136,6 +144,15 @@ public class TaxControllerTest extends BaseTestCase {
                 .phone("18600020000")
                 .userName("李慕白")
                 .taxSignId(UUIDUtil.createUUID32())
+                .provinceCode("420000000000")
+                .provinceName("湖北省")
+                .cityCode("420100000000")
+                .cityName("武汉市")
+                .areaCode("420106000000")
+                .areaName("武昌区")
+                .streetCode("420106011000")
+                .streetName("中南路街道")
+                .address("万金国际广场902室")
                 .build();
 
         webTestClient.post().uri("/tax/attest")

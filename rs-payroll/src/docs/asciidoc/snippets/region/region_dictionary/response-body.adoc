@@ -1,0 +1,14 @@
+[source,options="nowrap"]
+----
+[ {
+  "regionCode" : "430061",
+  "regionName" : "武昌区",
+  "regionParentCode" : "420100000000",
+  "regionParentName" : "武汉市",
+  "regionLevel" : 1,
+  "regionLevelVal" : "地级市、地区、自治州、盟",
+  "provinceCityCode" : "420106",
+  "longitude" : "E114°20′8.37",
+  "latitude" : "N30°33′18.32″"
+} ]
+----

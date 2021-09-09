@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/region/dictionary?regionParentCode=420100000000' -i -X GET \
+    -H 'encry-salt: 5810a57afb4045eb91d716336ff1c7d7' \
+    -H 'encry-passwd: 423edee4829f4d1984f59a6d71492be4' \
+    -H 'ent-id: 2649a3cc77454220af659af8754394da'
+----
