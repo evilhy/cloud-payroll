@@ -269,7 +269,7 @@ public class TaxController {
             //图片压缩
             //图片压缩
             File file = new File(filePath);
-            if (file.length() > 1024 * 120) {
+            if (file.length() > 1024 * 100) {
                 ImgPicUtils.compression(filePath, filePath);
             }
 
