@@ -23,8 +23,8 @@ public class ImgPicUtils {
     private static Logger logger = LoggerFactory.getLogger(ImgPicUtils.class);
 
     public static void main(String[] args) throws Exception {
-        String imgPath = "D:\\tmp\\2.jpg";
-        String goalPath = "D:\\tmp\\dd2.jpg";
+        String imgPath = "D:\\demo\\2.jpg";
+        String goalPath = "D:\\demo\\dd2.jpg";
         compression(imgPath, goalPath);
     }
 
@@ -37,7 +37,7 @@ public class ImgPicUtils {
     public static void compression(String imgPath, String goalPath) throws IOException {
         byte[] bytes = FileUtils.readFileToByteArray(new File(imgPath));
         long l = System.currentTimeMillis();
-        bytes = ImgPicUtils.compressPicForScale(bytes, 120, "x");// 图片小于300kb
+        bytes = ImgPicUtils.compressPicForScale(bytes, 100, "x");// 图片小于300kb
         System.out.println(System.currentTimeMillis() - l);
         FileUtils.writeByteArrayToFile(new File(goalPath), bytes);
     }
