@@ -267,30 +267,21 @@ public class TaxController {
 
 
             //图片压缩
+            //图片压缩
             File file = new File(filePath);
-            String compressionPath = filePath;
             if (file.length() > 1024 * 120) {
-//                //创建图片压缩目录
-//                String path = file.getPath();
-//                String name = file.getName();
-//                String replace = path.replace(name, "min/");
-//                File file1 = new File(replace);
-//                if (!file1.exists()){
-//                    file1.mkdirs();
-//                }
-//                compressionPath = replace + name;
-                ImgPicUtils.compression(filePath, compressionPath);
+                ImgPicUtils.compression(filePath, filePath);
             }
 
             //身份证照片
-            String base64 = ImageBase64Utils.imageToBase64(compressionPath);
+            String base64 = ImageBase64Utils.imageToBase64(filePath);
             if (StringUtils.isBlank(base64)) {
-                log.info("=====> 图片上传失败，请重新上传。compressionPath：{}", compressionPath);
+                log.info("=====> 图片上传失败，请重新上传。filePath：{}", filePath);
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片上传失败，请重新上传"));
             }
 
             return UploadDto.builder()
-                    .filepath(compressionPath)
+                    .filepath(filePath)
                     .imgBase("data:image/jpg;base64," + base64)
                     .build();
         }).subscribeOn(Schedulers.elastic());
