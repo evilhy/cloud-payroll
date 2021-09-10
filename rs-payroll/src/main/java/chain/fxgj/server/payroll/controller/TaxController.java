@@ -408,6 +408,12 @@ public class TaxController {
             String idCardFront = ImageBase64Utils.imageToBase64(req.getIdCardFront());
             String idCardNegative = ImageBase64Utils.imageToBase64(req.getIdCardNegative());
 
+            StringBuilder sb = new StringBuilder();
+            StringBuilder append = sb.append(req.getProvinceName())
+                    .append(req.getCityName())
+                    .append(req.getAreaName())
+                    .append(req.getStreetName())
+                    .append(req.getAddress());
             //验证身份信息
             SealUserReq userReq = SealUserReq.builder()
                     .fwOrg(userPrincipal.getEntName())
@@ -418,6 +424,7 @@ public class TaxController {
                     .transUserId(transUserId)
                     .idCardImg1("data:image/jpg;base64," + idCardFront)
                     .idCardImg2("data:image/jpg;base64," + idCardNegative)
+                    .address(append.toString())
 //                    .ygOrg()
                     .build();
             try {
