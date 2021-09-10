@@ -29,6 +29,8 @@ import chain.fxgj.server.payroll.dto.activity.*;
 import chain.fxgj.server.payroll.dto.base.ErrorDTO;
 import chain.fxgj.server.payroll.service.ActivityConfigureService;
 import chain.fxgj.server.payroll.service.WechatRedisService;
+import chain.ids.client.feign.UnAuthFeignClient;
+import chain.payroll.client.feign.InsideFeignController;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
 import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
@@ -45,6 +47,7 @@ import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -91,6 +94,10 @@ public class ActivityConfigureRS {
     EntBusinessWhiteListServiceFeign entBusinessWhiteListServiceFeign;
     @Autowired
     AccountFeignService accountFeignService;
+    @Autowired
+    InsideFeignController insideFeignController;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     /**
      * 根据code 获取openId
@@ -275,27 +282,39 @@ public class ActivityConfigureRS {
             }
 
             //验证短信验证码
-            MsgCodeLogCheckRequestDTO dto = new MsgCodeLogCheckRequestDTO();
-            dto.setSystemId(0);
-            dto.setCheckType(1);
-            dto.setCodeId(request.getSmsCodeId());
-            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-            dto.setCode(request.getSmsCode());
-            dto.setMsgMedium(request.getPhone());
-            Client client = ClientBuilder.newClient();
-            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCodeCheck");
-            log.info("管家url:{}", webTarget.getUri());
-            Response response = webTarget.request()
-                    .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
-                    .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
-            log.debug("{}", response.getStatus());
-            if (response.getStatus() != 200) {
-                ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
-                throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrorCode(), errorDTO.getErrorMsg()));
-            }
-            MsgCodeLogResponeDTO msgCodeLogResponeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
-            if (msgCodeLogResponeDTO.getMsgStatus() != 1) {
-                throw new ParamsIllegalException(ErrorConstant.Error0004.getErrorMsg());
+//            MsgCodeLogCheckRequestDTO dto = new MsgCodeLogCheckRequestDTO();
+//            dto.setSystemId(0);
+//            dto.setCheckType(1);
+//            dto.setCodeId(request.getSmsCodeId());
+//            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+//            dto.setCode(request.getSmsCode());
+//            dto.setMsgMedium(request.getPhone());
+//            Client client = ClientBuilder.newClient();
+//            WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCodeCheck");
+//            log.info("管家url:{}", webTarget.getUri());
+//            Response response = webTarget.request()
+//                    .header(PayrollDBConstant.LOGTOKEN, StringUtils.trimToEmpty(MDC.get(PayrollDBConstant.LOG_TOKEN)))
+//                    .post(Entity.entity(dto, MediaType.APPLICATION_JSON_TYPE));
+//            log.debug("{}", response.getStatus());
+//            if (response.getStatus() != 200) {
+//                ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);
+//                throw new ParamsIllegalException(new ErrorMsg(errorDTO.getErrorCode(), errorDTO.getErrorMsg()));
+//            }
+//            MsgCodeLogResponeDTO msgCodeLogResponeDTO = response.readEntity(MsgCodeLogResponeDTO.class);
+//            if (msgCodeLogResponeDTO.getMsgStatus() != 1) {
+//                throw new ParamsIllegalException(ErrorConstant.Error0004.getErrorMsg());
+//            }
+            String key ="inside_send"+request.getPhone();
+            String codeId = (String) redisTemplate.opsForValue().get(key);
+            core.dto.request.ReqPhone wageReqPhone = new core.dto.request.ReqPhone();
+            wageReqPhone.setCode(request.getSmsCode());
+            wageReqPhone.setCodeId(codeId);
+            wageReqPhone.setPhone(request.getPhone());
+            log.info("checkPhoneCode.wageReqPhone:[{}]", JacksonUtil.objectToJson(wageReqPhone));
+
+            String retStr = insideFeignController.checkPhoneCode(wageReqPhone);
+            if (!StringUtils.equals("0000", retStr)) {
+                throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
             }
 
             //保存redis

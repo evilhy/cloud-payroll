@@ -23,6 +23,9 @@ import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.TransferUtil;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.ids.client.feign.UnAuthFeignClient;
+import chain.ids.core.commons.dto.login.SmsDTO;
+import chain.ids.core.commons.dto.sms.SmsCodeSendDTO;
 import chain.payroll.client.feign.InsideFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.*;
@@ -38,6 +41,7 @@ import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -47,6 +51,7 @@ import javax.annotation.security.PermitAll;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Validated
@@ -69,6 +74,10 @@ public class InsideController {
     PaswordService paswordService;
     @Autowired
     EmployeeEncrytorService employeeEncrytorService;
+    @Autowired
+    UnAuthFeignClient unAuthFeignClient;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     /**
      * 发送短信验证码
@@ -165,15 +174,23 @@ public class InsideController {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("企业员工无手机号，短信发送失败"));
             }
             //需要加ip，所以直接调用inside发送短信，不调用cloud-wage-manager，上面的注释
-            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
-            dto.setSystemId(0);
-            dto.setCheckType(1);
-            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
-            dto.setMsgMedium(phone);
-            dto.setValidTime(120);
-            MsgCodeLogResponeDTO msgCodeLogResponeDTO = callInsideService.sendCode(dto, clientIp);
+//            MsgCodeLogRequestDTO dto = new MsgCodeLogRequestDTO();
+//            dto.setSystemId(0);
+//            dto.setCheckType(1);
+//            dto.setBusiType(MsgBuisTypeEnum.SMS_01.getCode());
+//            dto.setMsgMedium(phone);
+//            dto.setValidTime(120);
+//            MsgCodeLogResponeDTO msgCodeLogResponeDTO = callInsideService.sendCode(dto, clientIp);
+            SmsCodeSendDTO smsCodeSendDTO = new SmsCodeSendDTO();
+            smsCodeSendDTO.setPhone(phone);
+            smsCodeSendDTO.setSmsId("S004");
+            smsCodeSendDTO.setSysId("fxgj");
+            smsCodeSendDTO.setTimeOutMinute(2);
+            SmsDTO sendSmsCode = unAuthFeignClient.sendSmsCode(smsCodeSendDTO,"fxgj" );
+            String key ="inside_send"+phone;
+            redisTemplate.opsForValue().set(key,sendSmsCode.getCheckId(),2, TimeUnit.MINUTES);
             Res100302 res100302 = new Res100302();
-            res100302.setCodeId(msgCodeLogResponeDTO.getCodeId());
+            res100302.setCodeId(sendSmsCode.getCheckId());
             log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
             return res100302;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -251,6 +268,9 @@ public class InsideController {
             CacheReq100702 wageReq100702 = new CacheReq100702();
             BeanUtils.copyProperties(req100702, wageReq100702);
 
+            String key ="inside_send"+req100702.getPhone();
+            String codeId = (String) redisTemplate.opsForValue().get(key);
+            wageReq100702.setCodeId(codeId);
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
@@ -295,7 +315,9 @@ public class InsideController {
             //数字键盘密码，解密
             String password = paswordService.checkNumberPassword(pwd, wechatId);
             wageReq100701.setPwd(password);
-
+            String key ="inside_send"+req100701.getPhone();
+            String codeId = (String) redisTemplate.opsForValue().get(key);
+            wageReq100701.setCodeId(codeId);
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
@@ -464,9 +486,11 @@ public class InsideController {
             if (StringUtils.isBlank(phone)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("企业员工无手机号，短信验证失败"));
             }
+            String key ="inside_send"+phone;
+            String codeId = (String) redisTemplate.opsForValue().get(key);
             core.dto.request.ReqPhone wageReqPhone = new core.dto.request.ReqPhone();
             wageReqPhone.setCode(reqPhone.getCode());
-            wageReqPhone.setCodeId(reqPhone.getCodeId());
+            wageReqPhone.setCodeId(codeId);
             wageReqPhone.setPhone(phone);
             log.info("checkPhoneCode.wageReqPhone:[{}]", JacksonUtil.objectToJson(wageReqPhone));
 
@@ -499,6 +523,9 @@ public class InsideController {
             CacheReqPhone wageReqPhone = new CacheReqPhone();
             BeanUtils.copyProperties(reqPhone, wageReqPhone);
 
+            String key ="inside_send"+reqPhone.getPhone();
+            String codeId = (String) redisTemplate.opsForValue().get(key);
+            wageReqPhone.setCodeId(codeId);
             CacheUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
             CacheUpdPhoneRequestDTO cacheUpdPhoneRequestDTO = new CacheUpdPhoneRequestDTO();
             cacheUpdPhoneRequestDTO.setCacheReqPhone(wageReqPhone);
