@@ -13,6 +13,10 @@
 |`+String+`
 |证件类型 1：身份证、 2：外国护照
 
+|`+idTypeVal+`
+|`+String+`
+|证件类型 描述
+
 |`+idNumber+`
 |`+String+`
 |证件号码
@@ -44,5 +48,57 @@
 |`+signStatusVal+`
 |`+String+`
 |是否完成签约描述
+
+|`+isSign+`
+|`+Integer+`
+|是否需要签约(0:不需要签约、1:需要签约)
+
+|`+isSignVal+`
+|`+String+`
+|是否需要签约 描述
+
+|`+salt+`
+|`+String+`
+|salt
+
+|`+passwd+`
+|`+String+`
+|password
+
+|`+provinceCode+`
+|`+String+`
+|省、自治区、直辖市
+
+|`+provinceName+`
+|`+String+`
+|省、自治区、直辖市
+
+|`+cityCode+`
+|`+String+`
+|地级市、地区、自治州、盟
+
+|`+cityName+`
+|`+String+`
+|地级市、地区、自治州、盟
+
+|`+areaCode+`
+|`+String+`
+|市辖区、县级市、县
+
+|`+areaName+`
+|`+String+`
+|市辖区、县级市、县
+
+|`+streetCode+`
+|`+String+`
+|街道、镇、乡
+
+|`+streetName+`
+|`+String+`
+|街道、镇、乡
+
+|`+address+`
+|`+String+`
+|详细地址
 
 |===
