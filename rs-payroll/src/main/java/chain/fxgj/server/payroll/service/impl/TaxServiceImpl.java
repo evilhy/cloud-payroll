@@ -85,6 +85,7 @@ public class TaxServiceImpl implements TaxService {
         paramMap.put("idCardImg2", req.getIdCardImg2());
         paramMap.put("fwOrg", req.getFwOrg());
         paramMap.put("ygOrg", req.getYgOrg());
+        paramMap.put("address", req.getAddress());
         //h5
         String result = taxHttpClientService.send(paramMap, url);
         if (StringUtils.isNotBlank(result)) {

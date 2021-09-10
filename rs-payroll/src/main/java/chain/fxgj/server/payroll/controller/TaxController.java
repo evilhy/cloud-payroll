@@ -270,15 +270,15 @@ public class TaxController {
             File file = new File(filePath);
             String compressionPath = filePath;
             if (file.length() > 1024 * 120) {
-                //创建图片压缩目录
-                String path = file.getPath();
-                String name = file.getName();
-                String replace = path.replace(name, "min/");
-                File file1 = new File(replace);
-                if (!file1.exists()){
-                    file1.mkdirs();
-                }
-                compressionPath = replace + name;
+//                //创建图片压缩目录
+//                String path = file.getPath();
+//                String name = file.getName();
+//                String replace = path.replace(name, "min/");
+//                File file1 = new File(replace);
+//                if (!file1.exists()){
+//                    file1.mkdirs();
+//                }
+//                compressionPath = replace + name;
                 ImgPicUtils.compression(filePath, compressionPath);
             }
 
