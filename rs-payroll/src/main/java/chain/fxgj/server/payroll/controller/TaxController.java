@@ -266,10 +266,10 @@ public class TaxController {
             }).subscribe();
 
             //图片压缩
-//            File file = new File(filePath);
-//            if (file.length() > 1024 * 100) {
-//                ImgPicUtils.compression(filePath, filePath);
-//            }
+            File file = new File(filePath);
+            if (file.length() > 1024 * 110) {
+                ImgPicUtils.compression(filePath, filePath);
+            }
 
             //身份证照片
             String base64 = Base64Demo.ImageToBase64(filePath);
