@@ -88,6 +88,8 @@ public class TaxServiceImpl implements TaxService {
         paramMap.put("fwOrg", req.getFwOrg());
         paramMap.put("ygOrg", req.getYgOrg());
         paramMap.put("address", req.getAddress());
+
+        log.info("=====> paramMap length:{}", paramMap.toString().length()/1024);
         //h5
         String result = taxHttpClientService.send(paramMap, url);
         if (StringUtils.isNotBlank(result)) {
