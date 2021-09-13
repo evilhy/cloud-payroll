@@ -75,6 +75,8 @@ public class TaxServiceImpl implements TaxService {
     public SealUserRes user(SealUserReq req) throws Exception {
         log.info("=====> 推送用户实名认证信息至零工平台 req:{}", JacksonUtil.objectToJson(req));
         String url = "/sys/user";
+        log.info("=====> idCardImg1 length:{}", req.getIdCardImg1().length()/1024);
+        log.info("=====> idCardImg2 length:{}", req.getIdCardImg2().length()/1024);
         Map<String, Object> paramMap = new HashMap();
         paramMap.put("transUserId", req.getTransUserId());
         paramMap.put("userName", req.getUserName());

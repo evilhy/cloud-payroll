@@ -373,6 +373,8 @@ public class TaxController {
             log.info("=====> /tax/attest 身份认证 userPrincipal：{}，req：{}", JacksonUtil.objectToJson(userPrincipal), JacksonUtil.objectToJson(req));
             Optional.ofNullable(req.getIdCardFront()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证正面照不能为空")));
             Optional.ofNullable(req.getIdCardNegative()).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证反面照不能为空")));
+            log.info("=====> idCardFron length:{}", req.getIdCardFront().length()/1024);
+            log.info("=====> idCardNegative length:{}", req.getIdCardNegative().length()/1024);
 
             //查询登陆信息
             EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId, userPrincipal.getName());
