@@ -284,10 +284,13 @@ public class TaxController {
 
             //身份证照片
             String base64 = ImageBase64Utils.imageToBase64(compressionPath);
-//            String base64 = ImageBase64Utils.getImageStrFromUrl(filePath);
             if (StringUtils.isBlank(base64)) {
-                log.info("=====> 图片上传失败，请重新上传。compressionPath：{}", compressionPath);
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片转换失败，请重新上传"));
+                //第一次转失败，重新转换
+                base64 = ImageBase64Utils.imageToBase64(compressionPath);
+                if (StringUtils.isBlank(base64)){
+                    log.info("=====> 图片上传失败，请重新上传。compressionPath：{}", compressionPath);
+                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片转换失败，请重新上传"));
+                }
             }
             String imgBase = "data:image/jpg;base64," + base64;
             log.info("图片转base64:{}" + imgBase);
