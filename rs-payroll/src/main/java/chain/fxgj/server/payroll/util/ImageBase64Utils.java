@@ -5,6 +5,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Base64;
 
 /**
  * 图片base64互转
@@ -135,6 +136,31 @@ public class ImageBase64Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getImageStrFromUrl(String path) {
+        byte[] data = null;
+        try {
+//            URL url = new URL(imgURL);
+//            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+//            conn.setRequestMethod("GET");
+//            conn.setConnectTimeout(5 * 1000);
+            InputStream inStream = new FileInputStream(path);;
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            //每次读取的字符串长度，如果为-1，代表全部读取完毕
+            int len = 0;
+            while ((len = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, len);
+            }
+            inStream.close();
+            data = outStream.toByteArray();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String base64Image = Base64.getEncoder().encodeToString(data);
+        return base64Image;
     }
 
     /**
