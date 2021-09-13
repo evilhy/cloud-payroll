@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MerchantAccessDTO {
     /**
      * 接口调用凭证
@@ -75,4 +75,17 @@ public class MerchantAccessDTO {
         String signature = Sha1.SHA1(signatureMap);
         return signature;
     }
+
+    public static String signatureSHA(String accessUrl, String version, String appid, String clientSn, String timestamp) throws DigestException {
+        LinkedHashMap<String, Object> signatureMap = new LinkedHashMap<>();
+        signatureMap.put("accessUrl", accessUrl);
+        signatureMap.put("version", version);
+        signatureMap.put("appid", appid);
+        signatureMap.put("timestamp", timestamp);
+        signatureMap.put("clientSn", clientSn);
+        String signature = Sha1.SHA1(signatureMap);
+        return signature;
+    }
+
+
 }
