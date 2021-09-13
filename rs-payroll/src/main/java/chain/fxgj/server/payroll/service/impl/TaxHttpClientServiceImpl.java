@@ -82,7 +82,7 @@ public class TaxHttpClientServiceImpl implements TaxHttpClientService {
         if (null == response) {
             log.info("=====> 发送交易请求失败");
         }
-        log.info("=====> 报税平台接口 返回信息 ：{}", JacksonUtil.objectToJson(response));
+//        log.info("=====> 报税平台接口 返回信息 ：{}", JacksonUtil.objectToJson(response));
         if (null != response && null != response.getStatusLine() && 200 != response.getStatusLine().getStatusCode()) {
             log.info("=====> 发送交易请求失败，网络异常 code:{}，msg：{}", response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format(response.getStatusLine().getReasonPhrase()));
