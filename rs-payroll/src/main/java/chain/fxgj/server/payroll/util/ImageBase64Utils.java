@@ -141,11 +141,13 @@ public class ImageBase64Utils {
      * 测试
      */
     public static void main(String[] args) throws Exception {
-        File fromFile = new File("D:/tmp/sign.jpg");
-        File toFile = new File("D:/tmp/sign1.jpg");
-        resizePng(fromFile, toFile, 120, 50, true);
+//        File fromFile = new File("D:/tmp/sign.jpg");
+//        File toFile = new File("D:/tmp/sign1.jpg");
+//        resizePng(fromFile, toFile, 120, 50, true);
 
         //根据实际图片大小修改 水印图片的大小 动态适配
         // resizePng(fromFile, toFile, (int) (1244 * 0.71),  (int) (1684 * 0.18), false);
+        String base64 = imageToBase64("D:/demo/2.png");
+        System.out.println("data:image/jpg;base64," + base64);
     }
 }

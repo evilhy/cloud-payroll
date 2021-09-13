@@ -534,4 +534,28 @@ public class TaxController {
                     .build();
         }).subscribeOn(Schedulers.boundedElastic());
     }
+
+    /**
+     * 签约记录查看
+     *
+     * @return
+     */
+    @GetMapping("/test")
+    @TrackLog
+    public Mono<String> test(@RequestParam("fileName") String fileName) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            String toPath = "D://demo/test.png";
+            //图片压缩
+//            File file = new File(filePath);
+//            if (file.length() > 1024 * 90) {
+            ImgPicUtils.compression("D://demo/" + fileName,toPath );
+//            }
+
+            //身份证照片
+            String base64 = ImageBase64Utils.imageToBase64(toPath);
+            return  "data:image/jpg;base64," + base64;
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
 }
