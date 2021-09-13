@@ -278,10 +278,12 @@ public class TaxController {
                 log.info("=====> 图片上传失败，请重新上传。filePath：{}", filePath);
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片上传失败，请重新上传"));
             }
+            String imgBase = "data:image/jpg;base64," + base64;
+            log.info("图片转base64:{}"+base64);
 
             return UploadDto.builder()
                     .filepath(filePath)
-                    .imgBase("data:image/jpg;base64," + base64)
+                    .imgBase(imgBase)
                     .build();
         }).subscribeOn(Schedulers.elastic());
     }
