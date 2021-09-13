@@ -145,7 +145,7 @@ public class ImageBase64Utils {
 //            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 //            conn.setRequestMethod("GET");
 //            conn.setConnectTimeout(5 * 1000);
-            InputStream inStream = new FileInputStream(path);;
+            InputStream inStream = new FileInputStream(path);
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
             //每次读取的字符串长度，如果为-1，代表全部读取完毕
