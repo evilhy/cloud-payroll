@@ -287,13 +287,13 @@ public class TaxController {
 //            String base64 = ImageBase64Utils.getImageStrFromUrl(filePath);
             if (StringUtils.isBlank(base64)) {
                 log.info("=====> 图片上传失败，请重新上传。compressionPath：{}", compressionPath);
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片上传失败，请重新上传"));
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片转换失败，请重新上传"));
             }
             String imgBase = "data:image/jpg;base64," + base64;
             log.info("图片转base64:{}" + imgBase);
 
             return UploadDto.builder()
-                    .filepath(filePath)
+                    .filepath(compressionPath)
                     .imgBase(imgBase)
                     .build();
         }).subscribeOn(Schedulers.elastic());
