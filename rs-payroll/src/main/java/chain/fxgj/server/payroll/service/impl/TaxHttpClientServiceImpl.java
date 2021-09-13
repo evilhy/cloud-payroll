@@ -79,10 +79,10 @@ public class TaxHttpClientServiceImpl implements TaxHttpClientService {
         int length = md5Src.toString().getBytes().length;
         log.info("=====> 报税平台接口 请求参数大小 :{} byte, ：{} KB", length, length / 1024);
         HttpResponse response = request(taxProperties.getRequestUrl() + url, JacksonUtil.objectToJson(paramMap), taxProperties.getChannel(), timestamp, cipherKey, cipherMac);
-//        log.info("=====> 报税平台接口 返回信息 ：{}", JacksonUtil.objectToJson(request));
         if (null == response) {
             log.info("=====> 发送交易请求失败");
         }
+//        log.info("=====> 报税平台接口 返回信息 ：{}", JacksonUtil.objectToJson(response));
         if (null != response && null != response.getStatusLine() && 200 != response.getStatusLine().getStatusCode()) {
             log.info("=====> 发送交易请求失败，网络异常 code:{}，msg：{}", response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format(response.getStatusLine().getReasonPhrase()));

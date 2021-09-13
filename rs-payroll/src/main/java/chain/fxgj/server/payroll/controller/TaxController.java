@@ -7,7 +7,6 @@ import chain.fxgj.core.common.config.properties.PayrollProperties;
 import chain.fxgj.server.payroll.dto.tax.*;
 import chain.fxgj.server.payroll.service.EmployeeWechatService;
 import chain.fxgj.server.payroll.service.TaxService;
-import chain.fxgj.server.payroll.util.Base64Demo;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.ImageBase64Utils;
 import chain.fxgj.server.payroll.util.ImgPicUtils;
@@ -236,7 +235,7 @@ public class TaxController {
      */
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @TrackLog
-    public Mono<UploadDto> upload(@NotNull @RequestPart("file") FilePart uploadfile) throws BusiVerifyException {
+    public Mono<UploadDto> upload(@NotNull @RequestPart("file") FilePart uploadfile) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -266,23 +265,35 @@ public class TaxController {
             }).subscribe();
 
             //图片压缩
-//            File file = new File(filePath);
-//            if (file.length() > 1024 * 90) {
-            ImgPicUtils.compression(filePath, filePath);
-//            }
+            File file = new File(filePath);
+            log.info("=====> 图片原文件大小：{}",  file.length()/1024);
+            String compressionPath = filePath;
+            if (file.length() > 1024 * 90) {
+                //创建图片压缩目录
+                String path = file.getPath();
+                String name = file.getName();
+                String replace = path.replace(name, "min/");
+                File file1 = new File(replace);
+                if (!file1.exists()){
+                    file1.mkdirs();
+                }
+                compressionPath = replace + name;
+                ImgPicUtils.compression(filePath, compressionPath);
+            }
+            log.info("=====> 图片文件压缩后大小：{}", new File(compressionPath).length()/1024);
 
             //身份证照片
-//            String base64 = ImageBase64Utils.imageToBase64(filePath);
-            String base64 = ImageBase64Utils.getImageStrFromUrl(filePath);
+            String base64 = ImageBase64Utils.imageToBase64(compressionPath);
+//            String base64 = ImageBase64Utils.getImageStrFromUrl(filePath);
             if (StringUtils.isBlank(base64)) {
-                log.info("=====> 图片上传失败，请重新上传。filePath：{}", filePath);
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片上传失败，请重新上传"));
+                log.info("=====> 图片上传失败，请重新上传。compressionPath：{}", compressionPath);
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片转换失败，请重新上传"));
             }
             String imgBase = "data:image/jpg;base64," + base64;
-            log.info("图片转base64:{}"+base64);
+            log.info("图片转base64:{}" + imgBase);
 
             return UploadDto.builder()
-                    .filepath(filePath)
+                    .filepath(compressionPath)
                     .imgBase(imgBase)
                     .build();
         }).subscribeOn(Schedulers.elastic());
@@ -416,7 +427,7 @@ public class TaxController {
             StringBuilder append = sb.append(req.getProvinceName())
                     .append(req.getCityName())
                     .append(req.getAreaName())
-                    .append(req.getStreetName())
+//                    .append(req.getStreetName())
                     .append(req.getAddress());
             //验证身份信息
             SealUserReq userReq = SealUserReq.builder()
