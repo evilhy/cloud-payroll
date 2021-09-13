@@ -41,7 +41,8 @@ public class ImageBase64Utils {
                 }
             }
         }
-        return org.apache.commons.codec.binary.Base64.encodeBase64String(data);// 返回Base64编码过的字节数组字符串
+//        return org.apache.commons.codec.binary.Base64.encodeBase64String(data);// 返回Base64编码过的字节数组字符串
+        return new String(org.apache.commons.codec.binary.Base64.encodeBase64(data));// 返回Base64编码过的字节数组字符串
     }
 
     /**
