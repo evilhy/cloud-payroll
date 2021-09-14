@@ -85,8 +85,8 @@ public class TaxServiceImpl implements TaxService {
         paramMap.put("idCardNo", req.getIdCardNo());
         paramMap.put("idCardImg1", req.getIdCardImg1());
         paramMap.put("idCardImg2", req.getIdCardImg2());
-//        paramMap.put("fwOrg", req.getFwOrg());
-//        paramMap.put("ygOrg", req.getYgOrg());
+        paramMap.put("fwOrg", req.getFwOrg());
+        paramMap.put("ygOrg", req.getYgOrg());
         paramMap.put("address", req.getAddress());
 
         log.info("=====> paramMap length:{}", paramMap.toString().length()/1024);
