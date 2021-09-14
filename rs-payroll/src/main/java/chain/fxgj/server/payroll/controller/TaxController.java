@@ -184,7 +184,7 @@ public class TaxController {
                         .phoneNo(employeeTaxSignDTO.getPhone())
                         .transUserId(employeeTaxSignDTO.getId())
                         .userName(employeeTaxSignDTO.getUserName())
-//                    .ygOrg()
+                        .ygOrg("北京依依亮洁商贸有限公司")
                         .build();
 
                 try {
@@ -332,7 +332,7 @@ public class TaxController {
                     .phoneNo(employeeTaxSignDTO.getPhone())
                     .transUserId(employeeTaxSignDTO.getId())
                     .userName(employeeTaxSignDTO.getUserName())
-//                    .ygOrg()
+                    .ygOrg("北京依依亮洁商贸有限公司")
                     .build();
             WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
 
