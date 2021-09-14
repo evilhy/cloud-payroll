@@ -182,7 +182,8 @@ public class TaxController {
                 //是否签约
                 //验证身份信息成功，进入签约
                 WalletH5Req walletH5Req = WalletH5Req.builder()
-                        .fwOrg(employeeTaxSignDTO.getEntName())
+//                        .fwOrg(employeeTaxSignDTO.getEntName())
+                        .fwOrg("人力资源生产验证测试")
                         .idCardNo(employeeTaxSignDTO.getIdNumber())
                         .idType("SFZ")
                         .phoneNo(employeeTaxSignDTO.getPhone())
@@ -330,7 +331,8 @@ public class TaxController {
 
             //验证身份信息成功，进入签约
             WalletH5Req walletH5Req = WalletH5Req.builder()
-                    .fwOrg(employeeTaxSignDTO.getEntName())
+//                    .fwOrg(employeeTaxSignDTO.getEntName())
+                    .fwOrg("人力资源生产验证测试")
                     .idCardNo(employeeTaxSignDTO.getIdNumber())
                     .idType("SFZ")
                     .phoneNo(employeeTaxSignDTO.getPhone())
