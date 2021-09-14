@@ -4,6 +4,7 @@ import chain.css.exception.BusiVerifyException;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.core.common.config.properties.PayrollProperties;
+import chain.fxgj.feign.client.EnterpriseFeignService;
 import chain.fxgj.server.payroll.dto.tax.*;
 import chain.fxgj.server.payroll.service.EmployeeWechatService;
 import chain.fxgj.server.payroll.service.TaxService;
@@ -22,6 +23,7 @@ import chain.utils.fxgj.constant.DictEnums.AttestStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.CertTypeEnum;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
+import chain.wage.manager.core.dto.response.enterprise.EntErpriseInfoDTO;
 import core.dto.ErrorConstant;
 import core.dto.request.employeeTaxSign.CodingDTO;
 import core.dto.request.employeeTaxSign.EmployeeTaxSignQueryReq;
@@ -81,6 +83,8 @@ public class TaxController {
     EnterpriseAttachFeignService enterpriseAttachFeignService;
     @Autowired
     GroupAttachInfoServiceFeign groupAttachInfoServiceFeign;
+    @Autowired
+    EnterpriseFeignService enterpriseFeignService;
 
     @Autowired
     PayrollProperties payrollProperties;
@@ -397,13 +401,16 @@ public class TaxController {
                 transUserId = employeeTaxSignDTO.getId();
             }
 
+            //企业信息
+            EntErpriseInfoDTO ent = getEnt(userPrincipal.getEntId());
+
             //保存
             EmployeeTaxSignSaveReq signSaveReq = EmployeeTaxSignSaveReq.builder()
                     .id(transUserId)
                     .certTypeEnum(CertTypeEnum.PERSONAL_1)
                     .delStatusEnum(DelStatusEnum.normal)
                     .entId(entId)
-                    .entName(userPrincipal.getEntName())
+                    .entName(ent.getEntName())
                     .idNumber(req.getIdNumber())
                     .phone(req.getPhone())
                     .signStatus(IsStatusEnum.NO)
@@ -431,9 +438,10 @@ public class TaxController {
                     .append(req.getAreaName())
 //                    .append(req.getStreetName())
                     .append(req.getAddress());
+
             //验证身份信息
             SealUserReq userReq = SealUserReq.builder()
-                    .fwOrg(userPrincipal.getEntName())
+                    .fwOrg(ent.getEntName())
                     .idCardNo(req.getIdNumber())
                     .idType("SFZ")
                     .phoneNo(req.getPhone())
@@ -442,7 +450,7 @@ public class TaxController {
                     .idCardImg1("data:image/jpg;base64," + idCardFront)
                     .idCardImg2("data:image/jpg;base64," + idCardNegative)
                     .address(append.toString())
-//                    .ygOrg()
+                    .ygOrg("北京依依亮洁商贸有限公司")
                     .build();
             try {
                 SealUserRes userResult = taxService.user(userReq);
@@ -549,5 +557,13 @@ public class TaxController {
                     .url(sealH5)
                     .build();
         }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    public  EntErpriseInfoDTO getEnt(String entId) {
+        EntErpriseInfoDTO erpriseInfoDTO = enterpriseFeignService.findById(entId);
+        if (null == erpriseInfoDTO){
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("企业信息不存在"));
+        }
+        return erpriseInfoDTO;
     }
 }
