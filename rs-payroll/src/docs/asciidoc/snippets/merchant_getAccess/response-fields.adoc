@@ -1,0 +1,18 @@
+|===
+|Path|Type|Description
+
+|`+accessToken+`
+|`+String+`
+|接口调用凭证
+ 每次请求获取凭证，用完后立即失效
+
+|`+expiresIn+`
+|`+Integer+`
+|凭证超时时间
+ accessToken接口调用凭证超时时间，单位（秒
+
+|`+accessUrl+`
+|`+String+`
+|访问地址
+
+|===

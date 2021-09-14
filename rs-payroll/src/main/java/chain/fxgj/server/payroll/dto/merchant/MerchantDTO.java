@@ -122,6 +122,8 @@ public class MerchantDTO {
 
         signatureMap.put("version", merchantHeadDTO.getVersion());
         signatureMap.put("appid", merchantHeadDTO.getAppid());
+        signatureMap.put("timestamp", merchantHeadDTO.getAppid());
+        signatureMap.put("clientSn", merchantHeadDTO.getAppid());
         log.info("signatureMap:[{}]", JacksonUtil.objectToJson(signatureMap));
         String signature = null;
         try {
@@ -132,6 +134,9 @@ public class MerchantDTO {
         }
         return signature;
     }
+
+
+
 
 // 切库注释
 //    public EmployeeWechatInfo conver() {
@@ -150,4 +155,35 @@ public class MerchantDTO {
 //        return employeeWechatInfo;
 //
 //    }
+
+    /**
+     *
+     * @param merchantDTO
+     * @param merchantHeadDTO
+     * @return
+     */
+    public static String signatureClinet(MerchantDTO merchantDTO, MerchantHeadDTO merchantHeadDTO) {
+        LinkedHashMap<String, Object> signatureMap = new LinkedHashMap<>();
+        signatureMap.put("name", merchantDTO.getName());
+        signatureMap.put("idType", merchantDTO.getIdType());
+        signatureMap.put("idNumber", merchantDTO.getIdNumber());
+        signatureMap.put("phone", merchantDTO.getPhone());
+        signatureMap.put("uid", merchantDTO.getUid());
+
+        signatureMap.put("version", merchantHeadDTO.getVersion());
+        signatureMap.put("appid", merchantHeadDTO.getAppid());
+        log.info("signatureMap:[{}]", JacksonUtil.objectToJson(signatureMap));
+        String signature = null;
+        try {
+            signature = Sha1.SHA1(signatureMap);
+        } catch (DigestException e) {
+            e.printStackTrace();
+            throw new ParamsIllegalException(ErrorConstant.MERCHANT_05.getErrorMsg());
+        }
+        return signature;
+    }
+
+
+
+
 }

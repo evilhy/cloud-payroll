@@ -122,7 +122,7 @@ dependencies {
     compile("chain:ids-client:1.1.10")
     compile("chain:pub-client:1.1.7")
     compile('chain:wage-client:2.0.1')
-    compile('chain:payroll-client:2.0.3')
+    compile('chain:payroll-client:2.0.4')
     
     compile 'chain.wisales:wisales-client:1.0.2.75'
     compile('chain.fxgj:fxgj-ent-client:1.0.24')

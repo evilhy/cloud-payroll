@@ -57,3 +57,7 @@ include::chapter/fund.adoc[]
 include::chapter/bill.adoc[]
 
 include::chapter/tax.adoc[]
+
+include::chapter/region.adoc[]
+
+

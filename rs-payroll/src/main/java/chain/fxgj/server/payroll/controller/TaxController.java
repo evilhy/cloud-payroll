@@ -23,6 +23,7 @@ import chain.utils.fxgj.constant.DictEnums.CertTypeEnum;
 import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
 import core.dto.ErrorConstant;
+import core.dto.request.employeeTaxSign.CodingDTO;
 import core.dto.request.employeeTaxSign.EmployeeTaxSignQueryReq;
 import core.dto.request.employeeTaxSign.EmployeeTaxSignSaveReq;
 import core.dto.response.employeeTaxSign.EmployeeTaxSignDTO;
@@ -132,6 +133,15 @@ public class TaxController {
             if (null != list && list.size() > 0) {
                 employeeTaxSignDTO = list.get(0);
                 signingDetail.setTaxSignId(employeeTaxSignDTO.getId());
+                signingDetail.setProvinceCode(null == employeeTaxSignDTO.getProvince() ? null : employeeTaxSignDTO.getProvince().getCode());
+                signingDetail.setProvinceName(null == employeeTaxSignDTO.getProvince() ? null : employeeTaxSignDTO.getProvince().getValue());
+                signingDetail.setCityCode(null == employeeTaxSignDTO.getCity() ? null : employeeTaxSignDTO.getCity().getCode());
+                signingDetail.setCityName(null == employeeTaxSignDTO.getCity() ? null : employeeTaxSignDTO.getCity().getValue());
+                signingDetail.setAreaCode(null == employeeTaxSignDTO.getArea() ? null : employeeTaxSignDTO.getArea().getCode());
+                signingDetail.setAreaName(null == employeeTaxSignDTO.getArea() ? null : employeeTaxSignDTO.getArea().getValue());
+                signingDetail.setStreetCode(null == employeeTaxSignDTO.getStreet() ? null : employeeTaxSignDTO.getStreet().getCode());
+                signingDetail.setStreetName(null == employeeTaxSignDTO.getStreet() ? null : employeeTaxSignDTO.getStreet().getValue());
+                signingDetail.setAddress(employeeTaxSignDTO.getAddress());
                 if (AttestStatusEnum.FAIL != employeeTaxSignDTO.getAttestStatus()) {
                     //正面照
                     if (StringUtils.isNotBlank(employeeTaxSignDTO.getIdCardFront())) {
@@ -174,7 +184,7 @@ public class TaxController {
                         .phoneNo(employeeTaxSignDTO.getPhone())
                         .transUserId(employeeTaxSignDTO.getId())
                         .userName(employeeTaxSignDTO.getUserName())
-//                    .ygOrg()
+                        .ygOrg("北京依依亮洁商贸有限公司")
                         .build();
 
                 try {
@@ -199,15 +209,15 @@ public class TaxController {
 
             //查询台站所属机构
             WithdrawalLedgerDTO withdrawalLedgerDTO = withdrawalLedgerInfoServiceFeign.findById(withdrawalLedgerId);
-            if (null == withdrawalLedgerDTO){
+            if (null == withdrawalLedgerDTO) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("提现台账不存在"));
             }
             String groupId = withdrawalLedgerDTO.getGroupId();
             //查询是否需要签约
             GroupAttachInfoDTO attach = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
             IsStatusEnum isStatusEnum = IsStatusEnum.NO;
-            if (null != attach ){
-                isStatusEnum = null == attach.getIsSign() ? IsStatusEnum.NO  : attach.getIsSign();
+            if (null != attach) {
+                isStatusEnum = null == attach.getIsSign() ? IsStatusEnum.NO : attach.getIsSign();
             }
             signingDetail.setIsSign(isStatusEnum.getCode());
             signingDetail.setIsSignVal(isStatusEnum.getDesc());
@@ -225,7 +235,7 @@ public class TaxController {
      */
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @TrackLog
-    public Mono<UploadDto> upload(@NotNull @RequestPart("file") FilePart uploadfile) throws BusiVerifyException {
+    public Mono<UploadDto> upload(@NotNull @RequestPart("file") FilePart uploadfile) throws Exception {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -256,20 +266,37 @@ public class TaxController {
 
             //图片压缩
             File file = new File(filePath);
-            if (file.length() > 1024 * 120) {
-                ImgPicUtils.compression(filePath, filePath);
+            log.info("=====> 图片原文件大小：{}", file.length() / 1024);
+//            if (file.length() > 1024 * 90) {
+            //创建图片压缩目录
+            String path = file.getPath();
+            String name = file.getName();
+            String replace = path.replace(name, "min/");
+            File file1 = new File(replace);
+            if (!file1.exists()) {
+                file1.mkdirs();
             }
+            String compressionPath = replace + name;
+            ImgPicUtils.compression(filePath, compressionPath);
+//            }
+            log.info("=====> 图片文件压缩后大小：{}", new File(compressionPath).length() / 1024);
 
             //身份证照片
-            String base64 = ImageBase64Utils.imageToBase64(filePath);
+            String base64 = ImageBase64Utils.imageToBase64(compressionPath);
             if (StringUtils.isBlank(base64)) {
-                log.info("=====> 图片上传失败，请重新上传。filePath：{}", filePath);
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片上传失败，请重新上传"));
+                //第一次转失败，重新转换
+                base64 = ImageBase64Utils.imageToBase64(compressionPath);
+                if (StringUtils.isBlank(base64)) {
+                    log.info("=====> 图片上传失败，请重新上传。compressionPath：{}", compressionPath);
+                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("图片转换失败，请重新上传"));
+                }
             }
+            String imgBase = "data:image/jpg;base64," + base64;
+            log.info("图片转base64:{}" + imgBase);
 
             return UploadDto.builder()
-                    .filepath(filePath)
-                    .imgBase("data:image/jpg;base64," + base64)
+                    .filepath(compressionPath)
+                    .imgBase(imgBase)
                     .build();
         }).subscribeOn(Schedulers.elastic());
     }
@@ -305,7 +332,7 @@ public class TaxController {
                     .phoneNo(employeeTaxSignDTO.getPhone())
                     .transUserId(employeeTaxSignDTO.getId())
                     .userName(employeeTaxSignDTO.getUserName())
-//                    .ygOrg()
+                    .ygOrg("北京依依亮洁商贸有限公司")
                     .build();
             WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
 
@@ -385,6 +412,11 @@ public class TaxController {
                     .attestFailMsg("")
                     .idCardFront(req.getIdCardFront())
                     .idCardNegative(req.getIdCardNegative())
+                    .province(StringUtils.isNotBlank(req.getProvinceCode()) || StringUtils.isNotBlank(req.getProvinceName()) ? CodingDTO.builder().code(req.getProvinceCode()).value(req.getProvinceName()).build() : null)
+                    .city(StringUtils.isNotBlank(req.getCityCode()) || StringUtils.isNotBlank(req.getCityName()) ? CodingDTO.builder().code(req.getProvinceCode()).value(req.getCityName()).build() : null)
+                    .area(StringUtils.isNotBlank(req.getAreaCode()) || StringUtils.isNotBlank(req.getAreaName()) ? CodingDTO.builder().code(req.getProvinceCode()).value(req.getAreaName()).build() : null)
+                    .street(StringUtils.isNotBlank(req.getStreetCode()) || StringUtils.isNotBlank(req.getStreetName()) ? CodingDTO.builder().code(req.getProvinceCode()).value(req.getStreetName()).build() : null)
+                    .address(req.getAddress())
                     .build();
             EmployeeTaxSignDTO taxSignDTO = employeeTaxSignFeignService.save(signSaveReq);
             transUserId = taxSignDTO.getId();
@@ -393,6 +425,12 @@ public class TaxController {
             String idCardFront = ImageBase64Utils.imageToBase64(req.getIdCardFront());
             String idCardNegative = ImageBase64Utils.imageToBase64(req.getIdCardNegative());
 
+            StringBuilder sb = new StringBuilder();
+            StringBuilder append = sb.append(req.getProvinceName())
+                    .append(req.getCityName())
+                    .append(req.getAreaName())
+//                    .append(req.getStreetName())
+                    .append(req.getAddress());
             //验证身份信息
             SealUserReq userReq = SealUserReq.builder()
                     .fwOrg(userPrincipal.getEntName())
@@ -403,6 +441,7 @@ public class TaxController {
                     .transUserId(transUserId)
                     .idCardImg1("data:image/jpg;base64," + idCardFront)
                     .idCardImg2("data:image/jpg;base64," + idCardNegative)
+                    .address(append.toString())
 //                    .ygOrg()
                     .build();
             try {
@@ -509,6 +548,47 @@ public class TaxController {
             return H5UrlDto.builder()
                     .url(sealH5)
                     .build();
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    /**
+     * 签约记录查看
+     *
+     * @return
+     */
+    @GetMapping("/test")
+    @TrackLog
+    public Mono<String> test(@RequestParam("fileName") String fileName) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+//            String toPath = "D://demo/test.png";
+//            //图片压缩
+////            File file = new File(filePath);
+////            if (file.length() > 1024 * 90) {
+//            ImgPicUtils.compression("D://demo/" + fileName,toPath );
+////            }
+//
+//            //身份证照片
+//            String base64 = ImageBase64Utils.imageToBase64(toPath);
+//
+
+            String fileBase = "/webserver/www/upload/sign/20210913/";
+            String name1 = fileBase + "IDCARD-13734305793598492985D7C7090-620A-40EE-A09C-95B71FEF6017.png";
+            String name2 = fileBase + "1.png";
+
+
+            //图片压缩
+            // File file = new File(filePath);
+            //if (file.length() > 1024 * 90) {
+            ImgPicUtils.compression(name1, name2);
+            //}
+
+            //身份证照片
+            String base64 = ImageBase64Utils.imageToBase64(name2);
+            log.info("data:image/jpg;base64,{}", base64);
+
+            return "data:image/jpg;base64," + base64;
         }).subscribeOn(Schedulers.boundedElastic());
     }
 }

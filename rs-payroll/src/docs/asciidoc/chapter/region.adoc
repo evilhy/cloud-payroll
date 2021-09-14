@@ -1,0 +1,21 @@
+:snippets: ../snippets
+== 地区设置
+=== 地区查询字典
+==== 接口定义
+* Url path:
++
+/password/queryHandPassword
+* Part Parameters:
++
+include::{snippets}/region/region_dictionary/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/region/region_dictionary/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/region/region_dictionary/httpie-request.adoc[]
+* Response:
++
+include::{snippets}/region/region_dictionary/http-response.adoc[]
