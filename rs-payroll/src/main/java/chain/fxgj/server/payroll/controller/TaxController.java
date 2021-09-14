@@ -550,45 +550,4 @@ public class TaxController {
                     .build();
         }).subscribeOn(Schedulers.boundedElastic());
     }
-
-    /**
-     * 签约记录查看
-     *
-     * @return
-     */
-    @GetMapping("/test")
-    @TrackLog
-    public Mono<String> test(@RequestParam("fileName") String fileName) {
-        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-        return Mono.fromCallable(() -> {
-            MDC.setContextMap(mdcContext);
-//            String toPath = "D://demo/test.png";
-//            //图片压缩
-////            File file = new File(filePath);
-////            if (file.length() > 1024 * 90) {
-//            ImgPicUtils.compression("D://demo/" + fileName,toPath );
-////            }
-//
-//            //身份证照片
-//            String base64 = ImageBase64Utils.imageToBase64(toPath);
-//
-
-            String fileBase = "/webserver/www/upload/sign/20210913/";
-            String name1 = fileBase + "IDCARD-13734305793598492985D7C7090-620A-40EE-A09C-95B71FEF6017.png";
-            String name2 = fileBase + "1.png";
-
-
-            //图片压缩
-            // File file = new File(filePath);
-            //if (file.length() > 1024 * 90) {
-            ImgPicUtils.compression(name1, name2);
-            //}
-
-            //身份证照片
-            String base64 = ImageBase64Utils.imageToBase64(name2);
-            log.info("data:image/jpg;base64,{}", base64);
-
-            return "data:image/jpg;base64," + base64;
-        }).subscribeOn(Schedulers.boundedElastic());
-    }
 }
