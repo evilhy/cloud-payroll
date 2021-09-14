@@ -188,7 +188,7 @@ public class TaxController {
                         .phoneNo(employeeTaxSignDTO.getPhone())
                         .transUserId(employeeTaxSignDTO.getId())
                         .userName(employeeTaxSignDTO.getUserName())
-                        .ygOrg("北京依依亮洁商贸有限公司")
+                        .ygOrg("人力资源生产验证测试")
                         .build();
 
                 try {
@@ -336,7 +336,7 @@ public class TaxController {
                     .phoneNo(employeeTaxSignDTO.getPhone())
                     .transUserId(employeeTaxSignDTO.getId())
                     .userName(employeeTaxSignDTO.getUserName())
-                    .ygOrg("北京依依亮洁商贸有限公司")
+                    .ygOrg("人力资源生产验证测试")
                     .build();
             WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
 
@@ -450,7 +450,7 @@ public class TaxController {
                     .idCardImg1("data:image/jpg;base64," + idCardFront)
                     .idCardImg2("data:image/jpg;base64," + idCardNegative)
                     .address(append.toString())
-                    .ygOrg("北京依依亮洁商贸有限公司")
+                    .ygOrg("人力资源生产验证测试")
                     .build();
             try {
                 SealUserRes userResult = taxService.user(userReq);
