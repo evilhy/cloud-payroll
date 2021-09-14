@@ -441,7 +441,7 @@ public class TaxController {
 
             //验证身份信息
             SealUserReq userReq = SealUserReq.builder()
-                    .fwOrg(ent.getEntName())
+//                    .fwOrg(ent.getEntName())
                     .idCardNo(req.getIdNumber())
                     .idType("SFZ")
                     .phoneNo(req.getPhone())
@@ -450,7 +450,7 @@ public class TaxController {
                     .idCardImg1("data:image/jpg;base64," + idCardFront)
                     .idCardImg2("data:image/jpg;base64," + idCardNegative)
                     .address(append.toString())
-                    .ygOrg("人力资源生产验证测试")
+//                    .ygOrg("人力资源生产验证测试")
                     .build();
             try {
                 SealUserRes userResult = taxService.user(userReq);
