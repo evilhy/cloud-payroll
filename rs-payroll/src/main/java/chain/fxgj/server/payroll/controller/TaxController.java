@@ -183,13 +183,15 @@ public class TaxController {
                 //验证身份信息成功，进入签约
                 WalletH5Req walletH5Req = WalletH5Req.builder()
 //                        .fwOrg(employeeTaxSignDTO.getEntName())
-                        .fwOrg("北京蓝海在线科技有限公司")
+//                        .fwOrg("北京蓝海在线科技有限公司")
+                        .fwOrg(getSignDTO(employeeTaxSignDTO.getIdNumber()).getFwOrg())
                         .idCardNo(employeeTaxSignDTO.getIdNumber())
                         .idType("SFZ")
                         .phoneNo(employeeTaxSignDTO.getPhone())
                         .transUserId(employeeTaxSignDTO.getId())
                         .userName(employeeTaxSignDTO.getUserName())
-                        .ygOrg("北京依依亮洁商贸有限公司")
+//                        .ygOrg("北京依依亮洁商贸有限公司")
+                        .ygOrg(getSignDTO(employeeTaxSignDTO.getIdNumber()).getYgOrg())
                         .build();
 
                 try {
@@ -332,13 +334,15 @@ public class TaxController {
             //验证身份信息成功，进入签约
             WalletH5Req walletH5Req = WalletH5Req.builder()
 //                    .fwOrg(employeeTaxSignDTO.getEntName())
-                    .fwOrg("北京蓝海在线科技有限公司")
+//                    .fwOrg("北京蓝海在线科技有限公司")
+                    .fwOrg(getSignDTO(employeeTaxSignDTO.getIdNumber()).getFwOrg())
                     .idCardNo(employeeTaxSignDTO.getIdNumber())
                     .idType("SFZ")
                     .phoneNo(employeeTaxSignDTO.getPhone())
                     .transUserId(employeeTaxSignDTO.getId())
                     .userName(employeeTaxSignDTO.getUserName())
-                    .ygOrg("北京依依亮洁商贸有限公司")
+//                    .ygOrg("北京依依亮洁商贸有限公司")
+                    .ygOrg(getSignDTO(employeeTaxSignDTO.getIdNumber()).getYgOrg())
                     .build();
             WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
 
@@ -438,12 +442,10 @@ public class TaxController {
             StringBuilder append = sb.append(req.getProvinceName())
                     .append(req.getCityName())
                     .append(req.getAreaName())
-//                    .append(req.getStreetName())
                     .append(req.getAddress());
 
             //验证身份信息
             SealUserReq userReq = SealUserReq.builder()
-//                    .fwOrg(ent.getEntName())
                     .idCardNo(req.getIdNumber())
                     .idType("SFZ")
                     .phoneNo(req.getPhone())
@@ -452,7 +454,6 @@ public class TaxController {
                     .idCardImg1("data:image/jpg;base64," + idCardFront)
                     .idCardImg2("data:image/jpg;base64," + idCardNegative)
                     .address(append.toString())
-//                    .ygOrg("北京依依亮洁商贸有限公司")
                     .build();
             try {
                 SealUserRes userResult = taxService.user(userReq);
@@ -567,5 +568,31 @@ public class TaxController {
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("企业信息不存在"));
         }
         return erpriseInfoDTO;
+    }
+
+    public static SignDTO getSignDTO(String idNumber){
+        if (StringUtils.isBlank(idNumber)){
+            throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("身份证不能为空"));
+        }
+        SignDTO signDTO = null;
+        switch (idNumber){
+            case "130731198604100925":
+            case "410222197505306046":
+            case "130527198301291212":
+            case "130521198912283272":
+            case "130521198909063260":
+                signDTO = SignDTO.builder()
+                        .fwOrg("北京蓝海在线科技有限公司")
+                        .ygOrg("北京依依亮洁商贸有限公司")
+                        .build();
+                break;
+            default:
+                signDTO = SignDTO.builder()
+                        .fwOrg("北京蓝海在线科技有限公司")
+                        .ygOrg("石家庄渡康医疗器械有限公司")
+                        .build();
+                break;
+        }
+        return signDTO;
     }
 }
