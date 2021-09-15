@@ -183,13 +183,13 @@ public class TaxController {
                 //验证身份信息成功，进入签约
                 WalletH5Req walletH5Req = WalletH5Req.builder()
 //                        .fwOrg(employeeTaxSignDTO.getEntName())
-                        .fwOrg("人力资源生产验证测试")
+                        .fwOrg("北京蓝海在线科技有限公司")
                         .idCardNo(employeeTaxSignDTO.getIdNumber())
                         .idType("SFZ")
                         .phoneNo(employeeTaxSignDTO.getPhone())
                         .transUserId(employeeTaxSignDTO.getId())
                         .userName(employeeTaxSignDTO.getUserName())
-                        .ygOrg("人力资源生产验证测试")
+                        .ygOrg("北京依依亮洁商贸有限公司")
                         .build();
 
                 try {
@@ -332,13 +332,13 @@ public class TaxController {
             //验证身份信息成功，进入签约
             WalletH5Req walletH5Req = WalletH5Req.builder()
 //                    .fwOrg(employeeTaxSignDTO.getEntName())
-                    .fwOrg("人力资源生产验证测试")
+                    .fwOrg("北京蓝海在线科技有限公司")
                     .idCardNo(employeeTaxSignDTO.getIdNumber())
                     .idType("SFZ")
                     .phoneNo(employeeTaxSignDTO.getPhone())
                     .transUserId(employeeTaxSignDTO.getId())
                     .userName(employeeTaxSignDTO.getUserName())
-                    .ygOrg("人力资源生产验证测试")
+                    .ygOrg("北京依依亮洁商贸有限公司")
                     .build();
             WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
 
@@ -452,7 +452,7 @@ public class TaxController {
                     .idCardImg1("data:image/jpg;base64," + idCardFront)
                     .idCardImg2("data:image/jpg;base64," + idCardNegative)
                     .address(append.toString())
-//                    .ygOrg("人力资源生产验证测试")
+//                    .ygOrg("北京依依亮洁商贸有限公司")
                     .build();
             try {
                 SealUserRes userResult = taxService.user(userReq);
