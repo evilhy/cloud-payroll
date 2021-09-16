@@ -427,8 +427,28 @@ public class TaxController {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("原方案信息不存在"));
             }
 
+            //获取原签约记录
+            EmployeeTaxSigningQueryReq signingQueryReq = EmployeeTaxSigningQueryReq.builder()
+                    .entId(entErpriseInfoDTO.getId())
+                    .groupId(groupDTO.getGroupId())
+                    .templateId(withdrawDTO.getTemplateId())
+                    .empTaxAttestId(employeeTaxAttestDTO.getId())
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .build();
+            List<EmployeeTaxSigningDTO> signingDTOS = employeeTaxSigningFeignService.list(signingQueryReq);
+            String id = null;
+            if (null != signingDTOS && signingDTOS.size() > 0){
+                EmployeeTaxSigningDTO employeeTaxSigningDTO = signingDTOS.get(0);
+                if (IsStatusEnum.YES == employeeTaxSigningDTO.getSignStatus()) {
+                    log.info("=====> 用户在当前企业已进行签约 employeeWechatDTO:{}, req:{}", JacksonUtil.objectToJson(employeeTaxSigningDTO), JacksonUtil.objectToJson(req));
+                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户在当前企业已进行签约"));
+                }
+                id = employeeTaxSigningDTO.getId();
+            }
+
             //保存签约信息
             EmployeeTaxSigningSaveReq signSaveReq = EmployeeTaxSigningSaveReq.builder()
+                    .id(id)
                     .delStatusEnum(DelStatusEnum.normal)
                     .empTaxAttestId(employeeTaxAttestDTO.getId())
                     .entId(entErpriseInfoDTO.getId())
