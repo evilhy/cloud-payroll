@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @Description:
+ * @Description:推送用户实名认证信息至零工平台 请求信息
  * @Author: du
  * @Date: 2021/8/23 12:51
  */
@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "SealUserReq")
 public class SealUserReq {
 
-
     /**
      * 交易用户id
      */
@@ -37,7 +36,7 @@ public class SealUserReq {
     /**
      * 手机号
      */
-    String phoneNo;
+    String phone;
     /**
      * 证件类型 (SFZ:身份证,HZ:护照)
      */
@@ -54,14 +53,6 @@ public class SealUserReq {
      * 身份证反面 Base64
      */
     String idCardImg2;
-    /**
-     * 服务机构
-     */
-    String fwOrg;
-    /**
-     * 用工单位
-     */
-    String ygOrg;
     /**
      * 地址
      */

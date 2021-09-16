@@ -125,4 +125,6 @@ public class SigningDetailsReq {
      * 详细地址
      */
     private  String address;
+
+    String withdrawalLedgerId;
 }

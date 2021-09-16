@@ -8,9 +8,9 @@ import lombok.experimental.Accessors;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @Description:用户签约    响应信息
+ * @Description:
  * @Author: du
- * @Date: 2021/8/23 10:57
+ * @Date: 2021/9/15 15:51
  */
 @Getter
 @Setter
@@ -22,15 +22,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Accessors(chain = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@XmlRootElement(name = "WalletH5Req")
-public class WalletH5Res {
+@XmlRootElement(name = "TempListReq")
+public class TempListReq {
 
     /**
-     * 跳转链接
+     * 服务机构id
      */
-    String url;
+    String fwOrgId;
     /**
-     * 是否签约
+     * 服务机构
      */
-    Boolean isSeal;
+    String fwOrg;
+    /**
+     * 用工单位Id
+     */
+    String ygOrgId;
+    /**
+     * 用工单位
+     */
+    String ygOrg;
 }

@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @Description:用户签约请求信息
+ * @Description:用户签约    请求信息
  * @Author: du
  * @Date: 2021/8/23 10:57
  */
@@ -36,7 +36,7 @@ public class WalletH5Req {
     /**
      * 手机号
      */
-    String phoneNo;
+    String phone;
     /**
      * 证件类型 (SFZ:身份证,HZ:护照)
      */
@@ -46,11 +46,23 @@ public class WalletH5Req {
      */
     String idCardNo;
     /**
+     * 服务机构Id
+     */
+    String fwOrgId;
+    /**
      * 服务机构
      */
     String fwOrg;
     /**
+     * 用工单位Id
+     */
+    String ygOrgId;
+    /**
      * 用工单位
      */
     String ygOrg;
+    /**
+     * 协议模板id
+     */
+    String templateId;
 }
