@@ -233,7 +233,7 @@ public class TaxController {
                         EmployeeTaxSigningDTO employeeTaxSigningDTO = signingDTOS.get(0);
                         signingDetail.setSignStatus(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSigningDTO.getSignStatus().getCode());
                         signingDetail.setSignStatusVal(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSigningDTO.getSignStatus().getDesc());
-                        signingDetail.setTaxSignId(employeeTaxSigningDTO.getEmpTaxAttestId());
+                        signingDetail.setTaxSignId(employeeTaxSigningDTO.getId());
 
                         //验证身份信息成功，进入签约
                         WalletH5Req walletH5Req = WalletH5Req.builder()
