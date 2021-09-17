@@ -649,6 +649,7 @@ public class TaxController {
                     saveReq = EmployeeTaxAttestSaveReq.builder()
                             .id(employeeTaxAttestDTO.getId())
                             .attestStatus(AttestStatusEnum.FAIL)
+                            .attestFailMsg(req.getMsg())
                             .build();
                 }
                 employeeTaxAttestFeignService.save(saveReq);
