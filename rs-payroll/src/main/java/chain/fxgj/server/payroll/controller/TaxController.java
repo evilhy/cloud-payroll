@@ -237,9 +237,9 @@ public class TaxController {
 
                         //验证身份信息成功，进入签约
                         WalletH5Req walletH5Req = WalletH5Req.builder()
-                                .fwOrg(employeeTaxSigningDTO.getEntName())
+//                                .fwOrg(employeeTaxSigningDTO.getEntName())
                                 .fwOrgId(employeeTaxSigningDTO.getEntNum())
-                                .ygOrg(employeeTaxSigningDTO.getGroupName())
+//                                .ygOrg(employeeTaxSigningDTO.getGroupName())
                                 .ygOrgId(employeeTaxSigningDTO.getGroupNum())
                                 .templateId(employeeTaxSigningDTO.getTemplateId())
                                 .idType("SFZ")
@@ -465,9 +465,9 @@ public class TaxController {
 
             //验证身份信息成功，进入签约
             WalletH5Req walletH5Req = WalletH5Req.builder()
-                    .fwOrg(entErpriseInfoDTO.getEntName())
+//                    .fwOrg(entErpriseInfoDTO.getEntName())
                     .fwOrgId(enterpriseAttachRes.getEntNum())
-                    .ygOrg(groupDTO.getGroupName())
+//                    .ygOrg(groupDTO.getGroupName())
                     .ygOrgId(groupAttachInfoDTO.getGroupNum())
                     .templateId(withdrawDTO.getTemplateId())
                     .idType("SFZ")
