@@ -586,6 +586,19 @@ public class TaxController {
                         .ygOrg("北京依依亮洁商贸有限公司")
                         .build();
                 break;
+            case "131125198410153229":
+            case "13068319821005332X":
+            case "130183200005261843":
+            case "130131199404063025":
+            case "622701198503100571":
+            case "130105198903131240":
+            case "130181198503143919":
+            case "130185198208162522":
+                signDTO = SignDTO.builder()
+                        .fwOrg("北京蓝海在线科技有限公司")
+                        .ygOrg("石家庄明月口腔门诊部有限公司")
+                        .build();
+                break;
             default:
                 signDTO = SignDTO.builder()
                         .fwOrg("北京蓝海在线科技有限公司")
