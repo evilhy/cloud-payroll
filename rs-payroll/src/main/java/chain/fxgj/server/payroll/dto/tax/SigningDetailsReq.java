@@ -126,5 +126,13 @@ public class SigningDetailsReq {
      */
     private  String address;
 
-    String withdrawalLedgerId;
+    /**
+     * 认证失败原因
+     */
+    private String attestFailMsg;
+
+    /**
+     * 台账记录ID
+     */
+    private String withdrawalLedgerId;
 }

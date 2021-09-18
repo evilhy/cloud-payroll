@@ -186,6 +186,7 @@ public class TaxController {
                 signingDetail.setAddress(employeeTaxAttestDTO.getAddress());
                 signingDetail.setAttestStatus(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxAttestDTO.getAttestStatus().getCode());
                 signingDetail.setAttestStatusVal(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxAttestDTO.getAttestStatus().getDesc());
+                signingDetail.setAttestFailMsg(null != employeeTaxAttestDTO.getAttestStatus()  && AttestStatusEnum.FAIL == employeeTaxAttestDTO.getAttestStatus() ? employeeTaxAttestDTO.getAttestFailMsg() : null);
 
                 //正面照
                 if (StringUtils.isNotBlank(employeeTaxAttestDTO.getIdCardFront())) {
