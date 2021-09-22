@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @Description:
+ * @Description:签约结果推送 请求信息
  * @Author: du
  * @Date: 2021/8/23 14:31
  */
@@ -30,7 +30,11 @@ public class SignResultPushReq {
      */
     String transUserId;
     /**
-     * 签约状态
+     * 认证结果
      */
     Boolean isAuth;
+    /**
+     * 失败原因
+     */
+    String msg;
 }
