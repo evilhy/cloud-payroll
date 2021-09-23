@@ -19,7 +19,7 @@ ext {
     //jvm
     //JVM_ARGS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5000,-Dfile.encoding=utf-8,-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m'
     //1.8
-    JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m,-XX:+DisableExplicitGC,-XX:+UseConcMarkSweepGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseFastAccessorMethods,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
+    JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m,-XX:+DisableExplicitGC,-XX:+UseConcMarkSweepGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseFastAccessorMethods,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70,-javaagent:/opt/skywalking/skywalking-agent/skywalking-agent.jar,-Dskywalking.agent.service_name=rs-payroll,-Dskywalking.collector.backend_service=10.5.0.200:11800'
     //11
     //JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:+DisableExplicitGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
 
@@ -30,5 +30,3 @@ ext {
             '-Dfile.encoding=utf-8',
             '-Duser.timezone=GMT+08']
 }
-
-
