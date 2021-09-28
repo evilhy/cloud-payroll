@@ -5,6 +5,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Base64;
 
 /**
  * 图片base64互转
@@ -40,7 +41,8 @@ public class ImageBase64Utils {
                 }
             }
         }
-        return org.apache.commons.codec.binary.Base64.encodeBase64String(data);// 返回Base64编码过的字节数组字符串
+//        return org.apache.commons.codec.binary.Base64.encodeBase64String(data);// 返回Base64编码过的字节数组字符串
+        return new String(org.apache.commons.codec.binary.Base64.encodeBase64(data));// 返回Base64编码过的字节数组字符串
     }
 
     /**
@@ -137,15 +139,42 @@ public class ImageBase64Utils {
         }
     }
 
+    public static String getImageStrFromUrl(String path) {
+        byte[] data = null;
+        try {
+//            URL url = new URL(imgURL);
+//            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+//            conn.setRequestMethod("GET");
+//            conn.setConnectTimeout(5 * 1000);
+            InputStream inStream = new FileInputStream(path);
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            //每次读取的字符串长度，如果为-1，代表全部读取完毕
+            int len = 0;
+            while ((len = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, len);
+            }
+            inStream.close();
+            data = outStream.toByteArray();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String base64Image = Base64.getEncoder().encodeToString(data);
+        return base64Image;
+    }
+
     /**
      * 测试
      */
     public static void main(String[] args) throws Exception {
-        File fromFile = new File("D:/tmp/sign.jpg");
-        File toFile = new File("D:/tmp/sign1.jpg");
-        resizePng(fromFile, toFile, 120, 50, true);
+//        File fromFile = new File("D:/tmp/sign.jpg");
+//        File toFile = new File("D:/tmp/sign1.jpg");
+//        resizePng(fromFile, toFile, 120, 50, true);
 
         //根据实际图片大小修改 水印图片的大小 动态适配
         // resizePng(fromFile, toFile, (int) (1244 * 0.71),  (int) (1684 * 0.18), false);
+        String base64 = imageToBase64("D:/demo/2.png");
+        System.out.println("data:image/jpg;base64," + base64);
     }
 }

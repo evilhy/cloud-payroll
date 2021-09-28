@@ -1,0 +1,16 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+version: 1.0
+signature: N3hEQjFKUmNpcWUvZ1dHOElXcTBqSlNnVlhvMGc0N0pQdFNNN3NDUGw5UnJxSmlwOUpIZ1BFUGVwWVFDY1grblBqWVBsbXhqMkZyampTT2dYRlNCckwrSXo2azRMRzNoYVduR1Y2U3FjaEt1K1F4ZzBlMnhmS0puVjhxM1FkYzFjL3g1SDBJdEEzN25Pb0dYQzNpUmxtZnJjRHN2aDZHS29iRFZqLzZJcXVZPQ==
+clientSn: f6b246bb1ad3443fbfc24d0d3578ead4
+timestamp: 1631531987642
+Content-Length: 246
+
+{
+  "accessToken" : "zszmRPLC",
+  "expiresIn" : 3600,
+  "accessUrl" : "SD9csGfOwhVHOYZoPySw4htkhkCDHXh7+P7j0KcEJKt0cGxYgiAwGZniQhn8BwmMXFN/s3jpQ7JymYLwODYP17UcC8ui2h9rQpMb80KSYB1Lcemu5j/8RD38JGJ40kN5DEepGlzLmXgILiaDxllY5wehXPyVjv9ek9H6ryw09k0="
+}
+----

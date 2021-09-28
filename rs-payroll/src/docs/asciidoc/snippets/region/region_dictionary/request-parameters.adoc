@@ -1,0 +1,7 @@
+|===
+|Parameter|Description
+
+|`+regionParentCode+`
+|地区父ID（不传默认查询所有:省、自治区、直辖市）
+
+|===

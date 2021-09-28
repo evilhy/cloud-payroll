@@ -175,7 +175,7 @@ public class WalletServiceImpl implements WalletService {
         //企业提现配置
         EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(entId);
         ModelStatusEnum withdrawStatus = ModelStatusEnum.DISABLE;
-        if (null != enterpriseAttachRes) {
+        if (null != enterpriseAttachRes && null != enterpriseAttachRes.getWithdrawStatus()) {
             withdrawStatus = enterpriseAttachRes.getWithdrawStatus();
         }
 

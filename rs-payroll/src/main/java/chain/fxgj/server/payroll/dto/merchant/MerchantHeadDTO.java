@@ -16,7 +16,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MerchantHeadDTO {
 
     /**
@@ -37,15 +37,25 @@ public class MerchantHeadDTO {
      * appid
      */
     private String appid;
-
+    /**
+     * 毫秒
+     */
+    private String timestamp;
+    /**
+     * 渠道端流水号
+     */
+    private String clientSn;
 
     public static MerchantHeadDTO decrypt(MerchantHeadDTO merchantHeadDTO, String decrypt) {
         MerchantHeadDTO merchantHead = null;
         try {
             merchantHead = MerchantHeadDTO.builder()
-                    .version(RSAEncrypt.decrypt(merchantHeadDTO.getVersion(), decrypt))
+                    //.version(RSAEncrypt.decrypt(merchantHeadDTO.getVersion(), decrypt))
+                    .version(merchantHeadDTO.getVersion())
                     // .merchantCode(merchantHeadDTO.getMerchantCode())
                     .appid(merchantHeadDTO.getAppid())
+                    .timestamp(merchantHeadDTO.getTimestamp())
+                    .clientSn(merchantHeadDTO.getClientSn())
                     .signature(merchantHeadDTO.getSignature())
                     .build();
 

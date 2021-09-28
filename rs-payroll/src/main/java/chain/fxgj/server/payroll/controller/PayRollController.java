@@ -47,11 +47,12 @@ import core.dto.request.CacheCheckCardDTO;
 import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.request.empCard.EmployeeCardLogQueryReq;
 import core.dto.request.empCard.EmployeeCardQueryReq;
-import core.dto.request.employeeTaxSign.EmployeeTaxSignQueryReq;
+import core.dto.request.employeeTaxAttest.EmployeeTaxAttestQueryReq;
 import core.dto.response.*;
 import core.dto.response.cardbin.CardbinQueRes;
 import core.dto.response.empCard.EmployeeCardDTO;
 import core.dto.response.empCard.EmployeeCardLogDTO;
+import core.dto.response.employeeTaxAttest.EmployeeTaxAttestDTO;
 import core.dto.response.employeeTaxSign.EmployeeTaxSignDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
@@ -129,7 +130,9 @@ public class PayRollController {
     @Autowired
     EmployeeEncrytorService employeeEncrytorService;
     @Autowired
-    EmployeeTaxSignFeignService employeeTaxSignFeignService;
+    EmployeeTaxAttestFeignService employeeTaxAttestFeignService;
+    @Autowired
+    EmployeeTaxSigningFeignService employeeTaxSigningFeignService;
 
     /**
      * 服务当前时间
@@ -380,27 +383,23 @@ public class PayRollController {
             }
             log.info("返回脱敏数据emp.empInfoDTO.ret:[{}]", JacksonUtil.objectToJson(empInfoDTO));
 
-            //查询认证信息
-            EmployeeTaxSignQueryReq signQueryReq = EmployeeTaxSignQueryReq.builder()
-                    .idNumber(userPrincipal.getIdNumber())
-                    .entId(userPrincipal.getEntId())
-                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
-                    .build();
-            List<EmployeeTaxSignDTO> taxSignDTOS = employeeTaxSignFeignService.list(signQueryReq);
             empInfoDTO.setSignStatus(IsStatusEnum.NO.getCode());
             empInfoDTO.setSignStatusVal(IsStatusEnum.NO.getDesc());
             empInfoDTO.setAttestStatus(AttestStatusEnum.NOT.getCode());
             empInfoDTO.setAttestStatusVal(AttestStatusEnum.NOT.getDesc());
-
-            if (null != taxSignDTOS && taxSignDTOS.size() > 0) {
-                EmployeeTaxSignDTO employeeTaxSignDTO = taxSignDTOS.get(0);
-                empInfoDTO.setTaxSignId(employeeTaxSignDTO.getId());
-                empInfoDTO.setSignStatus(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSignDTO.getSignStatus().getCode());
-                empInfoDTO.setSignStatusVal(null == employeeTaxSignDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSignDTO.getSignStatus().getDesc());
-                empInfoDTO.setAttestStatus(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxSignDTO.getAttestStatus().getCode());
-                empInfoDTO.setAttestStatusVal(null == employeeTaxSignDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxSignDTO.getAttestStatus().getDesc());
+            //查询认证信息
+            EmployeeTaxAttestQueryReq attestQueryReq = EmployeeTaxAttestQueryReq.builder()
+                    .idNumber(userPrincipal.getIdNumber())
+                    .userName(empInfoDTO.getName())
+                    .phone(userPrincipal.getPhone())
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .build();
+            List<EmployeeTaxAttestDTO> attestDTOList = employeeTaxAttestFeignService.list(attestQueryReq);
+            if (null != attestDTOList && attestDTOList.size() > 0) {
+                EmployeeTaxAttestDTO employeeTaxAttestDTO = attestDTOList.get(0);
+                empInfoDTO.setAttestStatus(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxAttestDTO.getAttestStatus().getCode());
+                empInfoDTO.setAttestStatusVal(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxAttestDTO.getAttestStatus().getDesc());
             }
-
             return empInfoDTO;
         }).subscribeOn(Schedulers.boundedElastic());
 

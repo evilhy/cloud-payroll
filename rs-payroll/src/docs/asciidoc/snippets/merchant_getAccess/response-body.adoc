@@ -1,0 +1,8 @@
+[source,options="nowrap"]
+----
+{
+  "accessToken" : "zszmRPLC",
+  "expiresIn" : 3600,
+  "accessUrl" : "SD9csGfOwhVHOYZoPySw4htkhkCDHXh7+P7j0KcEJKt0cGxYgiAwGZniQhn8BwmMXFN/s3jpQ7JymYLwODYP17UcC8ui2h9rQpMb80KSYB1Lcemu5j/8RD38JGJ40kN5DEepGlzLmXgILiaDxllY5wehXPyVjv9ek9H6ryw09k0="
+}
+----

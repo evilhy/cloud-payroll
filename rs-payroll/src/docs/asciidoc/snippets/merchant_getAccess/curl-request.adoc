@@ -1,0 +1,22 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/merchant/getAccess' -i -X POST \
+    -H 'signature: ZllNYi9kU3RrdzI1TVhoWXIvZkdoNGFpOXEyQmkzQ1N4alNaSVNOaU1OWkJsaW9aTXdFRmpYSTByUWxZT3hZMUpNWHNiaW01RXFaaVQ4d3JOVkViNko5aENMcjlJb2dsQ1VXZUZjL0ZlVEpBSXZnNytFTitqekJOUDV2cW9ERFFZVlZmd2E1KzVRR2R2WURZVDhqTnhHcVVYL0V5d0ZIL1dTK1ZMZkpUVGM0PQ==' \
+    -H 'appid: wx0345ad9614fe9567' \
+    -H 'version: 1.0' \
+    -H 'clientSn: bfc48f52fc2d42e5b09ef8c6d8954504' \
+    -H 'clientDate: 20210913' \
+    -H 'clientTime: 101010' \
+    -H 'timestamp: 1631531987079' \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "name" : "cs537OIuJRE+gRD22oTc1MVDRd0DziWeIzP34MW9aJl+ul7NfkkyZDVzkjGyGPvuB0CIkUr8khd0roneYdakKQtIA9MLAKLRKbqLKDawE6KhK9UbKyagXtUwDIIZRbVqLVKyvKIFQSFcqunws6kXp6WhvG1jvr3wijI16k/DVEY=",
+  "idType" : "N3ryQTmhXoZE8DJJ5/PDXpCKgmY8+csSbgYm1YRrZ+yDO7hBT1OFSGX1AVi3p69poWY+KHjC9CsPHdeq3aUbE0SYTAUEvnTRaquqDbc8rno3l8x4ydQG2htaqML/bWG9alEeBsYVLVTzSmcIaj/DGUoWq2g10f0C/mBXwr+MsB8=",
+  "idNumber" : "IwVtJIvdC7Scy05x8CgMsaBqYNZCsx0Wp2z8NE7B18MqLQv0VwlguDMO7YWZNE7OkIFQA5DvNAk0fUSAdVhKgtdPy+HdbvQR2jqIxN//SelIAbtsMRn+/niWZIE5b/iwUopz2Yj3TBrFf35oeOaGedyMBQe/ldzIShlQNO04qTs=",
+  "phone" : "A68A2Z3lJVVeQdZnI7aib165q6GS6FhYJnRVWG/TOeay5I27A2tasn7nrM1G3Ialuu5jr6GVEEwxPZ3gN5999vBBEnl+b4YTbi8hT/CyaskYI7VLA2wAMlc3VUCfQR2LmGDyoGC4oGYQ9SsCfmhln5yH+T09AKePkh6ZiTduWiY=",
+  "uid" : "ao14xCwLsOxLObHkctJJtmjkULke1HElqVZHNJ57BjeC4J8MpdWpZfQEAZPJ7blhh1v13Vhq7RnP3/5cOefuKuI52rzDo820K2lA/YIUYBVT5pxXnEuFKqyFdCPHEbSDgGvdPNmkMvbm/JWRpfDPnP8rW3NAqwDWeOeKkKcmWw0=",
+  "openId" : "GYNG8DAWnYexngwd7+viBJ+Lua+o0th/mZ+LqrGu1zR92yQz6mf18tUzWl86g50c6IXArQGWhNPEciMw0ALamUX46IN9gT+h0UyhDaI/laRvfY9IIrpPrJz/vJ+Y/Rsct4RfijRdVwqog6nB2ze3kliRVIfT/CdcAMcc1Fs1Q9I=",
+  "nickname" : "用户微信昵称",
+  "headimgurl" : "http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLGZicQDuRPCCcFEFEN72qnAgVGJ99JMmegLMTknEpaSGbVzo2aweUSCkC0reicqhpZOWABEoTqahmA/132"
+}'
+----

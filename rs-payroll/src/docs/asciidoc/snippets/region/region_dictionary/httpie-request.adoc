@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/region/dictionary?regionParentCode=420100000000' \
+    'encry-salt:5810a57afb4045eb91d716336ff1c7d7' \
+    'encry-passwd:423edee4829f4d1984f59a6d71492be4' \
+    'ent-id:2649a3cc77454220af659af8754394da'
+----

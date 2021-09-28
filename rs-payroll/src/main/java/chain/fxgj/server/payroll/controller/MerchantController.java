@@ -96,6 +96,7 @@ public class MerchantController {
                                                 @RequestHeader(value = "clientSn", required = true) String clientSn,
                                                 @RequestHeader(value = "clientDate", required = true) String clientDate,
                                                 @RequestHeader(value = "clientTime", required = true) String clientTime,
+                                                @RequestHeader(value = "timestamp", required = true) String timestamp,
                                                 @RequestBody MerchantDTO merchantDTO,
                                                 ServerHttpResponse response
     ) throws Exception {
@@ -112,13 +113,15 @@ public class MerchantController {
                 .version(version)
                 .signature(signature)
                 .appid(appid)
+                .timestamp(timestamp)
+                .clientSn(clientSn)
                 .build();
         log.info("构建 MerchantHeadDTO:[{}]", JacksonUtil.objectToJson(merchantHeadDTO));
         //解密
         MerchantHeadDTO merchantHeadDecrypt = MerchantHeadDTO.decrypt(merchantHeadDTO, merchant.getRsaPrivateKey());
         log.info("解密 MerchantHeadDTO:[{}]", JacksonUtil.objectToJson(merchantHeadDecrypt));
 
-        //1、解析 返回报文体信息
+        //1、解析 返回报文体信息(私钥)
         MerchantDTO merchantDecrypt = MerchantDTO.decrypt(merchantDTO, merchant.getRsaPrivateKey());
 
         //2、生成签名信息
@@ -133,10 +136,10 @@ public class MerchantController {
         log.info("签名信息，报文中={} ,解析后生成签名={} ", signature, checkSignature);
 
         // todo 注释后测试使用暂不验签。生产请放开注释
-//        if (!signature.equalsIgnoreCase(checkSignature)) {
-//            log.error("签名信息,验证失败。报文中={} ,解析后生成签名={} ", signature, checkSignature);
-//            throw new ParamsIllegalException(ErrorConstant.MERCHANT_02.getErrorMsg());
-//        }
+        if (!signature.equalsIgnoreCase(checkSignature)) {
+            log.error("签名信息,验证失败。报文中={} ,解析后生成签名={} ", signature, checkSignature);
+            throw new ParamsIllegalException(ErrorConstant.MERCHANT_02.getErrorMsg());
+        }
         log.info(">>>>>>>验签通过<<<<<<<");
 
         return Mono.fromCallable(() -> {
@@ -194,19 +197,23 @@ public class MerchantController {
             redisTemplate.opsForValue().set(redisKey, emp, PayrollConstants.MERCHANT_EXPIRESIN, TimeUnit.SECONDS);
 
             //5、生成签名信息
-
             MerchantAccessDTO merchantAccessDTO = MerchantAccessDTO.builder()
                     .accessToken(accessToken)
                     .expiresIn(PayrollConstants.MERCHANT_EXPIRESIN)
                     .accessUrl(merchant.getAccessUrl())
                     .build();
+            //加密数据
             MerchantAccessDTO merchantAccess = MerchantAccessDTO.encryption(merchantAccessDTO, merchant.getParaRsaPublicKey());
 
-            String encryptVersion = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
             log.info("encryptAccessUrl:[{}]", merchantAccess.getAccessUrl());
-            log.info("encryptVersion:[{}]", encryptVersion);
             log.info("appid:[{}]", merchant.getAppid());
-            String retureSignature = MerchantAccessDTO.signatureSHA(merchantAccess.getAccessUrl(), encryptVersion, merchant.getAppid());
+
+            String serverTimestamp = "" + System.currentTimeMillis();
+            String serverSn = UUIDUtil.createUUID32();
+
+
+            //生成 放薪管家 服务端签名
+            String retureSignature = MerchantAccessDTO.signatureSHA(merchantAccess.getAccessUrl(), "1.0", merchant.getAppid(), serverSn, serverTimestamp);
             log.info("accessUrl.version.appid签名：{}", retureSignature);
 
             //公钥加密
@@ -215,20 +222,13 @@ public class MerchantController {
 
             //signature base64
             retureSignature = base64.encodeToString(retureSignature.getBytes("UTF-8"));
-            log.info("==>retureSignature base64 ={}", retureSignature);
-
-            response.getHeaders().set("signature", retureSignature);
             log.info("headers.signature返回签名：{}", retureSignature);
-            LocalDateTime now = LocalDateTime.now();
-            String encryptLog = RSAEncrypt.encrypt("1.0", merchant.getParaRsaPublicKey());
-            log.info("encryptLog:[{}]", encryptLog);
-            response.getHeaders().set("version", encryptVersion);
-            response.getHeaders().set("clientSn", UUIDUtil.createUUID32());
 
-            response.getHeaders().set("clientDate", new SimpleDateFormat("yyyyMMdd").format(new Date()));
+            response.getHeaders().set("version", "1.0");
+            response.getHeaders().set("signature", retureSignature);
+            response.getHeaders().set("clientSn", serverSn);
+            response.getHeaders().set("timestamp", serverTimestamp);
 
-            long timeStamp = now.toInstant(ZoneOffset.of("+8")).toEpochMilli();
-            response.getHeaders().set("clientTime", String.valueOf(timeStamp));
             log.info("merchantAccess:[{}]", JacksonUtil.objectToJson(merchantAccess));
             return merchantAccess;
         }).subscribeOn(Schedulers.boundedElastic());
