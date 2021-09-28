@@ -186,6 +186,9 @@ public class SecuritiesController {
 
             String key ="inside_send"+reqSecuritiesLoginDTO.getPhone();
             String codeId = (String) redisTemplate.opsForValue().get(key);
+            if(null ==codeId) {
+                throw new ServiceHandleException(ErrorConstant.Error0004.format());
+            }
             //1.短信验证码校验是否通过
             WageReqPhone wageReqPhone = new WageReqPhone();
             wageReqPhone.setCode(reqSecuritiesLoginDTO.getMsgCode());

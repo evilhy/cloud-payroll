@@ -268,9 +268,7 @@ public class InsideController {
             CacheReq100702 wageReq100702 = new CacheReq100702();
             BeanUtils.copyProperties(req100702, wageReq100702);
 
-            String key ="inside_send"+req100702.getPhone();
-            String codeId = (String) redisTemplate.opsForValue().get(key);
-            wageReq100702.setCodeId(codeId);
+            wageReq100702.setCodeId(verifyCode (req100702.getPhone()));
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
@@ -315,9 +313,7 @@ public class InsideController {
             //数字键盘密码，解密
             String password = paswordService.checkNumberPassword(pwd, wechatId);
             wageReq100701.setPwd(password);
-            String key ="inside_send"+req100701.getPhone();
-            String codeId = (String) redisTemplate.opsForValue().get(key);
-            wageReq100701.setCodeId(codeId);
+            wageReq100701.setCodeId(verifyCode (req100701.getPhone()));
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
@@ -486,11 +482,9 @@ public class InsideController {
             if (StringUtils.isBlank(phone)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format("企业员工无手机号，短信验证失败"));
             }
-            String key ="inside_send"+phone;
-            String codeId = (String) redisTemplate.opsForValue().get(key);
             core.dto.request.ReqPhone wageReqPhone = new core.dto.request.ReqPhone();
             wageReqPhone.setCode(reqPhone.getCode());
-            wageReqPhone.setCodeId(codeId);
+            wageReqPhone.setCodeId(verifyCode (phone));
             wageReqPhone.setPhone(phone);
             log.info("checkPhoneCode.wageReqPhone:[{}]", JacksonUtil.objectToJson(wageReqPhone));
 
@@ -523,9 +517,7 @@ public class InsideController {
             CacheReqPhone wageReqPhone = new CacheReqPhone();
             BeanUtils.copyProperties(reqPhone, wageReqPhone);
 
-            String key ="inside_send"+reqPhone.getPhone();
-            String codeId = (String) redisTemplate.opsForValue().get(key);
-            wageReqPhone.setCodeId(codeId);
+            wageReqPhone.setCodeId(verifyCode (reqPhone.getPhone()));
             CacheUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
             CacheUpdPhoneRequestDTO cacheUpdPhoneRequestDTO = new CacheUpdPhoneRequestDTO();
             cacheUpdPhoneRequestDTO.setCacheReqPhone(wageReqPhone);
@@ -657,6 +649,22 @@ public class InsideController {
             insideFeignController.setSkin(req);
             return null;
         }).subscribeOn(Schedulers.boundedElastic()).then();
+    }
+
+    /**
+     * 或者验证信息
+     * @param phone
+     * @return
+     */
+    public  String verifyCode (String phone){
+
+        String key ="inside_send"+phone;
+        String codeId = (String) redisTemplate.opsForValue().get(key);
+        if(null == codeId) {
+            throw new ParamsIllegalException(ErrorConstant.Error0004.format());
+
+        }
+        return codeId;
     }
 
 }
