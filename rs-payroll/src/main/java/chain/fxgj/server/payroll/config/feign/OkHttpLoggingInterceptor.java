@@ -21,7 +21,10 @@ public class OkHttpLoggingInterceptor implements Interceptor {
     @Override
     public Response intercept(Interceptor.Chain chain) throws IOException {
         //这个chain里面包含了request和response，所以你要什么都可以从这里拿
-        Request request = chain.request();
+//        Request request = chain.request();
+        Request request = chain.request().newBuilder()
+                .addHeader("Connection","close")
+                .build();
 
         //请求发起的时间
         long t1 = System.nanoTime();
