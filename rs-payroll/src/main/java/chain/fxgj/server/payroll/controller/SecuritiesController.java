@@ -15,6 +15,7 @@ import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.payroll.client.feign.InsideFeignController;
 import chain.pub.client.feign.CaptchaFeignClient;
 import chain.pub.common.dto.captcha.CaptchaDTO;
 import chain.pub.common.dto.wechat.AccessTokenDTO;
@@ -65,6 +66,8 @@ public class SecuritiesController {
     CaptchaFeignClient captchaFeignClient;
     @Autowired
     EmpWechatService empWechatService;
+    @Autowired
+    InsideFeignController insideFeignController;
 
     /**
      * 登录校验-工资条外部菜单使用
@@ -181,10 +184,15 @@ public class SecuritiesController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
+            String key ="inside_send"+reqSecuritiesLoginDTO.getPhone();
+            String codeId = (String) redisTemplate.opsForValue().get(key);
+            if(null ==codeId) {
+                throw new ServiceHandleException(ErrorConstant.Error0004.format());
+            }
             //1.短信验证码校验是否通过
             WageReqPhone wageReqPhone = new WageReqPhone();
             wageReqPhone.setCode(reqSecuritiesLoginDTO.getMsgCode());
-            wageReqPhone.setCodeId(reqSecuritiesLoginDTO.getMsgCodeId());
+            wageReqPhone.setCodeId(codeId);
             wageReqPhone.setPhone(phone);
             String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
             if (!StringUtils.equals("0000", retStr)) {
