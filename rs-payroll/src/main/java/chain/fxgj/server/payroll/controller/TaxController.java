@@ -56,6 +56,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -697,101 +698,77 @@ public class TaxController {
     public Mono<TaxAttestDetailRes> taxAttestDetail(@RequestHeader(value = "encry-salt", required = false) String salt,
                                                     @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//        UserPrincipal userPrincipal = WebContext.getCurrentUser();
-//        String jsessionId = userPrincipal.getSessionId();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        String jsessionId = userPrincipal.getSessionId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            log.info("=====> /tax/signingDetails 签约详情查询 userPrincipal：{}", JacksonUtil.objectToJson(userPrincipal));
-//
-//            //查询登陆信息
-//            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId, userPrincipal.getName());
-//
-//            TaxAttestDetailRes taxAttestDetailRes = TaxAttestDetailRes.builder()
-//                    .idType("1")
-//                    .idTypeVal("身份证")
-//                    .userName(EncrytorUtils.encryptField(employeeWechatDTO.getName(), salt, passwd))
-//                    .phone(EncrytorUtils.encryptField(employeeWechatDTO.getPhone(), salt, passwd))
-//                    .idNumber(EncrytorUtils.encryptField(employeeWechatDTO.getIdNumber(), salt, passwd))
-//                    .attestStatus(AttestStatusEnum.NOT.getCode())
-//                    .attestStatusVal(AttestStatusEnum.NOT.getDesc())
-//                    .passwd(passwd)
-//                    .salt(salt)
-//                    .build();
-//
-//            //查询认证信息
-//            EmployeeTaxAttestQueryReq attestQueryReq = EmployeeTaxAttestQueryReq.builder()
-//                    .idNumber(employeeWechatDTO.getIdNumber())
-//                    .userName(employeeWechatDTO.getName())
-//                    .phone(employeeWechatDTO.getPhone())
-//                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
-//                    .build();
-//            List<EmployeeTaxAttestDTO> attestDTOList = employeeTaxAttestFeignService.list(attestQueryReq);
-//            if (null != attestDTOList && attestDTOList.size() > 0) {
-//                EmployeeTaxAttestDTO employeeTaxAttestDTO = attestDTOList.get(0);
-//                taxAttestDetailRes.setTaxAttestId(employeeTaxAttestDTO.getId());
-//                taxAttestDetailRes.setProvinceCode(null == employeeTaxAttestDTO.getProvince() ? null : employeeTaxAttestDTO.getProvince().getCode());
-//                taxAttestDetailRes.setProvinceName(null == employeeTaxAttestDTO.getProvince() ? null : employeeTaxAttestDTO.getProvince().getValue());
-//                taxAttestDetailRes.setCityCode(null == employeeTaxAttestDTO.getCity() ? null : employeeTaxAttestDTO.getCity().getCode());
-//                taxAttestDetailRes.setCityName(null == employeeTaxAttestDTO.getCity() ? null : employeeTaxAttestDTO.getCity().getValue());
-//                taxAttestDetailRes.setAreaCode(null == employeeTaxAttestDTO.getArea() ? null : employeeTaxAttestDTO.getArea().getCode());
-//                taxAttestDetailRes.setAreaName(null == employeeTaxAttestDTO.getArea() ? null : employeeTaxAttestDTO.getArea().getValue());
-//                taxAttestDetailRes.setStreetCode(null == employeeTaxAttestDTO.getStreet() ? null : employeeTaxAttestDTO.getStreet().getCode());
-//                taxAttestDetailRes.setStreetName(null == employeeTaxAttestDTO.getStreet() ? null : employeeTaxAttestDTO.getStreet().getValue());
-//                taxAttestDetailRes.setAddress(employeeTaxAttestDTO.getAddress());
-//                taxAttestDetailRes.setAttestStatus(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxAttestDTO.getAttestStatus().getCode());
-//                taxAttestDetailRes.setAttestStatusVal(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxAttestDTO.getAttestStatus().getDesc());
-//                taxAttestDetailRes.setAttestFailMsg(null != employeeTaxAttestDTO.getAttestStatus() && AttestStatusEnum.FAIL == employeeTaxAttestDTO.getAttestStatus() ? employeeTaxAttestDTO.getAttestFailMsg() : null);
-//
-//                //正面照
-//                if (StringUtils.isNotBlank(employeeTaxAttestDTO.getIdCardFront())) {
-//                    String filePath = employeeTaxAttestDTO.getIdCardFront();
-//                    //图片压缩
-//                    if (new File(filePath).length() > 1024 * 160) {
-//                        ImgPicUtils.compression(filePath, filePath);
-//                    }
-//
-//                    //身份证照片
-//                    String base64 = ImageBase64Utils.imageToBase64(filePath);
-//                    taxAttestDetailRes.setIdCardFront("data:image/jpg;base64," + base64);
-//                }
-//                //反面照
-//                if (StringUtils.isNotBlank(employeeTaxAttestDTO.getIdCardNegative())) {
-//                    String filePath = employeeTaxAttestDTO.getIdCardNegative();
-//                    //图片压缩
-//                    if (new File(filePath).length() > 1024 * 160) {
-//                        ImgPicUtils.compression(filePath, filePath);
-//                    }
-//
-//                    //身份证照片
-//                    String base64 = ImageBase64Utils.imageToBase64(filePath);
-//                    taxAttestDetailRes.setIdCardNegative("data:image/jpg;base64," + base64);
-//                }
-//            }
-//            return taxAttestDetailRes;
-            return TaxAttestDetailRes.builder()
-                    .areaCode("110000")
-                    .areaName("东城区")
-                    .attestFailMsg(null)
-                    .attestStatus(2)
-                    .attestStatusVal("认证失败")
-                    .cityCode("110000")
-                    .cityName("北京市")
-                    .idCardFront("/webserver/www/upload/sign/20210922/min/IDCARD-7167343432770591979Screenshot_20210916_164138_com.tencent.mm.jpg")
-                    .idCardNegative("/webserver/www/upload/sign/20210922/min/IDCARD-1863685373598381325Screenshot_20210916_164130_com.tencent.mm.jpg")
-//                    .idNumber(EncrytorUtils.encryptField("42068219861027006X", salt, passwd))
+            log.info("=====> /tax/signingDetails 签约详情查询 userPrincipal：{}", JacksonUtil.objectToJson(userPrincipal));
+
+            //查询登陆信息
+            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId, userPrincipal.getName());
+
+            TaxAttestDetailRes taxAttestDetailRes = TaxAttestDetailRes.builder()
                     .idType("1")
                     .idTypeVal("身份证")
+                    .userName(EncrytorUtils.encryptField(employeeWechatDTO.getName(), salt, passwd))
+                    .phone(EncrytorUtils.encryptField(employeeWechatDTO.getPhone(), salt, passwd))
+                    .idNumber(EncrytorUtils.encryptField(employeeWechatDTO.getIdNumber(), salt, passwd))
+                    .attestStatus(AttestStatusEnum.NOT.getCode())
+                    .attestStatusVal(AttestStatusEnum.NOT.getDesc())
                     .passwd(passwd)
-                    .phone("18607559997")
-                    .provinceCode("110000")
-                    .provinceName("北京市")
                     .salt(salt)
-                    .streetCode("110000")
-                    .streetName("123街道")
-                    .taxAttestId("210dfb958b5446648f6db51d1860f694")
-                    .userName("周文君")
-                    .address("看了就看了")
                     .build();
+
+            //查询认证信息
+            EmployeeTaxAttestQueryReq attestQueryReq = EmployeeTaxAttestQueryReq.builder()
+                    .idNumber(employeeWechatDTO.getIdNumber())
+                    .userName(employeeWechatDTO.getName())
+                    .phone(employeeWechatDTO.getPhone())
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .build();
+            List<EmployeeTaxAttestDTO> attestDTOList = employeeTaxAttestFeignService.list(attestQueryReq);
+            if (null != attestDTOList && attestDTOList.size() > 0) {
+                EmployeeTaxAttestDTO employeeTaxAttestDTO = attestDTOList.get(0);
+                taxAttestDetailRes.setTaxAttestId(employeeTaxAttestDTO.getId());
+                taxAttestDetailRes.setProvinceCode(null == employeeTaxAttestDTO.getProvince() ? null : employeeTaxAttestDTO.getProvince().getCode());
+                taxAttestDetailRes.setProvinceName(null == employeeTaxAttestDTO.getProvince() ? null : employeeTaxAttestDTO.getProvince().getValue());
+                taxAttestDetailRes.setCityCode(null == employeeTaxAttestDTO.getCity() ? null : employeeTaxAttestDTO.getCity().getCode());
+                taxAttestDetailRes.setCityName(null == employeeTaxAttestDTO.getCity() ? null : employeeTaxAttestDTO.getCity().getValue());
+                taxAttestDetailRes.setAreaCode(null == employeeTaxAttestDTO.getArea() ? null : employeeTaxAttestDTO.getArea().getCode());
+                taxAttestDetailRes.setAreaName(null == employeeTaxAttestDTO.getArea() ? null : employeeTaxAttestDTO.getArea().getValue());
+                taxAttestDetailRes.setStreetCode(null == employeeTaxAttestDTO.getStreet() ? null : employeeTaxAttestDTO.getStreet().getCode());
+                taxAttestDetailRes.setStreetName(null == employeeTaxAttestDTO.getStreet() ? null : employeeTaxAttestDTO.getStreet().getValue());
+                taxAttestDetailRes.setAddress(employeeTaxAttestDTO.getAddress());
+                taxAttestDetailRes.setAttestStatus(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxAttestDTO.getAttestStatus().getCode());
+                taxAttestDetailRes.setAttestStatusVal(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxAttestDTO.getAttestStatus().getDesc());
+                taxAttestDetailRes.setAttestFailMsg(null != employeeTaxAttestDTO.getAttestStatus() && AttestStatusEnum.FAIL == employeeTaxAttestDTO.getAttestStatus() ? employeeTaxAttestDTO.getAttestFailMsg() : null);
+
+                //正面照
+                if (StringUtils.isNotBlank(employeeTaxAttestDTO.getIdCardFront())) {
+                    String filePath = employeeTaxAttestDTO.getIdCardFront();
+                    //图片压缩
+                    if (new File(filePath).length() > 1024 * 160) {
+                        ImgPicUtils.compression(filePath, filePath);
+                    }
+
+                    //身份证照片
+                    String base64 = ImageBase64Utils.imageToBase64(filePath);
+                    taxAttestDetailRes.setIdCardFront("data:image/jpg;base64," + base64);
+                }
+                //反面照
+                if (StringUtils.isNotBlank(employeeTaxAttestDTO.getIdCardNegative())) {
+                    String filePath = employeeTaxAttestDTO.getIdCardNegative();
+                    //图片压缩
+                    if (new File(filePath).length() > 1024 * 160) {
+                        ImgPicUtils.compression(filePath, filePath);
+                    }
+
+                    //身份证照片
+                    String base64 = ImageBase64Utils.imageToBase64(filePath);
+                    taxAttestDetailRes.setIdCardNegative("data:image/jpg;base64," + base64);
+                }
+            }
+            return taxAttestDetailRes;
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -806,107 +783,92 @@ public class TaxController {
                                                     @RequestHeader(value = "encry-salt", required = false) String salt,
                                                     @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
-//        UserPrincipal userPrincipal = WebContext.getCurrentUser();
-//        String jsessionId = userPrincipal.getSessionId();
-//        String entId = userPrincipal.getEntId();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        String jsessionId = userPrincipal.getSessionId();
+        String entId = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-//            log.info("=====> /tax/signingDetails 签约详情查询 userPrincipal：{}", JacksonUtil.objectToJson(userPrincipal));
-//            List<SigningDetailRes> list = new ArrayList<>();
-//
-//            //查询登陆信息
-//            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId, userPrincipal.getName());
-//
-//            //查询认证信息
-//            EmployeeTaxAttestQueryReq attestQueryReq = EmployeeTaxAttestQueryReq.builder()
-//                    .idNumber(employeeWechatDTO.getIdNumber())
-//                    .userName(employeeWechatDTO.getName())
-//                    .phone(employeeWechatDTO.getPhone())
-//                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
-//                    .build();
-//            List<EmployeeTaxAttestDTO> attestDTOList = employeeTaxAttestFeignService.list(attestQueryReq);
-//            if (null != attestDTOList && attestDTOList.size() > 0) {
-//                EmployeeTaxAttestDTO employeeTaxAttestDTO = attestDTOList.get(0);
-//                String empTaxAttestId = employeeTaxAttestDTO.getId();
-//
-//                //查询签约信息
-//                EmployeeTaxSigningQueryReq signingQueryReq = EmployeeTaxSigningQueryReq.builder()
-//                        .entId(entId)
-//                        .empTaxAttestId(empTaxAttestId)
-//                        .signStatus(IsStatusEnum.NO)
-//                        .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
-//                        .build();
-//                if (StringUtils.isNotBlank(templateId)) {
-//                    signingQueryReq.setTemplateId(templateId);
-//                }
-//                List<EmployeeTaxSigningDTO> signingDTOS = employeeTaxSigningFeignService.list(signingQueryReq);
-//                if (null != signingDTOS && signingDTOS.size() > 0) {
-//                    for (EmployeeTaxSigningDTO employeeTaxSigningDTO : signingDTOS) {
-//                        SigningDetailRes signingDetail = SigningDetailRes.builder()
-//                                .empTaxAttestId(employeeTaxSigningDTO.getEmpTaxAttestId())
-//                                .entName(employeeTaxSigningDTO.getEntName())
-//                                .groupId(employeeTaxSigningDTO.getGroupId())
-//                                .entNum(employeeTaxSigningDTO.getEntNum())
-//                                .groupName(employeeTaxSigningDTO.getGroupName())
-//                                .entId(employeeTaxSigningDTO.getEntId())
-//                                .groupNum(employeeTaxSigningDTO.getGroupNum())
-//                                .id(employeeTaxSigningDTO.getId())
-//                                .signDateTime(null == employeeTaxSigningDTO.getSignDateTime() ? null : employeeTaxSigningDTO.getSignDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-//                                .signStatus(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSigningDTO.getSignStatus().getCode())
-//                                .signStatusVal(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSigningDTO.getSignStatus().getDesc())
-//                                .templateId(employeeTaxSigningDTO.getTemplateId())
-//                                .build();
-//
-//                        //验证身份信息成功，进入签约
-//                        WalletH5Req walletH5Req = WalletH5Req.builder()
-////                                .fwOrg(employeeTaxSigningDTO.getEntName())
-//                                .fwOrgId(employeeTaxSigningDTO.getEntNum())
-////                                .ygOrg(employeeTaxSigningDTO.getGroupName())
-//                                .ygOrgId(employeeTaxSigningDTO.getGroupNum())
-//                                .templateId(employeeTaxSigningDTO.getTemplateId())
-//                                .idType("SFZ")
-//                                .idCardNo(employeeTaxAttestDTO.getIdNumber())
-//                                .phone(employeeTaxAttestDTO.getPhone())
-//                                .transUserId(employeeTaxAttestDTO.getId())
-//                                .userName(employeeTaxAttestDTO.getUserName())
-//                                .build();
-//                        try {
-//                            if (IsStatusEnum.YES != employeeTaxSigningDTO.getSignStatus()) {
-//
-//                                WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
-//                                if (null != walletH5Res && walletH5Res.getIsSeal()) {
-//                                    //已签约
-//                                    EmployeeTaxSigningSaveReq signSaveReq = EmployeeTaxSigningSaveReq.builder()
-//                                            .id(employeeTaxSigningDTO.getId())
-//                                            .signStatus(IsStatusEnum.YES)
-//                                            .signDateTime(LocalDateTime.now())
-//                                            .build();
-//                                    employeeTaxSigningFeignService.save(signSaveReq);
-//                                    continue;
-//                                }
-//                            }
-//                        } catch (Exception e) {
-//                            log.info("=====> 验证是否签约成功失败，walletH5Req：{}", JacksonUtil.objectToJson(walletH5Req));
-//                        }
-//                        list.add(signingDetail);
-//                    }
-//                }
-//            }
+            log.info("=====> /tax/signingDetails 签约详情查询 userPrincipal：{}", JacksonUtil.objectToJson(userPrincipal));
             List<SigningDetailRes> list = new ArrayList<>();
-            SigningDetailRes.builder()
-                    .taxSignId("e4af122d9808452d8f8ea6cd2c39059f")
-                    .groupNum("6124b450c3e50309ffe851fa")
-                    .entId("ff80808170e76b9b0170eb5bd4830000")
-                    .groupName("转账附言测试2")
-                    .entNum("6124b38fc3e50309ffe851f5")
-                    .groupId("2c9482a77b4cb308017b4e475e290004")
-                    .empTaxAttestId("238c325874754f3296c0803c00c0be3a")
-                    .entName("武汉德运人力资源有限公司")
-                    .signStatus(0)
-                    .signStatusVal("未签约")
-                    .templateId("614597a92a765e213be1f233")
-                    .signDateTime(System.currentTimeMillis())
+
+            //查询登陆信息
+            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId, userPrincipal.getName());
+
+            //查询认证信息
+            EmployeeTaxAttestQueryReq attestQueryReq = EmployeeTaxAttestQueryReq.builder()
+                    .idNumber(employeeWechatDTO.getIdNumber())
+                    .userName(employeeWechatDTO.getName())
+                    .phone(employeeWechatDTO.getPhone())
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
                     .build();
+            List<EmployeeTaxAttestDTO> attestDTOList = employeeTaxAttestFeignService.list(attestQueryReq);
+            if (null != attestDTOList && attestDTOList.size() > 0) {
+                EmployeeTaxAttestDTO employeeTaxAttestDTO = attestDTOList.get(0);
+                String empTaxAttestId = employeeTaxAttestDTO.getId();
+
+                //查询签约信息
+                EmployeeTaxSigningQueryReq signingQueryReq = EmployeeTaxSigningQueryReq.builder()
+                        .entId(entId)
+                        .empTaxAttestId(empTaxAttestId)
+                        .signStatus(IsStatusEnum.NO)
+                        .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                        .build();
+                if (StringUtils.isNotBlank(templateId)) {
+                    signingQueryReq.setTemplateId(templateId);
+                }
+                List<EmployeeTaxSigningDTO> signingDTOS = employeeTaxSigningFeignService.list(signingQueryReq);
+                if (null != signingDTOS && signingDTOS.size() > 0) {
+                    for (EmployeeTaxSigningDTO employeeTaxSigningDTO : signingDTOS) {
+                        SigningDetailRes signingDetail = SigningDetailRes.builder()
+                                .empTaxAttestId(employeeTaxSigningDTO.getEmpTaxAttestId())
+                                .entName(employeeTaxSigningDTO.getEntName())
+                                .groupId(employeeTaxSigningDTO.getGroupId())
+                                .entNum(employeeTaxSigningDTO.getEntNum())
+                                .groupName(employeeTaxSigningDTO.getGroupName())
+                                .entId(employeeTaxSigningDTO.getEntId())
+                                .groupNum(employeeTaxSigningDTO.getGroupNum())
+                                .taxSignId(employeeTaxSigningDTO.getId())
+                                .signDateTime(null == employeeTaxSigningDTO.getSignDateTime() ? null : employeeTaxSigningDTO.getSignDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                                .signStatus(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSigningDTO.getSignStatus().getCode())
+                                .signStatusVal(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSigningDTO.getSignStatus().getDesc())
+                                .templateId(employeeTaxSigningDTO.getTemplateId())
+                                .build();
+
+                        //验证身份信息成功，进入签约
+                        WalletH5Req walletH5Req = WalletH5Req.builder()
+//                                .fwOrg(employeeTaxSigningDTO.getEntName())
+                                .fwOrgId(employeeTaxSigningDTO.getEntNum())
+//                                .ygOrg(employeeTaxSigningDTO.getGroupName())
+                                .ygOrgId(employeeTaxSigningDTO.getGroupNum())
+                                .templateId(employeeTaxSigningDTO.getTemplateId())
+                                .idType("SFZ")
+                                .idCardNo(employeeTaxAttestDTO.getIdNumber())
+                                .phone(employeeTaxAttestDTO.getPhone())
+                                .transUserId(employeeTaxAttestDTO.getId())
+                                .userName(employeeTaxAttestDTO.getUserName())
+                                .build();
+                        try {
+                            if (IsStatusEnum.YES != employeeTaxSigningDTO.getSignStatus()) {
+
+                                WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
+                                if (null != walletH5Res && walletH5Res.getIsSeal()) {
+                                    //已签约
+                                    EmployeeTaxSigningSaveReq signSaveReq = EmployeeTaxSigningSaveReq.builder()
+                                            .id(employeeTaxSigningDTO.getId())
+                                            .signStatus(IsStatusEnum.YES)
+                                            .signDateTime(LocalDateTime.now())
+                                            .build();
+                                    employeeTaxSigningFeignService.save(signSaveReq);
+                                    continue;
+                                }
+                            }
+                        } catch (Exception e) {
+                            log.info("=====> 验证是否签约成功失败，walletH5Req：{}", JacksonUtil.objectToJson(walletH5Req));
+                        }
+                        list.add(signingDetail);
+                    }
+                }
+            }
             return list;
         }).subscribeOn(Schedulers.boundedElastic());
     }
