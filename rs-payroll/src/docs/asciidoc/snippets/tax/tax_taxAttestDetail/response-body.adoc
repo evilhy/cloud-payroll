@@ -1,0 +1,25 @@
+[source,options="nowrap"]
+----
+{
+  "taxAttestId" : "210dfb958b5446648f6db51d1860f694",
+  "userName" : "周文君",
+  "idType" : "1",
+  "idTypeVal" : "身份证",
+  "phone" : "18607559997",
+  "idCardFront" : "/webserver/www/upload/sign/20210922/min/IDCARD-7167343432770591979Screenshot_20210916_164138_com.tencent.mm.jpg",
+  "idCardNegative" : "/webserver/www/upload/sign/20210922/min/IDCARD-1863685373598381325Screenshot_20210916_164130_com.tencent.mm.jpg",
+  "attestStatus" : 2,
+  "attestStatusVal" : "认证失败",
+  "provinceCode" : "110000",
+  "provinceName" : "北京市",
+  "cityCode" : "110000",
+  "cityName" : "北京市",
+  "areaCode" : "110000",
+  "areaName" : "东城区",
+  "streetCode" : "110000",
+  "streetName" : "123街道",
+  "address" : "看了就看了",
+  "salt" : "8e1ad6d5a8b4464c8683f1d993be6a0c",
+  "passwd" : "bd23012dd4fc49b5bf7a7521669101a4"
+}
+----

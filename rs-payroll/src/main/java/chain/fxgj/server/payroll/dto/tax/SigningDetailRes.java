@@ -29,7 +29,7 @@ public class SigningDetailRes {
     /**
      * ID
      */
-    private String id;
+    private String taxSignId;
     /**
      * 身份认证ID
      */

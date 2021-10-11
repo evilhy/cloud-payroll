@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/tax/taxAttestDetail' \
+    'encry-salt:8e1ad6d5a8b4464c8683f1d993be6a0c' \
+    'encry-passwd:bd23012dd4fc49b5bf7a7521669101a4' \
+    'ent-id:5ba455c7d8ee48249d0d1859b0e5bb3b'
+----

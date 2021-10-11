@@ -126,3 +126,39 @@ include::{snippets}/tax/tax_signRecord/curl-request.adoc[]
 * Response:
 +
 include::{snippets}/tax/tax_signRecord/http-response.adoc[]
+
+
+=== 认证详情
+==== 接口定义
+* Path Parameters:
++
+无
+* Response Body:
++
+include::{snippets}/tax/tax_taxAttestDetail/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_taxAttestDetail/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_taxAttestDetail/http-response.adoc[]
+
+
+=== 待签约列表
+==== 接口定义
+* Path Parameters:
++
+include::{snippets}/tax/tax_signingList/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/tax/tax_signingList/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/tax/tax_signingList/curl-request.adoc[]
+* Response:
++
+include::{snippets}/tax/tax_signingList/http-response.adoc[]

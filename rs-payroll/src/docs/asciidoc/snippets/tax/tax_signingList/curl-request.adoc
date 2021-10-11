@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/tax/signingList?templateId=f62eb285c3c44095874fbd08f5d0ebca' -i -X GET \
+    -H 'encry-salt: 56d4bc83e0cd45f39d93625dcdaec69f' \
+    -H 'encry-passwd: 4de058dee93942dfbab88e99f4d33dbb' \
+    -H 'ent-id: 4846eba55839412090415ce3e6c08a69'
+----

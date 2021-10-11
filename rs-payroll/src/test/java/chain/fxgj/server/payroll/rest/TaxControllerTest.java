@@ -229,8 +229,7 @@ public class TaxControllerTest extends BaseTestCase {
                 .header("encry-passwd", passwd)
                 .header("ent-id", entId)
                 .exchange()
-                .expectStatus()
-                .isOk()
+                .expectStatus().isOk()
                 .expectBody()
                 .consumeWith(document("tax_taxAttestDetail",
 //                        relaxedRequestParameters(parameterWithName("withdrawalLedgerId").description("提现台账ID")),
@@ -259,7 +258,7 @@ public class TaxControllerTest extends BaseTestCase {
                 .expectBody()
                 .consumeWith(document("tax_signingList",
                         relaxedRequestParameters(parameterWithName("templateId").description("协议模板ID")),
-                        relaxedResponseFields(JavaDocReader.javaDoc(TaxAttestDetailRes.class))
+                        relaxedResponseFields(JavaDocReader.javaDoc(SigningDetailRes.class))
                 ));
     }
 }
