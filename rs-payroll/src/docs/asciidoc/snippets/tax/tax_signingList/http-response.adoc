@@ -2,7 +2,20 @@
 ----
 HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 3
+Content-Length: 535
 
-[ ]
+[ {
+  "taxSignId" : "e4af122d9808452d8f8ea6cd2c39059f",
+  "empTaxAttestId" : "238c325874754f3296c0803c00c0be3a",
+  "entId" : "ff80808170e76b9b0170eb5bd4830000",
+  "entName" : "武汉德运人力资源有限公司",
+  "entNum" : "6124b38fc3e50309ffe851f5",
+  "groupId" : "2c9482a77b4cb308017b4e475e290004",
+  "groupName" : "转账附言测试2",
+  "groupNum" : "6124b450c3e50309ffe851fa",
+  "templateId" : "614597a92a765e213be1f233",
+  "signStatus" : 0,
+  "signStatusVal" : "未签约",
+  "signDateTime" : 1634002331187
+} ]
 ----
