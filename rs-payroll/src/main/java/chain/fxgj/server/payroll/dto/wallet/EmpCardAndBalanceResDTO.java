@@ -79,4 +79,12 @@ public class EmpCardAndBalanceResDTO {
      * password
      */
     private String passwd;
+    /**
+     * 是否认证
+     */
+    private Boolean isAttest;
+    /**
+     * 未签约协议数
+     */
+    private Integer signNumber;
 }
