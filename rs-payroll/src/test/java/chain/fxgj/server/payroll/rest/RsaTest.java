@@ -56,9 +56,8 @@ public class RsaTest {
 
     public static void main(String[] args) throws Exception {
 
-        //国联证券  跳转url(测试地址)
+        //国联证券  跳转url(测试地址)   后面拼上&content=
         String accessUrl = "https://soft.thinkive.com:720/khv4/h5/open/views/account/index.html?sign_channel=wjhxym&content=";
-
 
         //放薪管家 rsa公钥
         String rsaPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCGYHGGPlZvE4DE7ExTBMDNwJlDKXBiQYaprvxGZ+rf7YqJhxO08UnecTHKpPdA0KGe6vMwgT58AN3Cj1WsytIQ6Y2ybiqSwlpjlFQaNb3jiiE4gnSMkMvxxzRaHQ+Y10Qtfil47wqVq2TCKMMWrgSfMNINoTbSEp10FFbhbVrxpQIDAQAB";
@@ -82,12 +81,12 @@ public class RsaTest {
         byte[] content_ras_enc_encode = base64.encode(content_ras_enc);
         String content_ras_enc_str = new String(content_ras_enc_encode);
 
+        // 拼接后数据请求发给券商
         content_ras_enc_str = accessUrl  + content_ras_enc_str;
         System.out.println("content_ras_enc_str: " + content_ras_enc_str);
-
+        // 截取加密content片段
         String subUrl = content_ras_enc_str.replace(accessUrl,"");
         System.out.println("subUrl: " + subUrl);
-
         System.out.println("content_ras_enc_str: " + content_ras_enc_str);
 
         //base64 解码
