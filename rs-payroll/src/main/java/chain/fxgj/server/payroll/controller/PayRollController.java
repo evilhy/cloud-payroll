@@ -409,7 +409,10 @@ public class PayRollController {
                         .build();
                 List<EmployeeTaxSigningDTO> signingDTOS = employeeTaxSigningFeignService.list(signingQueryReq);
                 if (null != signingDTOS && signingDTOS.size() > 0) {
-                    empInfoDTO.setTaxSignId(signingDTOS.get(0).getId());
+                    EmployeeTaxSigningDTO signing = signingDTOS.get(0);
+                    empInfoDTO.setTaxSignId(signing.getId());
+                    empInfoDTO.setSignStatus(signing.getSignStatus().getCode());
+                    empInfoDTO.setSignStatusVal(signing.getSignStatus().getDesc());
                 }
             }
             return empInfoDTO;
