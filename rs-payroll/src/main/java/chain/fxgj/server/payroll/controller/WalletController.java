@@ -173,7 +173,7 @@ public class WalletController {
                                 .build();
 
                         //验证身份信息成功，进入签约
-                        WalletH5Req walletH5Req = WalletH5Req.builder()
+                        chain.cloud.tax.dto.fxgj.WalletH5Req walletH5Req = chain.cloud.tax.dto.fxgj.WalletH5Req.builder()
 //                                .fwOrg(employeeTaxSigningDTO.getEntName())
                                 .fwOrgId(employeeTaxSigningDTO.getEntNum())
 //                                .ygOrg(employeeTaxSigningDTO.getGroupName())
@@ -188,7 +188,7 @@ public class WalletController {
                         try {
                             if (IsStatusEnum.YES != employeeTaxSigningDTO.getSignStatus()) {
 
-                                WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
+                                chain.cloud.tax.dto.fxgj.WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
                                 if (null != walletH5Res && walletH5Res.getIsSeal()) {
                                     //已签约
                                     EmployeeTaxSigningSaveReq signSaveReq = EmployeeTaxSigningSaveReq.builder()

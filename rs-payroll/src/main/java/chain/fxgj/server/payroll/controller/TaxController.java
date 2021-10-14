@@ -233,7 +233,7 @@ public class TaxController {
                     signingDetail.setTaxSignId(employeeTaxSigningDTO.getId());
 
                     //验证身份信息成功，进入签约
-                    WalletH5Req walletH5Req = WalletH5Req.builder()
+                    chain.cloud.tax.dto.fxgj.WalletH5Req walletH5Req = chain.cloud.tax.dto.fxgj.WalletH5Req.builder()
 //                                .fwOrg(employeeTaxSigningDTO.getEntName())
                             .fwOrgId(employeeTaxSigningDTO.getEntNum())
 //                                .ygOrg(employeeTaxSigningDTO.getGroupName())
@@ -248,7 +248,7 @@ public class TaxController {
                     try {
                         if (IsStatusEnum.YES != employeeTaxSigningDTO.getSignStatus()) {
 
-                            WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
+                            chain.cloud.tax.dto.fxgj.WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
                             if (null != walletH5Res && walletH5Res.getIsSeal()) {
                                 //已签约
                                 EmployeeTaxSigningSaveReq signSaveReq = EmployeeTaxSigningSaveReq.builder()
@@ -461,7 +461,7 @@ public class TaxController {
             EmployeeTaxSigningDTO signingDTO = employeeTaxSigningFeignService.save(signSaveReq);
 
             //验证身份信息成功，进入签约
-            WalletH5Req walletH5Req = WalletH5Req.builder()
+            chain.cloud.tax.dto.fxgj.WalletH5Req walletH5Req = chain.cloud.tax.dto.fxgj.WalletH5Req.builder()
 //                    .fwOrg(entErpriseInfoDTO.getEntName())
                     .fwOrgId(enterpriseAttachRes.getEntNum())
 //                    .ygOrg(groupDTO.getGroupName())
@@ -473,7 +473,7 @@ public class TaxController {
                     .transUserId(employeeTaxAttestDTO.getId())
                     .userName(employeeTaxAttestDTO.getUserName())
                     .build();
-            WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
+            chain.cloud.tax.dto.fxgj.WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
 
             if (null == walletH5Res) {
                 log.info("=====> 签约异常 walletH5Req:{}", JacksonUtil.objectToJson(walletH5Req));
@@ -569,7 +569,7 @@ public class TaxController {
                     .append(req.getAddress());
 
             //验证身份信息
-            SealUserReq userReq = SealUserReq.builder()
+            chain.cloud.tax.dto.fxgj.SealUserReq userReq = chain.cloud.tax.dto.fxgj.SealUserReq.builder()
                     .idCardNo(req.getIdNumber())
                     .idType("SFZ")
                     .phone(req.getPhone())
@@ -580,7 +580,7 @@ public class TaxController {
                     .address(append.toString())
                     .build();
             try {
-                SealUserRes userResult = taxService.user(userReq);
+                chain.cloud.tax.dto.fxgj.SealUserRes userResult = taxService.user(userReq);
                 if (null != userResult && "fail".equals(userResult.getRntCode())) {
                     attestSaveReq = EmployeeTaxAttestSaveReq.builder()
                             .id(taxSignDTO.getId())
@@ -679,9 +679,38 @@ public class TaxController {
             Optional.ofNullable(taxSignId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户ID不能不管为空")));
             log.info("=====> /tax/signRecord    签约记录查看   taxSignId：{}", taxSignId);
 
-            String sealH5 = taxService.sealH5(taxSignId);
+            //签约记录
+            EmployeeTaxSigningDTO signingDTO = employeeTaxSigningFeignService.findById(taxSignId);
+            if (null == signingDTO) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("签约记录不存在"));
+            }
+
+            //机构附件
+            GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(signingDTO.getGroupId());
+            if (null == groupAttachInfoDTO) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用工单位附件信息不存在"));
+            }
+
+            //企业附件
+            EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(groupAttachInfoDTO.getEntId());
+            if (null == enterpriseAttachRes) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("企业附件信息不存在"));
+            }
+
+            chain.cloud.tax.dto.fxgj.SealH5Req sealH5Req = chain.cloud.tax.dto.fxgj.SealH5Req.builder()
+                    .fwOrgId(enterpriseAttachRes.getEntNum())
+                    .ygOrgId(groupAttachInfoDTO.getGroupNum())
+                    .isUrl(true)
+                    .transUserId(signingDTO.getEmpTaxAttestId())
+                    .build();
+            chain.cloud.tax.dto.fxgj.SealH5Res  h5Res =taxService.sealH5(sealH5Req);
+            log.info("====> 获取签约记录信息  h5Res：{}",JacksonUtil.objectToJson(h5Res));
+             if (null == h5Res){
+                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("获取到签约记录信息为空"));
+             }
+
             return H5UrlDto.builder()
-                    .url(sealH5)
+                    .url(h5Res.getUrl())
                     .build();
         }).subscribeOn(Schedulers.boundedElastic());
     }
@@ -835,7 +864,7 @@ public class TaxController {
                                 .build();
 
                         //验证身份信息成功，进入签约
-                        WalletH5Req walletH5Req = WalletH5Req.builder()
+                        chain.cloud.tax.dto.fxgj.WalletH5Req walletH5Req = chain.cloud.tax.dto.fxgj.WalletH5Req.builder()
 //                                .fwOrg(employeeTaxSigningDTO.getEntName())
                                 .fwOrgId(employeeTaxSigningDTO.getEntNum())
 //                                .ygOrg(employeeTaxSigningDTO.getGroupName())
@@ -850,7 +879,7 @@ public class TaxController {
                         try {
                             if (IsStatusEnum.YES != employeeTaxSigningDTO.getSignStatus()) {
 
-                                WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
+                                chain.cloud.tax.dto.fxgj.WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
                                 if (null != walletH5Res && walletH5Res.getIsSeal()) {
                                     //已签约
                                     EmployeeTaxSigningSaveReq signSaveReq = EmployeeTaxSigningSaveReq.builder()
