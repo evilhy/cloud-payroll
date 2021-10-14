@@ -679,7 +679,13 @@ public class TaxController {
             Optional.ofNullable(taxSignId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户ID不能不管为空")));
             log.info("=====> /tax/signRecord    签约记录查看   taxSignId：{}", taxSignId);
 
-            String sealH5 = taxService.sealH5(taxSignId);
+            EmployeeTaxSigningDTO signingDTO = employeeTaxSigningFeignService.findById(taxSignId);
+            if (null == signingDTO) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("签约记录不存在"));
+            }
+
+            //签约记录查看
+            String sealH5 = taxService.sealH5(signingDTO.getEmpTaxAttestId());
             return H5UrlDto.builder()
                     .url(sealH5)
                     .build();
