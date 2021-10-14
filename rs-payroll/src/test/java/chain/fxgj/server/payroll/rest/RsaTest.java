@@ -82,11 +82,17 @@ public class RsaTest {
         byte[] content_ras_enc_encode = base64.encode(content_ras_enc);
         String content_ras_enc_str = new String(content_ras_enc_encode);
 
+        content_ras_enc_str = accessUrl  + content_ras_enc_str;
         System.out.println("content_ras_enc_str: " + content_ras_enc_str);
 
+        String subUrl = content_ras_enc_str.replace(accessUrl,"");
+        System.out.println("subUrl: " + subUrl);
+
+        System.out.println("content_ras_enc_str: " + content_ras_enc_str);
 
         //base64 解码
-        byte[]  content_ras_decode= base64.decode(content_ras_enc_str);
+        // byte[]  content_ras_decode= base64.decode(content_ras_enc_str);
+        byte[]  content_ras_decode= base64.decode(subUrl);
 
         //base64 解码  --> 私钥 解密
         byte[] content_ras_decrypt = RSAUtils.decryptByPrivateKey(content_ras_decode,rsaPrivateKey);
