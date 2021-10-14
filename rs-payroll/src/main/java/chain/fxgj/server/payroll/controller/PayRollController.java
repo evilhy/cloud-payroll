@@ -48,12 +48,13 @@ import core.dto.request.CacheEmployeeInfoReq;
 import core.dto.request.empCard.EmployeeCardLogQueryReq;
 import core.dto.request.empCard.EmployeeCardQueryReq;
 import core.dto.request.employeeTaxAttest.EmployeeTaxAttestQueryReq;
+import core.dto.request.employeeTaxSigning.EmployeeTaxSigningQueryReq;
 import core.dto.response.*;
 import core.dto.response.cardbin.CardbinQueRes;
 import core.dto.response.empCard.EmployeeCardDTO;
 import core.dto.response.empCard.EmployeeCardLogDTO;
 import core.dto.response.employeeTaxAttest.EmployeeTaxAttestDTO;
-import core.dto.response.employeeTaxSign.EmployeeTaxSignDTO;
+import core.dto.response.employeeTaxSigning.EmployeeTaxSigningDTO;
 import core.dto.response.signedreceipt.SignedReceiptSaveReq;
 import core.dto.response.wagesheet.WageSheetDTO;
 import core.dto.wechat.CacheUserPrincipal;
@@ -399,6 +400,20 @@ public class PayRollController {
                 EmployeeTaxAttestDTO employeeTaxAttestDTO = attestDTOList.get(0);
                 empInfoDTO.setAttestStatus(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getCode() : employeeTaxAttestDTO.getAttestStatus().getCode());
                 empInfoDTO.setAttestStatusVal(null == employeeTaxAttestDTO.getAttestStatus() ? AttestStatusEnum.NOT.getDesc() : employeeTaxAttestDTO.getAttestStatus().getDesc());
+
+                //查询签约信息
+                EmployeeTaxSigningQueryReq signingQueryReq = EmployeeTaxSigningQueryReq.builder()
+                        .entId(userPrincipal.getEntId())
+                        .empTaxAttestId(employeeTaxAttestDTO.getId())
+                        .signStatus(IsStatusEnum.YES)
+                        .build();
+                List<EmployeeTaxSigningDTO> signingDTOS = employeeTaxSigningFeignService.list(signingQueryReq);
+                if (null != signingDTOS && signingDTOS.size() > 0) {
+                    EmployeeTaxSigningDTO signing = signingDTOS.get(0);
+                    empInfoDTO.setTaxSignId(signing.getId());
+                    empInfoDTO.setSignStatus(signing.getSignStatus().getCode());
+                    empInfoDTO.setSignStatusVal(signing.getSignStatus().getDesc());
+                }
             }
             return empInfoDTO;
         }).subscribeOn(Schedulers.boundedElastic());
