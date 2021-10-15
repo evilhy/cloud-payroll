@@ -22,9 +22,9 @@ import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
 import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
 import chain.wage.manager.core.dto.response.enterprise.EntErpriseInfoDTO;
 import core.dto.ErrorConstant;
+import core.dto.request.employeeTaxAttest.CodingDTO;
 import core.dto.request.employeeTaxAttest.EmployeeTaxAttestQueryReq;
 import core.dto.request.employeeTaxAttest.EmployeeTaxAttestSaveReq;
-import core.dto.request.employeeTaxSign.CodingDTO;
 import core.dto.request.employeeTaxSigning.EmployeeTaxSigningQueryReq;
 import core.dto.request.employeeTaxSigning.EmployeeTaxSigningSaveReq;
 import core.dto.response.employeeTaxAttest.EmployeeTaxAttestDTO;
@@ -357,7 +357,6 @@ public class TaxController {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         String jsessionId = userPrincipal.getSessionId();
-        String entId = userPrincipal.getEntId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             log.info("=====> /tax/signing 确认签约 req：{}", JacksonUtil.objectToJson(req));
@@ -378,62 +377,76 @@ public class TaxController {
             EmployeeTaxAttestDTO employeeTaxAttestDTO = attestDTOList.get(0);
 
             //查询签约信息
+            String groupId = null;
+            String entId = null;
+            String templateId = null;
+            String id = req.getTaxSignId();
             if (StringUtils.isNotBlank(req.getTaxSignId())) {
                 EmployeeTaxSigningDTO employeeTaxSignDTO = employeeTaxSigningFeignService.findById(req.getTaxSignId());
                 if (IsStatusEnum.YES == employeeTaxSignDTO.getSignStatus()) {
                     log.info("=====> 用户在当前企业已进行签约 employeeWechatDTO:{}, req:{}", JacksonUtil.objectToJson(employeeTaxSignDTO), JacksonUtil.objectToJson(req));
                     throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户在当前企业已进行签约"));
                 }
+                groupId = employeeTaxSignDTO.getGroupId();
+                entId = employeeTaxSignDTO.getEntId();
+                templateId = employeeTaxSignDTO.getTemplateId();
+                id = employeeTaxSignDTO.getId();
             }
 
-            //查询提现台账
-            WithdrawalLedgerDTO withdrawalLedgerDTO = withdrawalLedgerInfoServiceFeign.findById(req.getWithdrawalLedgerId());
-            if (null == withdrawalLedgerDTO) {
-                log.info("=====> 提现台账不存在 withdrawalLedgerId:{}", req.getWithdrawalLedgerId());
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("提现台账不存在"));
+            if (StringUtils.isNotBlank(req.getWithdrawalLedgerId())) {
+                //查询提现台账
+                WithdrawalLedgerDTO withdrawalLedgerDTO = withdrawalLedgerInfoServiceFeign.findById(req.getWithdrawalLedgerId());
+                if (null == withdrawalLedgerDTO) {
+                    log.info("=====> 提现台账不存在 withdrawalLedgerId:{}", req.getWithdrawalLedgerId());
+                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("提现台账不存在"));
+                }
+
+                //通过方案获取协议ID
+                WageWithdrawDTO withdrawDTO = wageWithdrawFeignService.findById(withdrawalLedgerDTO.getWageSheetId());
+                if (null == withdrawDTO) {
+                    log.info("=====> 原方案信息不存在 wageSheetId:{}", withdrawalLedgerDTO.getWageSheetId());
+                    throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("原方案信息不存在"));
+                }
+
+                groupId = withdrawDTO.getGroupId();
+                entId = withdrawDTO.getEntId();
+                templateId = withdrawDTO.getTemplateId();
             }
 
-            GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(withdrawalLedgerDTO.getGroupId());
+            GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
             if (null == groupAttachInfoDTO) {
-                log.info("=====> 用工单位附加信息不存在！ groupId:{}", withdrawalLedgerDTO.getGroupId());
+                log.info("=====> 用工单位附加信息不存在！ groupId:{}", groupId);
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用工单位附加信息不存在！"));
             }
 
-            GroupDTO groupDTO = groupFeignController.findById(withdrawalLedgerDTO.getGroupId());
+            GroupDTO groupDTO = groupFeignController.findById(groupId);
             if (null == groupDTO) {
-                log.info("=====> 用工单位信息不存在！ groupId:{}", withdrawalLedgerDTO.getGroupId());
+                log.info("=====> 用工单位信息不存在！ groupId:{}", groupId);
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用工单位信息不存在！"));
             }
 
-            EntErpriseInfoDTO entErpriseInfoDTO = enterpriseFeignService.findById(withdrawalLedgerDTO.getEntId());
+            EntErpriseInfoDTO entErpriseInfoDTO = enterpriseFeignService.findById(entId);
             if (null == entErpriseInfoDTO) {
-                log.info("=====> 企业信息不存在！ entId:{}", withdrawalLedgerDTO.getEntId());
+                log.info("=====> 企业信息不存在！ entId:{}", entId);
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("企业信息不存在！"));
             }
 
-            EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(withdrawalLedgerDTO.getEntId());
+            EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(entId);
             if (null == enterpriseAttachRes) {
-                log.info("=====> 企业附加信息不存在！ entId:{}", withdrawalLedgerDTO.getEntId());
+                log.info("=====> 企业附加信息不存在！ entId:{}", entId);
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("企业附加信息不存在！"));
-            }
-
-            //通过方案获取协议ID
-            WageWithdrawDTO withdrawDTO = wageWithdrawFeignService.findById(withdrawalLedgerDTO.getWageSheetId());
-            if (null == withdrawDTO) {
-                log.info("=====> 原方案信息不存在 wageSheetId:{}", withdrawalLedgerDTO.getWageSheetId());
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("原方案信息不存在"));
             }
 
             //获取原签约记录
             EmployeeTaxSigningQueryReq signingQueryReq = EmployeeTaxSigningQueryReq.builder()
+                    .id(id)
                     .entId(entErpriseInfoDTO.getId())
                     .groupId(groupDTO.getGroupId())
-                    .templateId(withdrawDTO.getTemplateId())
+                    .templateId(templateId)
                     .empTaxAttestId(employeeTaxAttestDTO.getId())
                     .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
                     .build();
             List<EmployeeTaxSigningDTO> signingDTOS = employeeTaxSigningFeignService.list(signingQueryReq);
-            String id = null;
             if (null != signingDTOS && signingDTOS.size() > 0) {
                 EmployeeTaxSigningDTO employeeTaxSigningDTO = signingDTOS.get(0);
                 if (IsStatusEnum.YES == employeeTaxSigningDTO.getSignStatus()) {
@@ -456,7 +469,7 @@ public class TaxController {
                     .groupNum(groupAttachInfoDTO.getGroupNum())
 //                    .signDateTime()
                     .signStatus(IsStatusEnum.NO)
-                    .templateId(withdrawDTO.getTemplateId())
+                    .templateId(templateId)
                     .build();
             EmployeeTaxSigningDTO signingDTO = employeeTaxSigningFeignService.save(signSaveReq);
 
@@ -466,7 +479,7 @@ public class TaxController {
                     .fwOrgId(enterpriseAttachRes.getEntNum())
 //                    .ygOrg(groupDTO.getGroupName())
                     .ygOrgId(groupAttachInfoDTO.getGroupNum())
-                    .templateId(withdrawDTO.getTemplateId())
+                    .templateId(templateId)
                     .idType("SFZ")
                     .idCardNo(employeeTaxAttestDTO.getIdNumber())
                     .phone(employeeTaxAttestDTO.getPhone())
@@ -674,40 +687,47 @@ public class TaxController {
     @TrackLog
     public Mono<H5UrlDto> signRecord(@RequestParam("taxSignId") String taxSignId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        UserPrincipal userPrincipal = WebContext.getCurrentUser();
+        String jsessionId = userPrincipal.getSessionId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
             Optional.ofNullable(taxSignId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户ID不能不管为空")));
             log.info("=====> /tax/signRecord    签约记录查看   taxSignId：{}", taxSignId);
 
-            //签约记录
-            EmployeeTaxSigningDTO signingDTO = employeeTaxSigningFeignService.findById(taxSignId);
-            if (null == signingDTO) {
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("签约记录不存在"));
-            }
+            //查询登陆信息
+            EmployeeWechatDTO employeeWechatDTO = employeeWechatService.findByJsessionId(jsessionId, userPrincipal.getName());
 
-            //机构附件
-            GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(signingDTO.getGroupId());
-            if (null == groupAttachInfoDTO) {
-                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用工单位附件信息不存在"));
+            //查询认证信息
+            EmployeeTaxAttestQueryReq attestQueryReq = EmployeeTaxAttestQueryReq.builder()
+                    .idNumber(employeeWechatDTO.getIdNumber())
+                    .userName(employeeWechatDTO.getName())
+                    .phone(employeeWechatDTO.getPhone())
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .build();
+            List<EmployeeTaxAttestDTO> attestDTOList = employeeTaxAttestFeignService.list(attestQueryReq);
+            String empTaxAttestId = null;
+            if (null != attestDTOList && attestDTOList.size() > 0) {
+                empTaxAttestId = attestDTOList.get(0).getId();
+            } else {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("未找到认证信息，签约记录为空"));
             }
 
             //企业附件
-            EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(groupAttachInfoDTO.getEntId());
+            EnterpriseAttachRes enterpriseAttachRes = enterpriseAttachFeignService.attachInfo(userPrincipal.getEntId());
             if (null == enterpriseAttachRes) {
                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("企业附件信息不存在"));
             }
 
             chain.cloud.tax.dto.fxgj.SealH5Req sealH5Req = chain.cloud.tax.dto.fxgj.SealH5Req.builder()
                     .fwOrgId(enterpriseAttachRes.getEntNum())
-                    .ygOrgId(groupAttachInfoDTO.getGroupNum())
                     .isUrl(true)
-                    .transUserId(signingDTO.getEmpTaxAttestId())
+                    .transUserId(empTaxAttestId)
                     .build();
-            chain.cloud.tax.dto.fxgj.SealH5Res  h5Res =taxService.sealH5(sealH5Req);
-            log.info("====> 获取签约记录信息  h5Res：{}",JacksonUtil.objectToJson(h5Res));
-             if (null == h5Res){
-                 throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("获取到签约记录信息为空"));
-             }
+            chain.cloud.tax.dto.fxgj.SealH5Res h5Res = taxService.sealH5(sealH5Req);
+            log.info("====> 获取签约记录信息  h5Res：{}", JacksonUtil.objectToJson(h5Res));
+            if (null == h5Res) {
+                throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("获取到签约记录信息为空"));
+            }
 
             return H5UrlDto.builder()
                     .url(h5Res.getUrl())
@@ -861,6 +881,8 @@ public class TaxController {
                                 .signStatus(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSigningDTO.getSignStatus().getCode())
                                 .signStatusVal(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSigningDTO.getSignStatus().getDesc())
                                 .templateId(employeeTaxSigningDTO.getTemplateId())
+                                .templateName(employeeTaxSigningDTO.getTemplateName())
+                                .templateNo(employeeTaxSigningDTO.getTemplateNo())
                                 .build();
 
                         //验证身份信息成功，进入签约

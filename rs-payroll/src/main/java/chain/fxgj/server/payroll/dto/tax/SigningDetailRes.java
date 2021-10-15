@@ -63,6 +63,14 @@ public class SigningDetailRes {
      */
     private String templateId;
     /**
+     * 模板编号
+     */
+    private String templateNo;
+    /**
+     * 模板名称
+     */
+    private String templateName;
+    /**
      * 是否完成签约 (0:未签约、1：已签约)
      */
     private Integer signStatus;
