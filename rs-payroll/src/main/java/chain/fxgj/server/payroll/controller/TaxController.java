@@ -828,7 +828,7 @@ public class TaxController {
      */
     @GetMapping("/signingList")
     @TrackLog
-    public Mono<List<SigningDetailRes>> signingList(@RequestParam("templateId") String templateId,
+    public Mono<List<SigningDetailRes>> signingList(@RequestParam(value = "templateId", required = false) String templateId,
                                                     @RequestHeader(value = "encry-salt", required = false) String salt,
                                                     @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
