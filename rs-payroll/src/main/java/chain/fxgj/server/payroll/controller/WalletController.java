@@ -145,7 +145,7 @@ public class WalletController {
             if (null != attestDTOList && attestDTOList.size() > 0) {
                 EmployeeTaxAttestDTO employeeTaxAttestDTO = attestDTOList.get(0);
                 String empTaxAttestId = employeeTaxAttestDTO.getId();
-                isAttest = AttestStatusEnum.SUCCESS == employeeTaxAttestDTO.getAttestStatus();
+                isAttest = AttestStatusEnum.SUCCESS == employeeTaxAttestDTO.getAttestStatus() || AttestStatusEnum.ING == employeeTaxAttestDTO.getAttestStatus();
 
                 //未签约协议数
                 EmployeeTaxSigningQueryReq signingQueryReq = EmployeeTaxSigningQueryReq.builder()
