@@ -137,7 +137,6 @@ public class SecuritiesServiceImpl implements SecuritiesService {
         securitiesLoginDTO.setManagerId(reqSecuritiesLoginDTO.getCustomerId());
         securitiesLoginDTO.setReferrerId(reqSecuritiesLoginDTO.getInvitationId());
         securitiesLoginDTO.setPhoneNo(reqSecuritiesLoginDTO.getPhone());
-        // todo getCustId getSecuritiesPlatform
         securitiesLoginDTO.setCustId(reqSecuritiesLoginDTO.getCustId());
         securitiesLoginDTO.setSecuritiesPlatform(SecuritiesPlatformEnum.values()[reqSecuritiesLoginDTO.getSecuritiesPlatform()]);
         log.info("transferThirdPage.securitiesLoginDTO:[{}]", JacksonUtil.objectToJson(securitiesLoginDTO));
