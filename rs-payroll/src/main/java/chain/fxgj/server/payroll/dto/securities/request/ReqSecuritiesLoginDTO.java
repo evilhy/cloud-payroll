@@ -46,5 +46,14 @@ public class ReqSecuritiesLoginDTO {
      */
     private String msgCodeId;
 
+    /**
+     * 证券平台
+     */
+    private int securitiesPlatform;
+
+    /**
+     * 客户id
+     */
+    private String custId;
 
 }

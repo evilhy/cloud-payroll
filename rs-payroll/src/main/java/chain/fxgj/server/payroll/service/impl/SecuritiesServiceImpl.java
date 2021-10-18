@@ -1,10 +1,12 @@
 package chain.fxgj.server.payroll.service.impl;
 
+import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.fxgj.server.payroll.service.SecuritiesService;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.wisales.client.feign.SecuritiesActivityFeignService;
+import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
 import lombok.extern.slf4j.Slf4j;
@@ -121,4 +123,26 @@ public class SecuritiesServiceImpl implements SecuritiesService {
         List<SecuritiesRewardResDTO> securitiesRewardResDTOList = securitiesActivityFeignService.qryInvestmentRewardList(custId);
         return securitiesRewardResDTOList;
     }
+
+    /**
+     * 跳转第三方证券公司活动页面
+     *
+     * @param reqSecuritiesLoginDTO
+     * @return
+     */
+    @Override
+    public String transferThirdPage(ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
+        log.info("transferThirdPage.reqSecuritiesLoginDTO:[{}]", JacksonUtil.objectToJson(reqSecuritiesLoginDTO));
+        SecuritiesLoginDTO securitiesLoginDTO = new SecuritiesLoginDTO();
+        securitiesLoginDTO.setManagerId(reqSecuritiesLoginDTO.getCustomerId());
+        securitiesLoginDTO.setReferrerId(reqSecuritiesLoginDTO.getInvitationId());
+        securitiesLoginDTO.setPhoneNo(reqSecuritiesLoginDTO.getPhone());
+        // todo getCustId getSecuritiesPlatform
+        securitiesLoginDTO.setCustId(reqSecuritiesLoginDTO.getCustId());
+        securitiesLoginDTO.setSecuritiesPlatform(SecuritiesPlatformEnum.values()[reqSecuritiesLoginDTO.getSecuritiesPlatform()]);
+        log.info("transferThirdPage.securitiesLoginDTO:[{}]", JacksonUtil.objectToJson(securitiesLoginDTO));
+        String url = securitiesActivityFeignService.transferThirdPage(securitiesLoginDTO);
+        return url;
+    }
+
 }
