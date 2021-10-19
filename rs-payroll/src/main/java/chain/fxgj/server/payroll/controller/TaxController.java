@@ -685,13 +685,13 @@ public class TaxController {
      */
     @GetMapping("/signRecord")
     @TrackLog
-    public Mono<H5UrlDto> signRecord(@RequestParam("taxSignId") String taxSignId) {
+    public Mono<H5UrlDto> signRecord(@RequestParam(value = "taxSignId", required = false) String taxSignId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         String jsessionId = userPrincipal.getSessionId();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            Optional.ofNullable(taxSignId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户ID不能不管为空")));
+//            Optional.ofNullable(taxSignId).orElseThrow(() -> new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("用户ID不能不管为空")));
             log.info("=====> /tax/signRecord    签约记录查看   taxSignId：{}", taxSignId);
 
             //查询登陆信息
