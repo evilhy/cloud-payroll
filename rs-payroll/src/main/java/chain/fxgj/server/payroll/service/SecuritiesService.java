@@ -1,5 +1,6 @@
 package chain.fxgj.server.payroll.service;
 
+import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
@@ -72,5 +73,13 @@ public interface SecuritiesService {
      * @return
      */
     List<SecuritiesRewardResDTO> qryInvestmentRewardList(String custId);
+
+    /**
+     * 跳转第三方证券公司活动页面
+     *
+     * @param reqSecuritiesLoginDTO
+     * @return
+     */
+    String transferThirdPage(ReqSecuritiesLoginDTO reqSecuritiesLoginDTO);
 
 }
