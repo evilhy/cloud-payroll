@@ -27,6 +27,7 @@ import chain.utils.commons.UUIDUtil;
 import chain.wage.manager.core.dto.request.WageReqPhone;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
+import core.dto.request.ReqPhone;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -190,11 +191,16 @@ public class SecuritiesController {
                 throw new ServiceHandleException(ErrorConstant.Error0004.format());
             }
             //1.短信验证码校验是否通过
-            WageReqPhone wageReqPhone = new WageReqPhone();
+            /*WageReqPhone wageReqPhone = new WageReqPhone();
             wageReqPhone.setCode(reqSecuritiesLoginDTO.getMsgCode());
             wageReqPhone.setCodeId(codeId);
-            wageReqPhone.setPhone(phone);
-            String retStr = insideFeignService.checkPhoneCode(wageReqPhone);
+            wageReqPhone.setPhone(phone);*/
+
+            ReqPhone reqPhone = new ReqPhone();
+            reqPhone.setCode(reqSecuritiesLoginDTO.getMsgCode());
+            reqPhone.setCodeId(codeId);
+            reqPhone.setPhone(phone);
+            String retStr = insideFeignController.checkPhoneCode(reqPhone);
             if (!StringUtils.equals("0000", retStr)) {
                 throw new ServiceHandleException(ErrorConstant.SYS_ERROR.format(retStr));
             }
