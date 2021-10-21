@@ -17,7 +17,6 @@ import core.dto.ErrorConstant;
 import core.dto.request.BaseReqDTO;
 import core.dto.request.empCard.EmployeeCardQueryReq;
 import core.dto.request.employee.EmployeeQueryReq;
-import core.dto.request.employeeTaxSign.EmployeeTaxSignQueryReq;
 import core.dto.request.employeeWallet.EmployeeWalletQueryReq;
 import core.dto.request.employeeWallet.EmployeeWalletSaveReq;
 import core.dto.request.wageDetail.WageDetailQueryReq;
@@ -28,7 +27,6 @@ import core.dto.request.withdrawalRecordLog.WithdrawalRecordLogSaveReq;
 import core.dto.request.withdrawalSchedule.WithdrawalScheduleQueryReq;
 import core.dto.request.withdrawalSchedule.WithdrawalScheduleSaveReq;
 import core.dto.response.employee.EmployeeDTO;
-import core.dto.response.employeeTaxSign.EmployeeTaxSignDTO;
 import core.dto.response.employeeWallet.EmployeeWalletDTO;
 import core.dto.response.entAttach.EnterpriseAttachRes;
 import core.dto.response.group.GroupDTO;
@@ -97,8 +95,6 @@ public class WalletServiceImpl implements WalletService {
     EmployeeCardFeignService employeeCardFeignService;
     @Autowired
     WithdrawalScheduleFeignService withdrawalScheduleFeignService;
-    @Autowired
-    EmployeeTaxSignFeignService employeeTaxSignFeignService;
 
     @Autowired
     EmpWechatService empWechatService;
@@ -180,7 +176,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         // 最近一笔收入
-        BigDecimal bigDecimal = recentlyIssued(entId, dto.getName(), dto.getIdNumber(),employeeWalletDTO);
+        BigDecimal bigDecimal = recentlyIssued(entId, dto.getName(), dto.getIdNumber(), employeeWalletDTO);
 
         String walletNumber = null == employeeWalletDTO || StringUtils.isBlank(employeeWalletDTO.getWalletNumber()) ? "" : employeeWalletDTO.getWalletNumber();
         BigDecimal balance = null == employeeWalletDTO || null == employeeWalletDTO.getTotalAmount() ? BigDecimal.ZERO : employeeWalletDTO.getTotalAmount();
@@ -195,7 +191,7 @@ public class WalletServiceImpl implements WalletService {
                 .cardNum(empCardResDTO.getCardNum())
                 .withdrawStatus(withdrawStatus.getCode())
                 .withdrawStatusVal(withdrawStatus.getDesc())
-                .recentlyIssuedAmt(null == bigDecimal ? EncrytorUtils.encryptField("0.00", salt, passwd):EncrytorUtils.encryptField(bigDecimal.toString(), salt, passwd))
+                .recentlyIssuedAmt(null == bigDecimal ? EncrytorUtils.encryptField("0.00", salt, passwd) : EncrytorUtils.encryptField(bigDecimal.toString(), salt, passwd))
                 .salt(salt)
                 .passwd(passwd)
                 .build();
@@ -213,7 +209,7 @@ public class WalletServiceImpl implements WalletService {
      * @param idNumber
      * @return
      */
-    public BigDecimal recentlyIssued(String entId, String custName, String idNumber,EmployeeWalletDTO employeeWalletDTO ) {
+    public BigDecimal recentlyIssued(String entId, String custName, String idNumber, EmployeeWalletDTO employeeWalletDTO) {
         //查询方案明细
         WageDetailDTO wageDetailDTO = null;
         WageDetailQueryReq detailQueryReq = WageDetailQueryReq.builder()
@@ -229,7 +225,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         WithdrawalLedgerDTO withdrawalLedgerDTO = null;
-        if (null !=  employeeWalletDTO ) {
+        if (null != employeeWalletDTO) {
             //查询钱包
             WithdrawalLedgerQueryReq ledgerQueryReq = WithdrawalLedgerQueryReq.builder()
                     .entId(entId)
