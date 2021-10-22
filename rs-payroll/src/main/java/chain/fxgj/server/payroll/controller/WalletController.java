@@ -4,13 +4,28 @@ import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.PageDTO;
+import chain.fxgj.server.payroll.dto.tax.SigningDetailRes;
+import chain.fxgj.server.payroll.dto.tax.WalletH5Req;
+import chain.fxgj.server.payroll.dto.tax.WalletH5Res;
 import chain.fxgj.server.payroll.dto.wallet.*;
+import chain.fxgj.server.payroll.service.TaxService;
 import chain.fxgj.server.payroll.service.WalletService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
+import chain.payroll.client.feign.EmployeeTaxAttestFeignService;
+import chain.payroll.client.feign.EmployeeTaxSigningFeignService;
 import chain.payroll.client.feign.WechatFeignController;
+import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.JsonUtil;
 import chain.utils.commons.StringUtils;
+import chain.utils.fxgj.constant.DictEnums.AttestStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.DelStatusEnum;
+import chain.utils.fxgj.constant.DictEnums.IsStatusEnum;
+import core.dto.request.employeeTaxAttest.EmployeeTaxAttestQueryReq;
+import core.dto.request.employeeTaxSigning.EmployeeTaxSigningQueryReq;
+import core.dto.request.employeeTaxSigning.EmployeeTaxSigningSaveReq;
+import core.dto.response.employeeTaxAttest.EmployeeTaxAttestDTO;
+import core.dto.response.employeeTaxSigning.EmployeeTaxSigningDTO;
 import core.dto.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -20,6 +35,9 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +54,12 @@ public class WalletController {
 
     @Autowired
     WechatFeignController wechatFeignController;
+    @Autowired
+    EmployeeTaxAttestFeignService employeeTaxAttestFeignService;
+    @Autowired
+    EmployeeTaxSigningFeignService employeeTaxSigningFeignService;
+    @Autowired
+    TaxService taxService;
 
     /**
      * 获取登陆人信息
@@ -49,7 +73,7 @@ public class WalletController {
         if (null == dto) {
             throw new ParamsIllegalException(ErrorConstant.Error0001.format("登录人"));
         }
-        if (StringUtils.isBlank(dto.getName())){
+        if (StringUtils.isBlank(dto.getName())) {
             dto.setName(name);
         }
         return dto;
@@ -107,6 +131,84 @@ public class WalletController {
             //查询当前登陆人信息
             EmployeeWechatDTO dto = findByJsessionId(jsessionId, currentUser.getName());
             EmpCardAndBalanceResDTO resDTO = walletService.empCardAdnBalance(entId, salt, passwd, dto);
+
+            //查询认证信息
+            Boolean isAttest = true;
+            Integer signNumber = 0;
+            EmployeeTaxAttestQueryReq attestQueryReq = EmployeeTaxAttestQueryReq.builder()
+                    .idNumber(dto.getIdNumber())
+                    .userName(dto.getName())
+                    .phone(dto.getPhone())
+                    .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                    .build();
+            List<EmployeeTaxAttestDTO> attestDTOList = employeeTaxAttestFeignService.list(attestQueryReq);
+            if (null != attestDTOList && attestDTOList.size() > 0) {
+                EmployeeTaxAttestDTO employeeTaxAttestDTO = attestDTOList.get(0);
+                String empTaxAttestId = employeeTaxAttestDTO.getId();
+                isAttest = AttestStatusEnum.SUCCESS == employeeTaxAttestDTO.getAttestStatus() || AttestStatusEnum.ING == employeeTaxAttestDTO.getAttestStatus();
+
+                //未签约协议数
+                EmployeeTaxSigningQueryReq signingQueryReq = EmployeeTaxSigningQueryReq.builder()
+                        .entId(entId)
+                        .empTaxAttestId(empTaxAttestId)
+                        .signStatus(IsStatusEnum.NO)
+                        .delStatusEnums(Arrays.asList(DelStatusEnum.normal))
+                        .build();
+                List<EmployeeTaxSigningDTO> signingDTOS = employeeTaxSigningFeignService.list(signingQueryReq);
+                if (null != signingDTOS && signingDTOS.size() > 0) {
+                    for (EmployeeTaxSigningDTO employeeTaxSigningDTO : signingDTOS) {
+                        SigningDetailRes signingDetail = SigningDetailRes.builder()
+                                .empTaxAttestId(employeeTaxSigningDTO.getEmpTaxAttestId())
+                                .entName(employeeTaxSigningDTO.getEntName())
+                                .groupId(employeeTaxSigningDTO.getGroupId())
+                                .entNum(employeeTaxSigningDTO.getEntNum())
+                                .groupName(employeeTaxSigningDTO.getGroupName())
+                                .entId(employeeTaxSigningDTO.getEntId())
+                                .groupNum(employeeTaxSigningDTO.getGroupNum())
+                                .taxSignId(employeeTaxSigningDTO.getId())
+                                .signDateTime(null == employeeTaxSigningDTO.getSignDateTime() ? null : employeeTaxSigningDTO.getSignDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                                .signStatus(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getCode() : employeeTaxSigningDTO.getSignStatus().getCode())
+                                .signStatusVal(null == employeeTaxSigningDTO.getSignStatus() ? IsStatusEnum.NO.getDesc() : employeeTaxSigningDTO.getSignStatus().getDesc())
+                                .templateId(employeeTaxSigningDTO.getTemplateId())
+                                .build();
+
+                        //验证身份信息成功，进入签约
+                        chain.cloud.tax.dto.fxgj.WalletH5Req walletH5Req = chain.cloud.tax.dto.fxgj.WalletH5Req.builder()
+//                                .fwOrg(employeeTaxSigningDTO.getEntName())
+                                .fwOrgId(employeeTaxSigningDTO.getEntNum())
+//                                .ygOrg(employeeTaxSigningDTO.getGroupName())
+                                .ygOrgId(employeeTaxSigningDTO.getGroupNum())
+                                .templateId(employeeTaxSigningDTO.getTemplateId())
+                                .idType("SFZ")
+                                .idCardNo(employeeTaxAttestDTO.getIdNumber())
+                                .phone(employeeTaxAttestDTO.getPhone())
+                                .transUserId(employeeTaxAttestDTO.getId())
+                                .userName(employeeTaxAttestDTO.getUserName())
+                                .build();
+                        try {
+                            if (IsStatusEnum.YES != employeeTaxSigningDTO.getSignStatus()) {
+
+                                chain.cloud.tax.dto.fxgj.WalletH5Res walletH5Res = taxService.walletH5(walletH5Req);
+                                if (null != walletH5Res && walletH5Res.getIsSeal()) {
+                                    //已签约
+                                    EmployeeTaxSigningSaveReq signSaveReq = EmployeeTaxSigningSaveReq.builder()
+                                            .id(employeeTaxSigningDTO.getId())
+                                            .signStatus(IsStatusEnum.YES)
+                                            .signDateTime(LocalDateTime.now())
+                                            .build();
+                                    employeeTaxSigningFeignService.save(signSaveReq);
+                                    continue;
+                                }
+                            }
+                        } catch (Exception e) {
+                            log.info("=====> 验证是否签约成功失败，walletH5Req：{}", JacksonUtil.objectToJson(walletH5Req));
+                        }
+                        signNumber = signNumber + 1;
+                    }
+                }
+            }
+            resDTO.setIsAttest(isAttest);
+            resDTO.setSignNumber(signNumber);
             return resDTO;
         }).subscribeOn(Schedulers.boundedElastic());
     }

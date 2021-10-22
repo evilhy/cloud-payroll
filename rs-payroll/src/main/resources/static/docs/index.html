@@ -445,7 +445,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <span id="author" class="author">author</span><br>
 <span id="email" class="email"><a href="mailto:kayak@kayak.com">kayak@kayak.com</a></span><br>
 <span id="revnumber">version ,</span>
-<span id="revdate">2021-09-09T17:42:30.689+08:00</span>
+<span id="revdate">2021-10-11T20:09:15.261+08:00</span>
 <br><span id="revremark">适用于8月切库版本</span>
 </div>
 <div id="toc" class="toc2">
@@ -1153,14 +1153,26 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#id_示例_106">17.7.2. 示例</a></li>
 </ul>
 </li>
+<li><a href="#id_认证详情">17.8. 认证详情</a>
+<ul class="sectlevel3">
+<li><a href="#id_接口定义_107">17.8.1. 接口定义</a></li>
+<li><a href="#id_示例_107">17.8.2. 示例</a></li>
+</ul>
+</li>
+<li><a href="#id_待签约列表">17.9. 待签约列表</a>
+<ul class="sectlevel3">
+<li><a href="#id_接口定义_108">17.9.1. 接口定义</a></li>
+<li><a href="#id_示例_108">17.9.2. 示例</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#id_地区设置">18. 地区设置</a>
 <ul class="sectlevel2">
 <li><a href="#id_地区查询字典">18.1. 地区查询字典</a>
 <ul class="sectlevel3">
-<li><a href="#id_接口定义_107">18.1.1. 接口定义</a></li>
-<li><a href="#id_示例_107">18.1.2. 示例</a></li>
+<li><a href="#id_接口定义_109">18.1.1. 接口定义</a></li>
+<li><a href="#id_示例_109">18.1.2. 示例</a></li>
 </ul>
 </li>
 </ul>
@@ -15229,6 +15241,342 @@ Content-Length: 31
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="id_认证详情"><a class="anchor" href="#id_认证详情"></a><a class="link" href="#id_认证详情">17.8. 认证详情</a></h3>
+<div class="sect3">
+<h4 id="id_接口定义_107"><a class="anchor" href="#id_接口定义_107"></a><a class="link" href="#id_接口定义_107">17.8.1. 接口定义</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Path Parameters:</p>
+<div class="paragraph">
+<p>无</p>
+</div>
+</li>
+<li>
+<p>Response Body:</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>taxAttestId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证信息ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">姓名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">证件类型 1：身份证、 2：外国护照</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idTypeVal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">证件类型 描述</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idNumber</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">证件号码</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>phone</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">手机号</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idCardFront</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">身份证正面</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idCardNegative</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">身份证反面</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>attestStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Integer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证状态（0：未认证、1：认证中、2：认证失败、3：认证成功）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>attestStatusVal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证状态描述</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>provinceCode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">省、自治区、直辖市</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>provinceName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">省、自治区、直辖市</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cityCode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">地级市、地区、自治州、盟</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cityName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">地级市、地区、自治州、盟</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>areaCode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">市辖区、县级市、县</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>areaName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">市辖区、县级市、县</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>streetCode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">街道、镇、乡</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>streetName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">街道、镇、乡</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>address</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">详细地址</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>attestFailMsg</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">认证失败原因</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>salt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">salt</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>passwd</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">password</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="id_示例_107"><a class="anchor" href="#id_示例_107"></a><a class="link" href="#id_示例_107">17.8.2. 示例</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Request:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/tax/taxAttestDetail' -i -X GET \
+    -H 'encry-salt: 8e1ad6d5a8b4464c8683f1d993be6a0c' \
+    -H 'encry-passwd: bd23012dd4fc49b5bf7a7521669101a4' \
+    -H 'ent-id: 5ba455c7d8ee48249d0d1859b0e5bb3b'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Response:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 861
+
+{
+  "taxAttestId" : "210dfb958b5446648f6db51d1860f694",
+  "userName" : "周文君",
+  "idType" : "1",
+  "idTypeVal" : "身份证",
+  "phone" : "18607559997",
+  "idCardFront" : "/webserver/www/upload/sign/20210922/min/IDCARD-7167343432770591979Screenshot_20210916_164138_com.tencent.mm.jpg",
+  "idCardNegative" : "/webserver/www/upload/sign/20210922/min/IDCARD-1863685373598381325Screenshot_20210916_164130_com.tencent.mm.jpg",
+  "attestStatus" : 2,
+  "attestStatusVal" : "认证失败",
+  "provinceCode" : "110000",
+  "provinceName" : "北京市",
+  "cityCode" : "110000",
+  "cityName" : "北京市",
+  "areaCode" : "110000",
+  "areaName" : "东城区",
+  "streetCode" : "110000",
+  "streetName" : "123街道",
+  "address" : "看了就看了",
+  "salt" : "8e1ad6d5a8b4464c8683f1d993be6a0c",
+  "passwd" : "bd23012dd4fc49b5bf7a7521669101a4"
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="id_待签约列表"><a class="anchor" href="#id_待签约列表"></a><a class="link" href="#id_待签约列表">17.9. 待签约列表</a></h3>
+<div class="sect3">
+<h4 id="id_接口定义_108"><a class="anchor" href="#id_接口定义_108"></a><a class="link" href="#id_接口定义_108">17.9.1. 接口定义</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Path Parameters:</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>templateId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">协议模板ID</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Response Body:</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>taxSignId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>empTaxAttestId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">身份认证ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">企业ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">企业名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>entNum</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">企业编号</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>groupId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">机构（用工单位）ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>groupName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">机构（用工单位）名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>groupNum</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用工单位编号</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>templateId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">模板ID（协议ID）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>signStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Integer</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否完成签约 (0:未签约、1：已签约)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>signStatusVal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否完成签约 (0:未签约、1：已签约)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>signDateTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Long</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">签约成功时间</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="id_示例_108"><a class="anchor" href="#id_示例_108"></a><a class="link" href="#id_示例_108">17.9.2. 示例</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Request:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/tax/signingList?templateId=f62eb285c3c44095874fbd08f5d0ebca' -i -X GET \
+    -H 'encry-salt: 56d4bc83e0cd45f39d93625dcdaec69f' \
+    -H 'encry-passwd: 4de058dee93942dfbab88e99f4d33dbb' \
+    -H 'ent-id: 4846eba55839412090415ce3e6c08a69'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Response:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 3
+
+[ ]</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -15237,7 +15585,7 @@ Content-Length: 31
 <div class="sect2">
 <h3 id="id_地区查询字典"><a class="anchor" href="#id_地区查询字典"></a><a class="link" href="#id_地区查询字典">18.1. 地区查询字典</a></h3>
 <div class="sect3">
-<h4 id="id_接口定义_107"><a class="anchor" href="#id_接口定义_107"></a><a class="link" href="#id_接口定义_107">18.1.1. 接口定义</a></h4>
+<h4 id="id_接口定义_109"><a class="anchor" href="#id_接口定义_109"></a><a class="link" href="#id_接口定义_109">18.1.1. 接口定义</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -15335,7 +15683,7 @@ Content-Length: 31
 </div>
 </div>
 <div class="sect3">
-<h4 id="id_示例_107"><a class="anchor" href="#id_示例_107"></a><a class="link" href="#id_示例_107">18.1.2. 示例</a></h4>
+<h4 id="id_示例_109"><a class="anchor" href="#id_示例_109"></a><a class="link" href="#id_示例_109">18.1.2. 示例</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -15381,7 +15729,7 @@ Content-Length: 335
 <div id="footer">
 <div id="footer-text">
 Version <br>
-Last updated 2021-09-09 17:37:35 +0800
+Last updated 2021-10-11 17:15:07 +0800
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

@@ -1,9 +1,7 @@
 package chain.fxgj.server.payroll.rest;
 
 import chain.fxgj.server.payroll.JavaDocReader;
-import chain.fxgj.server.payroll.dto.response.ResMiniUserInfo;
 import chain.fxgj.server.payroll.dto.tax.*;
-import chain.fxgj.server.payroll.dto.wallet.WithdrawalReq;
 import chain.utils.commons.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.FixMethodOrder;
@@ -20,7 +18,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
 
 /**
@@ -42,7 +39,7 @@ public class TaxControllerTest extends BaseTestCase {
         String salt = UUIDUtil.createUUID32();
         String passwd = UUIDUtil.createUUID32();
         String entId = UUIDUtil.createUUID32();
-        webTestClient.get().uri("/tax/signingDetails?withdrawalLedgerId={withdrawalLedgerId}",UUIDUtil.createUUID8())
+        webTestClient.get().uri("/tax/signingDetails?withdrawalLedgerId={withdrawalLedgerId}", UUIDUtil.createUUID8())
                 .header("encry-salt", salt)
                 .header("encry-passwd", passwd)
                 .header("ent-id", entId)
@@ -131,6 +128,7 @@ public class TaxControllerTest extends BaseTestCase {
 
     /**
      * 身份认证
+     *
      * @throws Exception
      */
     @Test
@@ -200,7 +198,6 @@ public class TaxControllerTest extends BaseTestCase {
 
     /**
      * 签约记录查看
-     *
      */
     @Test
     public void signRecord() throws Exception {
@@ -212,8 +209,56 @@ public class TaxControllerTest extends BaseTestCase {
                 .expectBody(String.class)//返回是什么类型的对象
                 .consumeWith(body -> log.info(body.getResponseBody()))
                 .consumeWith(document("tax_signRecord",
-                        relaxedRequestParameters( parameterWithName("taxSignId").description("签约信息ID")),
+                        relaxedRequestParameters(parameterWithName("taxSignId").description("签约信息ID")),
                         relaxedResponseFields(JavaDocReader.javaDoc(H5UrlDto.class))//出参对象描述
+                ));
+    }
+
+    /**
+     * 认证详情
+     *
+     * @throws Exception
+     */
+    @Test
+    public void taxAttestDetail() throws Exception {
+        String salt = UUIDUtil.createUUID32();
+        String passwd = UUIDUtil.createUUID32();
+        String entId = UUIDUtil.createUUID32();
+        webTestClient.get().uri(("/tax/taxAttestDetail"))
+                .header("encry-salt", salt)
+                .header("encry-passwd", passwd)
+                .header("ent-id", entId)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(document("tax_taxAttestDetail",
+//                        relaxedRequestParameters(parameterWithName("withdrawalLedgerId").description("提现台账ID")),
+                        relaxedResponseFields(JavaDocReader.javaDoc(TaxAttestDetailRes.class))
+                ));
+    }
+
+    /**
+     * 待签约列表
+     *
+     * @throws Exception
+     */
+    @Test
+    public void signingList() throws Exception {
+        String salt = UUIDUtil.createUUID32();
+        String passwd = UUIDUtil.createUUID32();
+        String entId = UUIDUtil.createUUID32();
+        String templateId = UUIDUtil.createUUID32();
+        webTestClient.get().uri("/tax/signingList?templateId={templateId}", templateId)
+                .header("encry-salt", salt)
+                .header("encry-passwd", passwd)
+                .header("ent-id", entId)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody()
+                .consumeWith(document("tax_signingList",
+                        relaxedRequestParameters(parameterWithName("templateId").description("协议模板ID")),
+                        relaxedResponseFields(JavaDocReader.javaDoc(SigningDetailRes.class))
                 ));
     }
 }
