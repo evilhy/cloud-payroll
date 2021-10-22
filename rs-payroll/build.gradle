@@ -130,7 +130,6 @@ dependencies {
     compile('chain:utils-jpa:1.0.4')
     compile 'net.sf.json-lib:json-lib:2.4:jdk15'
     compile('chain:css-config:1.1.3')
-
     compile('com.lmax:disruptor:3.4.2')
 
     //红包增加
