@@ -125,7 +125,7 @@ dependencies {
     compile('chain:payroll-client:2.0.6')
     compile('chain.tax:tax-client:1.0.9')
     
-    compile 'chain.wisales:wisales-client:1.0.2.75'
+    compile 'chain.wisales:wisales-client:1.0.2.79-SNAPSHOT'
     compile('chain.fxgj:fxgj-ent-client:1.0.24')
     compile('chain:utils-jpa:1.0.4')
     compile 'net.sf.json-lib:json-lib:2.4:jdk15'

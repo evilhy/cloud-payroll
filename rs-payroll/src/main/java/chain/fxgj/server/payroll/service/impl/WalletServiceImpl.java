@@ -483,15 +483,13 @@ public class WalletServiceImpl implements WalletService {
         //机构附件
         String groupName = null;
         ModelStatusEnum withdrawStatus = ModelStatusEnum.DISABLE;
-        if (null != wageSheetDTO) {
-            String groupId = wageSheetDTO.getGroupId();
-            GroupDTO groupDTO = groupFeignController.findById(groupId);
-            groupName = groupDTO.getGroupName();
+        String groupId = ledgerDTO.getGroupId();
+        GroupDTO groupDTO = groupFeignController.findById(groupId);
+        groupName = groupDTO.getGroupName();
 
-            GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
-            if (null != groupAttachInfoDTO) {
-                withdrawStatus = groupAttachInfoDTO.getWithdrawStatus();
-            }
+        GroupAttachInfoDTO groupAttachInfoDTO = groupAttachInfoServiceFeign.findGroupAttachById(groupId);
+        if (null != groupAttachInfoDTO) {
+            withdrawStatus = groupAttachInfoDTO.getWithdrawStatus();
         }
 
         return WithdrawalLedgerDetailRes.builder()

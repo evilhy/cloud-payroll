@@ -386,4 +386,22 @@ public class SecuritiesController {
         }).subscribeOn(Schedulers.boundedElastic()).then();
     }
 
+    /**
+     * 跳转第三方证券公司活动页面
+     *
+     * @param reqSecuritiesLoginDTO
+     * @return
+     */
+    @PostMapping("/transferThirdPage")
+    @TrackLog
+    public Mono<String> transferThirdPage(@RequestBody ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        log.info("transferThirdPage.reqSecuritiesLoginDTO:[{}]",JacksonUtil.objectToJson(reqSecuritiesLoginDTO));
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            String url = securitiesService.transferThirdPage(reqSecuritiesLoginDTO);
+            return url;
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
 }
