@@ -120,9 +120,9 @@ dependencies {
     compile('chain.cloud:data-client:2.1.1')
     compile("chain.news:news-fengin:1.0.1")
     compile("chain:ids-client:1.1.10")
-    compile("chain:pub-client:1.1.7")
+    compile("chain:pub-client:2.0.0")
     compile('chain:wage-client:2.0.1')
-    compile('chain:payroll-client:2.0.6')
+    compile('chain:payroll-client:2.0.7')
     compile('chain.tax:tax-client:1.0.9')
     
     compile 'chain.wisales:wisales-client:1.0.2.79-SNAPSHOT'
