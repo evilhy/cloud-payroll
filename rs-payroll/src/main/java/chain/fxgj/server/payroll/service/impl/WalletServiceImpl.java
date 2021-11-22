@@ -404,7 +404,7 @@ public class WalletServiceImpl implements WalletService {
                 list.add(pageRes);
             }
         }
-        return new PageDTO<>(page.getPageNum(), page.getPageSize(), page.getTotalElements(), page.getTotalPages(), page.isFirst(), page.isFirst(), list);
+        return new PageDTO<>(page.getPageNum(), page.getPageSize(), page.getTotalElements(), page.getTotalPages(), page.isLast(), page.isFirst(), list);
     }
 
     @Override
