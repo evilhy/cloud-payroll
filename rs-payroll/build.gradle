@@ -139,7 +139,6 @@ dependencies {
 
     //密码键盘
     compile group: 'com.kayak', name: 'kayak-softkeyboard', version: '0.0.3-fxgj-SNAPSHOTS'
-    compile('com.lmax:disruptor:3.4.2')
     compile group: 'org.glassfish.jersey.connectors', name: 'jersey-apache-connector', version: '2.27'
 
     implementation(
