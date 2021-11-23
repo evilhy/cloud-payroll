@@ -2,7 +2,6 @@ package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.feign.client.CustManagerFeignService;
-import chain.fxgj.feign.client.PayRollFeignService;
 import chain.fxgj.server.payroll.dto.response.ManagerInfoDTO;
 import chain.fxgj.server.payroll.dto.response.ManagerInformationDTO;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
@@ -32,8 +31,6 @@ import java.util.Map;
 public class CustManagerController {
     @Autowired
     CustManagerFeignService custManagerFeignService;
-    @Autowired
-    PayRollFeignService payRollFeignService;
 
     /**
      * 查询客户经理信息
@@ -79,9 +76,8 @@ public class CustManagerController {
     }
 
     /**
-     *
      * 客户经理入口，弹窗提示
-     *
+     * <p>
      * 查询员工所属企业，
      * 1.是否有客户经理
      * 2.银行卡所属银行，本行、他行

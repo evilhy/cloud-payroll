@@ -1,14 +1,11 @@
 package chain.fxgj.server.payroll.dto.wallet;
 
-import chain.utils.fxgj.constant.DictEnums.ModelStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.Accessors;
-import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
 
 /**
  * 员工银行卡
@@ -58,15 +55,15 @@ public class EmpCardAndBalanceResDTO {
     /**
      * 近期收入
      */
-    private  String recentlyIssuedAmt;
+    private String recentlyIssuedAmt;
 
     /**
-     *是否启用员工提现（0.停用 1.启用）
+     * 是否启用员工提现（0.停用 1.启用）
      */
     private Integer withdrawStatus;
 
     /**
-     *是否启用员工提现  描述
+     * 是否启用员工提现  描述
      */
     private String withdrawStatusVal;
 

@@ -5,7 +5,6 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 public interface FundService {
 
     /**

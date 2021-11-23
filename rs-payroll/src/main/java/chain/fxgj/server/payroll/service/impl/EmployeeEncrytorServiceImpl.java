@@ -30,14 +30,14 @@ public class EmployeeEncrytorServiceImpl implements EmployeeEncrytorService {
     private Integer poolSize = 10;
 
     private void initEncrypt() {
-        log.info("====>passwd={}",passwd);
-        log.info("====>salt={}",salt);
+        log.info("====>passwd={}", passwd);
+        log.info("====>salt={}", salt);
 
         if (encryptorId != null) {
             return;
         }
-        log.info("==>salt={}",salt);
-        log.info("==>passwd={}",passwd);
+        log.info("==>salt={}", salt);
+        log.info("==>passwd={}", passwd);
         encryptorId = new PooledPBEStringEncryptor();
         encryptorId.setSaltGenerator(new StringFixedSaltGenerator(salt));
         encryptorId.setPoolSize(poolSize);

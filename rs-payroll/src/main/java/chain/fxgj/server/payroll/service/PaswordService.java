@@ -2,8 +2,6 @@ package chain.fxgj.server.payroll.service;
 
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
 import chain.fxgj.server.payroll.dto.response.KeyboardResDTO;
-import chain.ids.core.commons.dto.softkeyboard.KeyboardRequest;
-import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
 import core.dto.response.wechat.EmployeeWechatDTO;
 
 

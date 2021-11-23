@@ -2,7 +2,6 @@ package chain.fxgj.server.payroll.dto.merchant;
 
 import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.server.payroll.config.ErrorConstant;
-import chain.fxgj.server.payroll.util.RSAEncrypt;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 

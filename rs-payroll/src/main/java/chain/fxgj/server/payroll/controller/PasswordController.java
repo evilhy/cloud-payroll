@@ -51,8 +51,6 @@ public class PasswordController {
     @Autowired
     EmployeeWechatFeignController employeeWechatFeignController;
 
-
-
     private static String KEYBOARD_KEY = "keyboard_{KEYBOARDID}";
 
     /**

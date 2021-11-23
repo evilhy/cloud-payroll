@@ -1,8 +1,8 @@
-
 package chain.fxgj.server.payroll.util;
 
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
+
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -18,8 +18,10 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.Cipher;
+
 import org.apache.commons.codec.binary.Base64;
 
+@SuppressWarnings("unchecked")
 public class RSAUtils {
     public static final String KEY_ALGORITHM = "RSA";
     private static final String PUBLIC_KEY = "RSAPublicKey";
@@ -48,7 +50,7 @@ public class RSAUtils {
     }
 
     public static Map<String, Key> genKeyPair() throws Exception {
-        return genKeyPair((String)null);
+        return genKeyPair((String) null);
     }
 
     public static String sign(byte[] data, String privateKey, SignatureAlgorithm algorithm) throws Exception {
@@ -92,7 +94,7 @@ public class RSAUtils {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int offSet = 0;
 
-        for(int i = 0; inputLen - offSet > 0; offSet = i * 128) {
+        for (int i = 0; inputLen - offSet > 0; offSet = i * 128) {
             byte[] cache;
             if (inputLen - offSet > 128) {
                 cache = cipher.doFinal(encryptedData, offSet, 128);
@@ -120,7 +122,7 @@ public class RSAUtils {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int offSet = 0;
 
-        for(int i = 0; inputLen - offSet > 0; offSet = i * 128) {
+        for (int i = 0; inputLen - offSet > 0; offSet = i * 128) {
             byte[] cache;
             if (inputLen - offSet > 128) {
                 cache = cipher.doFinal(encryptedData, offSet, 128);
@@ -148,7 +150,7 @@ public class RSAUtils {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int offSet = 0;
 
-        for(int i = 0; inputLen - offSet > 0; offSet = i * 117) {
+        for (int i = 0; inputLen - offSet > 0; offSet = i * 117) {
             byte[] cache;
             if (inputLen - offSet > 117) {
                 cache = cipher.doFinal(data, offSet, 117);
@@ -176,7 +178,7 @@ public class RSAUtils {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int offSet = 0;
 
-        for(int i = 0; inputLen - offSet > 0; offSet = i * 117) {
+        for (int i = 0; inputLen - offSet > 0; offSet = i * 117) {
             byte[] cache;
             if (inputLen - offSet > 117) {
                 cache = cipher.doFinal(data, offSet, 117);
@@ -194,12 +196,12 @@ public class RSAUtils {
     }
 
     public static String getPrivateKey(Map<String, Key> keyMap) throws Exception {
-        Key key = (Key)keyMap.get("RSAPrivateKey");
+        Key key = (Key) keyMap.get("RSAPrivateKey");
         return Base64.encodeBase64String(key.getEncoded());
     }
 
     public static String getPublicKey(Map<String, Key> keyMap) throws Exception {
-        Key key = (Key)keyMap.get("RSAPublicKey");
+        Key key = (Key) keyMap.get("RSAPublicKey");
         return Base64.encodeBase64String(key.getEncoded());
     }
 

@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.dto.region;
 
-import chain.utils.fxgj.constant.DictEnums.RegionLevelEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

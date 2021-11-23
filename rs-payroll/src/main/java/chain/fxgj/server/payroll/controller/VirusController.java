@@ -24,7 +24,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.ws.rs.DefaultValue;
-import java.net.URLEncoder;
 import java.util.Map;
 
 /**
@@ -44,6 +43,7 @@ public class VirusController {
 
     /**
      * 查询列表
+     *
      * @param pageNum
      * @param size
      * @return
@@ -58,13 +58,13 @@ public class VirusController {
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
 
-            return virusFeignService.list(pageNum,size,openid);
+            return virusFeignService.list(pageNum, size, openid);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
     @PostMapping
     @TrackLog
-    public Mono<VirusPromiseAddResDto> post(@RequestBody VirusRequestDto virusRequestDto){
+    public Mono<VirusPromiseAddResDto> post(@RequestBody VirusRequestDto virusRequestDto) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
@@ -78,7 +78,7 @@ public class VirusController {
     @TrackLog
     public Mono<UserInfoDTO> getUserInfo(@RequestParam("code") String code,
                                          @RequestParam(value = "appPartner", defaultValue = "FXGJ") AppPartnerEnum appPartner,
-                                         @RequestParam(value = "routeName", required = false) String routeName){
+                                         @RequestParam(value = "routeName", required = false) String routeName) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
@@ -99,7 +99,7 @@ public class VirusController {
             if (null == userInfo || StringUtils.isEmpty(userInfo.getNickname())) {
                 log.info("根据openId、accessToken获取用户信息失败");
             }
-        return userInfo;
+            return userInfo;
         }).subscribeOn(Schedulers.boundedElastic());
     }
 

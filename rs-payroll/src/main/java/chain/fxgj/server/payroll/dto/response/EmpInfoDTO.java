@@ -13,7 +13,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmpInfoDTO {
     /**
      * 头像
@@ -46,7 +46,7 @@ public class EmpInfoDTO {
     private Integer isNew;
 
     /**
-     *签约信息ID
+     * 签约信息ID
      */
     String taxSignId;
     /**

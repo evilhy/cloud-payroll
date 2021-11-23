@@ -1,7 +1,6 @@
 package chain.fxgj.server.payroll.controller;
 
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.server.payroll.dto.tfinance.IntentRequestDTO;
 import chain.fxgj.server.payroll.dto.wisales.PayrllWelfareCustAddressInfoDTO;
 import chain.fxgj.server.payroll.util.EncrytorUtils;
 import chain.fxgj.server.payroll.util.SensitiveInfoUtils;
@@ -10,7 +9,6 @@ import chain.fxgj.server.payroll.web.WebContext;
 import chain.utils.commons.JacksonUtil;
 import chain.wisales.client.feign.WelfareActivityFeignService;
 import chain.wisales.core.constant.dictEnum.AreaEnum;
-import chain.wisales.core.constant.dictEnum.IsStatusEnum;
 import chain.wisales.core.dto.PageDTO;
 import chain.wisales.core.dto.fxgj.welfare.*;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +44,7 @@ public class WisalesController {
     /**
      * 历史活动记录
      * 员工福利活动列表
+     *
      * @param pageNum
      * @param limit
      * @param idNumber
@@ -54,9 +53,9 @@ public class WisalesController {
     @GetMapping("/welfareActivity/listByPayRoll")
     public Mono<PageDTO<WelfareActivityPayRollInfoDTO>> listByPayRoll(@RequestHeader(value = "pageNum",
             defaultValue = "1") int pageNum,
-                                                               @RequestHeader(value = "limit",defaultValue = "10") int limit,
-                                                               @RequestParam(required = false) String idNumber,
-                                                               @RequestParam(required = false) String custPhoneNo){
+                                                                      @RequestHeader(value = "limit", defaultValue = "10") int limit,
+                                                                      @RequestParam(required = false) String idNumber,
+                                                                      @RequestParam(required = false) String custPhoneNo) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -70,12 +69,13 @@ public class WisalesController {
 
     /**
      * 图片预览
+     *
      * @param id
      * @return
      */
     @GetMapping("/h5/unAuth/img/{id}")
     public Mono<byte[]> lookImg(@NotNull @PathVariable String id,
-                   ServerHttpResponse response){
+                                ServerHttpResponse response) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -83,15 +83,17 @@ public class WisalesController {
             return bytes;
         }).subscribeOn(Schedulers.boundedElastic());
     }
+
     /**
      * 福利领取活动详情
+     *
      * @param idNumber
      * @param activityId
      * @return
      */
     @GetMapping("/welfareActivity/detailByPayRoll")
     public Mono<WelfareActivityPayRollDetailDTO> detailByPayRoll(@RequestParam(required = false) String idNumber,
-                                                                 @RequestParam String activityId){
+                                                                 @RequestParam String activityId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -101,8 +103,10 @@ public class WisalesController {
             return welfareActivityPayRollDetailDTO;
         }).subscribeOn(Schedulers.boundedElastic());
     }
+
     /**
      * 福利活动商品列表
+     *
      * @param pageNum
      * @param limit
      * @param activityId
@@ -114,17 +118,17 @@ public class WisalesController {
      * @return
      */
     @GetMapping("/welfareGoods/list")
-    public Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader(value = "page-num",defaultValue = "1")int pageNum,
-                                             @RequestHeader(value = "limit",defaultValue = "10") int limit,
-                                             @Nullable @RequestParam String goodsNo,
-                                             @Nullable @RequestParam String goodsName,
-                                             @Nullable @RequestParam String activityId,
-                                             @Nullable @RequestParam String fItemCatId,
-                                             @Nullable @RequestParam String sItemCatId,
-                                             @Nullable @RequestParam String tItemCatId,
-                                             @Nullable @RequestParam BigDecimal minAmt,
-                                             @Nullable @RequestParam BigDecimal maxAmt,
-                                             @Nullable @RequestParam Boolean pickFlag){
+    public Mono<WelfareGoodsInfoAllResDTO> baseList(@RequestHeader(value = "page-num", defaultValue = "1") int pageNum,
+                                                    @RequestHeader(value = "limit", defaultValue = "10") int limit,
+                                                    @Nullable @RequestParam String goodsNo,
+                                                    @Nullable @RequestParam String goodsName,
+                                                    @Nullable @RequestParam String activityId,
+                                                    @Nullable @RequestParam String fItemCatId,
+                                                    @Nullable @RequestParam String sItemCatId,
+                                                    @Nullable @RequestParam String tItemCatId,
+                                                    @Nullable @RequestParam BigDecimal minAmt,
+                                                    @Nullable @RequestParam BigDecimal maxAmt,
+                                                    @Nullable @RequestParam Boolean pickFlag) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -139,15 +143,16 @@ public class WisalesController {
 
     /**
      * 商品详情
-     * @param idNumber 身份证
-     * @param activityId 活动id
+     *
+     * @param idNumber    身份证
+     * @param activityId  活动id
      * @param goodsInfoId 商品id
      * @return
      */
     @GetMapping("/welfareGoods/detail")
     public Mono<WelfareGoodsDetailDTO> detail(@RequestParam(required = false) String idNumber,
-                                       @RequestParam String activityId,
-                                       @RequestParam String goodsInfoId){
+                                              @RequestParam String activityId,
+                                              @RequestParam String goodsInfoId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -159,14 +164,16 @@ public class WisalesController {
     }
 
     // 兑换
+
     /**
      * 福利货柜活动商品兑换(实物兑换)
+     *
      * @param addCustTransOrderInfoDTO
      * @return
      */
     @PostMapping("welfareCustOrder/welfareExchangeGoods")
     @TrackLog
-    public Mono<AddCustTransOrderInfoDTO> welfareExchangeGoods(@RequestBody AddCustTransOrderInfoDTO addCustTransOrderInfoDTO){
+    public Mono<AddCustTransOrderInfoDTO> welfareExchangeGoods(@RequestBody AddCustTransOrderInfoDTO addCustTransOrderInfoDTO) {
         try {
             log.info("addCustTransOrderInfoDTO:[{}]", JacksonUtil.objectToJson(addCustTransOrderInfoDTO));
         } catch (Exception e) {
@@ -190,7 +197,7 @@ public class WisalesController {
      * @return
      */
     @PostMapping("welfareCustOrder/welfareExchange")
-    public Mono<AddCustTransOrderInfoDTO> welfareExchange(@RequestBody AddCustTransOrderInfoDTO addCustTransOrderInfoDTO){
+    public Mono<AddCustTransOrderInfoDTO> welfareExchange(@RequestBody AddCustTransOrderInfoDTO addCustTransOrderInfoDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -205,12 +212,13 @@ public class WisalesController {
 
     /**
      * 福利货柜活动商品兑换(话费流量兑换)
+     *
      * @param addCustTransOrderInfoDTO
      * @return
      */
     @PostMapping("welfareCustOrder/welfareExchangePhone")
     @TrackLog
-    public Mono<AddCustTransOrderInfoDTO> welfareExchangePhone(@RequestBody AddCustTransOrderInfoDTO addCustTransOrderInfoDTO){
+    public Mono<AddCustTransOrderInfoDTO> welfareExchangePhone(@RequestBody AddCustTransOrderInfoDTO addCustTransOrderInfoDTO) {
         log.info("addCustTransOrderInfoDTO:[{}]", JacksonUtil.objectToJson(addCustTransOrderInfoDTO));
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
@@ -225,13 +233,15 @@ public class WisalesController {
 
 
     //收获地址
+
     /**
      * 查询客户收货地址-列表
+     *
      * @param idNumber
      * @return
      */
     @GetMapping("welfareCust/address/get")
-    public Mono<PageDTO<WelfareCustAddressInfoDTO>> getCustAddress(@RequestParam(required = false) String idNumber){
+    public Mono<PageDTO<WelfareCustAddressInfoDTO>> getCustAddress(@RequestParam(required = false) String idNumber) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -265,14 +275,15 @@ public class WisalesController {
 
     /**
      * 根据收货地址ID 查询 客户地址 信息-地址详情
+     *
      * @param idNumber
      * @param addressId
      * @return
      */
     @GetMapping("welfareCust/address/getById")
     public Mono<PayrllWelfareCustAddressInfoDTO> getCustAddressById(@RequestParam(required = false) String idNumber,
-        @RequestParam String addressId, @RequestHeader(value = "encry-salt", required = false) String salt,
-        @RequestHeader(value = "encry-passwd", required = false) String passwd){
+                                                                    @RequestParam String addressId, @RequestHeader(value = "encry-salt", required = false) String salt,
+                                                                    @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -312,7 +323,7 @@ public class WisalesController {
      * @return
      */
     @PostMapping("welfareCust/address/save")
-    public Mono<Void> addressSave(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO){
+    public Mono<Void> addressSave(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -334,7 +345,7 @@ public class WisalesController {
      */
     @PostMapping("welfareCust/address/delete")
     @TrackLog
-    public Mono<Void> addressDelete(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO){
+    public Mono<Void> addressDelete(@RequestBody WelfareCustAddressInfoDTO welfareCustAddressInfoDTO) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNum = principal.getIdNumber();
@@ -350,13 +361,14 @@ public class WisalesController {
 
     /**
      * 省市区收货地址区域查询
+     *
      * @param areaType
      * @param code
      * @return
      */
     @GetMapping("welfareCust/area/baseQuery")
     public Mono<List<WelfareAreaInfoDTO>> findAreaaseQuery(@RequestParam(required = false) AreaEnum areaType,
-                                                    @RequestParam(required = false) String code){
+                                                           @RequestParam(required = false) String code) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -367,11 +379,12 @@ public class WisalesController {
 
     /**
      * 悠彩乡镇街道收货地址区域查询
+     *
      * @param code
      * @return
      */
     @GetMapping("welfareCust/area/townQuery")
-    public Mono<List<WelfareAreaInfoDTO>> findAreaQuery(@RequestParam(required = false) String code){
+    public Mono<List<WelfareAreaInfoDTO>> findAreaQuery(@RequestParam(required = false) String code) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -381,6 +394,7 @@ public class WisalesController {
     }
 
     //兑换记录
+
     /**
      * 查询客户活动兑换记录列表
      *
@@ -388,7 +402,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/custOrderList")
-    public Mono<PageDTO<CustTransOrderInfoDTO>> findAllByPage(@RequestParam String activityId){
+    public Mono<PageDTO<CustTransOrderInfoDTO>> findAllByPage(@RequestParam String activityId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal principal = WebContext.getCurrentUser();
         String idNumber = principal.getIdNumber();
@@ -406,7 +420,7 @@ public class WisalesController {
      * @return
      */
     @GetMapping("welfareCust/custOrderDetail")
-    public Mono<CustTransOrderInfoDetailDTO> findTransDtailById(@RequestParam String transOrderId){
+    public Mono<CustTransOrderInfoDetailDTO> findTransDtailById(@RequestParam String transOrderId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -417,11 +431,12 @@ public class WisalesController {
 
     /**
      * 根据系统下单订单号查询物流信息
+     *
      * @param transOrderId
      * @return
      */
     @GetMapping("welfareCust/orderTrack")
-    public Mono<CustExchangeTransTrackResultDataDTO> findOrderTrack(@RequestParam("transOrderId") String transOrderId){
+    public Mono<CustExchangeTransTrackResultDataDTO> findOrderTrack(@RequestParam("transOrderId") String transOrderId) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
@@ -431,11 +446,12 @@ public class WisalesController {
     }
 
     /**
-     *  福利卡券数量
+     * 福利卡券数量
+     *
      * @return
      */
     @GetMapping("/countWelfareEmpTicket")
-    public Mono<WelfareEmpTicketCountDTO> countWelfareEmpTicket(){
+    public Mono<WelfareEmpTicketCountDTO> countWelfareEmpTicket() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal currentUser = WebContext.getCurrentUser();
         String idNumber = currentUser.getIdNumber();

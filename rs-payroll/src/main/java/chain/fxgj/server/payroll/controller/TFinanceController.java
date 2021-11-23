@@ -58,16 +58,16 @@ public class TFinanceController {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
-            List<WageProductDTO> wageProductDTOList=financeFeignService.list(wageUserPrincipal);
-            log.info("list---->{}",wageProductDTOList);
-            List<ProductDTO> list=null;
-            if(wageProductDTOList!=null){
-                list=new ArrayList<>();
-                for(WageProductDTO dto:wageProductDTOList){
-                    ProductDTO productDTO=new ProductDTO();
-                    BeanUtils.copyProperties(dto,productDTO);
+            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
+            List<WageProductDTO> wageProductDTOList = financeFeignService.list(wageUserPrincipal);
+            log.info("list---->{}", wageProductDTOList);
+            List<ProductDTO> list = null;
+            if (wageProductDTOList != null) {
+                list = new ArrayList<>();
+                for (WageProductDTO dto : wageProductDTOList) {
+                    ProductDTO productDTO = new ProductDTO();
+                    BeanUtils.copyProperties(dto, productDTO);
                     list.add(productDTO);
                 }
             }
@@ -97,14 +97,14 @@ public class TFinanceController {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            ProductInfoDTO productInfoDTO=null;
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
-            WageProductInfoDTO wageProductInfoDTO=financeFeignService.productInfo(productId,entId,channel,fxId,wageUserPrincipal);
-            log.info("productInfo-->{}",wageProductInfoDTO);
-            if(wageProductInfoDTO!=null){
-                productInfoDTO=new ProductInfoDTO();
-                BeanUtils.copyProperties(wageProductInfoDTO,productInfoDTO);
+            ProductInfoDTO productInfoDTO = null;
+            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
+            WageProductInfoDTO wageProductInfoDTO = financeFeignService.productInfo(productId, entId, channel, fxId, wageUserPrincipal);
+            log.info("productInfo-->{}", wageProductInfoDTO);
+            if (wageProductInfoDTO != null) {
+                productInfoDTO = new ProductInfoDTO();
+                BeanUtils.copyProperties(wageProductInfoDTO, productInfoDTO);
             }
             log.info("ret.productInfoDTO:[{}]", JacksonUtil.objectToJson(productInfoDTO));
             return productInfoDTO;
@@ -126,12 +126,12 @@ public class TFinanceController {
 
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            IntentListDTO intentListDTO=null;
-            WageIntentListDTO wageIntentListDTO=financeFeignService.intentionList(productId);
-            log.info("intentionList-->{}",wageIntentListDTO);
-            if (wageIntentListDTO!=null){
-                intentListDTO=new IntentListDTO();
-                BeanUtils.copyProperties(wageIntentListDTO,intentListDTO);
+            IntentListDTO intentListDTO = null;
+            WageIntentListDTO wageIntentListDTO = financeFeignService.intentionList(productId);
+            log.info("intentionList-->{}", wageIntentListDTO);
+            if (wageIntentListDTO != null) {
+                intentListDTO = new IntentListDTO();
+                BeanUtils.copyProperties(wageIntentListDTO, intentListDTO);
             }
             return intentListDTO;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -161,14 +161,14 @@ public class TFinanceController {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
-            WagePageResponseDTO<WageOperateDTO> responseDTO=financeFeignService.operateList(pageNum,size,productId,entId,operate,wageUserPrincipal);
-            log.info("operateList-->{}",responseDTO);
-            PageResponseDTO<OperateDTO> response =null;
-            if (responseDTO!=null){
-                response=new PageResponseDTO<>();
-                BeanUtils.copyProperties(responseDTO,response);
+            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
+            WagePageResponseDTO<WageOperateDTO> responseDTO = financeFeignService.operateList(pageNum, size, productId, entId, operate, wageUserPrincipal);
+            log.info("operateList-->{}", responseDTO);
+            PageResponseDTO<OperateDTO> response = null;
+            if (responseDTO != null) {
+                response = new PageResponseDTO<>();
+                BeanUtils.copyProperties(responseDTO, response);
             }
             return response;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -189,14 +189,14 @@ public class TFinanceController {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
-            IntentInfoDTO intentInfoDTO=null;
-            WageIntentInfoDTO wageIntentInfoDTO=financeFeignService.intentInfo(productId,wageUserPrincipal);
-            log.info("intentInfo-->{}",wageIntentInfoDTO);
-            if(wageIntentInfoDTO!=null){
-                intentInfoDTO=new IntentInfoDTO();
-                BeanUtils.copyProperties(wageIntentInfoDTO,intentInfoDTO);
+            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
+            IntentInfoDTO intentInfoDTO = null;
+            WageIntentInfoDTO wageIntentInfoDTO = financeFeignService.intentInfo(productId, wageUserPrincipal);
+            log.info("intentInfo-->{}", wageIntentInfoDTO);
+            if (wageIntentInfoDTO != null) {
+                intentInfoDTO = new IntentInfoDTO();
+                BeanUtils.copyProperties(wageIntentInfoDTO, intentInfoDTO);
             }
             return intentInfoDTO;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -217,14 +217,14 @@ public class TFinanceController {
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
             MDC.setContextMap(mdcContext);
-            WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-            BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
-            UserInfoDTO userInfoDTO=null;
-            WageUserInfoDTO wageUserInfoDTO=financeFeignService.userInfo(entId,wageUserPrincipal);
-            log.info("userInfo-->{}",wageUserInfoDTO);
-            if (wageUserInfoDTO!=null){
-                userInfoDTO=new UserInfoDTO();
-                BeanUtils.copyProperties(wageUserInfoDTO,userInfoDTO);
+            WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+            BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
+            UserInfoDTO userInfoDTO = null;
+            WageUserInfoDTO wageUserInfoDTO = financeFeignService.userInfo(entId, wageUserPrincipal);
+            log.info("userInfo-->{}", wageUserInfoDTO);
+            if (wageUserInfoDTO != null) {
+                userInfoDTO = new UserInfoDTO();
+                BeanUtils.copyProperties(wageUserInfoDTO, userInfoDTO);
             }
             return userInfoDTO;
         }).subscribeOn(Schedulers.boundedElastic());
@@ -258,12 +258,12 @@ public class TFinanceController {
                 throw new ParamsIllegalException(ErrorConstant.FINANCE_004.getErrorMsg());
             }
 
-            if(intentRequestDTO!=null){
-                WageIntentRequestDTO wageIntentRequestDTO=new WageIntentRequestDTO();
-                BeanUtils.copyProperties(intentRequestDTO,wageIntentRequestDTO);
-                WageUserPrincipal wageUserPrincipal=new WageUserPrincipal();
-                BeanUtils.copyProperties(userPrincipal,wageUserPrincipal);
-                WageIntentDTO intentDTO=new WageIntentDTO();
+            if (intentRequestDTO != null) {
+                WageIntentRequestDTO wageIntentRequestDTO = new WageIntentRequestDTO();
+                BeanUtils.copyProperties(intentRequestDTO, wageIntentRequestDTO);
+                WageUserPrincipal wageUserPrincipal = new WageUserPrincipal();
+                BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
+                WageIntentDTO intentDTO = new WageIntentDTO();
                 intentDTO.setIntentRequestDTO(wageIntentRequestDTO);
                 intentDTO.setUserPrincipal(wageUserPrincipal);
                 financeFeignService.addIntent(intentDTO);
@@ -301,7 +301,7 @@ public class TFinanceController {
             authorizeurl = authorizeurl.replace("REDIRECT_URI", URLEncoder.encode(oauthUrl, "UTF-8"));
             authorizeurl = authorizeurl.replace("STATE", "STATE");
             authorizeurl = authorizeurl.replace("SCOPE", PayrollConstants.SNSAPI_USERINFO);
-            log.info("authorizeurl:[{}]",authorizeurl);
+            log.info("authorizeurl:[{}]", authorizeurl);
             return authorizeurl;
         }).subscribeOn(Schedulers.boundedElastic());
     }

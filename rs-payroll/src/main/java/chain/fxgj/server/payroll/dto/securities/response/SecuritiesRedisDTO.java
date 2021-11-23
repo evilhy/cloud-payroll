@@ -3,8 +3,6 @@ package chain.fxgj.server.payroll.dto.securities.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * 证券登录缓存数据
  */
@@ -15,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SecuritiesRedisDTO {
     /**
      * jsessionId

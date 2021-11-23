@@ -18,7 +18,7 @@ import java.util.logging.Level;
 public class PayrollConfig {
 
     @Autowired
-    public void setLettuceConnectionFactory(LettuceConnectionFactory lettuceConnectionFactory){
+    public void setLettuceConnectionFactory(LettuceConnectionFactory lettuceConnectionFactory) {
         lettuceConnectionFactory.setShareNativeConnection(false);
     }
 

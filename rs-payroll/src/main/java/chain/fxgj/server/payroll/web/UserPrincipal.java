@@ -135,7 +135,7 @@ public class UserPrincipal implements Principal {
     /**
      * 数据权限
      */
-    private List<chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum>  dataAuths;
+    private List<chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum> dataAuths;
 
 
     public UserPrincipal(String name, String sessionId, LocalDateTime sessionTimeOut, String[] roles) {

@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional
 public interface WechatRedisService {
     /**
      * 薪资列表 - mongo

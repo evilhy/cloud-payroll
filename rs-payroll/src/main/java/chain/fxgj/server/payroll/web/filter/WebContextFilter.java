@@ -39,7 +39,7 @@ public class WebContextFilter implements WebFilter, Ordered {
         String reqId = exchange.getRequest().getId();
         String logToken = exchange.getRequest().getHeaders().getFirst("log-token");
         if (StringUtils.isBlank(logToken)) {
-            log.info("====>logToken={}",logToken);
+            log.info("====>logToken={}", logToken);
             reqId = UUIDUtil.createUUID8();
             logToken = UUIDUtil.createUUID8();
 
@@ -50,7 +50,7 @@ public class WebContextFilter implements WebFilter, Ordered {
 
         String apppartner = exchange.getRequest().getHeaders().getFirst(PayrollConstants.APPPARTNER);
         log.info("exchange.getRequest().getHeaders().getFirst(apppartner):[{}]", apppartner);
-        if (StringUtils.isNotBlank(apppartner)&& !apppartner.equals("undefined")) {
+        if (StringUtils.isNotBlank(apppartner) && !apppartner.equals("undefined")) {
             AppPartnerEnum appPartner = AppPartnerEnum.valueOf(apppartner);
             MDC.put(PayrollConstants.APPPARTNER, appPartner.getCode().toString());
             MDC.put(PayrollConstants.APPPARTNER_DESC, appPartner.getDesc());

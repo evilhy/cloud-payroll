@@ -5,7 +5,6 @@ import chain.css.exception.ParamsIllegalException;
 import chain.css.log.annotation.TrackLog;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.constant.PayrollConstants;
-import chain.fxgj.server.payroll.service.WechatRedisService;
 import chain.payroll.client.feign.WechatFeignController;
 import chain.pub.client.feign.WechatFeignClient;
 import chain.pub.common.dto.wechat.*;
@@ -38,15 +37,12 @@ public class WechatController {
     @Autowired
     WechatFeignClient wechatFeignClient;
     @Autowired
-    WechatRedisService wechatRedisService;
-    @Autowired
     WechatFeignController wechatFeignController;
 
     /**
      * 微信菜单创建
      *
      * @param id 合作方定义(FXGJ-放薪管家, ZRL-中人联, YDNSH-尧都农商, SJZHRB-汇融银行)
-     *
      */
     @GetMapping("/creatMenu")
     @TrackLog
@@ -205,7 +201,6 @@ public class WechatController {
 
     /**
      * JS分享产生分享签名 (未测试是否可用)
-     *
      */
     @GetMapping("/getJsapiSignature")
     @TrackLog
@@ -238,7 +233,6 @@ public class WechatController {
 
     /**
      * JS分享产生分享签名(新增接口，前端增加 AppPartnerEnum)
-     *
      */
     @GetMapping("/getJsapiSignatureById")
     @TrackLog

@@ -25,7 +25,7 @@ public class ActivityAnswerResponseDTO extends ActivityResponseDTO {
      * 是否参与问答活动（ false 否 true 是）
      */
 
-    private Boolean isRandom ;
+    private Boolean isRandom;
 
 
     public ActivityAnswerResponseDTO(ActivityInfoRes activityInfoRes) {

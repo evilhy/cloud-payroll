@@ -14,7 +14,7 @@ import java.util.LinkedList;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EntInfoDTO {
     /**
      * 企业id
@@ -54,7 +54,7 @@ public class EntInfoDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @JsonIgnoreProperties(ignoreUnknown=true)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class GroupInfo {
         /**
          * 机构id
@@ -86,7 +86,7 @@ public class EntInfoDTO {
         @Builder
         @NoArgsConstructor
         @AllArgsConstructor
-        @JsonIgnoreProperties(ignoreUnknown=true)
+        @JsonIgnoreProperties(ignoreUnknown = true)
         public static class EmployeeInfo {
             /**
              * 员工id

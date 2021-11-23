@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 红包雨活动-生产者
+ *
  * @Author zhuchangjian
  * @Date 2019/12/10 09:13
  **/

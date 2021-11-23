@@ -47,7 +47,6 @@ public class FeignSupportConfig {
     }
 
 
-
     @Bean
     @ConditionalOnMissingBean
     public HttpMessageConverters messageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {

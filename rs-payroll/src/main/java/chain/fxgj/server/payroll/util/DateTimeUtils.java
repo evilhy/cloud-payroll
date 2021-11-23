@@ -558,6 +558,7 @@ public class DateTimeUtils {
 
     /**
      * 获取当前日期
+     *
      * @return yyyyMMdd
      * @Description: 获取当前日期
      */
@@ -568,6 +569,7 @@ public class DateTimeUtils {
 
     /**
      * 获取当前日期时间
+     *
      * @return yyyyMMddHHmmss
      * @Description: 获取当前日期
      */
@@ -579,7 +581,7 @@ public class DateTimeUtils {
     /**
      * 按指定时间转换
      *
-     * @param  localDateTime
+     * @param localDateTime
      * @return yyyyMMddHHmmss
      * @Description: 获取当前日期
      */
@@ -587,20 +589,21 @@ public class DateTimeUtils {
         return DateTimeUtils.DATE_FORMATTER_YYYYMMDDHHMMSS.format(localDateTime);
     }
 
-    public static LocalDateTime convert(Long timestamp){
-        return  LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
+    public static LocalDateTime convert(Long timestamp) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
 
-    public static Long convert(LocalDateTime localDateTime){
-        return  localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    public static Long convert(LocalDateTime localDateTime) {
+        return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     /**
      * 获取当前时间
+     *
      * @return HHmmss
      * @Description: 获取当前日期
      */
-    public static String getTime(){
+    public static String getTime() {
         return DateTimeUtils.TIME_FORMATTER_HHMMSS.format(DateTimeUtils.get());
     }
 

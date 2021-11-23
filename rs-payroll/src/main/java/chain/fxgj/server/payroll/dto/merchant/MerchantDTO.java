@@ -6,7 +6,6 @@ import chain.fxgj.server.payroll.util.RSAEncrypt;
 import chain.fxgj.server.payroll.util.Sha1;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.fxgj.constant.DictEnums.AppPartnerEnum;
-import chain.utils.fxgj.constant.DictEnums.CertTypeEnum;
 import chain.utils.fxgj.constant.DictEnums.FundLiquidationEnum;
 import chain.utils.fxgj.constant.DictEnums.RegisterTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,10 +13,6 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.DigestException;
@@ -35,7 +30,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MerchantDTO {
     /**
      * 客户姓名
@@ -136,8 +131,6 @@ public class MerchantDTO {
     }
 
 
-
-
 // 切库注释
 //    public EmployeeWechatInfo conver() {
 //        EmployeeWechatInfo employeeWechatInfo = EmployeeWechatInfo.builder()
@@ -157,7 +150,6 @@ public class MerchantDTO {
 //    }
 
     /**
-     *
      * @param merchantDTO
      * @param merchantHeadDTO
      * @return
@@ -182,8 +174,6 @@ public class MerchantDTO {
         }
         return signature;
     }
-
-
 
 
 }
