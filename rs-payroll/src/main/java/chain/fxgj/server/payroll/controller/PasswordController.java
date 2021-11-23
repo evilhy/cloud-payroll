@@ -7,11 +7,11 @@ import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
 import chain.fxgj.server.payroll.dto.request.PasswordSaveReq;
 import chain.fxgj.server.payroll.dto.response.CrateNumericKeypadRes;
+import chain.fxgj.server.payroll.dto.response.KeyboardResDTO;
 import chain.fxgj.server.payroll.dto.response.SecretFreeRes;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.fxgj.server.payroll.web.UserPrincipal;
 import chain.fxgj.server.payroll.web.WebContext;
-import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
 import chain.payroll.client.feign.EmployeeWechatFeignController;
 import chain.utils.commons.JacksonUtil;
 import com.google.gson.GsonBuilder;
@@ -246,7 +246,7 @@ public class PasswordController {
             log.info("=====> /admin/crateNumericKeypad 数字密码键盘生成 wechatId:{}", keyboardId);
 
             //生成密码键盘
-            KeyboardResponse keyboardResponse = paswordService.crateNumericKeypad(keyboardId);
+            KeyboardResDTO keyboardResponse = paswordService.crateNumericKeypad(keyboardId);
             String result = new GsonBuilder().disableHtmlEscaping().create().toJson(keyboardResponse.getNumber());
 
             //加入缓存

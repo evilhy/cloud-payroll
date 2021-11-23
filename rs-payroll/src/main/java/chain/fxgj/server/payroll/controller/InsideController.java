@@ -662,7 +662,6 @@ public class InsideController {
         String codeId = (String) redisTemplate.opsForValue().get(key);
         if(null == codeId) {
             throw new ParamsIllegalException(ErrorConstant.Error0004.format());
-
         }
         return codeId;
     }

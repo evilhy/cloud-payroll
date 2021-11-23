@@ -4,23 +4,30 @@ import chain.css.exception.ParamsIllegalException;
 import chain.fxgj.core.common.constant.PayrollDBConstant;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
+import chain.fxgj.server.payroll.dto.request.KeyboardReqDTO;
+import chain.fxgj.server.payroll.dto.response.KeyboardResDTO;
 import chain.fxgj.server.payroll.service.PaswordService;
 import chain.ids.client.feign.KeyboardFeign;
-import chain.ids.core.commons.dto.softkeyboard.KeyboardRequest;
-import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
 import chain.ids.core.commons.enums.EnumKeyboardType;
 import chain.payroll.client.feign.EmployeeWechatFeignController;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
+import com.kayak.security.kkutils.ImageUtils;
+import com.kayak.security.kkutils.Utils;
+import com.kayak.security.passwrod.image.ImageInfo;
+import com.kayak.security.passwrod.image.maker.AlphabetPasswordImageMaker;
+import com.kayak.security.passwrod.image.maker.NumberPasswordImageMaker;
 import core.dto.request.wechat.EmployeeWechatSaveReq;
 import core.dto.response.wechat.EmployeeWechatDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -41,8 +48,19 @@ public class PasswordServiceImpl implements PaswordService {
     KeyboardFeign keyboardFeign;
     @Resource
     RedisTemplate redisTemplate;
+    @Resource
+    RedisOperations<String, String> redisOperations;
+    /**
+     * 有效期60分
+     */
+    private static final int KEYBOARD_TIME_OUT = 10;
 
     private static String KEYBOARD_KEY = "keyboard_{KEYBOARDID}";
+
+    /**
+     * 密码键盘 宽度
+     */
+    private final int WIDTH = 750;
 
     @Override
     public HandPasswordDTO queryHandPassword(String wechatId) {
@@ -205,12 +223,36 @@ public class PasswordServiceImpl implements PaswordService {
     }
 
     @Override
-    public KeyboardResponse crateNumericKeypad(String keyboardId) {
-        KeyboardRequest keyboardRequest = KeyboardRequest.builder()
+    public KeyboardResDTO crateNumericKeypad(String keyboardId) {
+        KeyboardReqDTO keyboardRequest = KeyboardReqDTO.builder()
                 .keyboardType(EnumKeyboardType.number)
                 .keyboardId(keyboardId)
                 .build();
-        KeyboardResponse keyboard = keyboardFeign.createKeyboard(keyboardRequest);
+//        KeyboardResponse keyboard = keyboardFeign.createKeyboard(keyboardRequest); //调用ids项目
+        EnumKeyboardType keyboardType = keyboardRequest.getKeyboardType();
+        KeyboardResDTO keyboard = null;
+        switch (keyboardType) {
+            case letter:
+                //字母键盘
+                log.info("====>字母键盘");
+                keyboard = letterCreate(keyboardRequest);
+                break;
+            case number:
+                log.info("====>纯数字键盘");
+                //纯数字键盘
+                keyboard = numberCreate(keyboardRequest);
+                break;
+            case idcard:
+                //身份证键盘
+                log.info("====>身份证键盘");
+                keyboard = idcardCreate(keyboardRequest);
+                break;
+            case money:
+                //金额键盘
+                log.info("====>金额键盘");
+                break;
+        }
+
         if (null == keyboard || null == keyboard.getNumber()) {
             throw new ParamsIllegalException(ErrorConstant.SYS_ERROR.format("密码键盘生成失败"));
         }
@@ -255,6 +297,166 @@ public class PasswordServiceImpl implements PaswordService {
             sb = sb.append(number.get(s));
         }
         return sb.toString();
+    }
+
+    /**
+     * 字母键盘
+     *
+     * @param keyboardRequest
+     * @return
+     */
+    private KeyboardResDTO letterCreate(KeyboardReqDTO keyboardRequest) {
+        KeyboardResDTO keyboard = null;
+
+        Boolean topLogo = keyboardRequest.getTopLogo();
+        Boolean shuffle = keyboardRequest.getShuffle();
+        String keyboardId = keyboardRequest.getKeyboardId();
+
+        //[1]产生a ~ z的字符
+        char[] alphabetLower = Utils.getChars(shuffle);
+        Map<String, Character> lower = Utils.getkeyboard(alphabetLower, "L");
+        AlphabetPasswordImageMaker lowercaseMaker = new AlphabetPasswordImageMaker();
+        lowercaseMaker.setUppercase(false);
+        ImageInfo lowercaseImage = lowercaseMaker.make(WIDTH, topLogo, alphabetLower);
+
+        //[2]产生A ~ Z的字符
+        char[] alphabetUpper = Utils.getUpperChars(shuffle);
+        Map<String, Character> upper = Utils.getkeyboard(alphabetUpper, "U");
+        AlphabetPasswordImageMaker uppercaseMaker = new AlphabetPasswordImageMaker();
+        uppercaseMaker.setUppercase(true);
+        ImageInfo uppercaseImage = uppercaseMaker.make(WIDTH, topLogo, alphabetUpper);
+
+        //[3]随机 产生 0 ~ 9的数字
+        char[] alphabetNumber = Utils.getNumbers(shuffle);
+        Map<String, Character> number = Utils.getkeyboard(alphabetNumber, "N");
+        NumberPasswordImageMaker maker = new NumberPasswordImageMaker();
+        ImageInfo imageNumber = maker.makeNumberCharLeft(WIDTH, topLogo, alphabetNumber);
+
+        try {
+            String lowercaseBase64 = Utils.toBase64(ImageUtils.toPNG(lowercaseImage)).replaceAll("\n", "");
+            String uppercaseBase64 = Utils.toBase64(ImageUtils.toPNG(uppercaseImage)).replaceAll("\n", "");
+            String numberBase64 = Utils.toBase64(ImageUtils.toPNG(imageNumber)).replaceAll("\n", "");
+            keyboard = KeyboardResDTO.builder()
+                    .keyboardId(keyboardRequest.getKeyboardId())
+                    .keyboardType(keyboardRequest.getKeyboardType())
+                    .shuffle(keyboardRequest.getShuffle())
+                    .lowercaseBase64(lowercaseBase64)
+                    .uppercaseBase64(uppercaseBase64)
+                    .numberBase64(numberBase64)
+                    .build();
+
+            Map<String, Character> alphabetMap = new HashMap<>();
+            alphabetMap.putAll(lower);
+            alphabetMap.putAll(upper);
+            alphabetMap.putAll(number);
+
+            keyboard.setLower(lower);
+            keyboard.setUpper(upper);
+            keyboard.setNumber(number);
+            redisOperations.opsForValue().set(KEYBOARD_KEY.replace("{KEYBOARDID}", keyboardId), JacksonUtil.objectToJson(alphabetMap), KEYBOARD_TIME_OUT, TimeUnit.MINUTES);
+        } catch (Exception e) {
+            log.error("====>[字母键盘]失败");
+            e.printStackTrace();
+        }
+        return keyboard;
+    }
+
+    /**
+     * 纯数字键盘
+     *
+     * @param keyboardRequest
+     * @return
+     */
+    private KeyboardResDTO numberCreate(KeyboardReqDTO keyboardRequest) {
+        KeyboardResDTO keyboard = null;
+
+        Boolean topLogo = keyboardRequest.getTopLogo();
+        Boolean shuffle = keyboardRequest.getShuffle();
+        String keyboardId = keyboardRequest.getKeyboardId();
+
+        //随机 产生 0 ~ 9的数字
+        char[] alphabet = Utils.getNumbers(shuffle);
+        Map<String, Character> alphabetMap = Utils.getkeyboard(alphabet, "N");
+
+        //纯数字键盘
+        NumberPasswordImageMaker maker = new NumberPasswordImageMaker();
+        //准备绘图
+
+
+        ImageInfo image = null;
+        if (keyboardRequest.getConfirm()) {
+            image = maker.makeNumberConfirmLeft(WIDTH, topLogo, alphabet);
+        } else {
+            image = maker.makeNumberConfirmNon(WIDTH, topLogo, alphabet);
+        }
+
+        try {
+            //转成BASE64
+            String numberBase64 = Utils.toBase64(ImageUtils.toPNG(image)).replaceAll("\n", "");
+
+            keyboard = KeyboardResDTO.builder()
+                    .keyboardId(keyboardRequest.getKeyboardId())
+                    .keyboardType(keyboardRequest.getKeyboardType())
+                    .shuffle(keyboardRequest.getShuffle())
+                    .numberBase64(numberBase64)
+                    .build();
+
+            keyboard.setNumber(alphabetMap);
+            redisOperations.opsForValue().set(KEYBOARD_KEY.replace("{KEYBOARDID}", keyboardId), JacksonUtil.objectToJson(alphabetMap), KEYBOARD_TIME_OUT, TimeUnit.MINUTES);
+
+        } catch (Exception e) {
+            log.error("====>[纯数字键盘]失败");
+            e.printStackTrace();
+        }
+        return keyboard;
+    }
+
+    /**
+     * 身份证键盘
+     *
+     * @param keyboardRequest
+     * @return
+     */
+    private KeyboardResDTO idcardCreate(KeyboardReqDTO keyboardRequest) {
+        KeyboardResDTO keyboard = null;
+
+        Boolean topLogo = keyboardRequest.getTopLogo();
+        Boolean shuffle = keyboardRequest.getShuffle();
+        String keyboardId = keyboardRequest.getKeyboardId();
+
+        //产生身份证数据   0-9 ，X
+        char[] alphabet = Utils.getIdCard(shuffle);
+        Map<String, Character> alphabetMap = Utils.getkeyboard(alphabet, "N");
+
+        NumberPasswordImageMaker maker = new NumberPasswordImageMaker();
+        ImageInfo image = maker.makeIdCardChar(WIDTH, topLogo, alphabet);
+        try {
+            String numberBase64 = Utils.toBase64(ImageUtils.toPNG(image)).replaceAll("\n", "");
+
+             keyboard = KeyboardResDTO.builder()
+                    .keyboardId(keyboardRequest.getKeyboardId())
+                    .keyboardType(keyboardRequest.getKeyboardType())
+                    .shuffle(keyboardRequest.getShuffle())
+                    .numberBase64(numberBase64)
+                    .build();
+
+            keyboard.setIdCard(alphabetMap);
+            redisOperations.opsForValue().set(KEYBOARD_KEY.replace("{KEYBOARDID}", keyboardId), JacksonUtil.objectToJson(alphabetMap), KEYBOARD_TIME_OUT, TimeUnit.MINUTES);
+        } catch (Exception e) {
+            log.error("====>[身份证键盘]失败");
+            e.printStackTrace();
+        }
+
+        return keyboard;
+    }
+    /**
+     * 金额键盘
+     *
+     * @param keyboardRequest
+     * @return
+     */
+    private KeyboardResDTO moneyCreate(KeyboardReqDTO keyboardRequest) {
+        return null;
     }
 
     /**

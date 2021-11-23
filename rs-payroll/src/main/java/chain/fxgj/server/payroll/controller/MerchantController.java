@@ -183,10 +183,7 @@ public class MerchantController {
                     log.info("员工信息表中【不存在】！信息未认证");
                     throw new ParamsIllegalException(ErrorConstant.MERCHANT_07.getErrorMsg());
                 }
-
             }
-
-
             String accessToken = UUIDUtil.createUUID8();
             log.info("accessToken:[{}]", accessToken);
             String redisKey = PayrollDBConstant.PREFIX + ":merchant:" + accessToken;
