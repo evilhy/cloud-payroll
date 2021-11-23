@@ -41,10 +41,12 @@ public class OkHttpLoggingInterceptor implements Interceptor {
         //因为response.body().string()之后，response中的流会被关闭，程序会报错，我们需要创建出一个新的response给应用层处理
         ResponseBody responseBody = response.peekBody(1024 * 1024);
 
-        log.info("===>接收url: 【{}】", response.request().url());
-        log.info("===>响应header: 【{}】", response.headers());
-        log.debug("===>返回信息: 【{}】", responseBody.string());
-        log.info("===>耗时: 【{}ms】", (t2 - t1) / 1e6d);
+        //log.info("===>接收url: 【{}】", response.request().url());
+        //log.info("===>响应header: 【{}】", response.headers());
+        //log.info("===>返回信息: 【{}】", responseBody.string());
+        //log.info("===>耗时: 【{}ms】", (t2 - t1) / 1e6d);
+
+        log.info("===>Feign 接收url: 【{}】 耗时: 【{}ms】", response.request().url(),(t2 - t1) / 1e6d);
 
         return response;
     }
