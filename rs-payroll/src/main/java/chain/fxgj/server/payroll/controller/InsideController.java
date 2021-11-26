@@ -8,8 +8,6 @@ import chain.fxgj.ent.core.dto.request.EmployeeQueryRequest;
 import chain.fxgj.ent.core.dto.request.employee.EmpInfoUpdReq;
 import chain.fxgj.ent.core.dto.response.EmployeeInfoRes;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
-import chain.fxgj.server.payroll.dto.MsgCodeLogRequestDTO;
-import chain.fxgj.server.payroll.dto.MsgCodeLogResponeDTO;
 import chain.fxgj.server.payroll.dto.base.HeaderDTO;
 import chain.fxgj.server.payroll.dto.request.ReadWageDTO;
 import chain.fxgj.server.payroll.dto.request.*;
@@ -40,7 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +47,6 @@ import reactor.core.scheduler.Schedulers;
 import javax.annotation.security.PermitAll;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -60,8 +56,6 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("unchecked")
 public class InsideController {
 
-    @Qualifier("applicationTaskExecutor")
-    Executor executor;
     @Autowired
     CallInsideServiceImpl callInsideService;
     @Autowired
@@ -186,9 +180,9 @@ public class InsideController {
             smsCodeSendDTO.setSmsId("S004");
             smsCodeSendDTO.setSysId("fxgj");
             smsCodeSendDTO.setTimeOutMinute(2);
-            SmsDTO sendSmsCode = unAuthFeignClient.sendSmsCode(smsCodeSendDTO,"fxgj" );
-            String key ="inside_send"+phone;
-            redisTemplate.opsForValue().set(key,sendSmsCode.getCheckId(),2, TimeUnit.MINUTES);
+            SmsDTO sendSmsCode = unAuthFeignClient.sendSmsCode(smsCodeSendDTO, "fxgj");
+            String key = "inside_send" + phone;
+            redisTemplate.opsForValue().set(key, sendSmsCode.getCheckId(), 2, TimeUnit.MINUTES);
             Res100302 res100302 = new Res100302();
             res100302.setCodeId(sendSmsCode.getCheckId());
             log.info("sendCodeRet:[{}]", JacksonUtil.objectToJson(res100302));
@@ -268,7 +262,7 @@ public class InsideController {
             CacheReq100702 wageReq100702 = new CacheReq100702();
             BeanUtils.copyProperties(req100702, wageReq100702);
 
-            wageReq100702.setCodeId(verifyCode (req100702.getPhone()));
+            wageReq100702.setCodeId(verifyCode(req100702.getPhone()));
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
@@ -313,7 +307,7 @@ public class InsideController {
             //数字键盘密码，解密
             String password = paswordService.checkNumberPassword(pwd, wechatId);
             wageReq100701.setPwd(password);
-            wageReq100701.setCodeId(verifyCode (req100701.getPhone()));
+            wageReq100701.setCodeId(verifyCode(req100701.getPhone()));
             CacheUserPrincipal wageUserPrincipal = new CacheUserPrincipal();
             BeanUtils.copyProperties(userPrincipal, wageUserPrincipal);
 
@@ -484,7 +478,7 @@ public class InsideController {
             }
             core.dto.request.ReqPhone wageReqPhone = new core.dto.request.ReqPhone();
             wageReqPhone.setCode(reqPhone.getCode());
-            wageReqPhone.setCodeId(verifyCode (phone));
+            wageReqPhone.setCodeId(verifyCode(phone));
             wageReqPhone.setPhone(phone);
             log.info("checkPhoneCode.wageReqPhone:[{}]", JacksonUtil.objectToJson(wageReqPhone));
 
@@ -517,7 +511,7 @@ public class InsideController {
             CacheReqPhone wageReqPhone = new CacheReqPhone();
             BeanUtils.copyProperties(reqPhone, wageReqPhone);
 
-            wageReqPhone.setCodeId(verifyCode (reqPhone.getPhone()));
+            wageReqPhone.setCodeId(verifyCode(reqPhone.getPhone()));
             CacheUserPrincipal wageUserPrincipal = TransferUtil.userPrincipalToWageUserPrincipal(userPrincipal);
             CacheUpdPhoneRequestDTO cacheUpdPhoneRequestDTO = new CacheUpdPhoneRequestDTO();
             cacheUpdPhoneRequestDTO.setCacheReqPhone(wageReqPhone);
@@ -559,7 +553,7 @@ public class InsideController {
             if (!updBankCardDTO.getCardNo().matches(regex)) {
                 throw new ParamsIllegalException(ErrorConstant.WECHAR_013.getErrorMsg());
             }
-            return insideFeignController.updBankCard(updBankCardDTO,idNumber);
+            return insideFeignController.updBankCard(updBankCardDTO, idNumber);
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -653,16 +647,16 @@ public class InsideController {
 
     /**
      * 或者验证信息
+     *
      * @param phone
      * @return
      */
-    public  String verifyCode (String phone){
+    public String verifyCode(String phone) {
 
-        String key ="inside_send"+phone;
+        String key = "inside_send" + phone;
         String codeId = (String) redisTemplate.opsForValue().get(key);
-        if(null == codeId) {
+        if (null == codeId) {
             throw new ParamsIllegalException(ErrorConstant.Error0004.format());
-
         }
         return codeId;
     }

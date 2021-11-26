@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @Description:用户签约    请求信息
+ * @Description:用户签约 请求信息
  * @Author: du
  * @Date: 2021/8/23 10:57
  */

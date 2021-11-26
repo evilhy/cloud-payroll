@@ -63,7 +63,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -80,7 +79,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -97,9 +95,6 @@ public class PayRollController {
     @Autowired
     PayrollFeignController payrollFeignController;
     @Autowired
-    @Qualifier("applicationTaskExecutor")
-    Executor executor;
-    @Autowired
     PayRollFeignService wageMangerFeignService;
     @Autowired
     PayrollProperties payrollProperties;
@@ -110,8 +105,6 @@ public class PayRollController {
     EmpWechatService empWechatService;
     @Autowired
     WageSheetFeignController wageSheetFeignController;
-    @Autowired
-    WageDetailFeignController wageDetailFeignController;
     @Autowired
     WageDetailYearFeignController wageDetailYearFeignController;
     @Autowired
@@ -128,8 +121,6 @@ public class PayRollController {
     EnterpriseFeignService enterpriseFeignService;
     @Autowired
     CardBinFeignService cardBinFeignService;
-    @Autowired
-    EmployeeEncrytorService employeeEncrytorService;
     @Autowired
     EmployeeTaxAttestFeignService employeeTaxAttestFeignService;
     @Autowired

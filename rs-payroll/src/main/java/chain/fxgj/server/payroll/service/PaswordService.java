@@ -1,7 +1,7 @@
 package chain.fxgj.server.payroll.service;
 
 import chain.fxgj.server.payroll.dto.handpassword.HandPasswordDTO;
-import chain.ids.core.commons.dto.softkeyboard.KeyboardResponse;
+import chain.fxgj.server.payroll.dto.response.KeyboardResDTO;
 import core.dto.response.wechat.EmployeeWechatDTO;
 
 
@@ -53,7 +53,7 @@ public interface PaswordService {
      * @param keyboardId
      * @return
      */
-    KeyboardResponse crateNumericKeypad(String keyboardId);
+    KeyboardResDTO crateNumericKeypad(String keyboardId);
 
     /**
      * 数字键盘密码解密
@@ -63,4 +63,5 @@ public interface PaswordService {
      * @return
      */
     String checkNumberPassword(String passsword, String wechatId);
+
 }

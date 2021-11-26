@@ -45,13 +45,14 @@ public class FundController {
 
     /**
      * 查询基金预约信息-工资条菜单使用
+     *
      * @return
      */
     @GetMapping("/appointmentInfo")
     @TrackLog
     public Mono<FundAppointmentInfoDTO> appointmentInfo(@RequestParam("code") String code,
-                                                         @RequestHeader(value = "encry-salt", required = false) String salt,
-                                                         @RequestHeader(value = "encry-passwd", required = false) String passwd) {
+                                                        @RequestHeader(value = "encry-salt", required = false) String salt,
+                                                        @RequestHeader(value = "encry-passwd", required = false) String passwd) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
 
         return Mono.fromCallable(() -> {
@@ -83,6 +84,7 @@ public class FundController {
 
     /**
      * 基金预约入库-公众号页面调用
+     *
      * @return
      */
     @PostMapping("/appointmentSave")
@@ -125,6 +127,7 @@ public class FundController {
 
     /**
      * 基金预约入库-其他页面调用
+     *
      * @return
      */
     @PostMapping("/appointmentSaveByManagerId")

@@ -90,6 +90,7 @@ public interface ActivityConfigureService {
 
     /**
      * 更新活动状态
+     *
      * @param activityId
      * @param activityStatus
      */
@@ -97,6 +98,7 @@ public interface ActivityConfigureService {
 
     /**
      * 新增活动流程记录
+     *
      * @param activityId
      * @param openId
      * @param userId
@@ -105,6 +107,7 @@ public interface ActivityConfigureService {
 
     /**
      * 查询活动详情 缓存1分钟
+     *
      * @param activityQueryRequest
      * @return
      */
@@ -113,6 +116,7 @@ public interface ActivityConfigureService {
 
     /**
      * 新增方案
+     *
      * @param activityRequestDTO
      * @return
      */
@@ -120,6 +124,7 @@ public interface ActivityConfigureService {
 
     /**
      * 查询机构信息
+     *
      * @param entId
      * @param groupId
      * @return
@@ -128,6 +133,7 @@ public interface ActivityConfigureService {
 
     /**
      * 审核人顺序查询参数
+     *
      * @param checkGroupListReq
      * @return
      */

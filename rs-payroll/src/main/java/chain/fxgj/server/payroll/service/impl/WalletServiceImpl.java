@@ -84,18 +84,9 @@ public class WalletServiceImpl implements WalletService {
     @Autowired
     WageDetailFeignController wageDetailFeignController;
     @Autowired
-    EntGroupAccountFeignService entGroupAccountFeignService;
-    @Autowired
-    VirtualAccountFeignService virtualAccountFeignService;
-    @Autowired
-    VirtualUnitAccountFeignService virtualUnitAccountFeignService;
-    @Autowired
-    VirtualAccountConnectInfoFeignService virtualAccountConnectInfoFeignService;
-    @Autowired
     EmployeeCardFeignService employeeCardFeignService;
     @Autowired
     WithdrawalScheduleFeignService withdrawalScheduleFeignService;
-
     @Autowired
     EmpWechatService empWechatService;
 

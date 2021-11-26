@@ -5,8 +5,6 @@ import chain.css.log.annotation.TrackLog;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.PageDTO;
 import chain.fxgj.server.payroll.dto.tax.SigningDetailRes;
-import chain.fxgj.server.payroll.dto.tax.WalletH5Req;
-import chain.fxgj.server.payroll.dto.tax.WalletH5Res;
 import chain.fxgj.server.payroll.dto.wallet.*;
 import chain.fxgj.server.payroll.service.TaxService;
 import chain.fxgj.server.payroll.service.WalletService;

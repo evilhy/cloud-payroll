@@ -81,7 +81,8 @@ public class PayrollRedisConfig {
         configMap.put("weixinOauth2AccessToken", cacheConfiguration.entryTtl(Duration.ofSeconds(7200)));
         configMap.put("weixinOauth2AccessTokenOpenid", cacheConfiguration.entryTtl(Duration.ofSeconds(7200)));
         configMap.put("empInfos", cacheConfiguration.entryTtl(Duration.ofMinutes(2)));
-        configMap.put("checkFreePassword", cacheConfiguration.entryTtl(Duration.ofMinutes(1)));;
+        configMap.put("checkFreePassword", cacheConfiguration.entryTtl(Duration.ofMinutes(1)));
+        ;
         configMap.put("securities", cacheConfiguration.entryTtl(Duration.ofHours(2)));
         configMap.put("fund", cacheConfiguration.entryTtl(Duration.ofHours(2)));
 

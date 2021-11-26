@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
-
 /**
  * @Description:钱包余额
  * @Author: du

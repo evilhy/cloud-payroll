@@ -1,7 +1,5 @@
 package chain.fxgj.server.payroll.service;
 
-import chain.cloud.tax.dto.fxgj.SealH5Req;
-
 import java.util.List;
 
 /**

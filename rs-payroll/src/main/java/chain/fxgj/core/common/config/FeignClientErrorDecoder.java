@@ -26,27 +26,27 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
             log.error("feign.IOException:{}", e);
         }
         if (response.status() >= 400 && response.status() <= 500) {
-            JSONObject object=JSONObject.fromObject(body);
-            String message="";
+            JSONObject object = JSONObject.fromObject(body);
+            String message = "";
             if (object.containsKey("message")) {
                 message = object.getString("message");
             } else if (object.containsKey("error_msg")) {
                 message = object.getString("error_msg");
             }
             //r010-银行卡已存在
-            if (message.contains("-")){
-                if (message.split("-").length>0){
-                    message=message.split("-")[1];
+            if (message.contains("-")) {
+                if (message.split("-").length > 0) {
+                    message = message.split("-")[1];
                 }
             }
-            log.info("message:{}",message);
+            log.info("message:{}", message);
             throw new ParamsIllegalException(new ErrorMsg("r008", message));
         }
         return errorStatus(methodKey, response);
     }
 
     public static void main(String[] args) {
-        String str="r010-银行卡已存在";
+        String str = "r010-银行卡已存在";
         System.out.println(str.split("-")[1]);
     }
 }

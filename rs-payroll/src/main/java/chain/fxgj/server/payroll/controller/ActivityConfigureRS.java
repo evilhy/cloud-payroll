@@ -304,7 +304,7 @@ public class ActivityConfigureRS {
 //            if (msgCodeLogResponeDTO.getMsgStatus() != 1) {
 //                throw new ParamsIllegalException(ErrorConstant.Error0004.getErrorMsg());
 //            }
-            String key ="inside_send"+request.getPhone();
+            String key = "inside_send" + request.getPhone();
             String codeId = (String) redisTemplate.opsForValue().get(key);
             core.dto.request.ReqPhone wageReqPhone = new core.dto.request.ReqPhone();
             wageReqPhone.setCode(request.getSmsCode());
@@ -422,7 +422,7 @@ public class ActivityConfigureRS {
                                 return entAccountDTO;
                             }
                     ).subscribeOn(Schedulers.boundedElastic()), 5)
-                    .onErrorContinue((err, n) -> log.error("【代发账户】远程调用出现异常: {}" , err.getMessage()))
+                    .onErrorContinue((err, n) -> log.error("【代发账户】远程调用出现异常: {}", err.getMessage()))
                     .toIterable()
                     .iterator();
 
@@ -470,7 +470,7 @@ public class ActivityConfigureRS {
 
             log.info("acticityList.acticityPage:[{}]", activityQueryPage);
             PageDTO<ActivityInfoRes> activityInfoResPageDTO = activityConfigureFeignService.activityPage(activityQueryPage);
-            LinkedList<ActivityInfoRes> content = new LinkedList<>(activityInfoResPageDTO.getContent()) ;
+            LinkedList<ActivityInfoRes> content = new LinkedList<>(activityInfoResPageDTO.getContent());
 
             Iterator iterator = Flux.fromIterable(content)
                     .flatMapSequential(activityInfoRes -> Mono.fromCallable(() ->
@@ -724,7 +724,7 @@ public class ActivityConfigureRS {
             //新增活动流程记录
             activityConfigureService.addActivityFlowLog(activityId, redisDTO.getOpenId(), redisDTO.getUserId());
 
-        return null;
+            return null;
         }).subscribeOn(Schedulers.boundedElastic()).then();
 
     }
@@ -766,7 +766,7 @@ public class ActivityConfigureRS {
                 String account = balance.getAccount();
                 activityRainDTO.setAccountId(accountId);
 //                activityRainDTO.setAccount(TransUtil.accountStar(balance.getAccount()));
-                activityRainDTO.setAccount(StringUtils.isNotEmpty(account) ? account.substring(account.length() - 4, account.length()): "");
+                activityRainDTO.setAccount(StringUtils.isNotEmpty(account) ? account.substring(account.length() - 4, account.length()) : "");
                 activityRainDTO.setAccountBalance(new BigDecimal(balance.getBalance()));
             }
 
@@ -968,7 +968,7 @@ public class ActivityConfigureRS {
                 String account = balance.getAccount();
                 activityRandom.setAccountId(accountId);
 //                activityRandom.setAccount(TransUtil.accountStar(balance.getAccount()));
-                activityRandom.setAccount(StringUtils.isNotEmpty(account) ? account.substring(account.length() - 4, account.length()): "");
+                activityRandom.setAccount(StringUtils.isNotEmpty(account) ? account.substring(account.length() - 4, account.length()) : "");
                 activityRandom.setAccountBalance(new BigDecimal(balance.getBalance()));
             }
 
@@ -1175,7 +1175,7 @@ public class ActivityConfigureRS {
                 BalanceDTO balance = accountFeignService.getBalance(accountId, null);
                 String account = balance.getAccount();
                 activityAnswerDTO.setAccountId(accountId);
-                activityAnswerDTO.setAccount(StringUtils.isNotEmpty(account) ? account.substring(account.length() - 4, account.length()): "");
+                activityAnswerDTO.setAccount(StringUtils.isNotEmpty(account) ? account.substring(account.length() - 4, account.length()) : "");
                 activityAnswerDTO.setAccountBalance(new BigDecimal(balance.getBalance()));
             }
 

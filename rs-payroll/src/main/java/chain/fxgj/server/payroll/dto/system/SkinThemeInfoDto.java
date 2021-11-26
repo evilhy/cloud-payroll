@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.dto.system;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

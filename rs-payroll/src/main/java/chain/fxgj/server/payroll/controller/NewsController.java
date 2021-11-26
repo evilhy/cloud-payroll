@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,11 +32,12 @@ public class NewsController {
 
     /**
      * 首页滚动展示信息
+     *
      * @return
      */
     @GetMapping("/bulletInfo")
     @TrackLog
-    public Mono<NewsBulletInfoDto> bulletInfo(){
+    public Mono<NewsBulletInfoDto> bulletInfo() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
@@ -50,11 +50,12 @@ public class NewsController {
 
     /**
      * 各类消息类型未读个数统计
+     *
      * @return
      */
     @GetMapping("/statisticInfo")
     @TrackLog
-    public Mono<List<NewsStatisticInfoDto>> statisticInfo(){
+    public Mono<List<NewsStatisticInfoDto>> statisticInfo() {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
@@ -67,12 +68,13 @@ public class NewsController {
 
     /**
      * 分页查询消息列表
+     *
      * @param req
      * @return
      */
     @PostMapping
     @TrackLog
-    public Mono<PageDTO<NewsInfoDto>> pageList(@RequestBody NewsInfoReq req){
+    public Mono<PageDTO<NewsInfoDto>> pageList(@RequestBody NewsInfoReq req) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {
@@ -86,12 +88,13 @@ public class NewsController {
 
     /**
      * 操作消息
+     *
      * @param req
      * @return
      */
     @PostMapping("/operate")
     @TrackLog
-    public Mono<Void> operate(@RequestBody NewsOperateInfoReq req){
+    public Mono<Void> operate(@RequestBody NewsOperateInfoReq req) {
         Map<String, String> mdcContext = MDC.getCopyOfContextMap();
         UserPrincipal userPrincipal = WebContext.getCurrentUser();
         return Mono.fromCallable(() -> {

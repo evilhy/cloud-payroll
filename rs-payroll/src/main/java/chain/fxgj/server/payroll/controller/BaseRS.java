@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.annotation.security.PermitAll;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;

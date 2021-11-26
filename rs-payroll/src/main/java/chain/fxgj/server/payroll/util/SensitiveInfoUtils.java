@@ -28,8 +28,8 @@ public final class SensitiveInfoUtils {
         //[身份证号] 显示最后四位
         System.out.println(SensitiveInfoUtils.idCardNum("420625199810100050"));//**************0050
         System.out.println(SensitiveInfoUtils.idCardNumDefined("420625199810100050"));//420***********0050
-        System.out.println(SensitiveInfoUtils.idCardNumDefinedPrefix("420625199810100050",3));//420***********0050
-        System.out.println(SensitiveInfoUtils.idCardNumDefinedPrefix("420625199810100050",6));//420625********0050
+        System.out.println(SensitiveInfoUtils.idCardNumDefinedPrefix("420625199810100050", 3));//420***********0050
+        System.out.println(SensitiveInfoUtils.idCardNumDefinedPrefix("420625199810100050", 6));//420625********0050
 
         //[固定电话] 后四位
         System.out.println(SensitiveInfoUtils.fixedPhone("02788888888"));//*******8888
@@ -39,7 +39,7 @@ public final class SensitiveInfoUtils {
         System.out.println(SensitiveInfoUtils.mobilePhonePrefix("15802721921"));//158****1921
 
         //[地址] 只显示到地区
-        System.out.println(SensitiveInfoUtils.address("北京朝阳区酒仙桥中路26号院4号楼人人大厦",8));//北京朝阳区酒仙桥中路26号********
+        System.out.println(SensitiveInfoUtils.address("北京朝阳区酒仙桥中路26号院4号楼人人大厦", 8));//北京朝阳区酒仙桥中路26号********
 
         //[电子邮箱] 邮箱前缀仅显示第一个字母
         System.out.println(SensitiveInfoUtils.email("503965137@qq.com"));//5********@qq.com
@@ -50,7 +50,6 @@ public final class SensitiveInfoUtils {
 
         //[公司开户银行联号]
         System.out.println(SensitiveInfoUtils.cnapsCode("102100029679"));//10**********
-
 
 
     }
@@ -136,7 +135,7 @@ public final class SensitiveInfoUtils {
             return "";
         }
         String idPrefix = id.substring(0, prefix);
-        id=id.substring(prefix);
+        id = id.substring(prefix);
         String num = StringUtils.right(id, 4);
         return idPrefix.concat(StringUtils.leftPad(num, id.length(), "*"));
     }
@@ -147,12 +146,12 @@ public final class SensitiveInfoUtils {
      * @param id
      * @return
      */
-    public static String idCardNumDefinedPrefix(String id,int prefix) {
+    public static String idCardNumDefinedPrefix(String id, int prefix) {
         if (StringUtils.isBlank(id)) {
             return "";
         }
         String idPrefix = id.substring(0, prefix);
-        id=id.substring(prefix);
+        id = id.substring(prefix);
         String num = StringUtils.right(id, 4);
         return idPrefix.concat(StringUtils.leftPad(num, id.length(), "*"));
     }
@@ -182,7 +181,8 @@ public final class SensitiveInfoUtils {
             return "";
         }
         String name = StringUtils.right(num, 4);
-        return StringUtils.leftPad(name, num.length(), "*");      }
+        return StringUtils.leftPad(name, num.length(), "*");
+    }
 
     /**
      * [手机号码] 前三位，后四位，其他隐藏<例子:138******1234>
@@ -198,15 +198,11 @@ public final class SensitiveInfoUtils {
     }
 
 
-
-
-
     /**
      * [地址] 只显示到地区，不显示详细地址；我们要对个人信息增强保护<例子：北京市海淀区****>
      *
      * @param address
-     * @param sensitiveSize
-     *            敏感信息长度
+     * @param sensitiveSize 敏感信息长度
      * @return
      */
     public static String address(String address, int sensitiveSize) {
