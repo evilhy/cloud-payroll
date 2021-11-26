@@ -73,9 +73,9 @@ public class ActivityStartRS {
     ActivityConfigureService activityConfigureService;
 
 
-
     /**
      * 【通用接口】微信回调接口
+     *
      * @param code
      * @param routeName
      * @return
@@ -140,6 +140,7 @@ public class ActivityStartRS {
             return res100705;
         }).subscribeOn(Schedulers.boundedElastic());
     }
+
     /**
      * 员工是否参与此活动
      * <p>
@@ -927,7 +928,7 @@ public class ActivityStartRS {
             dto.setOpenId(request.getOpenId());
             dto.setNickname(request.getNickname());
             dto.setHeadimgurl(request.getHeadimgurl());
-            dto.setIsAnswer(isStatus.getCode().equals(1)?true:false);
+            dto.setIsAnswer(isStatus.getCode().equals(1) ? true : false);
             dto.setPrizeAmt(BigDecimal.ZERO);
             //改用MQ end
 
@@ -1334,7 +1335,7 @@ public class ActivityStartRS {
             ActivityInfoRes activityById = activityConfigureService.findActivityById(id, activityQueryRequest);
             LocalDateTime startDateTime = activityById.getStartDateTime();
             LocalDateTime endDateTime = activityById.getEndDateTime();
-            Duration duration = Duration.between(startDateTime,endDateTime);
+            Duration duration = Duration.between(startDateTime, endDateTime);
             long prizeTimeLong = duration.toMillis();
             dto.setPrizeTime(prizeTimeLong);
             return dto;
@@ -1388,7 +1389,7 @@ public class ActivityStartRS {
                         .nickname(activityPrizeRes.getNickname())
                         .headimgurl(activityPrizeRes.getHeadimgurl())
                         .prizeAmt(activityPrizeRes.getPrizeAmt())
-                        .prizeDateTime(null==activityPrizeRes.getPrizeDateTime()?0L:activityPrizeRes.getPrizeDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                        .prizeDateTime(null == activityPrizeRes.getPrizeDateTime() ? 0L : activityPrizeRes.getPrizeDateTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                         .prizeName(activityPrizeRes.getPrizeName())
                         .build();
 

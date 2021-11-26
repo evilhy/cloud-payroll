@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
-
 /**
  * @Description:提现台账详情
  * @Author: du
@@ -41,11 +39,11 @@ public class WithdrawalLedgerDetailRes {
      */
     private String accountStatusVal;
     /**
-     *是否启用员工提现（0.停用 1.启用）
+     * 是否启用员工提现（0.停用 1.启用）
      */
     private Integer withdrawStatus;
     /**
-     *是否启用员工提现  描述
+     * 是否启用员工提现  描述
      */
     private String withdrawStatusVal;
     /**

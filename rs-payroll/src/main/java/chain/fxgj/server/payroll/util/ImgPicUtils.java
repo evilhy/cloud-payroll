@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.util;
 
-
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;

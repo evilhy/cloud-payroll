@@ -28,7 +28,7 @@ public class WithdrawalRecordDetailRes {
     WithdrawalRecordLogDTO withdrawalRecordLog;
 
     /**
-     *提现台账详情
+     * 提现台账详情
      */
     WithdrawalLedgerDetailRes withdrawalLedgerDetail;
 }

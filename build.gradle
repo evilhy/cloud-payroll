@@ -31,9 +31,8 @@ import java.time.format.DateTimeFormatter
 
 //https://docs.gradle.org/current/userguide/plugins.html#sec:script_plugins
 plugins {
-    id 'org.springframework.boot' version '2.4.1' apply false
-    //id 'org.springframework.boot' version '2.3.3.RELEASE' apply false
-    id 'io.spring.dependency-management' version '1.0.10.RELEASE' apply false
+    id 'org.springframework.boot' version '2.4.13' apply false
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE' apply false
     id 'org.asciidoctor.jvm.convert' version '3.1.0' apply false
     id "com.google.cloud.tools.jib" version "2.4.0" apply false
     id 'idea'
@@ -48,10 +47,8 @@ ext {
     ]
 
     libraries = [
-            springBootVersion = '2.4.1',
-            springCloudVersion = '2020.0.0',
-            //springBootVersion = '2.3.3.RELEASE',
-            //springCloudVersion = 'Hoxton.SR8',
+            springBootVersion = '2.4.13',
+            springCloudVersion = '2020.0.4',
             lombokVersion = '1.18.2',
             commonsLang3Version = '3.9'
     ]
@@ -59,7 +56,7 @@ ext {
 
 allprojects {
     group = 'chain'
-    version = '1.0.1-SNAPSHOT'
+    version = '2.0.0-SNAPSHOT'
 }
 
 description = "cloud payroll"

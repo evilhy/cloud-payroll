@@ -1,4 +1,5 @@
 package chain.fxgj.server.payroll.util;
+
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -6,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Objects;
+
 /**
  * @Description:
  * @Author: du
@@ -46,7 +48,7 @@ public class Base64Demo {
         return data;
     }
 
-    public static void saveImage(byte[] imageByte){
+    public static void saveImage(byte[] imageByte) {
         InputStream input = null;
 
         try {

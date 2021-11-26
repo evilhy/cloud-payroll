@@ -3,7 +3,6 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.log.annotation.TrackLog;
 import chain.payroll.client.feign.RegionFeignService;
 import chain.utils.fxgj.constant.DictEnums.RegionLevelEnum;
-import core.dto.response.region.RegionDictionaryDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -83,7 +83,7 @@ public class MerchantsProperties {
         /**
          * 数据权限
          */
-        private List<FundLiquidationEnum>  dataAuths;
+        private List<FundLiquidationEnum> dataAuths;
 
     }
 

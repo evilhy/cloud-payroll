@@ -84,18 +84,9 @@ public class WalletServiceImpl implements WalletService {
     @Autowired
     WageDetailFeignController wageDetailFeignController;
     @Autowired
-    EntGroupAccountFeignService entGroupAccountFeignService;
-    @Autowired
-    VirtualAccountFeignService virtualAccountFeignService;
-    @Autowired
-    VirtualUnitAccountFeignService virtualUnitAccountFeignService;
-    @Autowired
-    VirtualAccountConnectInfoFeignService virtualAccountConnectInfoFeignService;
-    @Autowired
     EmployeeCardFeignService employeeCardFeignService;
     @Autowired
     WithdrawalScheduleFeignService withdrawalScheduleFeignService;
-
     @Autowired
     EmpWechatService empWechatService;
 
@@ -404,7 +395,7 @@ public class WalletServiceImpl implements WalletService {
                 list.add(pageRes);
             }
         }
-        return new PageDTO<>(page.getPageNum(), page.getPageSize(), page.getTotalElements(), page.getTotalPages(), page.isFirst(), page.isFirst(), list);
+        return new PageDTO<>(page.getPageNum(), page.getPageSize(), page.getTotalElements(), page.getTotalPages(), page.isLast(), page.isFirst(), list);
     }
 
     @Override

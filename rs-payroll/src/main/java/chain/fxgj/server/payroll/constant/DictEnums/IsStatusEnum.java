@@ -1,6 +1,5 @@
 package chain.fxgj.server.payroll.constant.DictEnums;
 
-
 import core.enums.SysDictEnum;
 
 /**
@@ -9,7 +8,8 @@ import core.enums.SysDictEnum;
  **/
 public enum IsStatusEnum implements SysDictEnum {
     NO("否"),
-    YES("是"),;
+    YES("是"),
+    ;
 
     private String desc;
 

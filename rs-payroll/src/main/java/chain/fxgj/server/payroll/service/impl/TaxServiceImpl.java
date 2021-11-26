@@ -1,9 +1,7 @@
 package chain.fxgj.server.payroll.service.impl;
 
 import chain.cloud.tax.client.feign.FxgjSignFeignService;
-import chain.cloud.tax.dto.fxgj.SealH5Req;
 import chain.cloud.tax.dto.fxgj.SealH5Res;
-import chain.fxgj.server.payroll.service.TaxHttpClientService;
 import chain.fxgj.server.payroll.service.TaxService;
 import chain.utils.commons.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +17,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class TaxServiceImpl implements TaxService {
-
-    @Autowired
-    TaxHttpClientService taxHttpClientService;
     @Autowired
     FxgjSignFeignService fxgjSignFeignService;
 

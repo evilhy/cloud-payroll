@@ -82,7 +82,7 @@ public class CallInsideServiceImpl implements CallInsideService {
         WebTarget webTarget = client.target(payrollProperties.getInsideUrl() + "msgCode/smsCode");
         Response response = webTarget.request()
                 .header(PayrollConstants.LOG_TOKEN, StringUtils.trimToEmpty(MDC.get(PayrollConstants.LOG_TOKEN)))
-                .header("clientIp",clientIp)
+                .header("clientIp", clientIp)
                 .post(Entity.entity(msgCodeLogRequestDTO, MediaType.APPLICATION_JSON_TYPE));
         if (response.getStatus() != 200) {
             ErrorDTO errorDTO = response.readEntity(ErrorDTO.class);

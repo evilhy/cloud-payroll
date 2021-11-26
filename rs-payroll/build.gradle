@@ -137,6 +137,10 @@ dependencies {
     compile("chain.fxgj:fxgj-account-client:1.0.16")
     compile("chain.fxgj:fxgj-wage-client:1.0.23")
 
+    //密码键盘
+    compile group: 'com.kayak', name: 'kayak-softkeyboard', version: '0.0.3-fxgj-SNAPSHOTS'
+    compile group: 'org.glassfish.jersey.connectors', name: 'jersey-apache-connector', version: '2.27'
+
     implementation(
             //https://github.com/spring-projects/spring-boot/blob/v2.2.2.RELEASE/spring-boot-project/spring-boot-dependencies/pom.xml
             platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"),

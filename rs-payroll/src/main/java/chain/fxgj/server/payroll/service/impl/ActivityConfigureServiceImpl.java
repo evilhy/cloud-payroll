@@ -8,7 +8,6 @@ import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.feign.hxinside.account.service.AccountFeignService;
 import chain.feign.hxinside.ent.service.CheckGroupInfoServiceFeign;
-import chain.feign.hxinside.ent.service.GroupInfoServiceFeign;
 import chain.feign.hxinside.ent.service.UserInfoServiceFeign;
 import chain.fxgj.account.core.dto.response.account.AccountDetailDTO;
 import chain.fxgj.account.core.dto.response.account.BalanceDTO;
@@ -57,8 +56,6 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
 
     @Autowired
     ActivityConfigureFeignService activityConfigureFeignService;
-//    @Autowired
-//    EntErpriseInfoServiceFeign entErpriseInfoServiceFeign;
     @Autowired
     UserInfoServiceFeign userInfoServiceFeign;
     @Autowired
@@ -66,10 +63,7 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
     @Autowired
     ActivityFeignService activityFeignService;
     @Autowired
-    GroupInfoServiceFeign groupInfoServiceFeign;
-    @Autowired
     CheckGroupInfoServiceFeign checkGroupInfoServiceFeign;
-
     @Autowired
     EntErpriseFeignController entErpriseFeignController;
     @Autowired
@@ -197,7 +191,7 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         activityModifyRequest.setEntId(entId);
         activityModifyRequest.setRealCnt(activityAnswerDTO.getRealCnt());
         Integer isTimeOpen = activityAnswerDTO.getIsTimeOpen();
-        if (isTimeOpen != null){
+        if (isTimeOpen != null) {
             activityModifyRequest.setIsTimeOpen(chain.utils.fxgj.constant.DictEnums.IsStatusEnum.values()[isTimeOpen]);
         }
         activityModifyRequest.setUserId(userId);
@@ -358,7 +352,7 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         activityModifyRequest.setEntId(entId);
         activityModifyRequest.setRealCnt(activityRainDTO.getRealCnt());
         Integer isTimeOpen = activityRainDTO.getIsTimeOpen();
-        if (isTimeOpen != null){
+        if (isTimeOpen != null) {
             activityModifyRequest.setIsTimeOpen(chain.utils.fxgj.constant.DictEnums.IsStatusEnum.values()[isTimeOpen]);
         }
         activityModifyRequest.setUserId(userId);
@@ -499,7 +493,7 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
         activityModifyRequest.setEntId(entId);
         activityModifyRequest.setRealCnt(activityRandomDTO.getRealCnt());
         Integer isTimeOpen = activityRandomDTO.getIsTimeOpen();
-        if (isTimeOpen != null){
+        if (isTimeOpen != null) {
             activityModifyRequest.setIsTimeOpen(chain.utils.fxgj.constant.DictEnums.IsStatusEnum.values()[isTimeOpen]);
         }
         activityModifyRequest.setUserId(userId);
@@ -639,9 +633,10 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
 
     /**
      * 根据活动id查询正常的活动详情
+     *
      * @param activityId
      */
-    public ActivityInfoRes findActivityInfo(String activityId){
+    public ActivityInfoRes findActivityInfo(String activityId) {
         ActivityQueryRequest activityQueryRequest = ActivityQueryRequest.builder()
                 .activityId(activityId)
                 .delStatus(new LinkedList(Arrays.asList(DelStatusEnum.normal)))
@@ -656,10 +651,11 @@ public class ActivityConfigureServiceImpl implements ActivityConfigureService {
 
     /**
      * 查询账户明细
+     *
      * @param accountId
      * @return
      */
-    public AccountDetailDTO getAccountDetailDTO(String accountId){
+    public AccountDetailDTO getAccountDetailDTO(String accountId) {
 
         AccountDetailDTO accountDetailDTO = accountFeignService.accountDetailInfo(accountId);
 

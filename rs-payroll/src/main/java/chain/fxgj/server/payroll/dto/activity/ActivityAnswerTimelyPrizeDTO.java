@@ -56,7 +56,7 @@ public class ActivityAnswerTimelyPrizeDTO {
     /**
      * 是否中奖（ false 否 true 是
      */
-    private Boolean isAnswer ;
+    private Boolean isAnswer;
     /**
      * 中奖金额
      */

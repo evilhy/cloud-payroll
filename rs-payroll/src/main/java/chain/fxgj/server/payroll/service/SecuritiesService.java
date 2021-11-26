@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Transactional
 public interface SecuritiesService {
 
     /**
      * 根据openId查询是证券活动否登录
+     *
      * @param jsessionId
      * @param openId
      */
@@ -24,6 +24,7 @@ public interface SecuritiesService {
 
     /**
      * 更新缓存
+     *
      * @param jsessionId
      * @param securitiesRedisDTO
      */
@@ -32,13 +33,15 @@ public interface SecuritiesService {
 
     /**
      * 查询缓存信息
+     *
      * @param jsessionId
      */
     @Cacheable(cacheNames = "securities", key = "'jsession:'.concat(#jsessionId)")
     SecuritiesRedisDTO qrySecuritiesRedis(String jsessionId);
 
     /**
-     *  证券登录入库
+     * 证券登录入库
+     *
      * @param
      * @return
      */
@@ -46,6 +49,7 @@ public interface SecuritiesService {
 
     /**
      * 邀请奖励列表查询
+     *
      * @param custIdOrManagerId
      * @return
      */
@@ -53,6 +57,7 @@ public interface SecuritiesService {
 
     /**
      * 查询金豆个数
+     *
      * @param custId
      */
     BigDecimal qryGoldenBean(String custId, UserTypeEnum userType);
@@ -69,6 +74,7 @@ public interface SecuritiesService {
 
     /**
      * 投资奖励列表List
+     *
      * @param custId
      * @return
      */

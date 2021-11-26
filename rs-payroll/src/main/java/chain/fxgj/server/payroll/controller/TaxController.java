@@ -76,8 +76,6 @@ public class TaxController {
     EmployeeWechatService employeeWechatService;
     @Autowired
     TaxService taxService;
-    //    @Autowired
-//    EmployeeTaxSignFeignService employeeTaxSignFeignService;
     @Autowired
     WithdrawalLedgerInfoServiceFeign withdrawalLedgerInfoServiceFeign;
     @Autowired

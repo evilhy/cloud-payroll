@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 @EnableDiscoveryClient
 @EnableFeignClients({"chain"})
 @EnableMongoAuditing
-@SpringBootApplication(scanBasePackages = {"chain"},exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"chain"}, exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class PayrollApplication {
 
     public static void main(String[] args) {
