@@ -84,6 +84,7 @@ public class CorsConfig {
                 }
                 headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
                 headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
+                headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
                 headers.add(HttpHeaders.ACCESS_CONTROL_MAX_AGE, MAX_AGE);
                 headers.setAccessControlExposeHeaders(Arrays.asList("*", "Content-Disposition"));
 
