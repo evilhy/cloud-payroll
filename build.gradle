@@ -164,7 +164,7 @@ subprojects {
         testAnnotationProcessor 'org.projectlombok:lombok'
         testCompileOnly 'org.projectlombok:lombok'
 
-        compile('chain:css-log:2.1.4')
+        compile('chain:css-log:2.1.5-SNAPSHOT')
         compile('chain:utils-commons:1.0.6')
         testCompile('junit:junit:4.12')
         testCompile('pl.pragmatists:JUnitParams:1.1.1')
