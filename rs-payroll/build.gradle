@@ -117,7 +117,7 @@ dependencyManagement {
 
 
 dependencies {
-    compile('chain.cloud:data-client:2.1.5')
+    compile('chain.cloud:data-client:2.1.6')
     compile("chain.news:news-fengin:1.0.1")
     compile("chain:ids-client:1.1.10")
     compile("chain:pub-client:2.0.0")
