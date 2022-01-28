@@ -9,11 +9,11 @@ import java.time.format.DateTimeFormatter
 //        //优先引用 自建仓库  > aliyun > gradle > Local ;  项目构建时，加载jar包下载
 //        maven {
 //            name "whkayak-releases"
-//            url "http://whkayak.f3322.net:18150/nexus/content/repositories/releases"
+//            url "http://10.5.0.252:8150/nexus/content/repositories/releases"
 //        }
 //        maven {
 //            name "whkayak-snapshots"
-//            url "http://whkayak.f3322.net:18150/nexus/content/repositories/snapshots"
+//            url "http://10.5.0.252:8150/nexus/content/repositories/snapshots"
 //        }
 //        maven {
 //            name "aliyun"
