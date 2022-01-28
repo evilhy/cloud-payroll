@@ -4,7 +4,8 @@ spring:
     base-url: http://localhost:7178
   cloud:
     consul:
-      host: 10.68.184.147
+#      host: 10.68.184.147
+      host: consul-server.consul.svc.cluster.local
       port: 8500
       discovery:
         #配置注册到consul 服务的id
