@@ -130,7 +130,7 @@ management:
 # mongodb 日志记录-
 logcss:
   sysId: rs-payroll
-  activateMongodb: true
+  activateMongodb: false
   pool-size: 2
   mongodb:
     uri: mongodb://fxgjlogs:123456@10.5.0.182:27017/fxgjlogs
