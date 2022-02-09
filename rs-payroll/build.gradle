@@ -138,7 +138,8 @@ dependencies {
     compile("chain.fxgj:fxgj-wage-client:1.0.23")
 
     //密码键盘
-    compile group: 'com.kayak', name: 'kayak-softkeyboard', version: '0.0.3-fxgj-SNAPSHOTS'
+//    compile group: 'com.kayak', name: 'kayak-softkeyboard', version: '0.0.3-fxgj-SNAPSHOTS'
+    compile('chain:utils-softkeyboard:1.0.0-SNAPSHOT')
     compile group: 'org.glassfish.jersey.connectors', name: 'jersey-apache-connector', version: '2.27'
 
     implementation(
