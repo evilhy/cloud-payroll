@@ -75,9 +75,9 @@ public class AdvertisingController {
             log.info("versionsTypeEnum:[{}]", versionsTypeEnum.getDesc());
             log.info("versionsEnum:[{}]", versionsEnum.getDesc());
 
-            //宁夏银行-新增校验:[仅华夏银行继续查询，其他银行统一返回空数组]
-            if (!FundLiquidationEnum.HXB.equals(liquidation)) {
-                log.info("!FundLiquidationEnum.HXB:[{}].eq.liquidation:[{}]", FundLiquidationEnum.HXB, liquidation);
+            //新增校验:[仅华夏银行、宁夏银行继续查询，其他银行统一返回空数组]
+            if (!FundLiquidationEnum.HXB.equals(liquidation) && !FundLiquidationEnum.NINGXIA.equals(liquidation)) {
+                log.info("当前企业非华夏银行【{}】且非宁夏银行【{}】, 当前企业银行渠道：liquidation:{} ", FundLiquidationEnum.HXB, FundLiquidationEnum.NINGXIA, liquidation);
                 return advertisingRotationDTOS;
             }
 
