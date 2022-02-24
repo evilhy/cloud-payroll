@@ -579,7 +579,7 @@ public class InsideController {
             List<FundLiquidationEnum> dataAuths = userPrincipal.getDataAuths();
             BaseReqDTO baseReqDTO = BaseReqDTO.builder()
                     .idNumber(idNumber)
-                    .entId(entId)
+                    .entId("undefined".equals(entId)? null : entId)
                     .dataAuths(dataAuths)
                     .build();
             if (StringUtils.isBlank(idNumber)) {
