@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 184
+Content-Type: application/json;charset=UTF-8
+
+[{"name":"王雪","position":"人事","phone":"13477092150"},{"name":"郑燕彬","position":"人事","phone":"13477092151"},{"name":"冯花","position":"其他","phone":"13477092152"}]
+----

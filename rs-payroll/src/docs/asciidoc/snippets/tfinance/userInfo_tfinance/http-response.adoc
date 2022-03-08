@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 281
+Content-Type: application/json;charset=UTF-8
+
+{"clientName":"韩德良","idNumber":"420704199304164673","idNumberStar":"4207*****4673","clientPhone":"15527689216","clientPhoneStar":"155*****9216","custManagerId":"123456","managerName":"张三行","managerPhone":"18800000000","managerImg":"","hxBank":1,"nowDate":1552476918158}
+----

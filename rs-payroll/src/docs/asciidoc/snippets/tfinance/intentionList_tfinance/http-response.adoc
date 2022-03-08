@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 59
+
+{"nowDate":1552569123076,"intentNum":0,"size":15,"list":[]}
+----

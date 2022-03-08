@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 64
+Content-Type: application/json;charset=UTF-8
+
+{"cardNum":2,"balance":"0.00","salt":"123456","passwd":"234567"}
+----

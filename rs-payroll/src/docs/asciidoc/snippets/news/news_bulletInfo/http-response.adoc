@@ -1,0 +1,14 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 143
+Content-Type: application/json;charset=UTF-8
+
+{
+  "unReadTotalCnt" : 1,
+  "list" : [ {
+                "newsType" :1,
+                "digest" : "这是一个摘要" }
+  ]
+}
+----

@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 1348
+
+[{"employeeId":"ff8080816908c5df016908c8dacb0001","employeeName":"123","idNumberStar":"4207*****4673","phoneStar":"15527689216","position":null,"inServiceStatus":"0","inServiceStatusVal":"在职","employeeNo":null,"groupName":"杜颖测试企业","entryDate":null,"bankCardList":[{"bankName":"华夏银行","bankCard":"6230200840161603"}]},{"employeeId":"ff808081692304f0016928d8194200b4","employeeName":"韩德良","idNumberStar":"4207*****4673","phoneStar":"15527689216","position":null,"inServiceStatus":"0","inServiceStatusVal":"在职","employeeNo":null,"groupName":"重复测试","entryDate":null,"bankCardList":[{"bankName":"华夏银行","bankCard":"6230200165153432"}]},{"employeeId":"ff808081692304f001692901d81600f7","employeeName":"韩德良","idNumberStar":"4207*****4673","phoneStar":"15527689216","position":null,"inServiceStatus":"0","inServiceStatusVal":"在职","employeeNo":null,"groupName":"安卓测试","entryDate":null,"bankCardList":[{"bankName":"华夏银行","bankCard":"6230200165153433"}]},{"employeeId":"ff808081694669240169467fd1d10030","employeeName":"韩德良","idNumberStar":"4207*****4673","phoneStar":null,"position":null,"inServiceStatus":"0","inServiceStatusVal":"在职","employeeNo":null,"groupName":"香香企业","entryDate":null,"bankCardList":[{"bankName":"华夏银行","bankCard":"6230200165153433"}]}]
+----

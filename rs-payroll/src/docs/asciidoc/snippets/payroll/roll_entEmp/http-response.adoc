@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 231
+Content-Type: application/json;charset=UTF-8
+
+{"bindStatus":"0","employeeList":[{"phone":"18627879315","phoneStar":"186*****9315","employeeName":"李东","sex":"0","idNumber":"2kerXcaeyc6D6pTxJawRhHa/VFbmTXjl","entName":"陈小妹","entId":"ff8080816899924301689e0288c50000"}]}
+----

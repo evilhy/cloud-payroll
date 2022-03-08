@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Length: 154
+Content-Type: application/json;charset=UTF-8
+
+{"shouldTotalAmt":0,"deductTotalAmt":0,"realTotalAmt":0,"years":[],"planList":[],"employeeSid":"lwTSWWi5avF3TMBEK4mjHTTkLdHHLnwFk9cNmy09vL9WnGf8szBeyw=="}
+----
