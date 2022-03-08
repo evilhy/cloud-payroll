@@ -23,12 +23,18 @@ public class AsyncConfigurer implements org.springframework.scheduling.annotatio
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor threadPool = new ThreadPoolTaskExecutorMdcWrapper();
-        threadPool.setCorePoolSize(1000);//当前线程数
-        threadPool.setQueueCapacity(1000000);//线程池所使用的缓冲队列
-        threadPool.setWaitForTasksToCompleteOnShutdown(true);//等待任务在关机时完成--表明等待所有线程执行完
-        threadPool.setAwaitTerminationSeconds(60);// 等待时间 （默认为0，此时立即停止），并没等待xx秒后强制停止
-        threadPool.setThreadNamePrefix("async-");//  线程名称前缀
-        threadPool.initialize(); // 初始化
+        //当前线程数
+        threadPool.setCorePoolSize(1000);
+        //线程池所使用的缓冲队列
+        threadPool.setQueueCapacity(1000000);
+        //等待任务在关机时完成--表明等待所有线程执行完
+        threadPool.setWaitForTasksToCompleteOnShutdown(true);
+        //等待时间 （默认为0，此时立即停止），并没等待xx秒后强制停止
+        threadPool.setAwaitTerminationSeconds(60);
+        //线程名称前缀
+        threadPool.setThreadNamePrefix("async-");
+        //初始化
+        threadPool.initialize();
         return threadPool;
     }
 

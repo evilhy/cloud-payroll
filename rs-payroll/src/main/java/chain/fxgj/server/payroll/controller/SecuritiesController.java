@@ -3,7 +3,6 @@ package chain.fxgj.server.payroll.controller;
 import chain.css.exception.ParamsIllegalException;
 import chain.css.exception.ServiceHandleException;
 import chain.css.log.annotation.TrackLog;
-import chain.fxgj.feign.client.InsideFeignService;
 import chain.fxgj.server.payroll.constant.ErrorConstant;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.ResSecuritiesLoginDTO;
@@ -24,7 +23,6 @@ import chain.pub.common.enums.WechatGroupEnum;
 import chain.utils.commons.JacksonUtil;
 import chain.utils.commons.StringUtils;
 import chain.utils.commons.UUIDUtil;
-import chain.wage.manager.core.dto.request.WageReqPhone;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
 import core.dto.request.ReqPhone;
@@ -41,8 +39,6 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 /**
@@ -61,8 +57,6 @@ public class SecuritiesController {
     SecuritiesService securitiesService;
     @Autowired
     WechatRedisService wechatRedisService;
-    @Autowired
-    InsideFeignService insideFeignService;
     @Autowired
     CaptchaFeignClient captchaFeignClient;
     @Autowired

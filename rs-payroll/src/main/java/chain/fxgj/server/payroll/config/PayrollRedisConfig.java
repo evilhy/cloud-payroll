@@ -61,16 +61,26 @@ public class PayrollRedisConfig {
         // 设置一个初始化的缓存空间set集合
         Set<String> cacheNames = new HashSet<>();
         cacheNames.add("loginSessionId");
-        cacheNames.add("advertisement");  //广告位(轮播图)
-        cacheNames.add("weixin");  //微信
-        cacheNames.add("weixinOauth2");  //微信网页授权 获取code
-        cacheNames.add("weixinOauth2AccessToken");  //微信网页授权 通过 code --> 获取 access_token
-        cacheNames.add("weixinOauth2AccessTokenOpenid");  //微信网页授权 通过 access_token -->获取  用户信息
-        cacheNames.add("weixinOauth2AccessTokenOpenid");  //微信网页授权 通过 access_token -->获取  用户信息
-        cacheNames.add("empInfos");  //员工缓存信息
-        cacheNames.add("checkFreePassword");  //免密查看工资标记
-        cacheNames.add("securities");  //证券开户
-        cacheNames.add("fund");  //基金预约
+        //广告位(轮播图)
+        cacheNames.add("advertisement");
+        //微信
+        cacheNames.add("weixin");
+        //微信网页授权 获取code
+        cacheNames.add("weixinOauth2");
+        //微信网页授权 通过 code --> 获取 access_token
+        cacheNames.add("weixinOauth2AccessToken");
+        //微信网页授权 通过 access_token -->获取  用户信息
+        cacheNames.add("weixinOauth2AccessTokenOpenid");
+        //微信网页授权 通过 access_token -->获取  用户信息
+        cacheNames.add("weixinOauth2AccessTokenOpenid");
+        //员工缓存信息
+        cacheNames.add("empInfos");
+        //免密查看工资标记
+        cacheNames.add("checkFreePassword");
+        //证券开户
+        cacheNames.add("securities");
+        //基金预约
+        cacheNames.add("fund");
 
 
         Map<String, RedisCacheConfiguration> configMap = new HashMap<>();

@@ -18,9 +18,6 @@ public class WechatDTO {
     /**
      * openId
      */
-    /**
-     * 手机号
-     */
     private String openId;
     /**
      * 手机号

@@ -3,7 +3,6 @@ package chain.fxgj.server.payroll.service;
 import chain.wisales.core.dto.promise.FundAppointmentInfoDTO;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface FundService {
 
