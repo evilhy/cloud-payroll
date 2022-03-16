@@ -1,11 +1,12 @@
 package chain.fxgj.server.payroll.util;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+//import sun.misc.BASE64Decoder;
+//import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Base64;
 import java.util.Objects;
 
 /**
@@ -72,24 +73,32 @@ public class Base64Demo {
 
     public static String ImageToBase64(String imgPath) {
         byte[] data = readImage(imgPath);
+        // 将字节码转化成base64编码
+        String base64Encoder = Base64.getUrlEncoder().encodeToString(data);
+        return base64Encoder;
 
-        // 对字节数组Base64编码
+        /*// 对字节数组Base64编码
         BASE64Encoder encoder = new BASE64Encoder();
 
         // 返回Base64编码过的字节数组字符串
-        return encoder.encode(Objects.requireNonNull(data));
+        return encoder.encode(Objects.requireNonNull(data));*/
     }
 
     public static void Base64ToStream(String base64) {
-        BASE64Decoder decoder = new BASE64Decoder();
+
+        byte[] imageByte = Base64.getUrlDecoder().decode(base64);
+
+        /*BASE64Decoder decoder = new BASE64Decoder();
 
         byte[] imageByte = new byte[0];
 
+        //base64 解码
+        byte[]  content_ras_decode = Base64.getUrlDecoder().decode(subUrl);
         try {
             imageByte = decoder.decodeBuffer(base64);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         //图片类型
         saveImage(imageByte);
