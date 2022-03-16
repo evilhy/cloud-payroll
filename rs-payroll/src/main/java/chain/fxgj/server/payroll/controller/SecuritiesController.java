@@ -27,6 +27,7 @@ import chain.utils.commons.UUIDUtil;
 import chain.wage.manager.core.dto.request.WageReqPhone;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
+import chain.wisales.core.dto.securitiesIntegral.SecuritiesIntegralRewardDTO;
 import core.dto.request.ReqPhone;
 import core.dto.wechat.CacheUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -404,4 +405,37 @@ public class SecuritiesController {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
+    /**
+     * 证券开户活动我的邀请查询
+     *
+     * @param managerId 客户经理ID
+     * @return list
+     */
+    @GetMapping("/unAuth/querySecuritiesInvitation")
+    @TrackLog
+    public Mono<List<SecuritiesIntegralRewardDTO>> querySecuritiesInvitation(@RequestParam String managerId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            List<SecuritiesIntegralRewardDTO> securitiesLoginDTOList = securitiesService.querySecuritiesInvitation(managerId);
+            return securitiesLoginDTOList;
+        }).subscribeOn(Schedulers.elastic());
+    }
+
+    /**
+     * 证券工分邀请奖励列表查询
+     *
+     * @param managerId 客户经理ID
+     * @return list
+     */
+    @GetMapping("/unAuth/queryInvitationIntegral")
+    @TrackLog
+    public Mono<List<SecuritiesIntegralRewardDTO>> queryInvitationIntegral(@RequestParam String managerId) {
+        Map<String, String> mdcContext = MDC.getCopyOfContextMap();
+        return Mono.fromCallable(() -> {
+            MDC.setContextMap(mdcContext);
+            List<SecuritiesIntegralRewardDTO> securitiesLoginDTOList = securitiesService.queryInvitationIntegral(managerId);
+            return securitiesLoginDTOList;
+        }).subscribeOn(Schedulers.elastic());
+    }
 }

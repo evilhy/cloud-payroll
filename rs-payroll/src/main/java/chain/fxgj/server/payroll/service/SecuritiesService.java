@@ -4,6 +4,7 @@ import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesRedisDTO;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
+import chain.wisales.core.dto.securitiesIntegral.SecuritiesIntegralRewardDTO;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,4 +89,19 @@ public interface SecuritiesService {
      */
     String transferThirdPage(ReqSecuritiesLoginDTO reqSecuritiesLoginDTO);
 
+    /**
+     * 证券开户活动我的邀请查询
+     *
+     * @param managerId 客户经理
+     * @return list
+     */
+    List<SecuritiesIntegralRewardDTO> querySecuritiesInvitation(String managerId);
+
+    /**
+     * 证券工分邀请奖励列表查询
+     *
+     * @param managerId 客户经理ID
+     * @return list
+     */
+    List<SecuritiesIntegralRewardDTO> queryInvitationIntegral(String managerId);
 }

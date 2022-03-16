@@ -9,6 +9,7 @@ import chain.wisales.client.feign.SecuritiesActivityFeignService;
 import chain.wisales.core.constant.dictEnum.SecuritiesPlatformEnum;
 import chain.wisales.core.constant.dictEnum.UserTypeEnum;
 import chain.wisales.core.dto.securities.*;
+import chain.wisales.core.dto.securitiesIntegral.SecuritiesIntegralRewardDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,16 +133,44 @@ public class SecuritiesServiceImpl implements SecuritiesService {
      */
     @Override
     public String transferThirdPage(ReqSecuritiesLoginDTO reqSecuritiesLoginDTO) {
-        log.info("transferThirdPage.reqSecuritiesLoginDTO:[{}]", JacksonUtil.objectToJson(reqSecuritiesLoginDTO));
+        log.info("SecuritiesServiceImpl.transferThirdPage reqSecuritiesLoginDTO:[{}]", JacksonUtil.objectToJson(reqSecuritiesLoginDTO));
         SecuritiesLoginDTO securitiesLoginDTO = new SecuritiesLoginDTO();
         securitiesLoginDTO.setManagerId(reqSecuritiesLoginDTO.getCustomerId());
         securitiesLoginDTO.setReferrerId(reqSecuritiesLoginDTO.getInvitationId());
         securitiesLoginDTO.setPhoneNo(reqSecuritiesLoginDTO.getPhone());
         securitiesLoginDTO.setCustId(reqSecuritiesLoginDTO.getCustId());
         securitiesLoginDTO.setSecuritiesPlatform(SecuritiesPlatformEnum.values()[reqSecuritiesLoginDTO.getSecuritiesPlatform()]);
-        log.info("transferThirdPage.securitiesLoginDTO:[{}]", JacksonUtil.objectToJson(securitiesLoginDTO));
+        log.info("SecuritiesServiceImpl.transferThirdPage securitiesLoginDTO:[{}]", JacksonUtil.objectToJson(securitiesLoginDTO));
         String url = securitiesActivityFeignService.transferThirdPage(securitiesLoginDTO);
         return url;
+    }
+
+    /**
+     * 证券开户活动我的邀请查询
+     *
+     * @param managerId 客户经理ID
+     * @return list
+     */
+    @Override
+    public List<SecuritiesIntegralRewardDTO> querySecuritiesInvitation(String managerId) {
+        log.info("SecuritiesServiceImpl.querySecuritiesInvitation managerId:[{}]", JacksonUtil.objectToJson(managerId));
+        List<SecuritiesIntegralRewardDTO> list = securitiesActivityFeignService.querySecuritiesInvitation(managerId);
+        log.info("SecuritiesServiceImpl.querySecuritiesInvitation list:[{}]", JacksonUtil.objectToJson(list));
+        return list;
+    }
+
+    /**
+     * 证券工分邀请奖励列表查询
+     *
+     * @param managerId 客户经理ID
+     * @return list
+     */
+    @Override
+    public List<SecuritiesIntegralRewardDTO> queryInvitationIntegral(String managerId) {
+        log.info("SecuritiesServiceImpl.querySecuritiesInvitation managerId:[{}]", JacksonUtil.objectToJson(managerId));
+        List<SecuritiesIntegralRewardDTO> list = securitiesActivityFeignService.queryInvitationIntegral(managerId);
+        log.info("SecuritiesServiceImpl.querySecuritiesInvitation list:[{}]", JacksonUtil.objectToJson(list));
+        return list;
     }
 
 }
