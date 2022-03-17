@@ -5,6 +5,7 @@ import chain.fxgj.server.payroll.dto.response.Res100705;
 import chain.fxgj.server.payroll.dto.securities.request.ReqSecuritiesLoginDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecInvAwardDTO;
 import chain.fxgj.server.payroll.dto.securities.response.SecuritiesCustInfoDTO;
+import chain.fxgj.server.payroll.dto.securities.response.SecuritiesIntegralRewardDTO;
 import core.dto.wechat.WeixinJsapiDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
@@ -182,6 +183,49 @@ public class SecuritiesControllerTest {
                 .consumeWith(document("getJsapiSignature_wechat",
                         relaxedRequestParameters(parameterWithName("url").description("获取url")),
                         relaxedResponseFields(JavaDocReader.javaDoc(WeixinJsapiDTO.class))));
+    }
+
+
+    /**
+     * 证券开户活动我的邀请查询
+     *
+     * @throws Exception
+     */
+    @Test
+    public void querySecuritiesInvitation() {
+        String managerId = "ff80808166c9dcbc0166c9dcd0490056";
+        webTestClient.get()
+                .uri("/securityes/unAuth/querySecuritiesInvitation?managerId={managerId}", managerId)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody()//返回是什么类型的对象
+                .consumeWith(document("securityes_querySecuritiesInvitation",
+                        relaxedRequestParameters(parameterWithName("managerId").description("客户经理ID")),
+                        relaxedResponseFields(JavaDocReader.javaDoc(SecuritiesIntegralRewardDTO.class))
+                    )
+                );//出参对象描述
+    }
+
+    /**
+     * 证券工分邀请奖励列表查询
+     *
+     * @throws Exception
+     */
+    @Test
+    public void queryInvitationIntegral() {
+        String managerId = "edb79b9de9e44202b9dd69592c3c4b9b";
+        webTestClient.get()
+                .uri("/securityes/unAuth/queryInvitationIntegral?managerId={managerId}", managerId)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody()//返回是什么类型的对象
+                .consumeWith(document("securityes_queryInvitationIntegral",
+                        relaxedRequestParameters(parameterWithName("managerId").description("客户经理ID")),
+                        relaxedResponseFields(JavaDocReader.javaDoc(SecuritiesIntegralRewardDTO.class))
+                        )
+                );//出参对象描述
     }
 
 //    @Test

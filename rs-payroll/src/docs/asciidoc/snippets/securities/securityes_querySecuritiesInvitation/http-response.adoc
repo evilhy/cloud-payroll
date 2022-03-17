@@ -1,0 +1,56 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 1402
+
+[ {
+  "custId" : "201909060005626",
+  "custPhone" : "189****7510",
+  "managerId" : "ff80808166c9dcbc0166c9dcd0490056",
+  "integral" : 0,
+  "createTime" : 1635499083585
+}, {
+  "custId" : "202110290000384",
+  "custPhone" : "186****9316",
+  "managerId" : "ff80808166c9dcbc0166c9dcd0490056",
+  "integral" : 0,
+  "createTime" : 1635499933944
+}, {
+  "custId" : "202111020000390",
+  "custPhone" : "156****5570",
+  "managerId" : "ff80808166c9dcbc0166c9dcd0490056",
+  "integral" : 0,
+  "createTime" : 1635819178679
+}, {
+  "custId" : "202002270020988",
+  "custPhone" : "133****2545",
+  "managerId" : "ff80808166c9dcbc0166c9dcd0490056",
+  "integral" : 0,
+  "createTime" : 1635835572227
+}, {
+  "custId" : "202111020000393",
+  "custPhone" : "189****0323",
+  "managerId" : "ff80808166c9dcbc0166c9dcd0490056",
+  "integral" : 0,
+  "createTime" : 1635856023218
+}, {
+  "custId" : "201907040003598",
+  "custPhone" : "139****1155",
+  "managerId" : "ff80808166c9dcbc0166c9dcd0490056",
+  "integral" : 0,
+  "createTime" : 1644549028304
+}, {
+  "custId" : "202202110020447",
+  "custPhone" : "195****0021",
+  "managerId" : "ff80808166c9dcbc0166c9dcd0490056",
+  "integral" : 0,
+  "createTime" : 1644559433709
+}, {
+  "custId" : "201907040003596",
+  "custPhone" : "151****1781",
+  "managerId" : "ff80808166c9dcbc0166c9dcd0490056",
+  "integral" : 0,
+  "createTime" : 1645155204838
+} ]
+----

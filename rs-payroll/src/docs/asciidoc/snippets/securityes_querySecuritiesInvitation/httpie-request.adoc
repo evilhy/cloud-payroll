@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8080/securityes/unAuth/querySecuritiesInvitation?managerId=ff80808166c9dcbc0166c9dcd0490056'
+----

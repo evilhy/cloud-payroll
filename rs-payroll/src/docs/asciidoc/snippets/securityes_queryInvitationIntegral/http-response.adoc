@@ -1,0 +1,18 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 288
+
+[ {
+  "custPhone" : "186****1234",
+  "standardStatusVal" : "初级客户",
+  "securitiesPlatformVal" : "首创证券",
+  "integral" : 30
+}, {
+  "custPhone" : "186****1234",
+  "standardStatusVal" : "中级客户",
+  "securitiesPlatformVal" : "国联证券",
+  "integral" : 25
+} ]
+----

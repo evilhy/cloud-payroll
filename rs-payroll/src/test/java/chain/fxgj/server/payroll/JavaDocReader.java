@@ -76,14 +76,14 @@ public class JavaDocReader extends Doclet {
                 JavaDocReader.class.getName(),
 // 因为自定义的Doclet类并不在外部jar中，就在当前类中，所以这里不需要指定-docletpath 参数，
                 "-docletpath",
-                JavaDocReader.class.getResource("/").getPath(),
+                JavaDocReader.class.getResource("/").getPath().substring(1),
                 "-encoding", "utf-8",
 //                "-cp",
 //                "/workspaces/cloud/kjb/core-fbo/build/classes/java/main:/Users/chain/.m2/repository/org/projectlombok/lombok/1.18.2/lombok-1.18.2.jar",
 //                System.getProperty("user.dir") + "/src/main/java/" +
 //                "D:/Code/cloud-payroll/rs-payroll/src/main/java/" +
 //                "/Users/lius/pro/cloudMicro/cloud-payroll/rs-payroll/src/main/java/" +
-                "D:/kayak/project/2019/official/cloud-payroll/rs-payroll/src/main/java/" +
+                "E:/IDEA2020_workspace/cloud-payroll/cloud-payroll/rs-payroll/src/main/java/" +
                         clas.getPackage().getName().replace(".", "/") + "/" +
                         clas.getSimpleName() + ".java"};
 

@@ -115,3 +115,37 @@ include::{snippets}/securities/securityes_qryInvestmentRewardList/curl-request.a
 * Response:
 +
 include::{snippets}/securities/securityes_qryInvestmentRewardList/http-response.adoc[]
+
+=== 证券开户活动我的邀请查询
+==== 接口定义
+* Query Parameters:
++
+include::{snippets}/securities/securityes_querySecuritiesInvitation/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/securities/securityes_querySecuritiesInvitation/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/securities/securityes_querySecuritiesInvitation/curl-request.adoc[]
+* Response:
++
+include::{snippets}/securities/securityes_querySecuritiesInvitation/http-response.adoc[]
+
+=== 证券工分邀请奖励列表查询
+==== 接口定义
+* Query Parameters:
++
+include::{snippets}/securities/securityes_queryInvitationIntegral/request-parameters.adoc[]
+* Response Body:
++
+include::{snippets}/securities/securityes_queryInvitationIntegral/response-fields.adoc[]
+
+==== 示例
+* Request:
++
+include::{snippets}/securities/securityes_queryInvitationIntegral/curl-request.adoc[]
+* Response:
++
+include::{snippets}/securities/securityes_queryInvitationIntegral/http-response.adoc[]

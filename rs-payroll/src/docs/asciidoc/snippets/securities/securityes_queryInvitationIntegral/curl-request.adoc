@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/securityes/unAuth/queryInvitationIntegral?managerId=edb79b9de9e44202b9dd69592c3c4b9b' -i -X GET
+----
