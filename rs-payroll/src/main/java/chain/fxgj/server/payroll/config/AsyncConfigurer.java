@@ -24,7 +24,7 @@ public class AsyncConfigurer implements org.springframework.scheduling.annotatio
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor threadPool = new ThreadPoolTaskExecutorMdcWrapper();
         //当前线程数
-        threadPool.setCorePoolSize(1000);
+        threadPool.setCorePoolSize(200);
         //线程池所使用的缓冲队列
         threadPool.setQueueCapacity(1000000);
         //等待任务在关机时完成--表明等待所有线程执行完
