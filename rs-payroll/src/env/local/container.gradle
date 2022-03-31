@@ -7,7 +7,8 @@ ext {
     //BUILD_TIMESTAMP=env.BUILD_TIMESTAMP
 
     //jdk基础镜像
-    JdkImage = '10.5.0.103/service/java:apline-openjdk-11.0.9'
+    JdkImage= '10.5.0.103/service/java:alpine-openjdk11-openj9'
+    //JdkImage = '10.5.0.103/service/java:apline-openjdk-11.0.9'
     //JdkImage = '10.5.0.103/service/java:alpine-jdk-1.8.231-utf8'
 
     //harbor仓库地址
@@ -21,7 +22,7 @@ ext {
     //1.8
     //JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:PermSize=256m,-XX:MaxPermSize=512m,-XX:+DisableExplicitGC,-XX:+UseConcMarkSweepGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseFastAccessorMethods,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70,-javaagent:/opt/skywalking/skywalking-agent/skywalking-agent.jar,-Dskywalking.agent.service_name=rs-payroll,-Dskywalking.collector.backend_service=10.5.0.200:11800'
     //11
-    JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-XX:+DisableExplicitGC,-XX:+CMSParallelRemarkEnabled,-XX:LargePageSizeInBytes=128m,-XX:+UseCMSInitiatingOccupancyOnly,-XX:CMSInitiatingOccupancyFraction=70'
+    JVM_ARGS='-Xms512m,-Xmx512m,-Xss1024K,-Xaggressive,-Xalwaysclassgc,-Xquickstart,-Xconmeter:dynamic,-Xshareclasses,-XX:+UseG1GC,-XX:+UseCompressedOops,-XX:+UseCompressedClassPointers,-XX:CMSInitiatingOccupancyFraction=70,-XX:+UseContainerSupport,-XX:InitialRAMPercentage=50,-XX:MaxRAMPercentage=80'
 
     jvmArg = [
             //"-Xms128m".toString(),
