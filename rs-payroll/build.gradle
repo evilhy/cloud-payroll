@@ -202,7 +202,7 @@ dependencies {
     // https://mvnrepository.com/artifact/net.coobird/thumbnailator
     implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
 
-    //compile ('chain.cloud.start:spring-boot-starter-consul-heartbeat:0.0.1-SNAPSHOT')
+    compile ('chain.cloud.start:spring-boot-starter-consul-heartbeat:0.0.1-SNAPSHOT')
 }
 
 
