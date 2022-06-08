@@ -1,0 +1,85 @@
+##私有仓库配置
+##参考https://plugins.drone.io/plugins/docker
+
+kind: pipeline
+name: default
+
+steps:
+  - name: build
+    image: gradle:6.5.1-jdk11
+    commands:
+      - gradle -PBranch=origin/dev-docker-openjdk11 -PAPP_NAME=rs-payroll -PRELEASE=1.0.2 clean rs-payroll:jib -DsendCredentialsOverHttp=true -x test -Penv=local -PBUILD_NUMBER=89
+      
+  - name: wechat
+    image: lizheming/drone-wechat
+    settings:
+      corpid: 
+        from_secret: wechat_corpid
+      corp_secret:
+        from_secret: wechat_corp_secret
+      agent_id: 
+        from_secret: agent_id
+      to_user: '@all'
+#      to_party: 1
+      to_tag: ${DRONE_REPO_NAME}
+      msg_url: ${DRONE_BUILD_LINK}
+      safe: 1
+      btn_txt: more
+      title: ${DRONE_REPO_NAME}
+      message: >
+        {%if success %}
+          build {{build.number}} succeeded. Good job.
+        {% else %}
+          build {{build.number}} failed. Fix me please.
+        {% endif %}
+
+
+  - name: docker
+    image: plugins/docker
+    settings:
+#insecure http协议true https协议false
+      insecure: true
+#registry 私有仓库地址  repo私有仓库写全地址 
+      registry: my.icm.icu:1080
+      repo: my.icm.icu:1080/library/cloud-payroll
+      use_cache: true
+#drone上secret上配置用户密码传参，也可以直接写账密username：xxx
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+#容器标签用变量，打包次数，其他变量参考官网https://docs.drone.io/pipeline/environment/reference/ and https://docs.drone.io/pipeline/environment/substitution/
+      tags: ${DRONE_BUILD_NUMBER}
+#      - ${DRONE_COMMIT_SHA:0:8}
+#触发条件：master收到push时才触发打包推送
+    when:
+      event: push
+      branch: master
+      
+      
+  - name: scp files
+    image: appleboy/drone-scp
+    settings:
+      host: ssh.icm.icu
+      username: root
+      password: 
+        from_secret: ssh_password
+      port: 22
+      target: /tmp/ts
+      source: .
+
+  - name: ssh
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        - ssh.icm.icu
+        - kk.icm.icu
+      username: root
+      password:
+        from_secret: ssh_password
+      port: 22
+      command_timeout: 2m
+      script:
+        - echo "Hello World"
+        - sh /home/freemem.sh
+       
