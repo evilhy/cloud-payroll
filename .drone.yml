@@ -34,7 +34,7 @@ steps:
         {% endif %}
       when:
         status:
-          - fail
+          - FAILED
 
 
   - name: docker
