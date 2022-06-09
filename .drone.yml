@@ -33,8 +33,7 @@ steps:
           build {{build.number}} failed. Fix me please.
         {% endif %}
       when:
-        status:
-          - FAILED
+        status: [ success, failure ]
 
 
   - name: docker
