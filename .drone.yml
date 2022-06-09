@@ -54,9 +54,9 @@ steps:
       tags: ${DRONE_BUILD_NUMBER}
 #      - ${DRONE_COMMIT_SHA:0:8}
 #触发条件：master收到push时才触发打包推送
-    when:
-      event: push
-      branch: master
+#    when:
+#      event: push
+#      branch: master
       
       
   - name: scp files
