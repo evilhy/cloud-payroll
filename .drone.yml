@@ -9,31 +9,10 @@ steps:
     image: gradle:6.5.1-jdk11
     commands:
       - gradle -PBranch=origin/dev-docker-openjdk11 -PAPP_NAME=rs-payroll -PRELEASE=1.0.2 clean rs-payroll:jib -DsendCredentialsOverHttp=true -x test -Penv=local -PBUILD_NUMBER=89
+    when:
+      event: push
+      branch: main_docker
       
-  - name: wechat
-    image: lizheming/drone-wechat
-    settings:
-      corpid: 
-        from_secret: wechat_corpid
-      corp_secret:
-        from_secret: wechat_corp_secret
-      agent_id: 
-        from_secret: agent_id
-      to_user: '@all'
-#      to_party: 1
-      to_tag: ${DRONE_REPO_NAME}
-      msg_url: ${DRONE_BUILD_LINK}
-      safe: 1
-      btn_txt: more
-      title: ${DRONE_REPO_NAME}
-      message: >
-        {%if success %}
-          build {{build.number}} succeeded. Good job.
-        {% else %}
-          build {{build.number}} failed. Fix me please.
-        {% endif %}
-      when:
-        status: [ success, failure ]
 
 
   - name: docker
@@ -69,7 +48,10 @@ steps:
       port: 22
       target: /tmp/ts
       source: .
-
+    when:
+      event: push
+      branch: main_docker
+      
   - name: ssh
     image: appleboy/drone-ssh
     settings:
@@ -84,4 +66,33 @@ steps:
       script:
         - echo "Hello World"
         - sh /home/freemem.sh
+    when:
+      event: push
+      branch: main_docker
        
+  - name: wechat
+    image: lizheming/drone-wechat
+    settings:
+      corpid: 
+        from_secret: wechat_corpid
+      corp_secret:
+        from_secret: wechat_corp_secret
+      agent_id: 
+        from_secret: agent_id
+      to_user: '@all'
+#      to_party: 1
+      to_tag: ${DRONE_REPO_NAME}
+      msg_url: ${DRONE_BUILD_LINK}
+      safe: 1
+      btn_txt: more
+      title: ${DRONE_REPO_NAME}
+      message: >
+        {%if success %}
+          build {{build.number}} succeeded. Good job.
+        {% else %}
+          build {{build.number}} failed. Fix me please.
+        {% endif %}
+      when:
+        status: [ success, failure ]
+        event: push
+        branch: main_docker
