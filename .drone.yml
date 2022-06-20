@@ -6,7 +6,7 @@ name: default
 
 trigger:
   ref:
-  - refs/tags/FileService
+  - refs/push/FileService
   
 steps:
   - name: build
