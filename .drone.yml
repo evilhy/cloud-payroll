@@ -4,6 +4,10 @@
 kind: pipeline
 name: default
 
+trigger:
+  ref:
+  - refs/tags/FileService
+  
 steps:
   - name: build
     image: gradle:6.5.1-jdk11
