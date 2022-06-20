@@ -9,7 +9,7 @@ steps:
   - name: build
     image: gradle:6.5.1-jdk11
     commands:
-      - gradle -PBranch=origin/dev-docker-openjdk11 -PAPP_NAME=rs-payroll -PRELEASE=1.0.2 clean rs-payroll:jib -DsendCredentialsOverHttp=true -x test -Penv=local -PBUILD_NUMBER=89
+      - gradle -PBranch=origin/dev-docker-openjdk11 -PAPP_NAME=rs-payroll -PRELEASE=1.0.2 clean rs-payroll:jib -DsendCredentialsOverHttp=true -x test -Penv=local
       
   - name: docker
     image: plugins/docker
