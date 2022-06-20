@@ -13,9 +13,6 @@ steps:
     image: gradle:6.5.1-jdk11
     commands:
       - gradle -PBranch=origin/dev-docker-openjdk11 -PAPP_NAME=rs-payroll -PRELEASE=1.0.2 clean rs-payroll:jib -DsendCredentialsOverHttp=true -x test -Penv=local -PBUILD_NUMBER=89
-    when:
-      event: push
-      branch: main_docker
       
 
 
@@ -37,9 +34,9 @@ steps:
       tags: ${DRONE_BUILD_NUMBER}
 #      - ${DRONE_COMMIT_SHA:0:8}
 #触发条件：master收到push时才触发打包推送
-    when:
-      event: push
-      branch: main_docker
+#    when:
+#      event: push
+#      branch: main_docker
       
       
   - name: scp files
@@ -52,9 +49,7 @@ steps:
       port: 22
       target: /tmp/ts
       source: .
-    when:
-      event: push
-      branch: main_docker
+
       
   - name: ssh
     image: appleboy/drone-ssh
@@ -70,9 +65,7 @@ steps:
       script:
         - echo "Hello World"
         - sh /home/freemem.sh
-    when:
-      event: push
-      branch: main_docker
+
        
   - name: wechat
     image: lizheming/drone-wechat
@@ -98,5 +91,3 @@ steps:
         {% endif %}
       when:
         status: [ success, failure ]
-        event: push
-        branch: main_docker
